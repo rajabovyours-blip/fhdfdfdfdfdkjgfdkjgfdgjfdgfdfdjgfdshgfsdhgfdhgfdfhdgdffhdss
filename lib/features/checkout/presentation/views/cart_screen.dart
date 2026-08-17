@@ -72,6 +72,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
         backgroundColor: context.colors.surfaceVariant,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        duration: const Duration(seconds: 4),
         action: SnackBarAction(
           label: context.l10n.undo,
           textColor: context.colors.secondary,
@@ -194,7 +195,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
             ),
             const SizedBox(height: 32),
             SizedBox(
-              height: 48,
+              height: 44,
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () => context.go('/home'),
@@ -202,7 +203,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                   backgroundColor: context.colors.primary,
                   foregroundColor: context.colors.onPrimary,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                 ),
                 child: Text(
@@ -312,9 +313,8 @@ class _CartScreenState extends ConsumerState<CartScreen> {
         top: 16,
         bottom: 16,
       ),
-      decoration: BoxDecoration(
-        color: context.colors.surface,
-        border: Border(top: BorderSide(color: context.colors.outline)),
+      decoration: const BoxDecoration(
+        color: Colors.transparent,
       ),
       child: SafeArea(
         top: false,
@@ -349,7 +349,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
             const SizedBox(width: 16),
             Expanded(
               child: SizedBox(
-                height: 48,
+                height: 44,
                 child: ElevatedButton(
                   key: const Key('checkout_button'),
                   onPressed: canCheckout
@@ -378,7 +378,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                         ? context.colors.onPrimary
                         : context.colors.textMedium,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                   ),
                   child: Text(

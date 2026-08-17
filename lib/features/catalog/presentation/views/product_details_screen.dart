@@ -1054,7 +1054,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                       // Add to cart button
                       Expanded(
                         child: SizedBox(
-                          height: 48,
+                          height: 44,
                           child: ElevatedButton(
                             key: const Key('add_to_cart_button'),
                             style: ElevatedButton.styleFrom(
@@ -1068,7 +1068,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                               disabledForegroundColor:
                                   context.colors.textMedium,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.circular(8),
                               ),
                               elevation: 0,
                             ),

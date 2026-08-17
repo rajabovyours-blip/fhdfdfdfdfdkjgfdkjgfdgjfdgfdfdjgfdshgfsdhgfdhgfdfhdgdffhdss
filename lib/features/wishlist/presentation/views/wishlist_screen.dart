@@ -61,7 +61,7 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
             ref.read(wishlistNotifierProvider.notifier).toggleWishlist(product);
           },
         ),
-        duration: const Duration(seconds: 3),
+        duration: const Duration(seconds: 4),
       ),
     );
   }
@@ -306,13 +306,13 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
             const SizedBox(height: 32),
             SizedBox(
               width: double.infinity,
-              height: 48,
+              height: 44,
               child: ElevatedButton(
                 onPressed: () => context.go('/home'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: context.colors.primary,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                 ),
                 child: Text(
@@ -450,14 +450,14 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
             const SizedBox(height: 24),
             SizedBox(
               width: 200,
-              height: 48,
+              height: 44,
               child: ElevatedButton(
                 onPressed: () =>
                     ref.read(wishlistNotifierProvider.notifier).loadWishlist(),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: context.colors.primary,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                 ),
                 child: Text(

@@ -15,7 +15,7 @@ class AppButton extends StatelessWidget {
     this.onPressed,
     this.isLoading = false,
     this.isSecondary = false,
-    this.height = 54.0,
+    this.height = 44.0,
   });
 
   @override
@@ -35,7 +35,7 @@ class AppButton extends StatelessWidget {
               : context.colors.primary.withValues(alpha: 0.5),
           side: isSecondary ? BorderSide(color: context.colors.outline) : null,
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           elevation: 0,
         ),
         child: isLoading
@@ -52,7 +52,7 @@ class AppButton extends StatelessWidget {
             : Text(
                 text,
                 style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
               ),
       ),
     );

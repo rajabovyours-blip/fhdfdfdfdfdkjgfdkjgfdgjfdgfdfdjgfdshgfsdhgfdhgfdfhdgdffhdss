@@ -22,7 +22,7 @@ class AppTheme {
       scaffoldBackgroundColor: AppColorsExtension.light.background,
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          minimumSize: const Size(double.infinity, 48),
+          minimumSize: const Size(double.infinity, 44),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           backgroundColor: AppColorsExtension.light.primary,
           foregroundColor: AppColorsExtension.light.onPrimary,
@@ -72,7 +72,7 @@ class AppTheme {
       scaffoldBackgroundColor: AppColorsExtension.dark.background,
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          minimumSize: const Size(double.infinity, 48),
+          minimumSize: const Size(double.infinity, 44),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           backgroundColor: AppColorsExtension.dark.primary,
           foregroundColor: AppColorsExtension.dark.onPrimary,

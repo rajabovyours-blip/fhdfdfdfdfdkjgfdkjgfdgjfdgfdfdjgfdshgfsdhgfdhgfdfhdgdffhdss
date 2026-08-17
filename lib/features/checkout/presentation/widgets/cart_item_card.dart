@@ -161,10 +161,9 @@ class CartItemCard extends StatelessWidget {
           // Action Bar (Quantity & Stock Status)
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: context
-                  .colors.surfaceVariant, // context.colors.surfaceVariant
-              borderRadius: const BorderRadius.only(
+            decoration: const BoxDecoration(
+              color: Colors.transparent,
+              borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(16),
                 bottomRight: Radius.circular(16),
               ),
@@ -258,17 +257,17 @@ class _QuantityButton extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(6),
           child: Container(
-            width: 36,
-            height: 36,
+            width: 32,
+            height: 32,
             decoration: BoxDecoration(
               border: Border.all(
                 color: disabled
                     ? context.colors.outline
-                    : context.colors.textMedium,
+                    : context.colors.textMedium.withValues(alpha: 0.5),
               ),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(6),
             ),
             child: Icon(
               icon,
