@@ -1,0 +1,280 @@
+import 'package:flutter/material.dart';
+import 'package:milliy_metr/core/theme/app_colors_extension.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:milliy_metr/core/router/route_constants.dart';
+import 'package:milliy_metr/shared/components/product_card.dart';
+import 'package:milliy_metr/features/catalog/presentation/providers/catalog_notifier.dart';
+import 'package:milliy_metr/features/catalog/presentation/widgets/catalog_search_bar.dart';
+import 'package:milliy_metr/features/catalog/presentation/widgets/catalog_filter_sort_row.dart';
+import 'package:milliy_metr/features/catalog/presentation/widgets/catalog_bottom_sheets.dart';
+import 'package:milliy_metr/l10n/l10n_extension.dart';
+
+class CategoryProductsScreen extends ConsumerStatefulWidget {
+  final String categoryId;
+  const CategoryProductsScreen({super.key, required this.categoryId});
+
+  @override
+  ConsumerState<CategoryProductsScreen> createState() => _CategoryProductsScreenState();
+}
+
+class _CategoryProductsScreenState extends ConsumerState<CategoryProductsScreen> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(catalogNotifierProvider.notifier).setCategory(widget.categoryId);
+    });
+    
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+          _scrollController.position.maxScrollExtent - 200) {
+        ref.read(catalogNotifierProvider.notifier).loadProducts();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final state = ref.watch(catalogNotifierProvider);
+
+    return Scaffold(
+      backgroundColor: context.colors.background,
+      appBar: AppBar(
+        backgroundColor: context.colors.background,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: context.colors.textHigh),
+          onPressed: () {
+            ref.read(catalogNotifierProvider.notifier).clearFilters();
+            context.pop();
+          },
+        ),
+        title: Text(
+          context.l10n.catalog,
+          style: TextStyle(
+            color: context.colors.textHigh,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.tune, color: context.colors.textHigh),
+            onPressed: () => CatalogBottomSheets.showFilterSheet(context, ref),
+          ),
+        ],
+      ),
+      body: SafeArea(
+        child: RefreshIndicator(
+          color: context.colors.primary,
+          backgroundColor: context.colors.surface,
+          onRefresh: () => ref
+              .read(catalogNotifierProvider.notifier)
+              .loadProducts(refresh: true),
+          child: CustomScrollView(
+            controller: _scrollController,
+            slivers: [
+              const SliverToBoxAdapter(child: CatalogSearchBar()),
+              const SliverToBoxAdapter(child: SizedBox(height: 8)),
+
+              SliverToBoxAdapter(
+                child: CatalogFilterSortRow(
+                  onFilterTap: () =>
+                      CatalogBottomSheets.showFilterSheet(context, ref),
+                  onSortTap: () =>
+                      CatalogBottomSheets.showSortSheet(context, ref),
+                ),
+              ),
+
+              state.maybeWhen(
+                loading: () => SliverFillRemaining(
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: context.colors.primary,
+                    ),
+                  ),
+                ),
+                error: (e) => SliverFillRemaining(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.error_outline,
+                          size: 48,
+                          color: context.colors.danger,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          context.l10n.errorLoadingProducts,
+                          style: TextStyle(
+                            color: context.colors.textHigh,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () => ref
+                              .read(catalogNotifierProvider.notifier)
+                              .loadProducts(refresh: true),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: context.colors.primary,
+                            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            context.l10n.retry,
+                            style: TextStyle(
+                              color: context.colors.textHigh,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                loaded: (data) {
+                  if (data.products.isEmpty) {
+                    return SliverFillRemaining(
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(24),
+                              decoration: BoxDecoration(
+                                color: context.colors.surface,
+                                shape: BoxShape.circle,
+                                border:
+                                    Border.all(color: context.colors.outline),
+                              ),
+                              child: Icon(
+                                Icons.search_off,
+                                size: 48,
+                                color: context.colors.textMedium,
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                            Text(
+                              context.l10n.productNotFound,
+                              style: TextStyle(
+                                color: context.colors.textHigh,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              context.l10n.searchWithAnotherName,
+                              style: TextStyle(
+                                color: context.colors.textMedium,
+                                fontSize: 14,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 24),
+                            OutlinedButton(
+                              onPressed: () => ref
+                                  .read(catalogNotifierProvider.notifier)
+                                  .clearFilters(),
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(color: context.colors.outline),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              child: Text(
+                                context.l10n.clear,
+                                style: TextStyle(
+                                  color: context.colors.textHigh,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+
+                  return SliverPadding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    sliver: SliverLayoutBuilder(
+                      builder: (context, constraints) {
+                        const crossAxisCount = 2;
+                        const crossAxisSpacing = 12.0;
+                        const mainAxisSpacing = 16.0;
+
+                        final availableWidth = constraints.crossAxisExtent;
+                        final cardWidth = (availableWidth -
+                                (crossAxisSpacing * (crossAxisCount - 1))) /
+                            crossAxisCount;
+                        final cardHeight = cardWidth + 190.0;
+                        final childAspectRatio = cardWidth / cardHeight;
+
+                        return SliverGrid(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: crossAxisCount,
+                            mainAxisSpacing: mainAxisSpacing,
+                            crossAxisSpacing: crossAxisSpacing,
+                            childAspectRatio: childAspectRatio,
+                          ),
+                          delegate: SliverChildBuilderDelegate(
+                            (context, index) {
+                              if (index == data.products.length) {
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    color: context.colors.primary,
+                                  ),
+                                );
+                              }
+                              final product = data.products[index];
+                              return ProductCard(
+                                key: Key('product_card_${product.id}'),
+                                product: product,
+                                onTap: () {
+                                  context.push(
+                                    AppRoutes.productDetails
+                                        .replaceAll(':id', product.id),
+                                  );
+                                },
+                              );
+                            },
+                            childCount: data.products.length +
+                                (data.hasReachedMax ? 0 : 1),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
+                orElse: () => SliverFillRemaining(
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: context.colors.primary,
+                    ),
+                  ),
+                ),
+              ),
+              const SliverToBoxAdapter(
+                child: SizedBox(height: 100),
+              ), // Bottom nav padding
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

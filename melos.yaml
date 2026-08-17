@@ -1,0 +1,12 @@
+name: milliy_metr_workspace
+repository: https://github.com/milliymetr/milliy_metr
+
+packages:
+  - .
+  - packages/*
+
+command:
+  bootstrap:
+    usePubspecOverrides: true
+  version:
+    workspaceFallback: true
