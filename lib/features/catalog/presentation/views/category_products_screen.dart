@@ -208,56 +208,60 @@ class _CategoryProductsScreenState extends ConsumerState<CategoryProductsScreen>
                     );
                   }
 
-                  return SliverPadding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    sliver: SliverLayoutBuilder(
-                      builder: (context, constraints) {
-                        const crossAxisCount = 2;
-                        const crossAxisSpacing = 12.0;
-                        const mainAxisSpacing = 16.0;
+                  return SliverMainAxisGroup(
+                    slivers: [
+                      SliverPadding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        sliver: SliverLayoutBuilder(
+                          builder: (context, constraints) {
+                            const crossAxisCount = 2;
+                            const crossAxisSpacing = 12.0;
+                            const mainAxisSpacing = 16.0;
 
-                        final availableWidth = constraints.crossAxisExtent;
-                        final cardWidth = (availableWidth -
-                                (crossAxisSpacing * (crossAxisCount - 1))) /
-                            crossAxisCount;
-                        final cardHeight = cardWidth + 190.0;
-                        final childAspectRatio = cardWidth / cardHeight;
+                            final availableWidth = constraints.crossAxisExtent;
+                            final cardWidth = (availableWidth - (crossAxisSpacing * (crossAxisCount - 1))) / crossAxisCount;
+                            final cardHeight = cardWidth + 190.0;
+                            final childAspectRatio = cardWidth / cardHeight;
 
-                        return SliverGrid(
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: crossAxisCount,
-                            mainAxisSpacing: mainAxisSpacing,
-                            crossAxisSpacing: crossAxisSpacing,
-                            childAspectRatio: childAspectRatio,
-                          ),
-                          delegate: SliverChildBuilderDelegate(
-                            (context, index) {
-                              if (index == data.products.length) {
-                                return Center(
-                                  child: CircularProgressIndicator(
-                                    color: context.colors.primary,
-                                  ),
-                                );
-                              }
-                              final product = data.products[index];
-                              return ProductCard(
-                                key: Key('product_card_${product.id}'),
-                                product: product,
-                                onTap: () {
-                                  context.push(
-                                    AppRoutes.productDetails
-                                        .replaceAll(':id', product.id),
+                            return SliverGrid(
+                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: crossAxisCount,
+                                crossAxisSpacing: crossAxisSpacing,
+                                mainAxisSpacing: mainAxisSpacing,
+                                childAspectRatio: childAspectRatio,
+                              ),
+                              delegate: SliverChildBuilderDelegate(
+                                (context, index) {
+                                  final product = data.products[index];
+                                  return ProductCard(
+                                    key: Key('product_card_${product.id}'),
+                                    product: product,
+                                    onTap: () {
+                                      context.push(
+                                        AppRoutes.productDetails
+                                            .replaceAll(':id', product.id),
+                                      );
+                                    },
                                   );
                                 },
-                              );
-                            },
-                            childCount: data.products.length +
-                                (data.hasReachedMax ? 0 : 1),
+                                childCount: data.products.length,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      if (!data.hasReachedMax)
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: context.colors.primary,
+                              ),
+                            ),
                           ),
-                        );
-                      },
-                    ),
+                        ),
+                    ],
                   );
                 },
                 orElse: () => SliverFillRemaining(

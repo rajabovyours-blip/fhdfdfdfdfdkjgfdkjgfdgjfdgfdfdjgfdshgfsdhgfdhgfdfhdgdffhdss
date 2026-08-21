@@ -13,6 +13,7 @@ import 'package:milliy_metr/features/authentication/domain/usecases/request_otp_
 import 'package:milliy_metr/features/authentication/domain/usecases/verify_otp_usecase.dart';
 import 'package:milliy_metr/features/authentication/domain/usecases/social_login_usecase.dart';
 import 'package:milliy_metr/features/authentication/presentation/providers/auth_state.dart';
+import 'package:milliy_metr/features/authentication/domain/entities/user_entity.dart';
 
 final dioProvider = Provider<Dio>((ref) => DioClient().dio);
 
@@ -198,6 +199,21 @@ class AuthController extends StateNotifier<AuthState> {
     state = const AuthState.loading();
     await _logoutUseCase(NoParams());
     state = const AuthState.unauthenticated();
+  }
+
+  Future<void> demoBypassAuth() async {
+    state = const AuthState.loading();
+    await Future.delayed(const Duration(milliseconds: 500));
+    // For demo purposes, we can bypass the backend and just simulate an authenticated state
+    // But since auth needs a UserEntity, we just use checkAuthStatus which relies on token.
+    // If there's no token, we can just save a dummy token in secure storage and then check!
+    final dummyUser = const UserEntity(
+      id: 'demo-google-123',
+      fullName: 'Demo User',
+      phone: '+998901234567',
+    );
+    await _repository.saveDemoSession(dummyUser);
+    state = AuthState.authenticated(dummyUser);
   }
 }
 

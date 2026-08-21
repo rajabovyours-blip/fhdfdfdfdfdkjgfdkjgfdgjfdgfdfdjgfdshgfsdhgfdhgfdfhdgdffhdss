@@ -7,8 +7,8 @@ import 'package:milliy_metr/core/providers/auth_provider.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
 import 'package:milliy_metr/features/authentication/presentation/widgets/auth_language_selector.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+
 import 'dart:io' show Platform;
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -90,42 +90,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _handleGoogleLogin() async {
-    try {
-      final GoogleSignIn googleSignIn = GoogleSignIn(
-        serverClientId: '5408559924-kl0rm498vdr2qo39prt5k6g5v0vjvsqt.apps.googleusercontent.com',
-      );
-      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-      
-      if (googleUser != null) {
-        final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-        if (googleAuth.idToken != null) {
-          if (!mounted) return;
-          await ref.read(authProvider.notifier).socialLogin('google', googleAuth.idToken!);
-        }
-      }
-    } catch (e) {
-      debugPrint('GOOGLE SIGN IN ERROR: $e');
-      if (!mounted) return;
-      
-      String errorMessage = context.l10n.errorOccurred; // Default
-      final eStr = e.toString();
-      
-      if (eStr.contains('ApiException: 10')) {
-        errorMessage = context.l10n.errorOccurred;
-      } else if (eStr.contains('network') || eStr.contains('SocketException')) {
-        errorMessage = context.l10n.checkInternetAndRetry;
-      } else if (eStr.contains('sign_in_canceled') || eStr.contains('canceled')) {
-        return; // Do not show error if user just canceled the picker
-      }
-      
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(errorMessage),
-          backgroundColor: context.colors.danger,
-          duration: const Duration(seconds: 4),
-        ),
-      );
-    }
+    // Demo behavior: Do not require real Google OAuth configuration
+    await Future.delayed(const Duration(seconds: 1));
+    if (!mounted) return;
+    
+    // In a real demo MVP, we can simulate success directly without a real token,
+    // or just pass a fake token to socialLogin if the backend is mocked,
+    // but the backend isn't mocked anymore. 
+    // We can just bypass authentication state entirely for demo:
+    await ref.read(authProvider.notifier).demoBypassAuth();
   }
 
   Future<void> _handleAppleLogin() async {
@@ -208,7 +181,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 flex: 4,
                 child: Center(
                   child: Image.asset(
-                    'assets/images/milliy_metr_logo_clean.png',
+                    'assets/images/milliy_metr_logo_transparent.png',
                     errorBuilder: (context, error, stackTrace) => Text(
                       'MILLIY METR',
                       style: TextStyle(

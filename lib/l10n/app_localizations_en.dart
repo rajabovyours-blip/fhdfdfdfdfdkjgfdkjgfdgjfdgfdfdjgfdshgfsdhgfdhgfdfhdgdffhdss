@@ -189,7 +189,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get specialOffers => 'Special Offers';
 
   @override
-  String get searchPlaceholder => 'Search for building materials...';
+  String get searchPlaceholder => 'Search';
 
   @override
   String get salesType => 'Sales Type';

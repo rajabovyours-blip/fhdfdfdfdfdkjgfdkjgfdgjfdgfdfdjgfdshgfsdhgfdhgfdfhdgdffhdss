@@ -5,6 +5,8 @@ analyzer:
     - "**/*.g.dart"
     - "**/*.freezed.dart"
     - "lib/generated_plugin_registrant.dart"
+    - "milliy_metr_admin/**"
+    - "milliy_metr_seller/**"
   errors:
     missing_required_param: error
     missing_return: error

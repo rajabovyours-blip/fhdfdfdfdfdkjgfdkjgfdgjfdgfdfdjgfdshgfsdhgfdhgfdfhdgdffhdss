@@ -190,7 +190,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get specialOffers => 'Maxsus takliflar';
 
   @override
-  String get searchPlaceholder => 'Qurilish materiallarini qidiring...';
+  String get searchPlaceholder => 'Qidirish';
 
   @override
   String get salesType => 'Sotuv turi';

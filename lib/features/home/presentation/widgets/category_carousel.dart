@@ -31,7 +31,7 @@ class CategoryCarousel extends ConsumerWidget {
               final cat = displayCategories[index];
               return CategoryItem(
                 title: cat.name.get(Localizations.localeOf(context).languageCode),
-                iconAsset: cat.iconUrl ?? 'assets/svg/categories/cat-1.svg',
+                iconAsset: cat.iconUrl ?? 'assets/images/categories/cat-1.webp',
                 onTap: () {
                   context.go(AppRoutes.categories);
                 },

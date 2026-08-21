@@ -860,9 +860,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                             return Container(
                                               padding: const EdgeInsets.all(12),
                                               decoration: BoxDecoration(
-                                                color: const Color(
-                                                  0xFF1A1A1A,
-                                                ), // slight dim
+                                                color: context.colors.surfaceVariant,
                                                 borderRadius:
                                                     BorderRadius.circular(12),
                                                 border: Border.all(

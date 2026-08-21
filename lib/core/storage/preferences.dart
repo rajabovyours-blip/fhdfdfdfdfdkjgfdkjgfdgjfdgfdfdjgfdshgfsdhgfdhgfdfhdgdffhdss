@@ -15,13 +15,6 @@ class PreferencesManager {
     return _prefs.getString('language');
   }
 
-  static Future<void> setOnboardingComplete(bool complete) async {
-    await _prefs.setBool('onboarding_complete', complete);
-  }
-
-  static bool isOnboardingComplete() {
-    return _prefs.getBool('onboarding_complete') ?? false;
-  }
 
   static Future<void> setStringList(String key, List<String> value) async {
     await _prefs.setStringList(key, value);

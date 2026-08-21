@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:milliy_metr/core/router/route_constants.dart';
 import 'package:milliy_metr/features/catalog/presentation/widgets/catalog_search_bar.dart';
 import 'package:milliy_metr/features/categories/presentation/providers/category_notifier.dart';
-import 'package:milliy_metr/shared/components/category_card.dart';
+
 import 'package:milliy_metr/l10n/l10n_extension.dart';
 
 class CatalogScreen extends ConsumerStatefulWidget {
@@ -50,7 +50,7 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
           child: CustomScrollView(
             slivers: [
               const SliverToBoxAdapter(child: CatalogSearchBar()),
-              const SliverToBoxAdapter(child: SizedBox(height: 16)),
+              const SliverToBoxAdapter(child: SizedBox(height: 8)),
               
               state.maybeWhen(
                 loading: () => SliverFillRemaining(
@@ -79,20 +79,23 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed: () => ref.read(categoryNotifierProvider.notifier).loadCategories(),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: context.colors.primary,
-                            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                        SizedBox(
+                          height: 44,
+                          child: ElevatedButton(
+                            onPressed: () => ref.read(categoryNotifierProvider.notifier).loadCategories(),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: context.colors.primary,
+                              padding: const EdgeInsets.symmetric(horizontal: 32),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                             ),
-                          ),
-                          child: Text(
-                            context.l10n.retry,
-                            style: TextStyle(
-                              color: context.colors.textHigh,
-                              fontWeight: FontWeight.w600,
+                            child: Text(
+                              context.l10n.retry,
+                              style: TextStyle(
+                                color: context.colors.onPrimary,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ),
@@ -112,30 +115,82 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                     );
                   }
                   
-                  return SliverPadding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    sliver: SliverGrid(
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 4,
-                        crossAxisSpacing: 8.0,
-                        mainAxisSpacing: 24.0,
-                        childAspectRatio: 0.7,
-                      ),
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                          final category = categories[index];
-                          return InkWell(
-                            key: Key('category_card_${category.id}'),
-                            onTap: () {
-                              context.push(
-                                AppRoutes.categoryProducts.replaceAll(':id', category.id),
-                              );
-                            },
-                            child: CategoryCard(category: category),
-                          );
-                        },
-                        childCount: categories.length,
-                      ),
+                  // Clean vertical list — one row per category
+                  return SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        final category = categories[index];
+                        return InkWell(
+                          key: Key('category_card_${category.id}'),
+                          onTap: () {
+                            context.push(
+                              AppRoutes.categoryProducts.replaceAll(':id', category.id),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: context.colors.outline.withValues(alpha: 0.3),
+                                  width: 0.5,
+                                ),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                // Category Image
+                                Container(
+                                  width: 48,
+                                  height: 48,
+                                  clipBehavior: Clip.hardEdge,
+                                  decoration: BoxDecoration(
+                                    color: context.colors.surfaceVariant,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: category.iconUrl != null
+                                      ? Image.asset(
+                                          category.iconUrl!,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (context, error, stackTrace) =>
+                                              Icon(Icons.category, color: context.colors.primary),
+                                        )
+                                      : Icon(Icons.category, color: context.colors.primary),
+                                ),
+                                const SizedBox(width: 14),
+                                // Category name
+                                Expanded(
+                                  child: Text(
+                                    category.name.get(
+                                      Localizations.localeOf(context).languageCode,
+                                    ),
+                                    style: TextStyle(
+                                      color: context.colors.textHigh,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                // Chevron
+                                Icon(
+                                  Icons.chevron_right,
+                                  color: context.colors.textDisabled,
+                                  size: 20,
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                      childCount: categories.length,
+                      addAutomaticKeepAlives: false,
+                      addRepaintBoundaries: true,
                     ),
                   );
                 },

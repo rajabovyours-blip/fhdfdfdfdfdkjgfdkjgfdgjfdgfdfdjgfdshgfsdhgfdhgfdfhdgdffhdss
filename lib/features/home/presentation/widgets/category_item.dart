@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 
 class CategoryItem extends StatelessWidget {
@@ -29,14 +29,12 @@ class CategoryItem extends StatelessWidget {
                 color: context.colors.surface,
                 shape: BoxShape.circle,
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: SvgPicture.asset(
+              child: ClipOval(
+                child: Image.asset(
                   iconAsset,
-                  colorFilter: ColorFilter.mode(
-                    context.colors.primary,
-                    BlendMode.srcIn,
-                  ),
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) =>
+                      Icon(Icons.category, color: context.colors.primary),
                 ),
               ),
             ),

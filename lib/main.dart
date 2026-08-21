@@ -9,6 +9,8 @@ import 'package:milliy_metr/core/providers/locale_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:milliy_metr/l10n/app_localizations.dart';
 
+
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
@@ -18,6 +20,8 @@ void main() async {
   }
   await PreferencesManager.init();
   await HiveStorage.init();
+  
+  
   runApp(const ProviderScope(child: MilliyMetrApp()));
 }
 

@@ -136,7 +136,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                     
                     Center(
                       child: Image.asset(
-                        'assets/images/milliy_metr_logo_clean.png',
+                        'assets/images/milliy_metr_logo_transparent.png',
                         height: 80,
                         errorBuilder: (context, error, stackTrace) => Icon(
                           Icons.lock_outline,

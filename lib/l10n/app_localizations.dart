@@ -445,7 +445,7 @@ abstract class AppLocalizations {
   /// No description provided for @searchPlaceholder.
   ///
   /// In uz, this message translates to:
-  /// **'Qurilish materiallarini qidiring...'**
+  /// **'Qidirish'**
   String get searchPlaceholder;
 
   /// No description provided for @salesType.

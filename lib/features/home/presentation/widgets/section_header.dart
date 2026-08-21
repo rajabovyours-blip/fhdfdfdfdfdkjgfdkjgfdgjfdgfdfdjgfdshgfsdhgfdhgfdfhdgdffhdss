@@ -2,17 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:go_router/go_router.dart';
 import 'package:milliy_metr/core/router/route_constants.dart';
+import 'package:milliy_metr/l10n/l10n_extension.dart';
 
 class SectionHeader extends StatelessWidget {
   final String title;
   final VoidCallback? onViewAll;
-  final String viewAllText;
+  final String? viewAllText;
 
   const SectionHeader({
     super.key,
     required this.title,
     this.onViewAll,
-    this.viewAllText = 'Barchasini ko‘rish',
+    this.viewAllText,
   });
 
   @override
@@ -44,7 +45,7 @@ class SectionHeader extends StatelessWidget {
                 padding:
                     const EdgeInsets.only(left: 8.0, top: 4.0, bottom: 4.0),
                 child: Text(
-                  viewAllText,
+                  viewAllText ?? context.l10n.viewAll,
                   style: TextStyle(
                     color: context.colors.primary,
                     fontSize: 14,

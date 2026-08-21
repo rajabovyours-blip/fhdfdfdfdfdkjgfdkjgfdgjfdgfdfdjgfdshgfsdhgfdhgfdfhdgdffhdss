@@ -105,6 +105,15 @@ class CatalogNotifier extends StateNotifier<FeatureState<CatalogData>> {
       filters: filters.isNotEmpty ? filters : null,
     );
 
+    // Stale request check: if category changed mid-flight, ignore this result
+    final currentCatId = state.maybeWhen(
+      loaded: (d) => d.selectedCategory,
+      orElse: () => null,
+    );
+    if (categoryId != null && currentCatId != null && categoryId != currentCatId) {
+      return;
+    }
+
     result.fold(
       (l) {
         state = FeatureState.error(l.message);
@@ -130,69 +139,56 @@ class CatalogNotifier extends StateNotifier<FeatureState<CatalogData>> {
     );
   }
 
-  void setSearchQuery(String query) {
-    state.maybeWhen(
-      loaded: (data) {
-        state = FeatureState.loaded(data.copyWith(searchQuery: query));
-        loadProducts(refresh: true);
-      },
-      orElse: () {},
+  CatalogData _getCurrentData() {
+    return state.maybeWhen(
+      loaded: (data) => data,
+      orElse: () => const CatalogData(products: [], page: 1, hasReachedMax: false),
     );
+  }
+
+  void setSearchQuery(String query) {
+    final data = _getCurrentData();
+    state = FeatureState.loaded(data.copyWith(searchQuery: query));
+    loadProducts(refresh: true);
   }
 
   void setCategory(String category) {
-    state.maybeWhen(
-      loaded: (data) {
-        state = FeatureState.loaded(data.copyWith(selectedCategory: category));
-        loadProducts(refresh: true);
-      },
-      orElse: () {},
-    );
+    final data = _getCurrentData();
+    state = FeatureState.loaded(data.copyWith(selectedCategory: category));
+    loadProducts(refresh: true);
   }
 
   void setFilters({double? minPrice, double? maxPrice, String? location}) {
-    state.maybeWhen(
-      loaded: (data) {
-        state = FeatureState.loaded(
-          data.copyWith(
-            minPrice: minPrice,
-            maxPrice: maxPrice,
-            selectedLocation: location,
-          ),
-        );
-        loadProducts(refresh: true);
-      },
-      orElse: () {},
+    final data = _getCurrentData();
+    state = FeatureState.loaded(
+      data.copyWith(
+        minPrice: minPrice,
+        maxPrice: maxPrice,
+        selectedLocation: location,
+      ),
     );
+    loadProducts(refresh: true);
   }
 
   void clearFilters() {
-    state.maybeWhen(
-      loaded: (data) {
-        state = FeatureState.loaded(
-          data.copyWith(
-            minPrice: null,
-            maxPrice: null,
-            selectedLocation: null,
-            searchQuery: '',
-            selectedCategory: 'Barchasi',
-            sortOption: null,
-          ),
-        );
-        loadProducts(refresh: true);
-      },
-      orElse: () {},
+    final data = _getCurrentData();
+    state = FeatureState.loaded(
+      data.copyWith(
+        minPrice: null,
+        maxPrice: null,
+        selectedLocation: null,
+        searchQuery: '',
+        selectedCategory: 'Barchasi',
+        sortOption: null,
+      ),
     );
+    loadProducts(refresh: true);
   }
 
   void setSortOption(String sortOption) {
-    state.maybeWhen(
-      loaded: (data) {
-        state = FeatureState.loaded(data.copyWith(sortOption: sortOption));
-        loadProducts(refresh: true);
-      },
-      orElse: () {},
-    );
+    final data = _getCurrentData();
+    state = FeatureState.loaded(data.copyWith(sortOption: sortOption));
+    loadProducts(refresh: true);
   }
 }
 

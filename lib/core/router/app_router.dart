@@ -5,8 +5,6 @@ import 'package:milliy_metr/core/router/route_constants.dart';
 import 'package:milliy_metr/core/router/guards/auth_guard.dart';
 
 import 'package:milliy_metr/features/splash/presentation/views/splash_screen.dart';
-import 'package:milliy_metr/features/onboarding/presentation/views/onboarding_screen.dart';
-import 'package:milliy_metr/features/personalization/presentation/views/personalization_screen.dart';
 import 'package:milliy_metr/features/authentication/presentation/views/login_screen.dart';
 import 'package:milliy_metr/features/authentication/presentation/views/registration_screen.dart';
 
@@ -88,14 +86,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.splash,
         builder: (context, state) => const SplashScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.onboarding,
-        builder: (context, state) => const OnboardingScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.personalization,
-        builder: (context, state) => const PersonalizationScreen(),
       ),
       GoRoute(
         path: AppRoutes.login,

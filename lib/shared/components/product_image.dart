@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ProductImage extends StatelessWidget {
   final String? imageUrl;
@@ -6,6 +7,9 @@ class ProductImage extends StatelessWidget {
   final double width;
   final String fallbackSeed;
   final BoxFit fit;
+  
+  // Decoding size limit to prevent OOM
+  static const int _cacheSize = 400;
 
   const ProductImage({
     super.key,
@@ -28,16 +32,19 @@ class ProductImage extends StatelessWidget {
         height: height,
         width: width,
         fit: fit,
+        cacheWidth: _cacheSize,
         errorBuilder: (context, error, stackTrace) => _buildNeedsImageFallback(context),
       );
     }
 
-    return Image.network(
-      imageUrl!,
+    return CachedNetworkImage(
+      imageUrl: imageUrl!,
       height: height,
       width: width,
       fit: fit,
-      errorBuilder: (context, error, stackTrace) => _buildNeedsImageFallback(context),
+      memCacheWidth: _cacheSize,
+      memCacheHeight: _cacheSize,
+      errorWidget: (context, url, error) => _buildNeedsImageFallback(context),
     );
   }
 

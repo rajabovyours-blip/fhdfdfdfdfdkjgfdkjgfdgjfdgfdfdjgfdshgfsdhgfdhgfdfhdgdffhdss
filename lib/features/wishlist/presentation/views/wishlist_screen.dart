@@ -53,6 +53,7 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
         ),
         backgroundColor: context.colors.surfaceVariant,
         behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 4),
         action: SnackBarAction(
           label: context.l10n.undo,
           textColor: context.colors.secondary,
@@ -61,7 +62,6 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
             ref.read(wishlistNotifierProvider.notifier).toggleWishlist(product);
           },
         ),
-        duration: const Duration(seconds: 4),
       ),
     );
   }
@@ -361,31 +361,30 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
 
         final availableWidth = constraints.maxWidth;
         final cardWidth = (availableWidth - (crossAxisSpacing * (crossAxisCount - 1)) - 32) / crossAxisCount; // 32 is padding
-        final cardHeight = cardWidth + 190.0;
-        final childAspectRatio = cardWidth / cardHeight;
 
-        return GridView.builder(
+        return SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           physics: const AlwaysScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: crossAxisCount,
-            mainAxisSpacing: mainAxisSpacing,
-            crossAxisSpacing: crossAxisSpacing,
-            childAspectRatio: childAspectRatio,
+          child: Wrap(
+            spacing: crossAxisSpacing,
+            runSpacing: mainAxisSpacing,
+            crossAxisAlignment: WrapCrossAlignment.start,
+            children: products.map((product) {
+              return SizedBox(
+                width: cardWidth,
+                child: ProductCard(
+                  product: product,
+                  showCartAction: true,
+                  showStock: true,
+                  onFavoriteToggleOverride: () =>
+                      _onFavoriteToggleOverride(product),
+                  onTap: () => context.push(
+                    AppRoutes.productDetails.replaceAll(':id', product.id),
+                  ),
+                ),
+              );
+            }).toList(),
           ),
-          itemCount: products.length,
-          itemBuilder: (context, index) {
-            return ProductCard(
-              product: products[index],
-              showCartAction: true,
-              showStock: true,
-              onFavoriteToggleOverride: () =>
-                  _onFavoriteToggleOverride(products[index]),
-              onTap: () => context.push(
-                AppRoutes.productDetails.replaceAll(':id', products[index].id),
-              ),
-            );
-          },
         );
       },
     );

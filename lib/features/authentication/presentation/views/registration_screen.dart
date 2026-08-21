@@ -127,7 +127,7 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                           alignment: Alignment.centerLeft,
                         ),
                         Image.asset(
-                          'assets/images/milliy_metr_logo_clean.png',
+                          'assets/images/milliy_metr_logo_transparent.png',
                           height: 36,
                           errorBuilder: (context, error, stackTrace) => Text(
                             'MILLIY METR',

@@ -4,7 +4,7 @@ import 'package:milliy_metr/core/network/interceptors/auth_interceptor.dart';
 import 'package:milliy_metr/core/network/interceptors/logging_interceptor.dart';
 import 'package:milliy_metr/core/network/interceptors/language_interceptor.dart';
 import 'package:milliy_metr/core/constants/api_constants.dart';
-import 'package:milliy_metr/core/network/interceptors/mock_interceptor.dart';
+
 
 class DioClient {
   final Dio _dio;
@@ -18,7 +18,7 @@ class DioClient {
       ..headers = {'Bypass-Tunnel-Reminder': 'true'};
 
     _dio.interceptors.addAll([
-      MockInterceptor(),
+
       AuthInterceptor(),
       LanguageInterceptor(),
       LoggingInterceptor(),

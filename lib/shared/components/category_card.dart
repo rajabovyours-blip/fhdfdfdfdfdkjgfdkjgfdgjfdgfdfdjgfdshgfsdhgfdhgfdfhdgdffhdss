@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:milliy_metr/features/categories/domain/entities/category_entity.dart';
 
@@ -14,32 +15,28 @@ class CategoryCard extends StatelessWidget {
         Container(
           width: 64,
           height: 64,
-          clipBehavior: Clip.antiAlias,
+          clipBehavior: Clip.hardEdge,
           decoration: BoxDecoration(
             color: context.colors.surfaceVariant,
             shape: BoxShape.circle,
           ),
           child: category.iconUrl != null && category.iconUrl!.isNotEmpty
-              ? (category.iconUrl!.endsWith('.svg')
-                  ? Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: SvgPicture.asset(
-                        category.iconUrl!,
-                        colorFilter: ColorFilter.mode(
-                          context.colors.primary,
-                          BlendMode.srcIn,
-                        ),
-                      ),
-                    )
-                  : Image.network(
+              ? (category.iconUrl!.startsWith('assets/')
+                  ? Image.asset(
                       category.iconUrl!,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Icon(
-                        Icons.category,
-                        color: context.colors.textMedium,
-                      ),
+                      errorBuilder: (context, error, stackTrace) =>
+                          CategoryCard.getSemanticIconWidget(category, context),
+                    )
+                  : CachedNetworkImage(
+                      imageUrl: category.iconUrl!,
+                      fit: BoxFit.cover,
+                      memCacheWidth: 150,
+                      memCacheHeight: 150,
+                      errorWidget: (_, __, ___) =>
+                          CategoryCard.getSemanticIconWidget(category, context),
                     ))
-                  : _getSemanticIcon(category, context),
+                  : getSemanticIconWidget(category, context),
         ),
         const SizedBox(height: 8),
         Text(
@@ -51,7 +48,7 @@ class CategoryCard extends StatelessWidget {
     );
   }
 
-  Widget _getSemanticIcon(CategoryEntity category, BuildContext context) {
+  static Widget getSemanticIconWidget(CategoryEntity category, BuildContext context, {double size = 28}) {
     final name = category.name.get('en').toLowerCase();
     IconData iconData = Icons.category;
 
@@ -59,17 +56,17 @@ class CategoryCard extends StatelessWidget {
       iconData = Icons.foundation;
     } else if (name.contains('brick') || name.contains('block') || name.contains("g'isht")) {
       iconData = Icons.view_module;
-    } else if (name.contains('steel') || name.contains('metal') || name.contains('armatura')) {
+    } else if (name.contains('steel') || name.contains('metal') || name.contains('armatura') || name.contains('rebar')) {
       iconData = Icons.hardware;
-    } else if (name.contains('sand') || name.contains('gravel') || name.contains('qum')) {
+    } else if (name.contains('sand') || name.contains('gravel') || name.contains('qum') || name.contains('aggregate')) {
       iconData = Icons.terrain;
     } else if (name.contains('roof')) {
       iconData = Icons.roofing;
-    } else if (name.contains('wood') || name.contains('timber') || name.contains('board')) {
+    } else if (name.contains('wood') || name.contains('timber') || name.contains('board') || name.contains('lumber')) {
       iconData = Icons.carpenter;
     } else if (name.contains('plumb') || name.contains('pipe') || name.contains('tube')) {
       iconData = Icons.plumbing;
-    } else if (name.contains('electric') || name.contains('wire') || name.contains('cable')) {
+    } else if (name.contains('electric') || name.contains('wire') || name.contains('cable') || name.contains('lighting') || name.contains('lamp')) {
       iconData = Icons.electrical_services;
     } else if (name.contains('paint') || name.contains('finish') || name.contains("bo'yoq")) {
       iconData = Icons.format_paint;
@@ -79,18 +76,36 @@ class CategoryCard extends StatelessWidget {
       iconData = Icons.thermostat;
     } else if (name.contains('door') || name.contains('window')) {
       iconData = Icons.door_front_door;
-    } else if (name.contains('floor') || name.contains('tile')) {
+    } else if (name.contains('floor') || name.contains('tile') || name.contains('laminate')) {
       iconData = Icons.grid_on;
     } else if (name.contains('glass')) {
       iconData = Icons.window;
-    } else if (name.contains('fasten') || name.contains('nail') || name.contains('screw')) {
+    } else if (name.contains('fasten') || name.contains('nail') || name.contains('screw') || name.contains('bolt')) {
       iconData = Icons.build;
+    } else if (name.contains('drywall') || name.contains('gypsum')) {
+      iconData = Icons.web_asset;
+    } else if (name.contains('sealant') || name.contains('adhesive') || name.contains('glue')) {
+      iconData = Icons.water_drop;
+    } else if (name.contains('waterproof')) {
+      iconData = Icons.umbrella;
+    } else if (name.contains('ventil') || name.contains('hvac') || name.contains('heating')) {
+      iconData = Icons.air;
+    } else if (name.contains('safet') || name.contains('protect')) {
+      iconData = Icons.health_and_safety;
+    } else if (name.contains('ladder') || name.contains('scaffold')) {
+      iconData = Icons.stairs;
+    } else if (name.contains('measur')) {
+      iconData = Icons.straighten;
+    } else if (name.contains('garden') || name.contains('landscape')) {
+      iconData = Icons.park;
+    } else if (name.contains('decor') || name.contains('wallpaper')) {
+      iconData = Icons.wallpaper;
     }
 
     return Icon(
       iconData,
       color: context.colors.primary,
-      size: 28,
+      size: size,
     );
   }
 }

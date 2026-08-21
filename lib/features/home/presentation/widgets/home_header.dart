@@ -77,7 +77,7 @@ class HomeHeader extends StatelessWidget {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      context.l10n.searchHint,
+                      context.l10n.searchPlaceholder,
                       style: TextStyle(
                         color: context.colors.textMedium,
                         fontSize: 14,

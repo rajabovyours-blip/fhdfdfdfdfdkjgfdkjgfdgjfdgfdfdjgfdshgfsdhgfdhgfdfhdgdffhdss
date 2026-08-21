@@ -30,6 +30,7 @@ class ComparisonScreen extends StatelessWidget {
               cells: [
                 DataCell(Text(context.l10n.weight)),
                 const DataCell(Text('M400')),
+                const DataCell(Text('M400')),
               ],
             ),
             DataRow(

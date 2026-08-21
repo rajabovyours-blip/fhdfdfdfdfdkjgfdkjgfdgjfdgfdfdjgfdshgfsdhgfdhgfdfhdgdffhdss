@@ -90,7 +90,7 @@ class _ProductCardState extends ConsumerState<ProductCard> {
           borderRadius: BorderRadius.circular(18),
           border: Border.all(color: context.colors.outline, width: 1),
         ),
-        clipBehavior: Clip.antiAlias,
+        clipBehavior: Clip.hardEdge,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -167,10 +167,9 @@ class _ProductCardState extends ConsumerState<ProductCard> {
             ),
 
             // Details Area
-            Expanded(
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -264,7 +263,7 @@ class _ProductCardState extends ConsumerState<ProductCard> {
                         ],
                       ],
                     ),
-                    const Spacer(),
+                    const SizedBox(height: 12),
 
                     // Price and Action Group
                     Column(
@@ -340,7 +339,6 @@ class _ProductCardState extends ConsumerState<ProductCard> {
                   ],
                 ),
               ),
-            ),
           ],
         ),
       ),

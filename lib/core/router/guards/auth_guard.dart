@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:milliy_metr/core/router/route_constants.dart';
 import 'package:milliy_metr/core/providers/auth_provider.dart';
-import 'package:milliy_metr/core/storage/preferences.dart';
 
 class AuthGuard {
   static bool _isProtectedRoute(String path) {
@@ -43,23 +42,18 @@ class AuthGuard {
 
     final isGoingToLogin = currentPath == AppRoutes.login;
     final isGoingToSplash = currentPath == AppRoutes.splash;
-    final isGoingToOnboarding = currentPath == AppRoutes.onboarding;
 
     final isGoingToOtp = currentPath == AppRoutes.otp;
     final isGoingToRegister = currentPath == AppRoutes.register;
 
-    final isOnboardingComplete = PreferencesManager.isOnboardingComplete();
+
 
     return authState.maybeWhen(
       initial: () => AppRoutes.splash,
       loading: () => null,
       unauthenticated: () {
-        if (!isOnboardingComplete && !isGoingToOnboarding) {
-          return AppRoutes.onboarding;
-        }
-        
         // If it's a protected route, force login and pass the original URL as redirect
-        if (isOnboardingComplete && _isProtectedRoute(currentPath)) {
+        if (_isProtectedRoute(currentPath)) {
           return '${AppRoutes.login}?redirect=${Uri.encodeComponent(state.uri.toString())}';
         }
         return null;
@@ -67,7 +61,6 @@ class AuthGuard {
       authenticated: (_) {
         if (isGoingToLogin ||
             isGoingToSplash ||
-            isGoingToOnboarding ||
             isGoingToOtp ||
             isGoingToRegister) {
           

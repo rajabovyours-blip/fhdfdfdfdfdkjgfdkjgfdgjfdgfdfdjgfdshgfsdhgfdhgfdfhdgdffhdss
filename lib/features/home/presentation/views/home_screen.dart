@@ -9,7 +9,7 @@ import 'package:milliy_metr/features/home/presentation/widgets/promotional_banne
 import 'package:milliy_metr/features/home/presentation/widgets/category_carousel.dart';
 import 'package:milliy_metr/features/home/presentation/widgets/section_header.dart';
 
-import 'package:milliy_metr/features/home/presentation/widgets/product_grid.dart';
+
 import 'package:milliy_metr/features/home/presentation/widgets/home_skeleton.dart';
 import 'package:milliy_metr/features/home/presentation/widgets/home_error_state.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
@@ -57,29 +57,7 @@ class HomeScreen extends ConsumerWidget {
                         child: CategoryCarousel(),
                       ),
 
-                      const SliverToBoxAdapter(child: SizedBox(height: 16)),
 
-                      if (data.featuredProducts.isNotEmpty) ...[
-                        SliverToBoxAdapter(
-                          child: SectionHeader(
-                            title: context.l10n.specialOffers,
-                            onViewAll: () {},
-                          ),
-                        ),
-                        ProductGrid(
-                          products:
-                              data.featuredProducts.reversed.take(4).toList(),
-                        ),
-                        const SliverToBoxAdapter(child: SizedBox(height: 16)),
-                      ],
-
-                      SliverToBoxAdapter(
-                        child: SectionHeader(
-                          title: context.l10n.featuredProducts,
-                          onViewAll: () {},
-                        ),
-                      ),
-                      ProductGrid(products: data.featuredProducts),
 
                       // Bottom padding
                       const SliverToBoxAdapter(child: SizedBox(height: 32)),
