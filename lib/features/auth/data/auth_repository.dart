@@ -17,7 +17,7 @@ class AuthRepository {
 
   Future<bool> login(String email, String password) async {
     try {
-      final response = await _dio.post('/auth/login', data: {
+      final response = await _dio.post('/auth/admin-login', data: {
         'username': email,
         'password': password,
       }, options: Options(
