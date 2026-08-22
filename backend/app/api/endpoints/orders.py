@@ -16,7 +16,7 @@ from app.api.deps import get_current_user
 
 router = APIRouter()
 
-@router.post("/", response_model=APIResponse[dict])
+@router.post("", response_model=APIResponse[dict])
 async def create_order(
     order_in: OrderCreate,
     db: AsyncSession = Depends(get_db),
@@ -77,7 +77,7 @@ async def create_order(
     
     return APIResponse(message="Order created successfully", data={"order_id": str(order.id)})
 
-@router.get("/", response_model=APIResponse[List[OrderModel]])
+@router.get("", response_model=APIResponse[List[OrderModel]])
 async def get_orders(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)

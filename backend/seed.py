@@ -7,7 +7,7 @@ from app.models.base import Base
 from app.models.users import User, Role
 from app.models.marketplace import Category, Product, ProductImage
 from app.security.hashing import get_password_hash
-import app.models.orders
+import app.models.order
 import app.models.order
 import app.models.user
 import app.models.users

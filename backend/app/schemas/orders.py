@@ -1,4 +1,5 @@
-from pydantic import BaseModel, UUID4
+from pydantic.alias_generators import to_camel
+from pydantic import BaseModel, ConfigDict, UUID4
 from typing import List, Optional
 from datetime import datetime
 from app.schemas.marketplace import ProductSummary

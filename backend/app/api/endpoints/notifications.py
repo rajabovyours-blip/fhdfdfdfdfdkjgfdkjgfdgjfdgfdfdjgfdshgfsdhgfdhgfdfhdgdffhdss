@@ -8,7 +8,7 @@ from app.models.user import User
 
 router = APIRouter()
 
-@router.get("/", response_model=APIResponse[list])
+@router.get("", response_model=APIResponse[list])
 async def get_notifications(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)

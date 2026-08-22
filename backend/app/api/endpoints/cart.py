@@ -14,7 +14,7 @@ from app.api.deps import get_current_user
 
 router = APIRouter()
 
-@router.get("/", response_model=APIResponse[List[CartItemModel]])
+@router.get("", response_model=APIResponse[List[CartItemModel]])
 async def get_cart(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)

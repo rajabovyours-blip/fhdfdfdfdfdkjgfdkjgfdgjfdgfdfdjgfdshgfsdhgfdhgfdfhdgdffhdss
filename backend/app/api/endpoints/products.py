@@ -12,7 +12,7 @@ from app.schemas.common import APIResponse
 
 router = APIRouter()
 
-@router.get("/", response_model=APIResponse[List[ProductModel]])
+@router.get("", response_model=APIResponse[List[ProductModel]])
 async def get_products(db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(Product))
     products = result.scalars().all()

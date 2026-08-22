@@ -1,7 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
-from app.models.marketplace import Category, Product, wishlist_table
+from app.models.category import Category
+from app.models.product import Product, wishlist_table
 from app.core.exceptions import AppError
 import uuid
 
@@ -18,9 +19,7 @@ class MarketplaceService:
         return result.scalars().all()
 
     async def get_products(self, query: str = None, category_id: uuid.UUID = None, limit: int = 20, offset: int = 0):
-        stmt = select(Product).filter(Product.status == "approved").options(
-            selectinload(Product.images)
-        )
+        stmt = select(Product).filter(Product.status == "approved")
         
         if query:
             stmt = stmt.filter(Product.name.ilike(f"%{query}%"))
@@ -35,9 +34,7 @@ class MarketplaceService:
         result = await self.db.execute(
             select(Product)
             .filter(Product.id == product_id, Product.status == "approved")
-            .options(
-                selectinload(Product.images)
-            )
+            
         )
         product = result.scalars().first()
         if not product:
@@ -69,7 +66,7 @@ class MarketplaceService:
             select(Product)
             .join(wishlist_table, wishlist_table.c.product_id == Product.id)
             .filter(wishlist_table.c.user_id == user_id)
-            .options(selectinload(Product.images))
+            
         )
         result = await self.db.execute(stmt)
         return result.scalars().all()

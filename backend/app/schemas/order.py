@@ -1,4 +1,5 @@
-from pydantic import BaseModel
+from pydantic.alias_generators import to_camel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional, List
 from uuid import UUID
 from datetime import datetime
@@ -23,6 +24,4 @@ class OrderModel(BaseModel):
     customer_notes: Optional[str] = None
     created_at: datetime
     items: List[CartItemModel] = []
-    
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True, alias_generator=to_camel)

@@ -11,7 +11,7 @@ from app.models.base import Base
 from app.core.config import settings
 import app.models.users
 import app.models.marketplace
-import app.models.orders
+import app.models.order
 
 config = context.config
 

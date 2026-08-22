@@ -37,11 +37,11 @@ async def seed_data(session: AsyncSession):
             unit="dona",
             moq=1000,
             stock=5000,
-            stockStatus="in_stock",
+            stock_status="in_stock",
             rating=4.8,
-            reviewCount=120,
+            review_count=120,
             location="Toshkent",
-            images="[\"https://images.unsplash.com/photo-1589939705384-5185137a7f0f\"]"
+            images=["https://images.unsplash.com/photo-1589939705384-5185137a7f0f"]
         )
         
         prod2 = Product(
@@ -53,11 +53,11 @@ async def seed_data(session: AsyncSession):
             unit="qop",
             moq=10,
             stock=500,
-            stockStatus="in_stock",
+            stock_status="in_stock",
             rating=4.9,
-            reviewCount=350,
+            review_count=350,
             location="Samarqand",
-            images="[\"https://images.unsplash.com/photo-1621501103258-3e4b77ae5573\"]"
+            images=["https://images.unsplash.com/photo-1621501103258-3e4b77ae5573"]
         )
         
         session.add(prod1)

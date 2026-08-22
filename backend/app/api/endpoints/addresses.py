@@ -8,14 +8,14 @@ from app.models.user import User
 
 router = APIRouter()
 
-@router.get("/", response_model=APIResponse[list])
+@router.get("", response_model=APIResponse[list])
 async def get_addresses(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     return APIResponse(data=[])
 
-@router.post("/", response_model=APIResponse[dict])
+@router.post("", response_model=APIResponse[dict])
 async def add_address(
     data: dict,
     db: AsyncSession = Depends(get_db),
