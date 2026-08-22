@@ -1,13 +1,6 @@
 __pycache__/
-*.py[cod]
-*$py.class
+*.pyc
 .env
-.venv
 venv/
-ENV/
-env.bak/
-venv.bak/
+venv_test/
 .pytest_cache/
-.coverage
-htmlcov/
-alembic.ini.bak
