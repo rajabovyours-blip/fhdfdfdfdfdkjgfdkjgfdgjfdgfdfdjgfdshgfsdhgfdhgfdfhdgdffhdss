@@ -1,33 +1,18 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../features/auth/presentation/login_screen.dart';
 import '../../features/dashboard/presentation/dashboard_screen.dart';
-import '../../features/auth/providers/auth_provider.dart';
 import '../../features/users/presentation/users_screen.dart';
-import '../../features/sellers/presentation/sellers_screen.dart';
 import '../../features/products/presentation/products_screen.dart';
+import '../../features/products/presentation/import_excel_screen.dart';
 import '../../features/categories/presentation/categories_screen.dart';
 import '../../features/banners/presentation/banners_screen.dart';
+import '../../features/reviews/presentation/reviews_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authStateProvider);
-
   return GoRouter(
     initialLocation: '/dashboard',
-    redirect: (context, state) {
-      final isLoggingIn = state.matchedLocation == '/login';
-      
-      if (!authState && !isLoggingIn) return '/login';
-      if (authState && isLoggingIn) return '/dashboard';
-      
-      return null;
-    },
     routes: [
-      GoRoute(
-        path: '/login',
-        builder: (context, state) => const LoginScreen(),
-      ),
       GoRoute(
         path: '/dashboard',
         builder: (context, state) => const DashboardScreen(),
@@ -37,12 +22,12 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const UsersScreen(),
       ),
       GoRoute(
-        path: '/sellers',
-        builder: (context, state) => const SellersScreen(),
-      ),
-      GoRoute(
         path: '/products',
         builder: (context, state) => const ProductsScreen(),
+      ),
+      GoRoute(
+        path: '/products/import',
+        builder: (context, state) => const ImportExcelScreen(),
       ),
       GoRoute(
         path: '/categories',
@@ -52,6 +37,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/banners',
         builder: (context, state) => const BannersScreen(),
       ),
+      GoRoute(
+        path: '/reviews',
+        builder: (context, state) => const ReviewsScreen(),
+      ),
     ],
+    errorBuilder: (context, state) => const DashboardScreen(),
   );
 });

@@ -1,1 +1,15 @@
-{"login": "Tizimga kirish"}
+{
+  "app_name": "Milliy Metr Admin",
+  "dashboard": "Boshqaruv paneli",
+  "users": "Foydalanuvchilar",
+  "products": "Mahsulotlar",
+  "categories": "Kategoriyalar",
+  "banners": "Bannerlar",
+  "reviews": "Sharhlar",
+  "language": "Til",
+  "loading": "Yuklanmoqda...",
+  "error": "Xatolik yuz berdi",
+  "no_data": "Ma'lumot topilmadi",
+  "back_home": "Bosh sahifaga qaytish",
+  "page_not_found": "Sahifa topilmadi"
+}
