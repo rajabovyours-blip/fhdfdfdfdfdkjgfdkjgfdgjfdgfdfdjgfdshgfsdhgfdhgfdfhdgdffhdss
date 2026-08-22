@@ -25,14 +25,21 @@ class Settings(BaseSettings):
 
     @property
     def SQLALCHEMY_DATABASE_URI(self) -> str:
+        fallback = "sqlite+aiosqlite:///./milliy_metr.db"
+        
         if self.DATABASE_URL:
-            # Render PostgreSQL URL might start with postgres:// instead of postgresql://
+            # Check if it's a valid URL format for SQLAlchemy
             if self.DATABASE_URL.startswith("postgres://"):
                 return self.DATABASE_URL.replace("postgres://", "postgresql+asyncpg://", 1)
             elif self.DATABASE_URL.startswith("postgresql://"):
                 return self.DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
-            return self.DATABASE_URL
-        return "sqlite+aiosqlite:///./test.db"
+            elif self.DATABASE_URL.startswith("sqlite"):
+                return self.DATABASE_URL
+            
+            # If it's something completely invalid (e.g. random base64 string from Render)
+            print(f"WARNING: Invalid DATABASE_URL provided. Falling back to SQLite.")
+            
+        return fallback
 
     class Config:
         case_sensitive = True
