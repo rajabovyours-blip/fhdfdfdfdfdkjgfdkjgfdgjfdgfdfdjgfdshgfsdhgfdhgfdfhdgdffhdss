@@ -56,7 +56,7 @@ import 'package:milliy_metr/features/admin/presentation/views/admin_users_screen
 
 import 'package:milliy_metr/core/providers/auth_provider.dart';
 
-final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
+// Removed rootNavigatorKey to prevent Navigator global key duplication crashes
 
 class RouterNotifier extends ChangeNotifier {
   final Ref _ref;
@@ -78,7 +78,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   final notifier = ref.watch(routerNotifierProvider);
 
   return GoRouter(
-    navigatorKey: rootNavigatorKey,
     initialLocation: AppRoutes.splash,
     refreshListenable: notifier,
     redirect: (context, state) => AuthGuard.redirect(context, state, ref),

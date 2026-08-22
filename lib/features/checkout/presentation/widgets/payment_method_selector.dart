@@ -59,7 +59,7 @@ class PaymentMethodSelector extends StatelessWidget {
         id: 'Cash on Delivery',
         name: l10n.cashOnDelivery,
         description: l10n.cashOnDeliveryDesc,
-        iconAsset: 'assets/svg/payment_cash.svg',
+        iconAsset: 'assets/images/payment_cash.jpg',
       ),
     ];
 
@@ -209,17 +209,29 @@ class _PaymentCard extends StatelessWidget {
       child: method.iconAsset != null
           ? ClipRRect(
               borderRadius: BorderRadius.circular(5),
-              child: SvgPicture.asset(
-                method.iconAsset!,
-                width: 50,
-                height: 30,
-                fit: BoxFit.contain,
-                placeholderBuilder: (BuildContext context) => Container(
-                  width: 50,
-                  height: 30,
-                  color: context.colors.surfaceVariant,
-                ),
-              ),
+              child: method.iconAsset!.endsWith('.svg')
+                  ? SvgPicture.asset(
+                      method.iconAsset!,
+                      width: 50,
+                      height: 30,
+                      fit: BoxFit.contain,
+                      placeholderBuilder: (BuildContext context) => Container(
+                        width: 50,
+                        height: 30,
+                        color: context.colors.surfaceVariant,
+                      ),
+                    )
+                  : Image.asset(
+                      method.iconAsset!,
+                      width: 50,
+                      height: 30,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        width: 50,
+                        height: 30,
+                        color: context.colors.surfaceVariant,
+                      ),
+                    ),
             )
           : Icon(
               method.fallbackIcon ?? Icons.credit_card,

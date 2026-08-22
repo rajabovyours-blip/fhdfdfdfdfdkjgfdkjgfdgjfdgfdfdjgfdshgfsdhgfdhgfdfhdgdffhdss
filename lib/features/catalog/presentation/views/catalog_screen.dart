@@ -115,82 +115,77 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                     );
                   }
                   
-                  // Clean vertical list — one row per category
-                  return SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final category = categories[index];
-                        return InkWell(
-                          key: Key('category_card_${category.id}'),
-                          onTap: () {
-                            context.push(
-                              AppRoutes.categoryProducts.replaceAll(':id', category.id),
-                            );
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                            decoration: BoxDecoration(
-                              border: Border(
-                                bottom: BorderSide(
-                                  color: context.colors.outline.withValues(alpha: 0.3),
-                                  width: 0.5,
-                                ),
-                              ),
-                            ),
-                            child: Row(
+                  // 3-column grid layout
+                  return SliverPadding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    sliver: SliverGrid(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 16,
+                        childAspectRatio: 0.75, // Adjust for image and 2 lines of text
+                      ),
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          final category = categories[index];
+                          return InkWell(
+                            key: Key('category_card_${category.id}'),
+                            borderRadius: BorderRadius.circular(12),
+                            onTap: () {
+                              context.push(
+                                AppRoutes.categoryProducts.replaceAll(':id', category.id),
+                              );
+                            },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 // Category Image
-                                Container(
-                                  width: 48,
-                                  height: 48,
-                                  clipBehavior: Clip.hardEdge,
-                                  decoration: BoxDecoration(
-                                    color: context.colors.surfaceVariant,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: category.iconUrl != null
-                                      ? Image.asset(
-                                          category.iconUrl!,
-                                          fit: BoxFit.cover,
-                                          errorBuilder: (context, error, stackTrace) =>
-                                              Icon(Icons.category, color: context.colors.primary),
-                                        )
-                                      : Icon(Icons.category, color: context.colors.primary),
-                                ),
-                                const SizedBox(width: 14),
-                                // Category name
                                 Expanded(
-                                  child: Text(
-                                    category.name.get(
-                                      Localizations.localeOf(context).languageCode,
+                                  child: Container(
+                                    width: double.infinity,
+                                    clipBehavior: Clip.hardEdge,
+                                    decoration: BoxDecoration(
+                                      color: context.colors.surfaceVariant,
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: context.colors.outline.withValues(alpha: 0.1),
+                                        width: 1,
+                                      ),
                                     ),
-                                    style: TextStyle(
-                                      color: context.colors.textHigh,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
+                                    child: category.iconUrl != null
+                                        ? Image.asset(
+                                            category.iconUrl!,
+                                            fit: BoxFit.cover,
+                                            errorBuilder: (context, error, stackTrace) =>
+                                                Icon(Icons.category, color: context.colors.primary, size: 28),
+                                          )
+                                        : Icon(Icons.category, color: context.colors.primary, size: 28),
                                   ),
                                 ),
-                                const SizedBox(width: 8),
-                                // Chevron
-                                Icon(
-                                  Icons.chevron_right,
-                                  color: context.colors.textDisabled,
-                                  size: 20,
+                                const SizedBox(height: 8),
+                                // Category name
+                                Text(
+                                  category.name.get(
+                                    Localizations.localeOf(context).languageCode,
+                                  ),
+                                  style: TextStyle(
+                                    color: context.colors.textHigh,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500,
+                                    height: 1.2,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ],
                             ),
-                          ),
-                        );
-                      },
-                      childCount: categories.length,
-                      addAutomaticKeepAlives: false,
-                      addRepaintBoundaries: true,
+                          );
+                        },
+                        childCount: categories.length,
+                        addAutomaticKeepAlives: false,
+                        addRepaintBoundaries: true,
+                      ),
                     ),
                   );
                 },

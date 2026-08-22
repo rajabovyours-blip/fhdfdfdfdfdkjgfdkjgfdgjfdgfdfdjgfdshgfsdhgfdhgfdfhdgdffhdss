@@ -11,7 +11,17 @@ class AppException implements Exception {
 }
 
 class ServerException extends AppException {
-  ServerException([super.message = 'Server Error']);
+  ServerException([String msg = 'Server Error']) : super(_formatMessage(msg));
+
+  static String _formatMessage(String msg) {
+    if (msg.contains('DioException') || 
+        msg.toLowerCase().contains('timeout') || 
+        msg.contains('Network error') || 
+        msg.toLowerCase().contains('connection')) {
+      return 'Connection error. Please try again later.';
+    }
+    return msg;
+  }
 }
 
 class CacheException extends AppException {

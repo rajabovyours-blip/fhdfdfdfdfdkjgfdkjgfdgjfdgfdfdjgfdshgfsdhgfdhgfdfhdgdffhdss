@@ -5,6 +5,7 @@ import 'package:milliy_metr/features/home/presentation/widgets/category_item.dar
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:milliy_metr/features/categories/presentation/providers/category_notifier.dart';
+import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 
 class CategoryCarousel extends ConsumerWidget {
   const CategoryCarousel({super.key});
@@ -40,7 +41,22 @@ class CategoryCarousel extends ConsumerWidget {
           ),
         );
       },
-      error: (e) => SizedBox(height: 96, child: Center(child: Text('Error: $e'))),
+      error: (e) => SizedBox(
+        height: 96, 
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.error_outline, color: context.colors.textMedium),
+              const SizedBox(height: 4),
+              Text(
+                'Failed to load categories',
+                style: TextStyle(color: context.colors.textMedium, fontSize: 12),
+              ),
+            ],
+          ),
+        ),
+      ),
       loading: () => const SizedBox(height: 96, child: Center(child: CircularProgressIndicator())),
       orElse: () => const SizedBox.shrink(),
     );

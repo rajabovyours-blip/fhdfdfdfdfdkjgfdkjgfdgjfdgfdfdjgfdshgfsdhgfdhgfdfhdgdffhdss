@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:easy_localization/easy_localization.dart';
 
-import 'widgets/import_preview_table.dart';
+import '../../../core/providers/admin_providers.dart';
 
 class ImportExcelScreen extends ConsumerStatefulWidget {
   const ImportExcelScreen({super.key});
@@ -14,24 +15,23 @@ class ImportExcelScreen extends ConsumerStatefulWidget {
 
 class _ImportExcelScreenState extends ConsumerState<ImportExcelScreen> {
   bool _isLoading = false;
-  Map<String, dynamic>? _previewData;
 
   Future<void> _pickAndUploadFile() async {
     final result = await FilePicker.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['xlsx'],
+      allowedExtensions: ['xlsx', 'csv'],
       withData: true,
     );
 
     if (result != null && result.files.isNotEmpty) {
       final fileBytes = result.files.first.bytes;
       if (fileBytes != null) {
-        await _uploadForPreview(fileBytes, result.files.first.name);
+        await _uploadBulkData(fileBytes, result.files.first.name);
       }
     }
   }
 
-  Future<void> _uploadForPreview(List<int> fileBytes, String fileName) async {
+  Future<void> _uploadBulkData(List<int> fileBytes, String fileName) async {
     setState(() {
       _isLoading = true;
     });
@@ -43,7 +43,7 @@ class _ImportExcelScreenState extends ConsumerState<ImportExcelScreen> {
       });
 
       final response = await dio.post(
-        '/admin/products/import/preview',
+        '/api/v1/admin/products/bulk-upload',
         data: formData,
         // In a real app, you'd add the auth token here
         options: Options(
@@ -52,55 +52,44 @@ class _ImportExcelScreenState extends ConsumerState<ImportExcelScreen> {
       );
 
       if (response.statusCode == 200) {
+        final data = response.data['data'];
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Import Successful! ${data['imported']} imported, ${data['failed']} failed.'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          // Refresh the products list
+          ref.invalidate(productsProvider);
+          Navigator.of(context).pop();
+        }
+      }
+    } on DioException catch (e) {
+      if (mounted) {
+        final errorMsg = e.response?.data?['detail'] ?? e.message;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $errorMsg'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
         setState(() {
-          _previewData = response.data['data'];
+          _isLoading = false;
         });
       }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}')),
-        );
-      }
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-  
-  Future<void> _submitImport() async {
-    if (_previewData == null) return;
-    
-    setState(() {
-      _isLoading = true;
-    });
-    
-    try {
-      final dio = Dio(BaseOptions(baseUrl: 'http://localhost:8000'));
-      final response = await dio.post(
-        '/admin/products/import',
-        data: _previewData!['rows'],
-        options: Options(
-          headers: {'Authorization': 'Bearer YOUR_TOKEN'},
-        )
-      );
-
-      if (response.statusCode == 200 && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Import Successful! ${response.data['data']['imported']} imported, ${response.data['data']['failed']} failed.')),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}')),
-        );
-      }
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
     }
   }
 
@@ -108,69 +97,41 @@ class _ImportExcelScreenState extends ConsumerState<ImportExcelScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Import Products from Excel'),
+        title: const Text('Excel/CSV orqali yuklash'),
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _previewData == null
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.table_view, size: 64, color: Colors.grey),
-                      const SizedBox(height: 16),
-                      const Text(
-                        'Upload an Excel (.xlsx) file to import products.',
-                        style: TextStyle(fontSize: 16, color: Colors.grey),
-                      ),
-                      const SizedBox(height: 24),
-                      ElevatedButton.icon(
-                        onPressed: _pickAndUploadFile,
-                        icon: const Icon(Icons.upload_file),
-                        label: const Text('Select Excel File'),
-                      ),
-                    ],
+      body: Center(
+        child: _isLoading
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const CircularProgressIndicator(),
+                  const SizedBox(height: 24),
+                  Text('Fayl yuklanmoqda va tahlil qilinmoqda...'.tr()),
+                ],
+              )
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.table_view, size: 80, color: Colors.grey),
+                  const SizedBox(height: 24),
+                  Text(
+                    'Mahsulotlarni ommaviy yuklash uchun Excel (.xlsx) yoki CSV faylni tanlang.',
+                    style: const TextStyle(fontSize: 16, color: Colors.grey),
+                    textAlign: TextAlign.center,
                   ),
-                )
-              : Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Found ${_previewData!['stats']['total']} products. '
-                            'Valid: ${_previewData!['stats']['valid']} | '
-                            'Errors: ${_previewData!['stats']['invalid']} | '
-                            'Duplicates: ${_previewData!['stats']['duplicates']}',
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          Row(
-                            children: [
-                              OutlinedButton(
-                                onPressed: () {
-                                  setState(() {
-                                    _previewData = null;
-                                  });
-                                },
-                                child: const Text('Cancel'),
-                              ),
-                              const SizedBox(width: 16),
-                              ElevatedButton(
-                                onPressed: _submitImport,
-                                child: const Text('Confirm Import'),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
+                  const SizedBox(height: 32),
+                  ElevatedButton.icon(
+                    onPressed: _pickAndUploadFile,
+                    icon: const Icon(Icons.upload_file),
+                    label: const Text('Faylni tanlash'),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                      textStyle: const TextStyle(fontSize: 18),
                     ),
-                    Expanded(
-                      child: ImportPreviewTable(rows: _previewData!['rows']),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
+              ),
+      ),
     );
   }
 }
