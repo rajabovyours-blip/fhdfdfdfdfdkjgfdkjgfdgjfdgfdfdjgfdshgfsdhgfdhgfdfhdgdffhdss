@@ -17,9 +17,7 @@ class Product(Base):
     brand = Column(String, nullable=True)
     
     category_id = Column(Uuid(as_uuid=True), ForeignKey("categories.id"), nullable=False)
-    subcategory_id = Column(Uuid(as_uuid=True), ForeignKey("categories.id"), nullable=True)
-    seller_id = Column(Uuid(as_uuid=True), ForeignKey("users.id"), nullable=True)
-    
+    subcategory_id = Column(Uuid(as_uuid=True), ForeignKey("categories.id"), nullable=True)    
     price = Column(Numeric(12, 2), nullable=False)
     old_price = Column(Numeric(12, 2), nullable=True)
     currency = Column(String(10), default="UZS")
