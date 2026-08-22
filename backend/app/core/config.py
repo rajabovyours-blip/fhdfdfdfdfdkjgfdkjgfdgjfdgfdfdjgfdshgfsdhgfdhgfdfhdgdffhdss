@@ -21,9 +21,17 @@ class Settings(BaseSettings):
     ESKIZ_PASSWORD: str = ""
     ESKIZ_TEST_MODE: bool = True
 
+    DATABASE_URL: str | None = None
+
     @property
     def SQLALCHEMY_DATABASE_URI(self) -> str:
-        # Use SQLite for local testing if Postgres/Docker is unavailable
+        if self.DATABASE_URL:
+            # Render PostgreSQL URL might start with postgres:// instead of postgresql://
+            if self.DATABASE_URL.startswith("postgres://"):
+                return self.DATABASE_URL.replace("postgres://", "postgresql+asyncpg://", 1)
+            elif self.DATABASE_URL.startswith("postgresql://"):
+                return self.DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
+            return self.DATABASE_URL
         return "sqlite+aiosqlite:///./test.db"
 
     class Config:

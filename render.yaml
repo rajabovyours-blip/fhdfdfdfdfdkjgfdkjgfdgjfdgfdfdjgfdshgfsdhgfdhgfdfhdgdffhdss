@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: milliy-metr-backend
+    env: docker
+    repo: https://github.com/rajabovyours-blip/mybestflutterappforiosandonlytest
+    rootDir: backend
+    plan: free # Change to starter/standard as needed
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: DATABASE_URL
+        generateValue: true
+      - key: SECRET_KEY
+        generateValue: true
