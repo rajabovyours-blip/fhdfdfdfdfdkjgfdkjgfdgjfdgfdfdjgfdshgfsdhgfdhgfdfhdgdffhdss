@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.db.session import get_db
-from app.models.user import User
+from app.models.user import User, RoleEnum
 from app.schemas.user import UserCreate, UserLogin, UserModel, OTPRequest, OTPVerify, CheckPhone, SocialLoginRequest
 from app.schemas.token import TokenModel
 from app.schemas.common import APIResponse
@@ -55,6 +55,28 @@ async def login(user_in: UserLogin, db: AsyncSession = Depends(get_db)):
         expires_in=86400
     )
     return APIResponse(data=token, message="Login successful")
+
+from fastapi.security import OAuth2PasswordRequestForm
+
+@router.post("/admin-login", response_model=APIResponse[TokenModel])
+async def admin_login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(User).where(User.email == form_data.username))
+    user = result.scalar_one_or_none()
+    
+    if not user or not verify_password(form_data.password, user.hashed_password):
+        raise HTTPException(status_code=400, detail="Incorrect email or password")
+        
+    if user.role != RoleEnum.ADMIN:
+        raise HTTPException(status_code=403, detail="Not authorized as admin")
+        
+    access_token = create_access_token(subject=str(user.id))
+    
+    token = TokenModel(
+        access_token=access_token,
+        refresh_token="not_implemented_yet",
+        expires_in=86400
+    )
+    return APIResponse(data=token, message="Admin login successful")
 
 @router.post("/request-otp", response_model=APIResponse[dict])
 async def request_otp(otp_in: OTPRequest):

@@ -2,6 +2,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.models.category import Category
 from app.models.product import Product
+from app.models.user import User, RoleEnum
+from app.auth.security import get_password_hash
+import uuid
 
 async def seed_data(session: AsyncSession):
     # Check if categories exist
@@ -61,3 +64,20 @@ async def seed_data(session: AsyncSession):
         session.add(prod2)
         await session.commit()
         print("Database seeded with mock categories and products!")
+
+    # Check if admin user exists
+    result = await session.execute(select(User).where(User.role == RoleEnum.ADMIN).limit(1))
+    admin_user = result.scalar_one_or_none()
+    
+    if not admin_user:
+        admin_user = User(
+            id=uuid.uuid4(),
+            full_name="Super Admin",
+            phone="+998990000000",
+            email="admin@milliymetr.uz",
+            hashed_password=get_password_hash("AdminPassword123!"),
+            role=RoleEnum.ADMIN
+        )
+        session.add(admin_user)
+        await session.commit()
+        print("Default admin user created: email='admin@milliymetr.uz', password='AdminPassword123!'")
