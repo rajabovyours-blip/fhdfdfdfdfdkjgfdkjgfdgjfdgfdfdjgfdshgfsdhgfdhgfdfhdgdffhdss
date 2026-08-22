@@ -3,10 +3,37 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import os
 
+from contextlib import asynccontextmanager
+
+from app.db.base_class import Base
+from app.db.session import engine
+# Import all models to ensure they are registered with Base.metadata
+from app.models.user import User
+from app.models.category import Category
+from app.models.product import Product
+from app.models.review import Review
+from app.models.order import Order
+from app.db.session import AsyncSessionLocal
+from app.db.seed import seed_data
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Initialize database tables
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    
+    # Seed data
+    async with AsyncSessionLocal() as session:
+        await seed_data(session)
+        
+    yield
+
+
 app = FastAPI(
     title="Milliy Metr API",
     description="Backend API for the Milliy Metr Marketplace",
     version="1.0.0",
+    lifespan=lifespan,
 )
 
 # CORS Configuration

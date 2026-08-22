@@ -40,7 +40,9 @@ class CategoryCarousel extends ConsumerWidget {
           ),
         );
       },
-      orElse: () => const SizedBox(height: 96, child: Center(child: CircularProgressIndicator())),
+      error: (e) => SizedBox(height: 96, child: Center(child: Text('Error: $e'))),
+      loading: () => const SizedBox(height: 96, child: Center(child: CircularProgressIndicator())),
+      orElse: () => const SizedBox.shrink(),
     );
   }
 }

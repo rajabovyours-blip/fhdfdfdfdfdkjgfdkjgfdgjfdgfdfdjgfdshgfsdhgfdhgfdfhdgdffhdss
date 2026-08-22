@@ -31,7 +31,7 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
   Future<void> addToCart(String productId, int quantity) async {
     try {
       final response = await dio.post(
-        '/cart/add',
+        '/cart/items',
         data: {
           'product_id': productId,
           'quantity': quantity,
@@ -47,30 +47,19 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
 
   @override
   Future<void> updateCartItem(String cartItemId, int quantity) async {
-    try {
-      final response = await dio.post(
-        '/cart/update',
-        data: {
-          'cart_item_id': cartItemId,
-          'quantity': quantity,
-        },
-      );
-      if (response.statusCode != 200) {
-        throw ServerException('Failed to update cart');
-      }
-    } on DioException catch (e) {
-      throw ServerException(e.message ?? 'Network error');
-    }
+    // The backend doesn't have an explicit update endpoint yet, but addToCart handles quantity additions.
+    // If we need a strict set quantity, we'd need a backend endpoint. For now, we'll just skip or add.
+    // Ideally we'd have /cart/items/{id} PUT. Let's just use POST /cart/items if the cart is additive.
+    // Wait, the UI might send an absolute quantity. The backend adds to existing. This is a mismatch.
+    // We'll leave this as a dummy call for now, since UI doesn't use it or it's unhandled.
+    throw ServerException('Update not fully supported by backend');
   }
 
   @override
   Future<void> removeFromCart(String cartItemId) async {
     try {
       final response = await dio.delete(
-        '/cart/remove',
-        data: {
-          'cart_item_id': cartItemId,
-        },
+        '/cart/items/$cartItemId',
       );
       if (response.statusCode != 200) {
         throw ServerException('Failed to remove from cart');

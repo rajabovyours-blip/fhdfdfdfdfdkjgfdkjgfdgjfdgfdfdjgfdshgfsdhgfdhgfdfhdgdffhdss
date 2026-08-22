@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from typing import List
 from uuid import UUID
 
@@ -18,7 +19,11 @@ async def get_cart(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    result = await db.execute(select(CartItem).where(CartItem.user_id == current_user.id))
+    result = await db.execute(
+        select(CartItem)
+        .options(selectinload(CartItem.product))
+        .where(CartItem.user_id == current_user.id)
+    )
     items = result.scalars().all()
     return APIResponse(data=[CartItemModel.model_validate(item) for item in items])
 
@@ -30,7 +35,9 @@ async def add_to_cart(
 ):
     # Check if product exists and if it's already in the cart
     result = await db.execute(
-        select(CartItem).where(
+        select(CartItem)
+        .options(selectinload(CartItem.product))
+        .where(
             CartItem.user_id == current_user.id,
             CartItem.product_id == item_in.product_id
         )
@@ -41,6 +48,15 @@ async def add_to_cart(
         existing_item.quantity += item_in.quantity
         await db.commit()
         await db.refresh(existing_item)
+        # Note: refresh might drop eager loaded relationships in sqlalchemy,
+        # so we fetch it again if needed or just return. Wait, if it drops it, it might cause an error on serialization.
+        # Let's fetch it again to be safe.
+        result = await db.execute(
+            select(CartItem)
+            .options(selectinload(CartItem.product))
+            .where(CartItem.id == existing_item.id)
+        )
+        existing_item = result.scalar_one()
         return APIResponse(data=CartItemModel.model_validate(existing_item))
         
     new_item = CartItem(
@@ -50,8 +66,14 @@ async def add_to_cart(
     )
     db.add(new_item)
     await db.commit()
-    await db.refresh(new_item)
-    return APIResponse(data=CartItemModel.model_validate(new_item))
+    # Fetch with product loaded
+    result = await db.execute(
+        select(CartItem)
+        .options(selectinload(CartItem.product))
+        .where(CartItem.id == new_item.id)
+    )
+    new_item_loaded = result.scalar_one()
+    return APIResponse(data=CartItemModel.model_validate(new_item_loaded))
 
 @router.delete("/items/{id}", response_model=APIResponse[dict])
 async def remove_from_cart(
