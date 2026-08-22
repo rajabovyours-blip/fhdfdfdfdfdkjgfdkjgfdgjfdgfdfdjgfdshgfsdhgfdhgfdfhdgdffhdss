@@ -12,6 +12,10 @@ flutter config --enable-web
 echo "Getting dependencies..."
 flutter pub get
 
+echo "Creating dummy .env file..."
+touch .env
+
+
 echo "Building Flutter Web application..."
 flutter build web --release --dart-define=API_URL=https://milliy-metr-backend-hdol.onrender.com/api/v1
 
