@@ -213,7 +213,7 @@ class AuthController extends StateNotifier<AuthState> {
       phone: '+998901234567',
     );
     await _repository.saveDemoSession(dummyUser);
-    state = AuthState.authenticated(dummyUser);
+    state = const AuthState.authenticated(dummyUser);
   }
 }
 
