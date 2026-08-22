@@ -4,6 +4,7 @@ FROM ghcr.io/cirruslabs/flutter:3.19.0 AS build
 WORKDIR /app
 COPY . .
 RUN flutter pub get
+RUN touch .env
 RUN flutter build web --release
 
 # Serve stage
