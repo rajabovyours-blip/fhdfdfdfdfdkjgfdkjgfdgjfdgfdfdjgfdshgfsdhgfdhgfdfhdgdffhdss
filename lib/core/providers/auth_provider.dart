@@ -207,7 +207,7 @@ class AuthController extends StateNotifier<AuthState> {
     // For demo purposes, we can bypass the backend and just simulate an authenticated state
     // But since auth needs a UserEntity, we just use checkAuthStatus which relies on token.
     // If there's no token, we can just save a dummy token in secure storage and then check!
-    final dummyUser = const UserEntity(
+    const dummyUser = UserEntity(
       id: 'demo-google-123',
       fullName: 'Demo User',
       phone: '+998901234567',
