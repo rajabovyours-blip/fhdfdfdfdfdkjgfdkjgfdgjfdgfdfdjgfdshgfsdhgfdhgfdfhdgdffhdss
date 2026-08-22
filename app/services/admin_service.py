@@ -2,8 +2,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import func
 from app.models.users import User, Role
-from app.models.orders import Order
-from app.models.marketplace import Product, Category
+from app.models.order import Order
+from app.models.category import Category
+from app.models.product import Product
 from app.schemas.marketplace import ProductCreate
 from app.core.exceptions import AppError
 import uuid

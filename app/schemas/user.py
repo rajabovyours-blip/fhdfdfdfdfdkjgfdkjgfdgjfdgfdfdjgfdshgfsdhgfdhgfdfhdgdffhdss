@@ -1,4 +1,5 @@
-from pydantic import BaseModel, Field
+from pydantic.alias_generators import to_camel
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional
 from uuid import UUID
 
@@ -8,9 +9,7 @@ class UserModel(BaseModel):
     phone: str
     email: Optional[str] = None
     avatar_url: Optional[str] = None
-    
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True, alias_generator=to_camel)
 
 class UserCreate(BaseModel):
     full_name: str

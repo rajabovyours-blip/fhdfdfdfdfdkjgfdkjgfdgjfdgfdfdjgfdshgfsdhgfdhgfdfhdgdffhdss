@@ -1,4 +1,5 @@
-from pydantic import BaseModel
+from pydantic.alias_generators import to_camel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional, List, Dict
 from uuid import UUID
 from datetime import datetime
@@ -12,26 +13,24 @@ class ProductModel(BaseModel):
     videos: List[str] = []
     brand: Optional[str] = None
     category_id: UUID
-    subcategoryId: Optional[UUID] = None
+    subcategory_id: Optional[UUID] = None
     price: float
-    oldPrice: Optional[float] = None
+    old_price: Optional[float] = None
     currency: str = "UZS"
     unit: str = "pcs"
     moq: int = 1
     stock: int = 0
-    stockStatus: str = "in_stock"
+    stock_status: str = "in_stock"
     rating: float = 0.0
-    reviewCount: int = 0
+    review_count: int = 0
     discount: Optional[float] = None
     specifications: Optional[Dict[str, str]] = None
     certificates: Optional[List[str]] = None
-    deliveryInformation: Optional[str] = None
+    delivery_information: Optional[str] = None
     location: Optional[str] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True, alias_generator=to_camel)
 
 class CategoryModel(BaseModel):
     id: UUID
@@ -41,6 +40,4 @@ class CategoryModel(BaseModel):
     image_url: Optional[str] = None
     parent_id: Optional[UUID] = None
     is_featured: bool = False
-    
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True, alias_generator=to_camel)

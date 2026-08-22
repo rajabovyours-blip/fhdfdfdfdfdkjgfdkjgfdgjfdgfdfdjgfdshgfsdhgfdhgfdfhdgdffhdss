@@ -1,8 +1,9 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
-from app.models.marketplace import Cart, CartItem, Product
-from app.models.orders import Order, OrderItem, Payment
+from app.models.cart import Cart, CartItem
+from app.models.product import Product
+from app.models.order import Order, OrderItem
 from app.models.users import Address
 from app.schemas.orders import AddressRequest, CartItemRequest, CheckoutRequest
 from app.core.exceptions import AppError

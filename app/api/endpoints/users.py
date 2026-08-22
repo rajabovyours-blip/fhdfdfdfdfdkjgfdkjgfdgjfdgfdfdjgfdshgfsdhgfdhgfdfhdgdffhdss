@@ -12,7 +12,7 @@ from app.models.user import RoleEnum
 
 router = APIRouter()
 
-@router.get("/", response_model=APIResponse[List[UserModel]])
+@router.get("", response_model=APIResponse[List[UserModel]])
 async def get_users(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
