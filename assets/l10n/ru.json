@@ -1,1 +1,15 @@
-{"login": "Войти"}
+{
+  "app_name": "Milliy Metr Админ",
+  "dashboard": "Панель управления",
+  "users": "Пользователи",
+  "products": "Продукты",
+  "categories": "Категории",
+  "banners": "Баннеры",
+  "reviews": "Отзывы",
+  "language": "Язык",
+  "loading": "Загрузка...",
+  "error": "Произошла ошибка",
+  "no_data": "Нет данных",
+  "back_home": "На главную",
+  "page_not_found": "Страница не найдена"
+}
