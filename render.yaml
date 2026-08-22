@@ -10,3 +10,15 @@ services:
         value: 10000
       - key: SECRET_KEY
         generateValue: true
+
+  - type: web
+    name: milliy-metr-admin
+    env: static
+    repo: https://github.com/rajabovyours-blip/mybestflutterappforiosandonlytest
+    rootDir: milliy_metr_admin
+    buildCommand: "./render-build.sh"
+    staticPublishPath: "./build/web"
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
