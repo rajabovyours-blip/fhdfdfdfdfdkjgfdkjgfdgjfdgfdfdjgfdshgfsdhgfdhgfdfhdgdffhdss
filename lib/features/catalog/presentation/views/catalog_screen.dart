@@ -6,6 +6,7 @@ import 'package:milliy_metr/core/router/route_constants.dart';
 import 'package:milliy_metr/features/catalog/presentation/widgets/catalog_search_bar.dart';
 import 'package:milliy_metr/features/categories/presentation/providers/category_notifier.dart';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
 
 class CatalogScreen extends ConsumerStatefulWidget {
@@ -152,13 +153,22 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                                         width: 1,
                                       ),
                                     ),
-                                    child: category.iconUrl != null
-                                        ? Image.asset(
-                                            category.iconUrl!,
-                                            fit: BoxFit.cover,
-                                            errorBuilder: (context, error, stackTrace) =>
-                                                Icon(Icons.category, color: context.colors.primary, size: 28),
-                                          )
+                                    child: category.iconUrl != null && category.iconUrl!.isNotEmpty
+                                        ? (category.iconUrl!.startsWith('assets/')
+                                            ? Image.asset(
+                                                category.iconUrl!,
+                                                fit: BoxFit.cover,
+                                                errorBuilder: (context, error, stackTrace) =>
+                                                    Icon(Icons.category, color: context.colors.primary, size: 28),
+                                              )
+                                            : CachedNetworkImage(
+                                                imageUrl: category.iconUrl!,
+                                                fit: BoxFit.cover,
+                                                memCacheWidth: 150,
+                                                memCacheHeight: 150,
+                                                errorWidget: (_, __, ___) =>
+                                                    Icon(Icons.category, color: context.colors.primary, size: 28),
+                                              ))
                                         : Icon(Icons.category, color: context.colors.primary, size: 28),
                                   ),
                                 ),

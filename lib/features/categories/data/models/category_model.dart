@@ -25,11 +25,20 @@ class CategoryModel with _$CategoryModel {
   const CategoryModel._();
 
   CategoryEntity toEntity() {
+    // Intelligently map to one of the manually uploaded 61 category images based on name
+    String getAssetPath(String name) {
+      final hash = name.hashCode.abs();
+      final index = (hash % 61) + 1; // Maps to cat-1.webp ... cat-61.webp
+      return 'assets/images/categories/cat-$index.webp';
+    }
+
     return CategoryEntity(
       id: id,
       name: name,
       description: description,
-      iconUrl: iconUrl,
+      iconUrl: (iconUrl == null || iconUrl!.isEmpty || iconUrl == 'null') 
+          ? getAssetPath(name.get('en')) 
+          : iconUrl,
       imageUrl: imageUrl,
       parentId: parentId,
       productCount: productCount,
