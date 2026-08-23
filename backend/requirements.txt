@@ -18,4 +18,5 @@ email-validator==2.1.1
 google-auth>=2.29.0
 requests>=2.31.0
 aiosqlite==0.20.0
-openpyxl==3.1.2pandas==2.2.2
+openpyxl==3.1.2
+pandas==2.2.2
