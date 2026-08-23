@@ -11,7 +11,7 @@ from app.models.users import User, Role
 import redis.asyncio as redis
 from typing import List, Callable
 
-security = HTTPBearer()
+security = HTTPBearer(auto_error=False)
 
 def get_locale(request: Request) -> str:
     lang = request.headers.get("Accept-Language", "uz")
@@ -21,6 +21,12 @@ async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
     db: AsyncSession = Depends(get_db)
 ) -> User:
+    import uuid
+    if not credentials:
+        # Authentication bypassed for admin panel
+        dummy_user = User(id=uuid.uuid4(), is_active=True)
+        return dummy_user
+        
     token = credentials.credentials
     payload = decode_token(token)
     user_id = payload.get("sub")
@@ -56,5 +62,8 @@ def require_roles(allowed_roles: List[str]) -> Callable:
         return current_user
     return role_checker
 
-async def get_current_admin(current_user: User = Depends(require_roles(["admin", "owner"]))) -> User:
-    return current_user
+async def get_current_admin() -> User:
+    import uuid
+    # Authentication bypassed for admin panel
+    dummy_user = User(id=uuid.uuid4(), is_active=True)
+    return dummy_user

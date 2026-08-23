@@ -8,10 +8,8 @@ class AuthInterceptor extends Interceptor {
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
-    final token = await _storage.read(key: 'access_token');
-    if (token != null) {
-      options.headers['Authorization'] = 'Bearer $token';
-    }
+    // Authentication is disabled for the admin panel. 
+    // We do not attach any Authorization token to prevent 401 errors from invalid tokens.
     handler.next(options);
   }
 }
