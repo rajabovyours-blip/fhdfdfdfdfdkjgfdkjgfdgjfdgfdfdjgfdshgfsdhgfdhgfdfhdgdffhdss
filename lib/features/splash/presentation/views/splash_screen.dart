@@ -39,9 +39,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     // If the provider is already loaded, it might not re-trigger.
     // We can explicitly navigate to home or login based on current state here:
     final authState = ref.read(authProvider);
+    final isAdminApp = const bool.fromEnvironment('IS_ADMIN', defaultValue: false);
     authState.maybeWhen(
-      authenticated: (_) => context.go(AppRoutes.home),
-      orElse: () => context.go(AppRoutes.home),
+      authenticated: (_) => context.go(isAdminApp ? AppRoutes.adminDashboard : AppRoutes.home),
+      orElse: () => context.go(isAdminApp ? AppRoutes.adminLogin : AppRoutes.home),
     );
   }
 

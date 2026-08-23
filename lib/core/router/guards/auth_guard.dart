@@ -5,7 +5,14 @@ import 'package:milliy_metr/core/router/route_constants.dart';
 import 'package:milliy_metr/core/providers/auth_provider.dart';
 
 class AuthGuard {
+  static const bool isAdminApp = bool.fromEnvironment('IS_ADMIN', defaultValue: false);
+
   static bool _isProtectedRoute(String path) {
+    if (isAdminApp) {
+      if (path == AppRoutes.adminLogin || path == AppRoutes.splash) return false;
+      return true;
+    }
+
     // Exclude admin paths from customer auth guard
     if (path.startsWith('/admin')) {
       return false;
@@ -54,21 +61,25 @@ class AuthGuard {
       unauthenticated: () {
         // If it's a protected route, force login and pass the original URL as redirect
         if (_isProtectedRoute(currentPath)) {
-          return '${AppRoutes.login}?redirect=${Uri.encodeComponent(state.uri.toString())}';
+          final loginRoute = isAdminApp ? AppRoutes.adminLogin : AppRoutes.login;
+          return '$loginRoute?redirect=${Uri.encodeComponent(state.uri.toString())}';
         }
         return null;
       },
       authenticated: (_) {
+        final isGoingToAdminLogin = currentPath == AppRoutes.adminLogin;
+        
         if (isGoingToLogin ||
             isGoingToSplash ||
             isGoingToOtp ||
-            isGoingToRegister) {
+            isGoingToRegister ||
+            isGoingToAdminLogin) {
           
           final redirect = state.uri.queryParameters['redirect'];
           if (redirect != null && redirect.isNotEmpty) {
             return redirect;
           }
-          return AppRoutes.home;
+          return isAdminApp ? AppRoutes.adminDashboard : AppRoutes.home;
         }
         return null;
       },

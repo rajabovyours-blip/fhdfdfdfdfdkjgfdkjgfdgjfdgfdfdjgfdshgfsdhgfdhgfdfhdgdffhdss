@@ -20,7 +20,8 @@ RUN flutter pub get
 
 COPY . .
 RUN touch .env
-RUN flutter build web --release
+ARG IS_ADMIN=false
+RUN flutter build web --release --dart-define=IS_ADMIN=$IS_ADMIN
 
 # Serve stage
 FROM nginx:alpine
