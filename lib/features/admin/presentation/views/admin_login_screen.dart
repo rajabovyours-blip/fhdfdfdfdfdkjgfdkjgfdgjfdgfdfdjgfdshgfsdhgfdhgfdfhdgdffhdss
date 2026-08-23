@@ -25,23 +25,17 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
-      try {
-        final dio = ref.read(dioProvider);
-        await dio.post(
-          '/auth/login',
-          data: {
-            'email': _emailController.text,
-            'password': _passwordController.text,
-          },
-        );
-        if (mounted) {
-          setState(() => _isLoading = false);
+      final errorMsg = await ref.read(authProvider.notifier).adminLogin(
+            _emailController.text,
+            _passwordController.text,
+          );
+          
+      if (mounted) {
+        setState(() => _isLoading = false);
+        if (errorMsg == null) {
           context.go(AppRoutes.adminDashboard);
-        }
-      } on DioException catch (e) {
-        if (mounted) {
-          setState(() => _isLoading = false);
-          AppSnackBar.showError(context, e.message ?? 'Login failed');
+        } else {
+          AppSnackBar.showError(context, errorMsg);
         }
       }
     }

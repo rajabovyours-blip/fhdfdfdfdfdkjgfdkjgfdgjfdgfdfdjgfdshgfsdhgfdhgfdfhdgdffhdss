@@ -34,6 +34,22 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<Either<Failure, TokenEntity>> adminLogin(
+    String email,
+    String password,
+  ) async {
+    try {
+      final tokenModel = await remoteDataSource.adminLogin(email, password);
+      await localDataSource.saveToken(tokenModel);
+      return Right(tokenModel.toEntity());
+    } on Failure catch (e) {
+      return Left(e);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
   Future<Either<Failure, void>> register(
     String fullName,
     String phone,

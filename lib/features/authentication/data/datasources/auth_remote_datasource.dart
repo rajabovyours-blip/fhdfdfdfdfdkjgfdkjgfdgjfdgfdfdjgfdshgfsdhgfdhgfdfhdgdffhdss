@@ -6,6 +6,7 @@ import 'package:milliy_metr/features/authentication/data/models/user_model.dart'
 
 abstract class AuthRemoteDataSource {
   Future<TokenModel> login(String phone, String password);
+  Future<TokenModel> adminLogin(String email, String password);
   Future<void> register(String fullName, String phone, String password);
   Future<void> requestOtp(String phone);
   Future<bool> checkPhone(String phone);
@@ -32,6 +33,25 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       return TokenModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       throw ServerFailure(e.response?.data['message'] ?? 'Failed to login');
+    } catch (e) {
+      throw ServerFailure('An unexpected error occurred');
+    }
+  }
+
+  @override
+  Future<TokenModel> adminLogin(String email, String password) async {
+    try {
+      final response = await dio.post(
+        '/auth/admin-login',
+        data: {
+          'username': email,
+          'password': password,
+        },
+        options: Options(contentType: Headers.formUrlEncodedContentType),
+      );
+      return TokenModel.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      throw ServerFailure(e.response?.data['detail'] ?? e.response?.data['message'] ?? 'Failed to login');
     } catch (e) {
       throw ServerFailure('An unexpected error occurred');
     }

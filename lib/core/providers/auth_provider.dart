@@ -144,6 +144,21 @@ class AuthController extends StateNotifier<AuthState> {
     );
   }
 
+  Future<String?> adminLogin(String email, String password) async {
+    state = const AuthState.loading();
+    final result = await _repository.adminLogin(email, password);
+    return result.fold(
+      (failure) {
+        state = AuthState.error(failure.message);
+        return failure.message;
+      },
+      (token) {
+        checkAuthStatus(); // fetch user info after getting token
+        return null; // success
+      },
+    );
+  }
+
   Future<bool> register(String fullName, String phone, String password) async {
     state = const AuthState.loading();
     final result = await _registerUseCase(

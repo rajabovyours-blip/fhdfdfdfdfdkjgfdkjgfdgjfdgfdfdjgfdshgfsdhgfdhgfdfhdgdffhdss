@@ -5,6 +5,7 @@ import 'package:milliy_metr/features/authentication/domain/entities/token_entity
 
 abstract class AuthRepository {
   Future<Either<Failure, TokenEntity>> login(String phone, String password);
+  Future<Either<Failure, TokenEntity>> adminLogin(String email, String password);
   Future<Either<Failure, void>> register(
     String fullName,
     String phone,
