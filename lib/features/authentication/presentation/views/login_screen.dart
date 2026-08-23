@@ -8,7 +8,7 @@ import 'package:milliy_metr/l10n/l10n_extension.dart';
 import 'package:milliy_metr/features/authentication/presentation/widgets/auth_language_selector.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-
+import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:io' show Platform;
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -90,15 +90,29 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _handleGoogleLogin() async {
-    // Demo behavior: Do not require real Google OAuth configuration
-    await Future.delayed(const Duration(seconds: 1));
-    if (!mounted) return;
-    
-    // In a real demo MVP, we can simulate success directly without a real token,
-    // or just pass a fake token to socialLogin if the backend is mocked,
-    // but the backend isn't mocked anymore. 
-    // We can just bypass authentication state entirely for demo:
-    await ref.read(authProvider.notifier).demoBypassAuth();
+    try {
+      final googleSignIn = GoogleSignIn(
+        serverClientId: '5408559924-kl0rm498vdr2qo39prt5k6g5v0vjvsqt.apps.googleusercontent.com',
+      );
+      final account = await googleSignIn.signIn();
+      if (account == null) return; // User canceled
+      
+      final auth = await account.authentication;
+      final idToken = auth.idToken;
+      
+      if (idToken != null) {
+        if (!mounted) return;
+        await ref.read(authProvider.notifier).socialLogin('google', idToken);
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Google Sign-In failed: $e'),
+          backgroundColor: context.colors.danger,
+        ),
+      );
+    }
   }
 
   Future<void> _handleAppleLogin() async {

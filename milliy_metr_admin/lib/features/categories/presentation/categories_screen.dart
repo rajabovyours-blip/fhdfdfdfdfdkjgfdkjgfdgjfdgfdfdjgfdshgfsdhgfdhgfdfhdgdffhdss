@@ -10,6 +10,7 @@ class CategoriesScreen extends ConsumerWidget {
     final isEditing = category != null;
     final nameController = TextEditingController(text: isEditing ? category['name'] : '');
     final idController = TextEditingController(text: isEditing ? category['id'] : '');
+    final imageController = TextEditingController(text: isEditing ? category['image_url'] : 'assets/images/categories/default.webp');
 
     showDialog(
       context: context,
@@ -27,6 +28,10 @@ class CategoriesScreen extends ConsumerWidget {
               controller: nameController,
               decoration: const InputDecoration(labelText: 'Name'),
             ),
+            TextField(
+              controller: imageController,
+              decoration: const InputDecoration(labelText: 'Image URL'),
+            ),
           ],
         ),
         actions: [
@@ -39,7 +44,7 @@ class CategoriesScreen extends ConsumerWidget {
               final newCat = {
                 'id': isEditing ? category['id'] : idController.text,
                 'name': nameController.text,
-                'image_url': isEditing ? category['image_url'] : 'assets/images/categories/default.webp',
+                'image_url': imageController.text,
               };
               if (isEditing) {
                 ref.read(categoriesProvider.notifier).updateCategory(newCat);
@@ -77,7 +82,14 @@ class CategoriesScreen extends ConsumerWidget {
               itemBuilder: (context, index) {
                 final category = categories[index];
                 return ListTile(
-                  leading: const CircleAvatar(child: Icon(Icons.category)),
+                  leading: CircleAvatar(
+                    backgroundImage: category['image_url'] != null 
+                        ? (category['image_url'].toString().startsWith('http') 
+                            ? NetworkImage(category['image_url']) 
+                            : AssetImage(category['image_url']) as ImageProvider)
+                        : null,
+                    child: category['image_url'] == null ? const Icon(Icons.category) : null,
+                  ),
                   title: Text(category['name'] ?? 'Category'),
                   subtitle: Text('ID: ${category['id']}'),
                   trailing: Row(

@@ -13,13 +13,7 @@ from app.models.user import RoleEnum
 router = APIRouter()
 
 @router.get("", response_model=APIResponse[List[UserModel]])
-async def get_users(
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    if current_user.role != RoleEnum.ADMIN:
-        raise HTTPException(status_code=403, detail="Not enough permissions")
-        
+async def get_users(db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(User))
     users = result.scalars().all()
     return APIResponse(data=[UserModel.model_validate(u) for u in users])
