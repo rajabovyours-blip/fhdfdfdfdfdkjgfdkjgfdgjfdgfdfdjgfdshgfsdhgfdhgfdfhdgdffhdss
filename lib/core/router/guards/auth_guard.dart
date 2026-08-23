@@ -47,7 +47,7 @@ class AuthGuard {
     final currentPath = state.uri.path;
 
     if (isAdminApp) {
-      if (currentPath == AppRoutes.adminLogin || currentPath == AppRoutes.login || currentPath == AppRoutes.splash || currentPath == '/') {
+      if (currentPath == AppRoutes.login || currentPath == AppRoutes.splash || currentPath == '/') {
         return AppRoutes.adminDashboard;
       }
     }
@@ -66,19 +66,17 @@ class AuthGuard {
       unauthenticated: () {
         // If it's a protected route, force login and pass the original URL as redirect
         if (_isProtectedRoute(currentPath)) {
-          final loginRoute = isAdminApp ? AppRoutes.adminLogin : AppRoutes.login;
+          // ADMIN LOGIN IS COMPLETELY REMOVED. Only standard login exists.
+          final loginRoute = AppRoutes.login;
           return '$loginRoute?redirect=${Uri.encodeComponent(state.uri.toString())}';
         }
         return null;
       },
       authenticated: (_) {
-        final isGoingToAdminLogin = currentPath == AppRoutes.adminLogin;
-        
         if (isGoingToLogin ||
             isGoingToSplash ||
             isGoingToOtp ||
-            isGoingToRegister ||
-            isGoingToAdminLogin) {
+            isGoingToRegister) {
           
           final redirect = state.uri.queryParameters['redirect'];
           if (redirect != null && redirect.isNotEmpty) {

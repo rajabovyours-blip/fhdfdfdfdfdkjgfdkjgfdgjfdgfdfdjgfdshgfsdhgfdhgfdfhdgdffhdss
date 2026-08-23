@@ -275,11 +275,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             ReviewPhotoViewerScreen(photoUrl: state.extra as String),
       ),
 
-      // Admin
-      GoRoute(
-        path: AppRoutes.adminLogin,
-        builder: (context, state) => const AdminLoginScreen(),
-      ),
+      // Admin Login Route has been COMPLETELY REMOVED per user instructions
       GoRoute(
         path: AppRoutes.adminDashboard,
         builder: (context, state) => const AdminDashboardScreen(),

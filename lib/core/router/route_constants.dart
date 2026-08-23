@@ -31,7 +31,6 @@ class AppRoutes {
   static const profileHelp = '/profile/help';
 
   // Admin Routes
-  static const adminLogin = '/admin/login';
   static const adminDashboard = '/admin';
   static const adminUsers = '/admin/users';
   static const adminProducts = '/admin/products';
