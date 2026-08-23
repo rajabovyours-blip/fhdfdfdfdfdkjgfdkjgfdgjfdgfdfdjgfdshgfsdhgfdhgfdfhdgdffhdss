@@ -1,9 +1,24 @@
-# Build stage
-FROM ghcr.io/cirruslabs/flutter:3.27.3 AS build
+# Build stage - use Ubuntu and install Flutter from source
+FROM ubuntu:22.04 AS build
+
+# Install required system dependencies
+RUN apt-get update && apt-get install -y \
+    curl git unzip xz-utils zip libglu1-mesa ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Clone Flutter at EXACT version matching local dev environment
+RUN git clone https://github.com/flutter/flutter.git -b 3.44.9 --depth 1 /flutter
+ENV PATH="/flutter/bin:/flutter/bin/cache/dart-sdk/bin:${PATH}"
+
+# Pre-cache web SDK
+RUN flutter precache --web
+RUN flutter config --no-analytics
 
 WORKDIR /app
-COPY . .
+COPY pubspec.yaml pubspec.lock ./
 RUN flutter pub get
+
+COPY . .
 RUN touch .env
 RUN flutter build web --release
 
