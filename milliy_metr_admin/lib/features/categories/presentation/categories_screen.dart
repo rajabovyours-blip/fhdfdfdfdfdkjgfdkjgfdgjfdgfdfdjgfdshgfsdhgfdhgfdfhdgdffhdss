@@ -14,7 +14,7 @@ class CategoriesScreen extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(isEditing ? 'edit_category'.tr(fallback: 'Edit Category') : 'add_category'.tr(fallback: 'Add Category')),
+        title: Text(isEditing ? 'edit_category'.tr() : 'add_category'.tr()),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -32,7 +32,7 @@ class CategoriesScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('cancel'.tr(fallback: 'Cancel')),
+            child: Text('cancel'.tr()),
           ),
           ElevatedButton(
             onPressed: () {
@@ -48,7 +48,7 @@ class CategoriesScreen extends ConsumerWidget {
               }
               Navigator.pop(context);
             },
-            child: Text('save'.tr(fallback: 'Save')),
+            child: Text('save'.tr()),
           ),
         ],
       ),
