@@ -1,3 +1,9 @@
+import pandas as pd
+import io
+import uuid
+from sqlalchemy import select, insert
+from app.models.category import Category
+from app.models.product import Product
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Body
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Dict, Any, List
@@ -45,12 +51,6 @@ async def execute_excel_import(
     result = await importer.execute_import(rows)
     return APIResponse(data=result)
 
-import pandas as pd
-import io
-import uuid
-from sqlalchemy import select, insert
-from app.models.category import Category
-from app.models.product import Product
 
 @router.post("/bulk-upload", response_model=APIResponse[Dict[str, Any]])
 async def bulk_upload_products(
