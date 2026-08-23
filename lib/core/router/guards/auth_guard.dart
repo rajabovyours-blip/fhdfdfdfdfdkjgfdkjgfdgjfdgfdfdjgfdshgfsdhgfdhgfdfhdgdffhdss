@@ -9,8 +9,7 @@ class AuthGuard {
 
   static bool _isProtectedRoute(String path) {
     if (isAdminApp) {
-      if (path == AppRoutes.adminLogin || path == AppRoutes.splash) return false;
-      return true;
+      return false; // Admin app is completely open now
     }
 
     // Exclude admin paths from customer auth guard

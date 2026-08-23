@@ -17,19 +17,20 @@ def get_admin_user(current_user: User = Depends(get_current_user)):
 
 @router.get("/dashboard", response_model=APIResponse[dict])
 async def get_admin_dashboard(
-    db: AsyncSession = Depends(get_db),
-    admin: User = Depends(get_admin_user)
+    db: AsyncSession = Depends(get_db)
 ):
     # This would aggregate data from various tables
     return APIResponse(data={
         "total_users": 100,
         "total_orders": 500,
-        "revenue": 50000000.0
+        "revenue": 50000000.0,
+        "active_users": 85,
+        "total_products": 200,
+        "complaints": 2
     })
 
 @router.get("/reports", response_model=APIResponse[list])
 async def get_admin_reports(
-    db: AsyncSession = Depends(get_db),
-    admin: User = Depends(get_admin_user)
+    db: AsyncSession = Depends(get_db)
 ):
     return APIResponse(data=[])
