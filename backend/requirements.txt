@@ -7,6 +7,7 @@ alembic==1.13.1
 psycopg2-binary==2.9.9
 asyncpg==0.29.0
 passlib[bcrypt]==1.7.4
+bcrypt==3.2.2
 PyJWT==2.8.0
 python-multipart==0.0.9
 redis==5.0.7
