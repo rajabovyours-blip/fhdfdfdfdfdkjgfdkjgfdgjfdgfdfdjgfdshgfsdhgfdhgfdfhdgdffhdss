@@ -10,6 +10,9 @@ RUN apt-get update && apt-get install -y \
 RUN git clone https://github.com/flutter/flutter.git -b 3.44.9 --depth 1 /flutter
 ENV PATH="/flutter/bin:/flutter/bin/cache/dart-sdk/bin:${PATH}"
 
+# Fix tar ownership error in Render Docker builds
+ENV TAR_OPTIONS="--no-same-owner"
+
 # Pre-cache web SDK
 RUN flutter precache --web
 RUN flutter config --no-analytics
