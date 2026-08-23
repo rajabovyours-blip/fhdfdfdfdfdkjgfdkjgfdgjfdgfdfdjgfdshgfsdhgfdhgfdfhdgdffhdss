@@ -46,6 +46,12 @@ class AuthGuard {
     final authState = ref.read(authProvider);
     final currentPath = state.uri.path;
 
+    if (isAdminApp) {
+      if (currentPath == AppRoutes.adminLogin || currentPath == AppRoutes.login || currentPath == AppRoutes.splash || currentPath == '/') {
+        return AppRoutes.adminDashboard;
+      }
+    }
+
     final isGoingToLogin = currentPath == AppRoutes.login;
     final isGoingToSplash = currentPath == AppRoutes.splash;
 
