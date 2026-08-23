@@ -76,11 +76,16 @@ final routerNotifierProvider = Provider<RouterNotifier>((ref) {
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final notifier = ref.watch(routerNotifierProvider);
+  final isAdminApp = const bool.fromEnvironment('IS_ADMIN', defaultValue: false);
 
   return GoRouter(
-    initialLocation: AppRoutes.splash,
+    initialLocation: isAdminApp ? AppRoutes.adminDashboard : AppRoutes.splash,
     refreshListenable: notifier,
-    redirect: (context, state) => AuthGuard.redirect(context, state, ref),
+    redirect: (context, state) {
+      // COMPLETELY REMOVE AUTHENTICATION GUARDS FOR ADMIN
+      if (isAdminApp) return null;
+      return AuthGuard.redirect(context, state, ref);
+    },
     routes: [
       GoRoute(
         path: AppRoutes.splash,
