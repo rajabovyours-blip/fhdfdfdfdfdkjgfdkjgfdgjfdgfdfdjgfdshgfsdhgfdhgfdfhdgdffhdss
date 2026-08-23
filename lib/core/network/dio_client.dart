@@ -11,7 +11,7 @@ class DioClient {
 
   DioClient() : _dio = Dio() {
     _dio.options
-      ..baseUrl = dotenv.env['API_BASE_URL'] ?? ApiConstants.baseUrl
+      ..baseUrl = (dotenv.isInitialized ? dotenv.env['API_BASE_URL'] : null) ?? ApiConstants.baseUrl
       ..connectTimeout = const Duration(seconds: 15)
       ..receiveTimeout = const Duration(seconds: 15)
       ..responseType = ResponseType.json
