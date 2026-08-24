@@ -10,6 +10,8 @@ import 'package:milliy_metr/features/checkout/presentation/widgets/cart_item_car
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
 
+import 'package:milliy_metr/core/providers/auth_provider.dart';
+
 class CartScreen extends ConsumerStatefulWidget {
   const CartScreen({super.key});
 
@@ -88,9 +90,14 @@ class _CartScreenState extends ConsumerState<CartScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(cartNotifierProvider);
     final notifier = ref.read(cartNotifierProvider.notifier);
+    final authState = ref.watch(authProvider);
+    final isAuthenticated = authState.maybeWhen(
+      authenticated: (_) => true,
+      orElse: () => false,
+    );
 
     return Scaffold(
-      backgroundColor: context.colors.background, // context.colors.background
+      backgroundColor: context.colors.background,
       appBar: AppBar(
         title: Text(
           context.l10n.cart,
@@ -100,7 +107,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
         backgroundColor: context.colors.background,
         surfaceTintColor: Colors.transparent,
         actions: [
-          if (notifier.itemCount > 0)
+          if (notifier.itemCount > 0 && isAuthenticated)
             IconButton(
               icon: Icon(
                 Icons.delete_sweep_outlined,
@@ -111,10 +118,12 @@ class _CartScreenState extends ConsumerState<CartScreen> {
             ),
         ],
       ),
-      body: state.maybeWhen(
-        loading: () => _buildSkeleton(),
-        error: (e) => _buildErrorState(e),
-        loaded: (cartItems) {
+      body: !isAuthenticated 
+          ? _buildGuestState() 
+          : state.maybeWhen(
+              loading: () => _buildSkeleton(),
+              error: (e) => _buildErrorState(e),
+              loaded: (cartItems) {
           if (cartItems.isEmpty) {
             return _buildEmptyState();
           }
@@ -151,6 +160,73 @@ class _CartScreenState extends ConsumerState<CartScreen> {
           );
         },
         orElse: () => _buildSkeleton(),
+      ),
+    );
+  }
+
+  Widget _buildGuestState() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: context.colors.surface,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.lock_outline,
+                size: 64,
+                color: context.colors.textMedium,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              context.l10n.guestModeTitle,
+              style: TextStyle(
+                color: context.colors.textHigh,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              context.l10n.guestCartDesc,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: context.colors.textMedium,
+                fontSize: 14,
+                height: 1.5,
+              ),
+            ),
+            const SizedBox(height: 32),
+            SizedBox(
+              height: 44,
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () => context.push(AppRoutes.login),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: context.colors.primary,
+                  foregroundColor: context.colors.onPrimary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: Text(
+                  context.l10n.login,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: context.colors.onPrimary,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

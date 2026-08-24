@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:milliy_metr/core/state/feature_state.dart';
 import 'package:milliy_metr/features/checkout/domain/entities/cart_item_entity.dart';
 import 'package:milliy_metr/features/cart/presentation/providers/cart_providers.dart';
+import 'package:milliy_metr/core/providers/auth_provider.dart' as milliy_metr_auth_provider;
 
 class CartNotifier extends StateNotifier<FeatureState<List<CartItemEntity>>> {
   final Ref _ref;
@@ -12,6 +13,19 @@ class CartNotifier extends StateNotifier<FeatureState<List<CartItemEntity>>> {
 
   Future<void> loadCart({bool silent = false}) async {
     if (!silent) state = const FeatureState.loading();
+    
+    // Check auth state directly
+    final authState = _ref.read(milliy_metr_auth_provider.authProvider);
+    final isAuthenticated = authState.maybeWhen(
+      authenticated: (_) => true,
+      orElse: () => false,
+    );
+    
+    if (!isAuthenticated) {
+      state = const FeatureState.loaded([]);
+      return;
+    }
+
     final repository = _ref.read(cartRepositoryProvider);
     final result = await repository.getCartItems();
 

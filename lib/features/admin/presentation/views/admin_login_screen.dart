@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:milliy_metr/core/router/route_constants.dart';
 import 'package:milliy_metr/shared/widgets/app_button.dart';
 import 'package:milliy_metr/core/providers/auth_provider.dart';
-import 'package:dio/dio.dart';
+
 import 'package:milliy_metr/shared/widgets/app_snackbar.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 

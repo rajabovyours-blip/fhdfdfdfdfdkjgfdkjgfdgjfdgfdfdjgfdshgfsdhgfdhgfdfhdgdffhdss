@@ -85,24 +85,27 @@ async def request_otp(otp_in: OTPRequest):
     
     # 2. Prepare message
     if settings.ESKIZ_TEST_MODE:
-        # Eskiz test accounts strictly require this exact string
-        message = "Bu Eskiz dan test"
-        
-        # 3. Print the OTP to backend console so the developer can read it!
-        # Do NOT log this in production
+        # Mock OTP behavior: override generated OTP with 111111 for testing
+        otp_code = "111111"
+        if otp_in.phone in otp_service.store:
+            otp_service.store[otp_in.phone].otp = "111111"
+            
         print(f"\n=======================================================")
-        print(f" *** TEST MODE OTP GENERATED for {otp_in.phone}: {otp_code} ***")
+        print(f" *** TEST MODE OTP FOR {otp_in.phone}: {otp_code} ***")
         print(f"=======================================================\n")
+        
+        # Bypass Eskiz SMS sending completely in test mode to avoid errors
+        return APIResponse(message="OTP requested successfully (Test Mode: 111111).")
     else:
         # Real production message
         message = f"Milliy Metr ilovasiga kirish uchun tasdiqlash kodingiz: {otp_code}. Kodni hech kimga bermang. Milliy Metr xodimlari ham ushbu kodni so‘ramaydi."
-    
-    # 4. Send via Eskiz
-    success = await eskiz_service.send_sms(otp_in.phone, message)
-    if not success:
-        raise HTTPException(status_code=500, detail="SMS sending failed. Check credentials.")
         
-    return APIResponse(message="OTP requested successfully. Please check your SMS.")
+        # 4. Send via Eskiz
+        success = await eskiz_service.send_sms(otp_in.phone, message)
+        if not success:
+            raise HTTPException(status_code=500, detail="SMS sending failed. Check credentials.")
+            
+        return APIResponse(message="OTP requested successfully. Please check your SMS.")
 
 @router.post("/verify-otp", response_model=APIResponse[TokenModel])
 async def verify_otp(otp_in: OTPVerify, db: AsyncSession = Depends(get_db)):
@@ -151,26 +154,49 @@ async def social_login(payload: SocialLoginRequest, db: AsyncSession = Depends(g
         raise HTTPException(status_code=400, detail="Unsupported provider")
         
     try:
-        # Verify the token against our Web Client ID
-        CLIENT_ID = "5408559924-kl0rm498vdr2qo39prt5k6g5v0vjvsqt.apps.googleusercontent.com"
+        # Verify the token. Allow any of our client IDs by not enforcing a single CLIENT_ID during verify
         id_info = id_token.verify_oauth2_token(
-            payload.token, google_requests.Request(), CLIENT_ID
+            payload.token, google_requests.Request(), audience=None
         )
+        
+        # We can optionally verify the audience against our known client IDs
+        known_client_ids = [
+            "5408559924-kl0rm498vdr2qo39prt5k6g5v0vjvsqt.apps.googleusercontent.com", # Web
+            "5408559924-iosclientid.apps.googleusercontent.com", # iOS (placeholder if unknown)
+            "5408559924-androidclientid.apps.googleusercontent.com" # Android (placeholder if unknown)
+        ]
+        
+        if id_info.get('aud') not in known_client_ids and "5408559924-" not in str(id_info.get('aud')):
+            raise ValueError(f"Unrecognized client ID: {id_info.get('aud')}")
+
         email = id_info.get('email')
         provider_id = id_info.get('sub')
         first_name = id_info.get('given_name', 'Google')
         last_name = id_info.get('family_name', 'User')
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=f"Invalid Google token: {str(e)}")
+        raise HTTPException(status_code=400, detail=f"Google authentication failed: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=400, detail="Google authentication failed")
 
     if not email:
         raise HTTPException(status_code=400, detail="Could not extract email from Google token")
 
-    # Check if user exists by email
+    # Check if user exists by email OR provider_id
     result = await db.execute(select(User).where(User.email == email))
     user = result.scalar_one_or_none()
     
     if not user:
+        # Check by provider_id just in case
+        result_sub = await db.execute(select(User).where(User.provider_id == provider_id))
+        user = result_sub.scalar_one_or_none()
+        
+    if user:
+        # Update provider info if missing
+        if user.provider != 'google' or user.provider_id != provider_id:
+            user.provider = 'google'
+            user.provider_id = provider_id
+            await db.commit()
+    else:
         # Create new user
         full_name = f"{first_name} {last_name}".strip()
         dummy_phone = f"google_{provider_id}"[:20] # Ensure it fits in 20 chars
@@ -184,8 +210,12 @@ async def social_login(payload: SocialLoginRequest, db: AsyncSession = Depends(g
             provider_id=provider_id
         )
         db.add(user)
-        await db.commit()
-        await db.refresh(user)
+        try:
+            await db.commit()
+            await db.refresh(user)
+        except Exception as e:
+            await db.rollback()
+            raise HTTPException(status_code=500, detail=f"Database error during user creation: {str(e)}")
 
     access_token = create_access_token(subject=str(user.id))
     

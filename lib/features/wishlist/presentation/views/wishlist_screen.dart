@@ -8,7 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:milliy_metr/core/router/route_constants.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
-
+import 'package:milliy_metr/core/providers/auth_provider.dart';
 class WishlistScreen extends ConsumerStatefulWidget {
   const WishlistScreen({super.key});
 
@@ -154,6 +154,11 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(wishlistNotifierProvider);
+    final authState = ref.watch(authProvider);
+    final isAuthenticated = authState.maybeWhen(
+      authenticated: (_) => true,
+      orElse: () => false,
+    );
 
     return Scaffold(
       backgroundColor: context.colors.background,
@@ -193,7 +198,7 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
           ),
         ],
       ),
-      body: RefreshIndicator(
+      body: !isAuthenticated ? _buildGuestState() : RefreshIndicator(
         onRefresh: () =>
             ref.read(wishlistNotifierProvider.notifier).loadWishlist(),
         child: state.maybeWhen(
@@ -256,6 +261,73 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
             borderSide: BorderSide.none,
           ),
           contentPadding: const EdgeInsets.symmetric(vertical: 0),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGuestState() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: context.colors.surfaceVariant,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.lock_outline,
+                size: 64,
+                color: context.colors.secondary,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              context.l10n.guestModeTitle,
+              style: TextStyle(
+                color: context.colors.textHigh,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              context.l10n.guestWishlistDesc,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: context.colors.textMedium,
+                fontSize: 14,
+                height: 1.5,
+              ),
+            ),
+            const SizedBox(height: 32),
+            SizedBox(
+              height: 44,
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () => context.push(AppRoutes.login),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: context.colors.primary,
+                  foregroundColor: context.colors.onPrimary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: Text(
+                  context.l10n.login,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: context.colors.onPrimary,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -397,11 +469,6 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
         const crossAxisSpacing = 16.0;
         const mainAxisSpacing = 16.0;
 
-        final availableWidth = constraints.maxWidth;
-        final cardWidth = (availableWidth - (crossAxisSpacing * (crossAxisCount - 1)) - 32) / crossAxisCount;
-        final cardHeight = cardWidth + 190.0;
-        final childAspectRatio = cardWidth / cardHeight;
-
         return GridView.builder(
           padding: const EdgeInsets.all(16),
           physics: const NeverScrollableScrollPhysics(),
@@ -409,7 +476,7 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
             crossAxisCount: crossAxisCount,
             mainAxisSpacing: mainAxisSpacing,
             crossAxisSpacing: crossAxisSpacing,
-            childAspectRatio: childAspectRatio,
+            childAspectRatio: 0.75,
           ),
           itemCount: 6,
           itemBuilder: (context, index) {

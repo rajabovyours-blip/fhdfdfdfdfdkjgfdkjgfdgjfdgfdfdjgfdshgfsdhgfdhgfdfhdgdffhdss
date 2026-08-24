@@ -20,6 +20,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   AuthRemoteDataSourceImpl(this.dio);
 
+  String _extractErrorMessage(DioException e, String defaultMessage) {
+    if (e.response?.data != null) {
+      return extractErrorMessage(e.response!.data);
+    }
+    return defaultMessage;
+  }
+
   @override
   Future<TokenModel> login(String phone, String password) async {
     try {
@@ -32,7 +39,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
       return TokenModel.fromJson(response.data['data']);
     } on DioException catch (e) {
-      throw ServerFailure(e.response?.data['message'] ?? 'Failed to login');
+      throw ServerFailure(_extractErrorMessage(e, 'Failed to login'));
     } catch (e) {
       throw ServerFailure('An unexpected error occurred');
     }
@@ -51,7 +58,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
       return TokenModel.fromJson(response.data['data']);
     } on DioException catch (e) {
-      throw ServerFailure(e.response?.data['detail'] ?? e.response?.data['message'] ?? 'Failed to login');
+      throw ServerFailure(_extractErrorMessage(e, 'Failed to login'));
     } catch (e) {
       throw ServerFailure('An unexpected error occurred');
     }
@@ -69,7 +76,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         },
       );
     } on DioException catch (e) {
-      throw ServerFailure(e.response?.data['message'] ?? 'Failed to register');
+      throw ServerFailure(_extractErrorMessage(e, 'Failed to register'));
     } catch (e) {
       throw ServerFailure('An unexpected error occurred');
     }
@@ -85,9 +92,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         },
       );
     } on DioException catch (e) {
-      throw ServerFailure(
-        e.response?.data['message'] ?? 'Failed to request OTP',
-      );
+      throw ServerFailure(_extractErrorMessage(e, 'Failed to request OTP'));
     } catch (e) {
       throw ServerFailure('An unexpected error occurred');
     }
@@ -104,9 +109,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
       return response.data['data']['exists'] as bool;
     } on DioException catch (e) {
-      throw ServerFailure(
-        e.response?.data['message'] ?? 'Failed to check phone',
-      );
+      throw ServerFailure(_extractErrorMessage(e, 'Failed to check phone'));
     } catch (e) {
       throw ServerFailure('An unexpected error occurred');
     }
@@ -128,9 +131,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
       return TokenModel.fromJson(response.data['data']);
     } on DioException catch (e) {
-      throw ServerFailure(
-        e.response?.data['message'] ?? 'Failed to verify OTP',
-      );
+      throw ServerFailure(_extractErrorMessage(e, 'Failed to verify OTP'));
     } catch (e) {
       throw ServerFailure('An unexpected error occurred');
     }
@@ -148,9 +149,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
       return TokenModel.fromJson(response.data['data']);
     } on DioException catch (e) {
-      throw ServerFailure(
-        e.response?.data['message'] ?? 'Failed to login with $provider',
-      );
+      throw ServerFailure(_extractErrorMessage(e, 'Failed to login with $provider'));
     } catch (e) {
       throw ServerFailure('An unexpected error occurred');
     }
@@ -162,7 +161,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final response = await dio.get('/auth/me');
       return UserModel.fromJson(response.data['data']);
     } on DioException catch (e) {
-      throw ServerFailure(e.response?.data['message'] ?? 'Failed to get user');
+      throw ServerFailure(_extractErrorMessage(e, 'Failed to get user'));
     } catch (e) {
       throw ServerFailure('An unexpected error occurred');
     }

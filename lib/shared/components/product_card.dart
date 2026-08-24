@@ -191,17 +191,6 @@ class _ProductCardState extends ConsumerState<ProductCard> {
                           overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 4),
-                        Text(
-                          widget.product.brand ?? 'Milliy Metr',
-                          style: TextStyle(
-                            color: context.colors.textMedium,
-                            fontSize: 11,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 8),
-
                         // Rating
                         Row(
                           children: [
@@ -263,7 +252,7 @@ class _ProductCardState extends ConsumerState<ProductCard> {
                         ],
                       ],
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 6),
 
                     // Price and Action Group
                     Column(

@@ -73,12 +73,12 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
             title: l10n.activeSessions,
             subtitle: l10n.activeSessionsDesc,
             onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
+              /* ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(l10n.requiresBackendIntegration),
                   backgroundColor: context.colors.primary,
                 ),
-              );
+              ); */
             },
           ),
 
@@ -254,12 +254,12 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
                     return;
                   }
                   Navigator.pop(ctx);
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  /* ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(l10n.requiresBackendIntegration),
                       backgroundColor: context.colors.primary,
                     ),
-                  );
+                  ); */
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: context.colors.primary,
@@ -329,12 +329,12 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
-              ScaffoldMessenger.of(context).showSnackBar(
+              /* ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(l10n.requiresBackendIntegration),
                   backgroundColor: context.colors.primary,
                 ),
-              );
+              ); */
             },
             child: Text(
               l10n.deleteAccount,

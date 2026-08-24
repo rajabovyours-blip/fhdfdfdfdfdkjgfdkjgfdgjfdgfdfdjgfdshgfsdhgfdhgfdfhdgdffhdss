@@ -2259,6 +2259,24 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'dona'**
   String get piece;
+
+  /// No description provided for @guestModeTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tizimga kiring'**
+  String get guestModeTitle;
+
+  /// No description provided for @guestCartDesc.
+  ///
+  /// In uz, this message translates to:
+  /// **'Savatchani ko\'rish uchun tizimga kiring.'**
+  String get guestCartDesc;
+
+  /// No description provided for @guestWishlistDesc.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sevimlilarni ko\'rish uchun tizimga kiring.'**
+  String get guestWishlistDesc;
 }
 
 class _AppLocalizationsDelegate

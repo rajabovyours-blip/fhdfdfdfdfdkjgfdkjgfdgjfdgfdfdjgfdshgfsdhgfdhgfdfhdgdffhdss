@@ -175,8 +175,8 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
             activeColor: context.colors.primary,
             inactiveColor: context.colors.outline,
             labels: RangeLabels(
-              (_currentFilters.minPrice ?? 0).round().toString(),
-              (_currentFilters.maxPrice ?? 10000000).round().toString(),
+              '${((_currentFilters.minPrice ?? 0) / 1000).round()} k',
+              '${((_currentFilters.maxPrice ?? 10000000) / 1000).round()} k',
             ),
             onChanged: (values) {
               setState(() {

@@ -1,0 +1,710 @@
+.
+├── .env
+├── .env.example
+├── .flutter-plugins-dependencies
+├── .gitignore
+├── .idea
+│   ├── .gitignore
+│   ├── caches
+│   │   └── deviceStreaming.xml
+│   ├── deviceManager.xml
+│   ├── libraries
+│   │   ├── Dart_Packages.xml
+│   │   ├── Dart_SDK.xml
+│   │   ├── Flutter_Plugins.xml
+│   │   └── KotlinJavaRuntime.xml
+│   ├── markdown.xml
+│   ├── modules.xml
+│   ├── runConfigurations
+│   │   └── main_dart.xml
+│   └── workspace.xml
+├── .metadata
+├── .pytest_cache
+│   ├── .gitignore
+│   ├── CACHEDIR.TAG
+│   ├── README.md
+│   └── v
+│       └── cache
+│           ├── lastfailed
+│           └── stepwise
+├── .vscode
+│   └── settings.json
+├── ARCHITECTURE.md
+├── BACKEND_ARCHITECTURE.md
+├── DESIGN_SYSTEM.md
+├── Dockerfile
+├── FINAL_SYSTEM_AUDIT.md
+├── PRODUCT_BLUEPRINT.md
+├── README.md
+├── UX_ARCHITECTURE.md
+├── admin_categories_provider.dart
+├── analysis_options.yaml
+├── assets
+│   ├── .gitkeep
+│   ├── fonts
+│   ├── images
+│   │   ├── categories
+│   │   │   ├── cat-1.webp
+│   │   │   ├── cat-10.webp
+│   │   │   ├── cat-11.webp
+│   │   │   ├── cat-12.webp
+│   │   │   ├── cat-13.webp
+│   │   │   ├── cat-14.webp
+│   │   │   ├── cat-15.webp
+│   │   │   ├── cat-16.webp
+│   │   │   ├── cat-17.webp
+│   │   │   ├── cat-18.webp
+│   │   │   ├── cat-19.webp
+│   │   │   ├── cat-2.webp
+│   │   │   ├── cat-20.webp
+│   │   │   ├── cat-21.webp
+│   │   │   ├── cat-22.webp
+│   │   │   ├── cat-23.webp
+│   │   │   ├── cat-24.webp
+│   │   │   ├── cat-25.webp
+│   │   │   ├── cat-26.webp
+│   │   │   ├── cat-27.webp
+│   │   │   ├── cat-28.webp
+│   │   │   ├── cat-29.webp
+│   │   │   ├── cat-3.webp
+│   │   │   ├── cat-30.webp
+│   │   │   ├── cat-31.webp
+│   │   │   ├── cat-32.webp
+│   │   │   ├── cat-33.webp
+│   │   │   ├── cat-34.webp
+│   │   │   ├── cat-35.webp
+│   │   │   ├── cat-36.webp
+│   │   │   ├── cat-37.webp
+│   │   │   ├── cat-38.webp
+│   │   │   ├── cat-39.webp
+│   │   │   ├── cat-4.webp
+│   │   │   ├── cat-40.webp
+│   │   │   ├── cat-41.webp
+│   │   │   ├── cat-42.webp
+│   │   │   ├── cat-43.webp
+│   │   │   ├── cat-44.webp
+│   │   │   ├── cat-45.webp
+│   │   │   ├── cat-46.webp
+│   │   │   ├── cat-47.webp
+│   │   │   ├── cat-48.webp
+│   │   │   ├── cat-49.webp
+│   │   │   ├── cat-5.webp
+│   │   │   ├── cat-50.webp
+│   │   │   ├── cat-51.webp
+│   │   │   ├── cat-52.webp
+│   │   │   ├── cat-53.webp
+│   │   │   ├── cat-54.webp
+│   │   │   ├── cat-55.webp
+│   │   │   ├── cat-56.webp
+│   │   │   ├── cat-57.webp
+│   │   │   ├── cat-58.webp
+│   │   │   ├── cat-59.webp
+│   │   │   ├── cat-6.webp
+│   │   │   ├── cat-60.webp
+│   │   │   ├── cat-61.webp
+│   │   │   ├── cat-7.webp
+│   │   │   ├── cat-8.webp
+│   │   │   └── cat-9.webp
+│   │   ├── milliy_metr_logo_clean.PNG
+│   │   └── milliy_metr_logo_transparent.PNG
+│   ├── l10n
+│   │   ├── .gitkeep
+│   │   ├── en.json
+│   │   ├── ru.json
+│   │   └── uz.json
+│   └── svg
+│       ├── .gitkeep
+│       ├── google_logo.svg
+│       ├── payment_cash.svg
+│       ├── payment_click.svg
+│       ├── payment_mastercard.svg
+│       ├── payment_payme.svg
+│       └── payment_visa.svg
+├── backend
+│   ├── .env
+│   ├── .env.example
+│   ├── .gitignore
+│   ├── .pytest_cache
+│   │   ├── .gitignore
+│   │   ├── CACHEDIR.TAG
+│   │   ├── README.md
+│   │   └── v
+│   │       └── cache
+│   ├── Dockerfile
+│   ├── README.md
+│   ├── alembic
+│   │   ├── README
+│   │   ├── env.py
+│   │   ├── script.py.mako
+│   │   └── versions
+│   │       ├── 58a45a364663_add_provider_to_users.py
+│   │       └── 871a9f6cd46d_remove_seller_id_from_products.py
+│   ├── alembic.ini
+│   ├── app
+│   │   ├── __init__.py
+│   │   ├── api
+│   │   │   ├── __init__.py
+│   │   │   ├── dependencies.py
+│   │   │   ├── deps.py
+│   │   │   ├── endpoints
+│   │   │   ├── router.py
+│   │   │   └── v1
+│   │   ├── auth
+│   │   │   └── security.py
+│   │   ├── core
+│   │   │   ├── __init__.py
+│   │   │   ├── config.py
+│   │   │   ├── database.py
+│   │   │   ├── exceptions.py
+│   │   │   ├── logging.py
+│   │   │   └── redis.py
+│   │   ├── db
+│   │   │   ├── base_class.py
+│   │   │   ├── seed.py
+│   │   │   └── session.py
+│   │   ├── main.py
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── address.py
+│   │   │   ├── base.py
+│   │   │   ├── cart.py
+│   │   │   ├── category.py
+│   │   │   ├── extras.py
+│   │   │   ├── order.py
+│   │   │   ├── product.py
+│   │   │   ├── review.py
+│   │   │   └── user.py
+│   │   ├── repositories
+│   │   │   └── __init__.py
+│   │   ├── schemas
+│   │   │   ├── __init__.py
+│   │   │   ├── admin.py
+│   │   │   ├── auth.py
+│   │   │   ├── cart.py
+│   │   │   ├── common.py
+│   │   │   ├── marketplace.py
+│   │   │   ├── order.py
+│   │   │   ├── order_create.py
+│   │   │   ├── orders.py
+│   │   │   ├── product.py
+│   │   │   ├── token.py
+│   │   │   ├── user.py
+│   │   │   └── users.py
+│   │   ├── security
+│   │   │   ├── __init__.py
+│   │   │   ├── hashing.py
+│   │   │   └── jwt.py
+│   │   ├── services
+│   │   │   ├── __init__.py
+│   │   │   ├── admin_service.py
+│   │   │   ├── auth_service.py
+│   │   │   ├── eskiz.py
+│   │   │   ├── excel_importer.py
+│   │   │   ├── marketplace_service.py
+│   │   │   ├── orders_service.py
+│   │   │   └── otp.py
+│   │   └── utils
+│   │       └── __init__.py
+│   ├── create_db.py
+│   ├── docker-compose.yml
+│   ├── init.sql
+│   ├── migrations
+│   │   ├── README
+│   │   ├── env.py
+│   │   ├── script.py.mako
+│   │   └── versions
+│   │       └── 6648f32b6dd8_initial_migration.py
+│   ├── milliy_metr.db
+│   ├── requirements.txt
+│   ├── scripts
+│   │   ├── insert_categories.py
+│   │   └── seed.py
+│   ├── seed.py
+│   ├── seed_roles.py
+│   ├── test.db
+│   ├── test_auth_flow.py
+│   ├── test_integration.py
+│   ├── tests
+│   │   ├── __init__.py
+│   │   ├── conftest.py
+│   │   ├── test_auth.py
+│   │   └── test_catalog.py
+│   ├── uploads
+│   │   └── images
+│   │       ├── brick.jpg
+│   │       ├── cable.jpg
+│   │       ├── cement.jpg
+│   │       ├── drill.jpg
+│   │       ├── insulation.jpg
+│   │       ├── paint.jpg
+│   │       ├── pipes.jpg
+│   │       ├── rebar.jpg
+│   │       ├── roofing.jpg
+│   │       └── timber.jpg
+│   └── venv_test
+│       ├── Include
+│       │   └── site
+│       ├── Lib
+│       │   └── site-packages
+│       ├── Scripts
+│       │   ├── Activate.ps1
+│       │   ├── activate
+│       │   ├── activate.bat
+│       │   ├── alembic.exe
+│       │   ├── cffi-gen-src.exe
+│       │   ├── deactivate.bat
+│       │   ├── dotenv.exe
+│       │   ├── email_validator.exe
+│       │   ├── httpx.exe
+│       │   ├── idna.exe
+│       │   ├── mako-render.exe
+│       │   ├── markdown-it.exe
+│       │   ├── normalizer.exe
+│       │   ├── pip.exe
+│       │   ├── pip3.10.exe
+│       │   ├── pip3.exe
+│       │   ├── py.test.exe
+│       │   ├── pygmentize.exe
+│       │   ├── pytest.exe
+│       │   ├── python.exe
+│       │   ├── pythonw.exe
+│       │   ├── typer.exe
+│       │   ├── uvicorn.exe
+│       │   ├── watchfiles.exe
+│       │   └── websockets.exe
+│       └── pyvenv.cfg
+├── categories_list.txt
+├── check_cat.py
+├── codemagic.yaml
+├── copy_images.py
+├── dart_categories.txt
+├── devtools_options.yaml
+├── docs
+│   └── backend_api_contract.md
+├── fix2.py
+├── fix_imports.py
+├── fix_syntax.py
+├── gen_admin_cat.py
+├── generate_categories.py
+├── generate_overview.py
+├── integration_test
+│   ├── app_test.dart
+│   ├── guest_flow_test.dart
+│   └── onboarding_qa_test_en.dart
+├── l10n.yaml
+├── lib
+│   ├── config
+│   │   └── app_config.dart
+│   ├── core
+│   │   ├── api
+│   │   │   ├── api_client.dart
+│   │   │   └── auth_interceptor.dart
+│   │   ├── base
+│   │   │   ├── base_controller.dart
+│   │   │   └── base_usecase.dart
+│   │   ├── config
+│   │   ├── constants
+│   │   │   └── api_constants.dart
+│   │   ├── errors
+│   │   │   ├── app_exception.dart
+│   │   │   └── failures.dart
+│   │   ├── exceptions
+│   │   ├── extensions
+│   │   ├── helpers
+│   │   │   ├── connectivity_helper.dart
+│   │   │   └── permission_helper.dart
+│   │   ├── localization
+│   │   │   └── localized_string.dart
+│   │   ├── mixins
+│   │   ├── mock
+│   │   ├── network
+│   │   │   ├── dio_client.dart
+│   │   │   └── interceptors
+│   │   ├── providers
+│   │   │   ├── auth_provider.dart
+│   │   │   ├── locale_provider.dart
+│   │   │   ├── main_navigation_provider.dart
+│   │   │   └── theme_provider.dart
+│   │   ├── router
+│   │   │   ├── app_router.dart
+│   │   │   ├── guards
+│   │   │   └── route_constants.dart
+│   │   ├── routing
+│   │   │   └── router.dart
+│   │   ├── services
+│   │   ├── state
+│   │   │   ├── feature_state.dart
+│   │   │   └── feature_state.freezed.dart
+│   │   ├── storage
+│   │   │   ├── hive_storage.dart
+│   │   │   ├── preferences.dart
+│   │   │   └── secure_storage.dart
+│   │   ├── theme
+│   │   │   ├── app_colors.dart
+│   │   │   ├── app_colors_extension.dart
+│   │   │   ├── app_theme.dart
+│   │   │   ├── app_typography.dart
+│   │   │   └── theme.dart
+│   │   ├── typedefs
+│   │   ├── utils
+│   │   │   ├── app_formatters.dart
+│   │   │   ├── app_logger.dart
+│   │   │   └── currency_formatter.dart
+│   │   └── validators
+│   │       └── app_validators.dart
+│   ├── features
+│   │   ├── admin
+│   │   │   ├── data
+│   │   │   ├── domain
+│   │   │   └── presentation
+│   │   ├── analytics
+│   │   │   ├── data
+│   │   │   ├── domain
+│   │   │   └── presentation
+│   │   ├── auth
+│   │   │   ├── data
+│   │   │   ├── presentation
+│   │   │   └── providers
+│   │   ├── authentication
+│   │   │   ├── data
+│   │   │   ├── domain
+│   │   │   └── presentation
+│   │   ├── banners
+│   │   │   └── presentation
+│   │   ├── cart
+│   │   │   ├── data
+│   │   │   ├── domain
+│   │   │   └── presentation
+│   │   ├── catalog
+│   │   │   └── presentation
+│   │   ├── categories
+│   │   │   ├── data
+│   │   │   ├── domain
+│   │   │   └── presentation
+│   │   ├── chat
+│   │   │   ├── data
+│   │   │   ├── domain
+│   │   │   └── presentation
+│   │   ├── checkout
+│   │   │   ├── data
+│   │   │   ├── domain
+│   │   │   └── presentation
+│   │   ├── complaint
+│   │   │   ├── data
+│   │   │   ├── domain
+│   │   │   └── presentation
+│   │   ├── coupons
+│   │   │   ├── data
+│   │   │   ├── domain
+│   │   │   └── presentation
+│   │   ├── dashboard
+│   │   │   └── presentation
+│   │   ├── delivery
+│   │   │   ├── data
+│   │   │   ├── domain
+│   │   │   └── presentation
+│   │   ├── home
+│   │   │   ├── data
+│   │   │   ├── domain
+│   │   │   └── presentation
+│   │   ├── inventory
+│   │   │   ├── data
+│   │   │   ├── domain
+│   │   │   └── presentation
+│   │   ├── main
+│   │   │   └── presentation
+│   │   ├── notifications
+│   │   │   ├── data
+│   │   │   ├── domain
+│   │   │   └── presentation
+│   │   ├── order_details
+│   │   │   ├── data
+│   │   │   ├── domain
+│   │   │   └── presentation
+│   │   ├── orders
+│   │   │   ├── data
+│   │   │   ├── domain
+│   │   │   └── presentation
+│   │   ├── payment
+│   │   │   ├── data
+│   │   │   ├── domain
+│   │   │   └── presentation
+│   │   ├── products
+│   │   │   ├── data
+│   │   │   ├── domain
+│   │   │   └── presentation
+│   │   ├── profile
+│   │   │   ├── data
+│   │   │   ├── domain
+│   │   │   └── presentation
+│   │   ├── reports
+│   │   │   ├── data
+│   │   │   ├── domain
+│   │   │   └── presentation
+│   │   ├── reviews
+│   │   │   ├── data
+│   │   │   ├── domain
+│   │   │   └── presentation
+│   │   ├── search
+│   │   │   ├── data
+│   │   │   ├── domain
+│   │   │   └── presentation
+│   │   ├── seller
+│   │   │   └── presentation
+│   │   ├── settings
+│   │   │   ├── data
+│   │   │   ├── domain
+│   │   │   └── presentation
+│   │   ├── splash
+│   │   │   ├── data
+│   │   │   ├── domain
+│   │   │   └── presentation
+│   │   ├── store
+│   │   │   └── presentation
+│   │   ├── support
+│   │   │   ├── data
+│   │   │   ├── domain
+│   │   │   └── presentation
+│   │   ├── users
+│   │   │   └── presentation
+│   │   ├── warehouse
+│   │   │   ├── data
+│   │   │   ├── domain
+│   │   │   └── presentation
+│   │   └── wishlist
+│   │       ├── data
+│   │       ├── domain
+│   │       └── presentation
+│   ├── l10n
+│   │   ├── app_en.arb
+│   │   ├── app_localizations.dart
+│   │   ├── app_localizations_en.dart
+│   │   ├── app_localizations_ru.dart
+│   │   ├── app_localizations_uz.dart
+│   │   ├── app_ru.arb
+│   │   ├── app_uz.arb
+│   │   └── l10n_extension.dart
+│   ├── main.dart
+│   └── shared
+│       ├── animations
+│       ├── bottom_sheets
+│       ├── common
+│       ├── components
+│       │   ├── category_card.dart
+│       │   ├── loaders
+│       │   ├── product_card.dart
+│       │   └── product_image.dart
+│       ├── dialogs
+│       ├── loaders
+│       │   └── app_loader.dart
+│       ├── models
+│       └── widgets
+│           ├── app_button.dart
+│           ├── app_card.dart
+│           ├── app_snackbar.dart
+│           └── app_text_field.dart
+├── melos.yaml
+├── milliy_metr.iml
+├── milliy_metr_admin
+│   ├── .flutter-plugins-dependencies
+│   ├── .gitignore
+│   ├── .idea
+│   │   ├── libraries
+│   │   │   ├── Dart_SDK.xml
+│   │   │   └── KotlinJavaRuntime.xml
+│   │   ├── modules.xml
+│   │   ├── runConfigurations
+│   │   │   └── main_dart.xml
+│   │   └── workspace.xml
+│   ├── .metadata
+│   ├── Dockerfile
+│   ├── README.md
+│   ├── analysis_options.yaml
+│   ├── assets
+│   │   ├── .gitkeep
+│   │   ├── l10n
+│   │   │   ├── .gitkeep
+│   │   │   ├── ru.json
+│   │   │   └── uz.json
+│   │   └── svg
+│   │       └── .gitkeep
+│   ├── lib
+│   │   ├── core
+│   │   │   ├── api
+│   │   │   ├── config
+│   │   │   ├── errors
+│   │   │   ├── providers
+│   │   │   ├── routing
+│   │   │   ├── theme
+│   │   │   └── utils
+│   │   ├── data
+│   │   │   ├── datasources
+│   │   │   ├── models
+│   │   │   └── repositories
+│   │   ├── domain
+│   │   │   ├── entities
+│   │   │   └── repositories
+│   │   ├── features
+│   │   │   ├── auth
+│   │   │   ├── banners
+│   │   │   ├── categories
+│   │   │   ├── dashboard
+│   │   │   ├── products
+│   │   │   ├── reviews
+│   │   │   └── users
+│   │   ├── l10n
+│   │   └── main.dart
+│   ├── milliy_metr_admin.iml
+│   ├── nginx.conf
+│   ├── pubspec.lock
+│   ├── pubspec.yaml
+│   ├── render-build.sh
+│   └── test
+│       └── widget_test.dart
+├── milliy_metr_seller
+│   ├── .flutter-plugins-dependencies
+│   ├── .gitignore
+│   ├── .idea
+│   │   ├── libraries
+│   │   │   ├── Dart_SDK.xml
+│   │   │   └── KotlinJavaRuntime.xml
+│   │   ├── modules.xml
+│   │   ├── runConfigurations
+│   │   │   └── main_dart.xml
+│   │   └── workspace.xml
+│   ├── .metadata
+│   ├── README.md
+│   ├── analysis_options.yaml
+│   ├── assets
+│   │   ├── l10n
+│   │   │   ├── en.json
+│   │   │   ├── ru.json
+│   │   │   └── uz.json
+│   │   └── svg
+│   ├── lib
+│   │   ├── core
+│   │   │   ├── api
+│   │   │   ├── config
+│   │   │   ├── errors
+│   │   │   ├── routing
+│   │   │   ├── theme
+│   │   │   └── utils
+│   │   ├── data
+│   │   │   ├── datasources
+│   │   │   ├── models
+│   │   │   └── repositories
+│   │   ├── domain
+│   │   │   ├── entities
+│   │   │   └── repositories
+│   │   ├── features
+│   │   │   ├── auth
+│   │   │   ├── dashboard
+│   │   │   ├── orders
+│   │   │   ├── products
+│   │   │   └── store
+│   │   ├── l10n
+│   │   └── main.dart
+│   ├── milliy_metr_seller.iml
+│   ├── pubspec.lock
+│   ├── pubspec.yaml
+│   └── test
+│       └── widget_test.dart
+├── nginx.conf
+├── patch_admin.py
+├── patch_repo.py
+├── patch_repo2.py
+├── pubspec.lock
+├── pubspec.yaml
+├── remove_banner.py
+├── render-build.sh
+├── render.yaml
+├── scratch
+│   ├── fetch_images.py
+│   ├── fetch_wiki.py
+│   └── generate_images.py
+├── test
+│   ├── features
+│   │   └── authentication
+│   │       └── auth_repository_test.dart
+│   └── widget_test.dart
+├── test_parser.dart
+├── translate.py
+├── translate_cat.py
+├── tree.py
+└── tree.txt
+
+milliy_metr_admin
+├── .flutter-plugins-dependencies
+├── .gitignore
+├── .idea
+│   ├── libraries
+│   │   ├── Dart_SDK.xml
+│   │   └── KotlinJavaRuntime.xml
+│   ├── modules.xml
+│   ├── runConfigurations
+│   │   └── main_dart.xml
+│   └── workspace.xml
+├── .metadata
+├── Dockerfile
+├── README.md
+├── analysis_options.yaml
+├── assets
+│   ├── .gitkeep
+│   ├── l10n
+│   │   ├── .gitkeep
+│   │   ├── ru.json
+│   │   └── uz.json
+│   └── svg
+│       └── .gitkeep
+├── lib
+│   ├── core
+│   │   ├── api
+│   │   │   ├── api_client.dart
+│   │   │   └── auth_interceptor.dart
+│   │   ├── config
+│   │   ├── errors
+│   │   ├── providers
+│   │   │   └── admin_providers.dart
+│   │   ├── routing
+│   │   │   └── router.dart
+│   │   ├── theme
+│   │   │   └── theme.dart
+│   │   └── utils
+│   ├── data
+│   │   ├── datasources
+│   │   ├── models
+│   │   └── repositories
+│   ├── domain
+│   │   ├── entities
+│   │   └── repositories
+│   ├── features
+│   │   ├── auth
+│   │   │   ├── data
+│   │   │   ├── domain
+│   │   │   ├── presentation
+│   │   │   └── providers
+│   │   ├── banners
+│   │   │   └── presentation
+│   │   ├── categories
+│   │   │   └── presentation
+│   │   ├── dashboard
+│   │   │   ├── presentation
+│   │   │   └── providers
+│   │   ├── products
+│   │   │   └── presentation
+│   │   ├── reviews
+│   │   │   └── presentation
+│   │   └── users
+│   │       └── presentation
+│   ├── l10n
+│   └── main.dart
+├── milliy_metr_admin.iml
+├── nginx.conf
+├── pubspec.lock
+├── pubspec.yaml
+├── render-build.sh
+└── test
+    └── widget_test.dart
+
+../backend
+

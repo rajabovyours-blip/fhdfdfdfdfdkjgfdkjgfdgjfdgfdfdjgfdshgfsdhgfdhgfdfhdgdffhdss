@@ -37,7 +37,7 @@ class ProfileScreen extends ConsumerWidget {
         ),
         unauthenticated: () => _buildUnauthenticatedState(context),
         authenticated: (user) => _buildAuthenticatedState(context, ref, user),
-        error: (message) => _buildErrorState(context, message),
+        error: (message) => _buildErrorState(context, message, ref),
       ),
     );
   }
@@ -83,7 +83,7 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildErrorState(BuildContext context, String message) {
+  Widget _buildErrorState(BuildContext context, String message, WidgetRef ref) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -97,11 +97,20 @@ class ProfileScreen extends ConsumerWidget {
               style: TextStyle(color: context.colors.danger, fontSize: 16),
               textAlign: TextAlign.center,
             ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: AppButton(
+                text: 'OK',
+                onPressed: () => ref.read(authProvider.notifier).clearError(),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
+
 
   Widget _buildAuthenticatedState(
     BuildContext context,

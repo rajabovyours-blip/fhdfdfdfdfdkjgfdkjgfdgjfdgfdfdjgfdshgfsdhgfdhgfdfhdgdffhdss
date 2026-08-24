@@ -56,11 +56,7 @@ class ProductGrid extends StatelessWidget {
           const crossAxisSpacing = 12.0;
           const mainAxisSpacing = 16.0;
 
-          final availableWidth = constraints.crossAxisExtent;
-          final cardWidth = (availableWidth - (crossAxisSpacing * (crossAxisCount - 1))) / crossAxisCount;
-          // Calculate height dynamically to prevent overflow
-          final cardHeight = cardWidth + 190.0;
-          final childAspectRatio = cardWidth / cardHeight;
+          const childAspectRatio = 0.75;
 
           return SliverGrid(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

@@ -40,6 +40,7 @@ class _CatalogSearchBarState extends ConsumerState<CatalogSearchBar> {
   }
 
   void _onSearchChanged(String query) {
+    setState(() {}); // update clear button visibility
     if (_debounce?.isActive ?? false) _debounce!.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
       ref.read(catalogNotifierProvider.notifier).setSearchQuery(query);

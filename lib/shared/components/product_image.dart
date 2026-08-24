@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shimmer/shimmer.dart';
 
 class ProductImage extends StatelessWidget {
   final String? imageUrl;
@@ -54,10 +55,15 @@ class ProductImage extends StatelessWidget {
       width: width,
       color: Colors.grey[200],
       child: Center(
-        child: Icon(
-          Icons.image_not_supported,
-          color: Colors.grey[400],
-          size: 40,
+        child: Shimmer.fromColors(
+          baseColor: Colors.grey[300]!,
+          highlightColor: Colors.grey[100]!,
+          child: Image.asset(
+            'assets/images/milliy_metr_logo_transparent.png',
+            width: width * 0.5,
+            height: height * 0.5,
+            fit: BoxFit.contain,
+          ),
         ),
       ),
     );

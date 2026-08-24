@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:cached_network_image/cached_network_image.dart';
+
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:milliy_metr/features/categories/domain/entities/category_entity.dart';
+import 'package:milliy_metr/features/categories/utils/category_asset_helper.dart';
 
 class CategoryCard extends StatelessWidget {
   final CategoryEntity category;
@@ -20,29 +21,29 @@ class CategoryCard extends StatelessWidget {
             color: context.colors.surfaceVariant,
             shape: BoxShape.circle,
           ),
-          child: category.iconUrl != null && category.iconUrl!.isNotEmpty
-              ? (category.iconUrl!.startsWith('assets/')
-                  ? Image.asset(
-                      category.iconUrl!,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) =>
-                          CategoryCard.getSemanticIconWidget(category, context),
-                    )
-                  : CachedNetworkImage(
-                      imageUrl: category.iconUrl!,
-                      fit: BoxFit.cover,
-                      memCacheWidth: 150,
-                      memCacheHeight: 150,
-                      errorWidget: (_, __, ___) =>
-                          CategoryCard.getSemanticIconWidget(category, context),
-                    ))
-                  : getSemanticIconWidget(category, context),
+          child: Builder(
+            builder: (context) {
+              final assetPath = CategoryAssetHelper.getAssetPath(
+                category.id,
+                category.name.get('en'),
+              );
+
+              return Image.asset(
+                assetPath,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) =>
+                    CategoryCard.getSemanticIconWidget(category, context),
+              );
+            },
+          ),
         ),
         const SizedBox(height: 8),
         Text(
           category.name.get(Localizations.localeOf(context).languageCode),
           style: TextStyle(color: context.colors.textHigh, fontSize: 12),
           textAlign: TextAlign.center,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
         ),
       ],
     );

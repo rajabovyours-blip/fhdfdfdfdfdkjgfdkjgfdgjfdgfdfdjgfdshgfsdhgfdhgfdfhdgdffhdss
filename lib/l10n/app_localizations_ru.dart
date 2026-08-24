@@ -1121,4 +1121,14 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get piece => 'шт';
+
+  @override
+  String get guestModeTitle => 'Войдите в систему';
+
+  @override
+  String get guestCartDesc => 'Войдите, чтобы просмотреть корзину.';
+
+  @override
+  String get guestWishlistDesc =>
+      'Войдите, чтобы просмотреть избранные товары.';
 }

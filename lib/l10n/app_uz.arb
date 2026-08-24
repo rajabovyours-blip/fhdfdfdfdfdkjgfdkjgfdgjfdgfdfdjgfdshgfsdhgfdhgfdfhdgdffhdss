@@ -359,5 +359,8 @@
   "getStarted": "Boshlash",
   "errorOccurred": "Xatolik yuz berdi",
   "categoriesNotFound": "Kategoriyalar topilmadi",
-  "piece": "dona"
+  "piece": "dona",
+  "guestModeTitle": "Tizimga kiring",
+  "guestCartDesc": "Savatchani ko'rish uchun tizimga kiring.",
+  "guestWishlistDesc": "Sevimlilarni ko'rish uchun tizimga kiring."
 }

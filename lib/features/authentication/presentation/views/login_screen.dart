@@ -10,6 +10,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:io' show Platform;
+import 'package:flutter/services.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   final String? redirect;
@@ -52,8 +53,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _processLogin() async {
-    final phoneBody = _phoneController.text.replaceAll(' ', '');
-    if (phoneBody.length < 9) {
+    final phoneBody = _phoneController.text.replaceAll(RegExp(r'\D'), '');
+    if (phoneBody.length != 9) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(context.l10n.invalidPhone),
+          backgroundColor: context.colors.danger,
+        ),
+      );
+      return;
+    }
+    
+    // Validate Uzbek prefixes
+    final validPrefixes = ['90', '91', '93', '94', '95', '97', '98', '99', '88', '33', '50', '77', '20'];
+    final prefix = phoneBody.substring(0, 2);
+    if (!validPrefixes.contains(prefix)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(context.l10n.invalidPhone),
@@ -278,6 +292,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         controller: _phoneController,
                         focusNode: _phoneFocusNode,
                         keyboardType: TextInputType.phone,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(9),
+                        ],
                         style: TextStyle(
                           color: context.colors.textHigh,
                           fontSize: 16,

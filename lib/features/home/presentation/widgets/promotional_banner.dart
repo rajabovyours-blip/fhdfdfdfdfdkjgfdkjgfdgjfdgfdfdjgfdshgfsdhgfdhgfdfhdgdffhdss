@@ -40,19 +40,20 @@ class _PromotionalBannerState extends State<PromotionalBanner> {
             itemCount: widget.banners.length,
             itemBuilder: (context, index) {
               final banner = widget.banners[index];
-              return Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-                decoration: BoxDecoration(
-                  color: context.colors.primary,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: context.colors.primary.withValues(alpha: 0.2),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
+                return Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    color: context.colors.primary,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: context.colors.primary.withValues(alpha: 0.2),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
                 child: Row(
                   children: [
                     Expanded(
@@ -63,28 +64,32 @@ class _PromotionalBannerState extends State<PromotionalBanner> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
-                              banner.title.get(languageCode),
-                              style: TextStyle(
-                                color: context.colors.textHigh,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                height: 1.2,
+                            Flexible(
+                              child: Text(
+                                banner.title.get(languageCode),
+                                style: TextStyle(
+                                  color: context.colors.textHigh,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  height: 1.2,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 8),
-                            Text(
-                              banner.subtitle.get(languageCode),
-                              style: TextStyle(
-                                color: context.colors.textHigh.withValues(alpha: 0.8),
-                                fontSize: 12,
+                            Flexible(
+                              child: Text(
+                                banner.subtitle.get(languageCode),
+                                style: TextStyle(
+                                  color: context.colors.textHigh.withValues(alpha: 0.8),
+                                  fontSize: 12,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
                             ),
-                            const Spacer(),
+                            const SizedBox(height: 16),
                             Container(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 16, vertical: 8,),
@@ -99,6 +104,8 @@ class _PromotionalBannerState extends State<PromotionalBanner> {
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
                                 ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ],

@@ -28,16 +28,16 @@ class ImportPreviewTable extends StatelessWidget {
           rows: rows.map((row) {
             Color? rowColor;
             if (row['status'] == 'Error') {
-              rowColor = Colors.red.withOpacity(0.1);
+              rowColor = Colors.red.withValues(alpha: 0.1);
             } else if (row['status'] == 'Needs Review') {
-              rowColor = Colors.orange.withOpacity(0.1);
+              rowColor = Colors.orange.withValues(alpha: 0.1);
             } else if (row['status'] == 'Duplicate') {
-              rowColor = Colors.blue.withOpacity(0.1);
+              rowColor = Colors.blue.withValues(alpha: 0.1);
             }
 
             return DataRow(
-              color: MaterialStateProperty.resolveWith<Color?>(
-                  (Set<MaterialState> states) {
+              color: WidgetStateProperty.resolveWith<Color?>(
+                  (Set<WidgetState> states) {
                 return rowColor;
               }),
               cells: [

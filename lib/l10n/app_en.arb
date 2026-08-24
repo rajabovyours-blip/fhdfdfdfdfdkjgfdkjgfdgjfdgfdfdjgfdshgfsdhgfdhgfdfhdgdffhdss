@@ -359,5 +359,8 @@
   "getStarted": "Get Started",
   "errorOccurred": "An error occurred",
   "categoriesNotFound": "Categories not found",
-  "piece": "piece"
+  "piece": "piece",
+  "guestModeTitle": "Please Log In",
+  "guestCartDesc": "Log in to view and manage your cart.",
+  "guestWishlistDesc": "Log in to view your favorite products."
 }

@@ -359,5 +359,8 @@
   "getStarted": "Начать",
   "errorOccurred": "Произошла ошибка",
   "categoriesNotFound": "Категории не найдены",
-  "piece": "шт"
+  "piece": "шт",
+  "guestModeTitle": "Войдите в систему",
+  "guestCartDesc": "Войдите, чтобы просмотреть корзину.",
+  "guestWishlistDesc": "Войдите, чтобы просмотреть избранные товары."
 }

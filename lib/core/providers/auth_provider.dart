@@ -113,6 +113,13 @@ class AuthController extends StateNotifier<AuthState> {
     );
   }
 
+  void clearError() {
+    state.maybeWhen(
+      error: (_) => state = const AuthState.unauthenticated(),
+      orElse: () {},
+    );
+  }
+
   void saveRegistrationData(String fullName, String surname) {
     _tempFullName = fullName;
     _tempSurname = surname;

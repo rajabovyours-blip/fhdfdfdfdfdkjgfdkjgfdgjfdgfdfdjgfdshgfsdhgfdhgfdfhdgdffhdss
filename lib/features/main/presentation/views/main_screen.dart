@@ -10,6 +10,7 @@ import 'package:milliy_metr/features/profile/presentation/views/profile_screen.d
 import 'package:milliy_metr/features/cart/presentation/providers/cart_notifier.dart';
 import 'package:milliy_metr/core/providers/main_navigation_provider.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
+import 'package:milliy_metr/core/providers/auth_provider.dart';
 
 class MainScreen extends ConsumerStatefulWidget {
   final StatefulNavigationShell? navigationShell;
@@ -61,6 +62,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         child: BottomNavigationBar(
           currentIndex: currentIndex,
           onTap: (index) {
+            ref.read(authProvider.notifier).clearError();
             if (widget.navigationShell != null) {
               widget.navigationShell!.goBranch(
                 index,

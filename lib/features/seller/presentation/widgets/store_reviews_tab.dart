@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:milliy_metr/core/providers/auth_provider.dart';
 import 'package:milliy_metr/features/seller/data/datasources/store_review_remote_datasource.dart';
+import 'package:milliy_metr/features/reviews/domain/entities/review_entity.dart';
 
 final storeReviewsProvider =
-    FutureProvider.family<List<StoreReviewEntity>, String>(
+    FutureProvider.family<List<ReviewEntity>, String>(
         (ref, storeId) async {
   final dio = ref.watch(dioProvider);
   final datasource = StoreReviewRemoteDataSourceImpl(dio: dio);
@@ -53,7 +54,7 @@ class StoreReviewsTab extends ConsumerWidget {
                   ],
                 ),
                 const SizedBox(height: 8),
-                Text(review.comment),
+                Text(review.text ?? ''),
               ],
             );
           },

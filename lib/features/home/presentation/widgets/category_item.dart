@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 
 class CategoryItem extends StatelessWidget {
@@ -19,7 +18,7 @@ class CategoryItem extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: SizedBox(
-        width: 72,
+        width: 76,
         child: Column(
           children: [
             Container(

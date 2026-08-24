@@ -39,12 +39,12 @@ import 'package:milliy_metr/features/orders/presentation/views/order_details_scr
 import 'package:milliy_metr/features/wishlist/presentation/views/wishlist_screen.dart';
 import 'package:milliy_metr/features/reviews/presentation/views/all_reviews_screen.dart';
 import 'package:milliy_metr/features/reviews/presentation/views/review_photo_viewer_screen.dart';
+import 'package:milliy_metr/features/seller/presentation/views/store_profile_screen.dart';
 
 import 'package:milliy_metr/features/admin/presentation/views/admin_audit_logs_screen.dart';
 import 'package:milliy_metr/features/admin/presentation/views/admin_categories_screen.dart';
 import 'package:milliy_metr/features/admin/presentation/views/admin_complaints_screen.dart';
 import 'package:milliy_metr/features/admin/presentation/views/admin_dashboard_screen.dart';
-import 'package:milliy_metr/features/admin/presentation/views/admin_login_screen.dart';
 import 'package:milliy_metr/features/admin/presentation/views/admin_orders_screen.dart';
 import 'package:milliy_metr/features/admin/presentation/views/admin_payments_screen.dart';
 import 'package:milliy_metr/features/admin/presentation/views/admin_permissions_screen.dart';
@@ -273,6 +273,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/review-photo',
         builder: (context, state) =>
             ReviewPhotoViewerScreen(photoUrl: state.extra as String),
+      ),
+      GoRoute(
+        path: AppRoutes.sellerProfile,
+        builder: (context, state) =>
+            StoreProfileScreen(storeId: state.pathParameters['id']!),
       ),
 
       // Admin Login Route has been COMPLETELY REMOVED per user instructions

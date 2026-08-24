@@ -1131,4 +1131,13 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get piece => 'dona';
+
+  @override
+  String get guestModeTitle => 'Tizimga kiring';
+
+  @override
+  String get guestCartDesc => 'Savatchani ko\'rish uchun tizimga kiring.';
+
+  @override
+  String get guestWishlistDesc => 'Sevimlilarni ko\'rish uchun tizimga kiring.';
 }

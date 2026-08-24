@@ -166,8 +166,22 @@ class _FilterSheetContentState extends ConsumerState<_FilterSheetContent> {
                     ),
                   ),
                   const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '${_minPrice.round()} UZS',
+                        style: TextStyle(color: context.colors.textMedium),
+                      ),
+                      Text(
+                        '${_maxPrice.round()} UZS',
+                        style: TextStyle(color: context.colors.textMedium),
+                      ),
+                    ],
+                  ),
                   SliderTheme(
                     data: SliderTheme.of(context).copyWith(
+                      minThumbSeparation: 100,
                       valueIndicatorTextStyle: TextStyle(
                         color: context.colors.onPrimary,
                         fontWeight: FontWeight.bold,
@@ -181,10 +195,6 @@ class _FilterSheetContentState extends ConsumerState<_FilterSheetContent> {
                       divisions: 100,
                       activeColor: context.colors.primary,
                       inactiveColor: context.colors.outline,
-                      labels: RangeLabels(
-                        _minPrice.round().toString(),
-                        _maxPrice.round().toString(),
-                      ),
                       onChanged: (values) {
                         setState(() {
                           _minPrice = values.start;
@@ -192,19 +202,6 @@ class _FilterSheetContentState extends ConsumerState<_FilterSheetContent> {
                         });
                       },
                     ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        '${_minPrice.round()} UZS',
-                        style: TextStyle(color: context.colors.textMedium),
-                      ),
-                      Text(
-                        '${_maxPrice.round()} UZS',
-                        style: TextStyle(color: context.colors.textMedium),
-                      ),
-                    ],
                   ),
                   const SizedBox(height: 32),
                   Text(

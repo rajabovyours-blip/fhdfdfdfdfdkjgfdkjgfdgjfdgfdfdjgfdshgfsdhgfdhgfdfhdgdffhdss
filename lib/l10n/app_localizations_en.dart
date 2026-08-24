@@ -1122,4 +1122,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get piece => 'piece';
+
+  @override
+  String get guestModeTitle => 'Please Log In';
+
+  @override
+  String get guestCartDesc => 'Log in to view and manage your cart.';
+
+  @override
+  String get guestWishlistDesc => 'Log in to view your favorite products.';
 }

@@ -49,13 +49,14 @@ dependencies:
   # UI / UX
   cached_network_image: ^3.3.1
   flutter_svg: ^2.0.10
-  shimmer: ^3.0.0
+  shimmer: ^4.0.0
   responsive_builder: ^0.7.0
 
   # System Utilities
   logger: ^2.0.2
   permission_handler: ^11.3.1
   image_picker: ^1.1.1
+  file_picker: ^8.0.3
   connectivity_plus: ^6.0.3
   internet_connection_checker: ^1.0.0+1
   uuid: ^4.6.0

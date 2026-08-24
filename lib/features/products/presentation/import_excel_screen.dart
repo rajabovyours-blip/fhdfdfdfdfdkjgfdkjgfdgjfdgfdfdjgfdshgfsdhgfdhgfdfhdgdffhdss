@@ -17,7 +17,7 @@ class _ImportExcelScreenState extends ConsumerState<ImportExcelScreen> {
   Map<String, dynamic>? _previewData;
 
   Future<void> _pickAndUploadFile() async {
-    final result = await FilePicker.pickFiles(
+    final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['xlsx'],
       withData: true,

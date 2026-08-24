@@ -15,6 +15,11 @@ class MockRemoteDataSource implements AuthRemoteDataSource {
   }
 
   @override
+  Future<TokenModel> adminLogin(String email, String password) async {
+    return const TokenModel(accessToken: 'admin_token', refreshToken: 'admin_refresh');
+  }
+
+  @override
   Future<void> register(String fullName, String phone, String password) async {
     return;
   }

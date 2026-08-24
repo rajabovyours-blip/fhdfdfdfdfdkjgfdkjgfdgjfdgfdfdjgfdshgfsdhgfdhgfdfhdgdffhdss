@@ -214,21 +214,12 @@ class _CategoryProductsScreenState extends ConsumerState<CategoryProductsScreen>
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         sliver: SliverLayoutBuilder(
                           builder: (context, constraints) {
-                            const crossAxisCount = 2;
-                            const crossAxisSpacing = 12.0;
-                            const mainAxisSpacing = 16.0;
-
-                            final availableWidth = constraints.crossAxisExtent;
-                            final cardWidth = (availableWidth - (crossAxisSpacing * (crossAxisCount - 1))) / crossAxisCount;
-                            final cardHeight = cardWidth + 190.0;
-                            final childAspectRatio = cardWidth / cardHeight;
-
                             return SliverGrid(
-                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: crossAxisCount,
-                                crossAxisSpacing: crossAxisSpacing,
-                                mainAxisSpacing: mainAxisSpacing,
-                                childAspectRatio: childAspectRatio,
+                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                mainAxisSpacing: 16,
+                                crossAxisSpacing: 16,
+                                childAspectRatio: 0.75,
                               ),
                               delegate: SliverChildBuilderDelegate(
                                 (context, index) {

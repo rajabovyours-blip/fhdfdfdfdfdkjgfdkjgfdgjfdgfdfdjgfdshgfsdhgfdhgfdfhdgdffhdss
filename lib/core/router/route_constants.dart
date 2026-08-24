@@ -21,6 +21,7 @@ class AppRoutes {
   static const orderDetails = '/order/:id';
   static const orderSuccess = '/order-success';
   static const profile = '/profile';
+  static const sellerProfile = '/seller/:id';
 
   static const profilePersonalInfo = '/profile/personal-info';
   static const profilePaymentMethods = '/profile/payment-methods';
