@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:milliy_metr/shared/components/category_card.dart';
 import 'package:milliy_metr/core/router/route_constants.dart';
-import 'package:milliy_metr/features/catalog/presentation/widgets/catalog_search_bar.dart';
-import 'package:milliy_metr/features/categories/presentation/providers/category_notifier.dart';
 import 'package:milliy_metr/features/catalog/presentation/providers/catalog_notifier.dart';
+import 'package:milliy_metr/features/categories/presentation/providers/category_notifier.dart';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
 
 class CatalogScreen extends ConsumerStatefulWidget {
@@ -141,7 +140,7 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                         crossAxisCount: 3,
                         crossAxisSpacing: 12,
                         mainAxisSpacing: 16,
-                        childAspectRatio: 0.75, // Adjust for image and 2 lines of text
+                        childAspectRatio: 0.85, // Updated aspect ratio
                       ),
                       delegate: SliverChildBuilderDelegate(
                         (context, index) {
@@ -154,69 +153,7 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                                 AppRoutes.categoryProducts.replaceAll(':id', category.id),
                               );
                             },
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                // Category Image
-                                Expanded(
-                                  child: Container(
-                                    width: double.infinity,
-                                    clipBehavior: Clip.hardEdge,
-                                    decoration: BoxDecoration(
-                                      color: context.colors.surfaceVariant,
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                        color: context.colors.outline.withValues(alpha: 0.1),
-                                        width: 1,
-                                      ),
-                                    ),
-                                    child: Builder(
-                                      builder: (context) {
-                                        final imagePath = (category.imageUrl != null && category.imageUrl!.isNotEmpty)
-                                            ? category.imageUrl!
-                                            : (category.iconUrl ?? '');
-
-                                        if (imagePath.isEmpty) {
-                                          return Icon(Icons.category, color: context.colors.primary, size: 28);
-                                        }
-                                        if (imagePath.startsWith('assets/')) {
-                                          return Image.asset(
-                                            imagePath,
-                                            fit: BoxFit.cover,
-                                            errorBuilder: (context, error, stackTrace) =>
-                                                Icon(Icons.category, color: context.colors.primary, size: 28),
-                                          );
-                                        }
-                                        return CachedNetworkImage(
-                                          imageUrl: imagePath,
-                                          fit: BoxFit.cover,
-                                          memCacheWidth: 150,
-                                          memCacheHeight: 150,
-                                          errorWidget: (_, __, ___) =>
-                                              Icon(Icons.category, color: context.colors.primary, size: 28),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                // Category name
-                                Text(
-                                  category.name.get(
-                                    Localizations.localeOf(context).languageCode,
-                                  ),
-                                  style: TextStyle(
-                                    color: context.colors.textHigh,
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w500,
-                                    height: 1.2,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
+                            child: CategoryCard(category: category),
                           );
                         },
                         childCount: displayCategories.length,

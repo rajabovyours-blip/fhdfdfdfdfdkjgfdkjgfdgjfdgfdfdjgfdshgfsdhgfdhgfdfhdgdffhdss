@@ -50,18 +50,26 @@ class ProductImage extends StatelessWidget {
   }
 
   Widget _buildNeedsImageFallback(BuildContext context) {
-    return Container(
-      height: height,
-      width: width,
-      color: Colors.grey[200],
-      child: Center(
-        child: Shimmer.fromColors(
-          baseColor: Colors.grey[300]!,
-          highlightColor: Colors.grey[100]!,
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final baseColor = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E8E8);
+    final highlightColor = isDark ? const Color(0xFF2C2C2C) : const Color(0xFFF5F5F5);
+    final logoColor = isDark ? Colors.white.withValues(alpha: 0.12) : Colors.black.withValues(alpha: 0.08);
+
+    return Shimmer.fromColors(
+      baseColor: baseColor,
+      highlightColor: highlightColor,
+      child: Container(
+        decoration: BoxDecoration(
+          color: baseColor,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Center(
           child: Image.asset(
             'assets/images/milliy_metr_logo_transparent.png',
-            width: width * 0.5,
-            height: height * 0.5,
+            color: logoColor,
+            width: 70,
+            height: 70,
             fit: BoxFit.contain,
           ),
         ),

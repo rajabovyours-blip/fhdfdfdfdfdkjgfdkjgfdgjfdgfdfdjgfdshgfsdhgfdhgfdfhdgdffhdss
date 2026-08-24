@@ -472,11 +472,11 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
         return GridView.builder(
           padding: const EdgeInsets.all(16),
           physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: crossAxisCount,
             mainAxisSpacing: mainAxisSpacing,
             crossAxisSpacing: crossAxisSpacing,
-            childAspectRatio: 0.75,
+            childAspectRatio: 0.68,
           ),
           itemCount: 6,
           itemBuilder: (context, index) {

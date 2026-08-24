@@ -11,41 +11,61 @@ class CategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          width: 64,
-          height: 64,
-          clipBehavior: Clip.hardEdge,
-          decoration: BoxDecoration(
-            color: context.colors.surfaceVariant,
-            shape: BoxShape.circle,
-          ),
-          child: Builder(
-            builder: (context) {
-              final assetPath = CategoryAssetHelper.getAssetPath(
-                category.id,
-                category.name.get('en'),
-              );
+    return Container(
+      decoration: BoxDecoration(
+        color: context.colors.surface,
+        borderRadius: BorderRadius.circular(16.0),
+        border: Border.all(
+          color: context.colors.outline.withValues(alpha: 0.2),
+          width: 1,
+        ),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 52,
+            height: 52,
+            clipBehavior: Clip.hardEdge,
+            decoration: BoxDecoration(
+              color: context.colors.surfaceVariant,
+              shape: BoxShape.circle,
+            ),
+            child: Builder(
+              builder: (context) {
+                final assetPath = CategoryAssetHelper.getAssetPath(
+                  category.id,
+                  category.name.get('en'),
+                );
 
-              return Image.asset(
-                assetPath,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    CategoryCard.getSemanticIconWidget(category, context),
-              );
-            },
+                return Image.asset(
+                  assetPath,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) =>
+                      CategoryCard.getSemanticIconWidget(category, context, size: 24),
+                );
+              },
+            ),
           ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          category.name.get(Localizations.localeOf(context).languageCode),
-          style: TextStyle(color: context.colors.textHigh, fontSize: 12),
-          textAlign: TextAlign.center,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        ),
-      ],
+          const SizedBox(height: 8),
+          Expanded(
+            child: Center(
+              child: Text(
+                category.name.get(Localizations.localeOf(context).languageCode),
+                style: TextStyle(
+                  color: context.colors.textHigh, 
+                  fontSize: 11.5,
+                  height: 1.2,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
