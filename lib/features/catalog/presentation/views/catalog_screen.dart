@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:milliy_metr/shared/components/category_card.dart';
 import 'package:milliy_metr/core/router/route_constants.dart';
+import 'package:milliy_metr/features/catalog/presentation/widgets/catalog_search_bar.dart';
 import 'package:milliy_metr/features/catalog/presentation/providers/catalog_notifier.dart';
 import 'package:milliy_metr/features/categories/presentation/providers/category_notifier.dart';
 
@@ -50,7 +51,7 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
           onRefresh: () => ref.read(categoryNotifierProvider.notifier).loadCategories(),
           child: CustomScrollView(
             slivers: [
-              const SliverToBoxAdapter(child: CatalogSearchBar()),
+              SliverToBoxAdapter(child: CatalogSearchBar()),
               const SliverToBoxAdapter(child: SizedBox(height: 8)),
               
               state.maybeWhen(
