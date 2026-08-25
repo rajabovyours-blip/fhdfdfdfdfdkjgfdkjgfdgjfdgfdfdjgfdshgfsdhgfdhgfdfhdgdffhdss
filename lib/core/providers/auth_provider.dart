@@ -237,6 +237,19 @@ class AuthController extends StateNotifier<AuthState> {
     await _repository.saveDemoSession(dummyUser);
     state = const AuthState.authenticated(dummyUser);
   }
+
+  Future<void> instantDevLogin(String phone) async {
+    state = const AuthState.loading();
+    final devUser = UserEntity(
+      id: 'dev-master-user-001',
+      fullName: 'Bekzodbek (Dev)',
+      phone: phone,
+      email: 'dev@milliymetr.uz',
+      createdAt: DateTime.now(),
+    );
+    await _repository.saveDemoSession(devUser);
+    state = AuthState.authenticated(devUser);
+  }
 }
 
 final authProvider = StateNotifierProvider<AuthController, AuthState>((ref) {

@@ -11,7 +11,8 @@ class CategoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final borderColor = isDark ? const Color(0xFF262A36) : const Color(0xFFE5E7EB);
+    final surfaceColor = isDark ? const Color(0xFF16181F) : Colors.white;
+    final borderColor = isDark ? Colors.white.withOpacity(0.06) : const Color(0xFFE5E7EB);
 
     final assetPath = CategoryAssetHelper.getAssetPath(
       category.id,
@@ -20,8 +21,8 @@ class CategoryCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: context.colors.surface,
-        borderRadius: BorderRadius.circular(16.0),
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(14.0),
         border: Border.all(
           color: borderColor,
           width: 1,

@@ -35,25 +35,15 @@ class HomeNotifier extends StateNotifier<FeatureState<HomeData>> {
 
     if (!mounted) return;
 
-    if (bannerResult.isLeft() ||
-        categoryResult.isLeft() ||
-        productResult.isLeft()) {
-      final failure = bannerResult.fold(
-        (l) => l,
-        (r) => categoryResult.fold(
-          (l) => l,
-          (r) => productResult.fold((l) => l, (r) => null),
-        ),
-      );
-      state = FeatureState.error(failure!.message);
-      return;
-    }
+    final banners = bannerResult.fold((l) => <BannerEntity>[], (r) => r);
+    final categories = categoryResult.fold((l) => <CategoryEntity>[], (r) => r);
+    final products = productResult.fold((l) => <ProductEntity>[], (r) => r);
 
     state = FeatureState.loaded(
       HomeData(
-        banners: bannerResult.getRight().toNullable()!,
-        categories: categoryResult.getRight().toNullable()!,
-        featuredProducts: productResult.getRight().toNullable()!,
+        banners: banners,
+        categories: categories,
+        featuredProducts: products,
       ),
     );
   }

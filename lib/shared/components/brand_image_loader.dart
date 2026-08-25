@@ -21,8 +21,8 @@ class BrandImageLoader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final baseColor = isDark ? const Color(0xFF16181F) : const Color(0xFFE5E7EB);
-    final highlightColor = isDark ? const Color(0xFF282D3B) : const Color(0xFFF9FAFB);
+    final baseColor = isDark ? const Color(0xFF1E222D) : const Color(0xFFE5E7EB);
+    final highlightColor = isDark ? const Color(0xFF2D3342) : const Color(0xFFF9FAFB);
 
     Widget buildShimmerPlaceholder() {
       return Shimmer.fromColors(
@@ -37,13 +37,13 @@ class BrandImageLoader extends StatelessWidget {
           ),
           child: Center(
             child: Opacity(
-              opacity: 0.35,
+              opacity: 0.45,
               child: Image.asset(
                 'assets/images/milliy_metr_logo.png',
-                width: (width != null) ? (width! * 0.42).clamp(24.0, 56.0) : 42.0,
+                width: (width != null) ? (width! * 0.45).clamp(24.0, 56.0) : 42.0,
                 fit: BoxFit.contain,
                 errorBuilder: (_, __, ___) => const Icon(
-                  Icons.construction,
+                  Icons.construction_rounded,
                   color: Color(0xFFFF7A00),
                   size: 28,
                 ),

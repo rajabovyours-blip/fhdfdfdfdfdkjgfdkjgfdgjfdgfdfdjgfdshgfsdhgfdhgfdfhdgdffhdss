@@ -66,7 +66,7 @@ class SearchScreen extends ConsumerWidget {
                     crossAxisCount: 2,
                     mainAxisSpacing: 16,
                     crossAxisSpacing: 16,
-                    childAspectRatio: 0.68,
+                    childAspectRatio: 0.55,
                   ),
                   itemCount: products.length,
                   itemBuilder: (context, index) =>
