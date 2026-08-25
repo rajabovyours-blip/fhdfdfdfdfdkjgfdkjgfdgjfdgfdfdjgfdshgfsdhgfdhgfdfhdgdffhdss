@@ -188,7 +188,7 @@ class _FilterSheetContentState extends ConsumerState<_FilterSheetContent> {
                       ),
                       valueIndicatorColor: context.colors.primary,
                     ),
-                    Builder(
+                    child: Builder(
                       builder: (context) {
                         double minVal = 0;
                         double maxVal = 10000000;
