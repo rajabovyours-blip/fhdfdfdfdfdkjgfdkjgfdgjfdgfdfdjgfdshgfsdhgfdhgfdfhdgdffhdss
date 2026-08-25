@@ -91,7 +91,6 @@ flutter:
     - assets/images/milliy_metr_logo_transparent.png
     - assets/svg/
     - .env
-    - shorebird.yaml
 
 flutter_launcher_icons:
   android: "launcher_icon"
