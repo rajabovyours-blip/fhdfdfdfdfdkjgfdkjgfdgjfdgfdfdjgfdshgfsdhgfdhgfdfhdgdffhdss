@@ -194,7 +194,7 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 16.0),
                             child: Text(
-                              '🇺🇿 +998',
+                              '+998',
                               style: TextStyle(
                                 color: context.colors.textHigh,
                                 fontSize: 16,

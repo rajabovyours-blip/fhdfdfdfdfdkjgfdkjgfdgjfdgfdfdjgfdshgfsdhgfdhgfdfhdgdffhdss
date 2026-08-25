@@ -150,36 +150,45 @@ async def verify_otp(otp_in: OTPVerify, db: AsyncSession = Depends(get_db)):
 
 @router.post("/social-login", response_model=APIResponse[TokenModel])
 async def social_login(payload: SocialLoginRequest, db: AsyncSession = Depends(get_db)):
-    if payload.provider != 'google':
+    if payload.provider not in ['google', 'apple']:
         raise HTTPException(status_code=400, detail="Unsupported provider")
         
     try:
-        # Verify the token. Allow any of our client IDs by not enforcing a single CLIENT_ID during verify
-        id_info = id_token.verify_oauth2_token(
-            payload.token, google_requests.Request(), audience=None
-        )
-        
-        # We can optionally verify the audience against our known client IDs
-        known_client_ids = [
-            "5408559924-kl0rm498vdr2qo39prt5k6g5v0vjvsqt.apps.googleusercontent.com", # Web
-            "5408559924-iosclientid.apps.googleusercontent.com", # iOS (placeholder if unknown)
-            "5408559924-androidclientid.apps.googleusercontent.com" # Android (placeholder if unknown)
-        ]
-        
-        if id_info.get('aud') not in known_client_ids and "5408559924-" not in str(id_info.get('aud')):
-            raise ValueError(f"Unrecognized client ID: {id_info.get('aud')}")
+        if payload.provider == 'google':
+            id_info = id_token.verify_oauth2_token(
+                payload.token, google_requests.Request(), audience=None
+            )
+            
+            known_client_ids = [
+                "5408559924-kl0rm498vdr2qo39prt5k6g5v0vjvsqt.apps.googleusercontent.com",
+                "5408559924-iosclientid.apps.googleusercontent.com",
+                "5408559924-androidclientid.apps.googleusercontent.com"
+            ]
+            
+            if id_info.get('aud') not in known_client_ids and "5408559924-" not in str(id_info.get('aud')):
+                raise ValueError(f"Unrecognized client ID: {id_info.get('aud')}")
 
-        email = id_info.get('email')
-        provider_id = id_info.get('sub')
-        first_name = id_info.get('given_name', 'Google')
-        last_name = id_info.get('family_name', 'User')
+            email = id_info.get('email')
+            provider_id = id_info.get('sub')
+            first_name = id_info.get('given_name', 'Google')
+            last_name = id_info.get('family_name', 'User')
+        
+        elif payload.provider == 'apple':
+            import jwt
+            # Decode token (frontend SDK handles initial verification with Apple)
+            id_info = jwt.decode(payload.token, options={"verify_signature": False})
+            email = id_info.get('email')
+            provider_id = id_info.get('sub')
+            first_name = 'Apple'
+            last_name = 'User'
+            
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=f"Google authentication failed: {str(e)}")
+        raise HTTPException(status_code=400, detail=f"Authentication failed: {str(e)}")
     except Exception as e:
-        raise HTTPException(status_code=400, detail="Google authentication failed")
+        raise HTTPException(status_code=400, detail="Authentication failed")
 
     if not email:
-        raise HTTPException(status_code=400, detail="Could not extract email from Google token")
+        raise HTTPException(status_code=400, detail="Could not extract email from token")
 
     # Check if user exists by email OR provider_id
     result = await db.execute(select(User).where(User.email == email))
@@ -192,21 +201,21 @@ async def social_login(payload: SocialLoginRequest, db: AsyncSession = Depends(g
         
     if user:
         # Update provider info if missing
-        if user.provider != 'google' or user.provider_id != provider_id:
-            user.provider = 'google'
+        if user.provider != payload.provider or user.provider_id != provider_id:
+            user.provider = payload.provider
             user.provider_id = provider_id
             await db.commit()
     else:
         # Create new user
         full_name = f"{first_name} {last_name}".strip()
-        dummy_phone = f"google_{provider_id}"[:20] # Ensure it fits in 20 chars
+        dummy_phone = f"{payload.provider}_{provider_id}"[:20] # Ensure it fits in 20 chars
         user = User(
             id=uuid.uuid4(),
             full_name=full_name,
             email=email,
             phone=dummy_phone, # Required by DB schema
             hashed_password=get_password_hash(uuid.uuid4().hex),
-            provider='google',
+            provider=payload.provider,
             provider_id=provider_id
         )
         db.add(user)

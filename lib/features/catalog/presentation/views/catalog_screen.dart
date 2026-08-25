@@ -141,7 +141,7 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                         crossAxisCount: 3,
                         crossAxisSpacing: 12,
                         mainAxisSpacing: 16,
-                        childAspectRatio: 0.85, // Updated aspect ratio
+                        childAspectRatio: 1.15, // Updated aspect ratio
                       ),
                       delegate: SliverChildBuilderDelegate(
                         (context, index) {

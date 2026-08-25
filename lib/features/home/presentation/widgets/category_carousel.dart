@@ -23,7 +23,7 @@ class CategoryCarousel extends ConsumerWidget {
         final displayCategories = categories.take(10).toList();
         
         return SizedBox(
-          height: 96,
+          height: 120,
           child: ListView.separated(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             scrollDirection: Axis.horizontal,

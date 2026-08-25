@@ -5,7 +5,7 @@ import 'package:milliy_metr/core/router/route_constants.dart';
 import 'package:milliy_metr/core/utils/app_formatters.dart';
 import 'package:milliy_metr/features/wishlist/presentation/providers/wishlist_notifier.dart';
 import 'package:milliy_metr/features/cart/presentation/providers/cart_notifier.dart';
-import 'package:milliy_metr/shared/components/product_image.dart';
+import 'package:milliy_metr/shared/components/brand_image_loader.dart';
 import 'package:go_router/go_router.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
@@ -97,16 +97,15 @@ class _ProductCardState extends ConsumerState<ProductCard> {
           children: [
             // Image Area
             AspectRatio(
-              aspectRatio: 1, // Fixed aspect ratio for image
+              aspectRatio: 1.0,
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  ProductImage(
+                  BrandImageLoader(
                     imageUrl: widget.product.images.isNotEmpty
                         ? widget.product.images.first
                         : null,
-                    fallbackSeed: widget.product.name
-                        .get(Localizations.localeOf(context).languageCode),
+                    borderRadius: 0,
                   ),
 
                   // Favorite Button
@@ -122,15 +121,14 @@ class _ProductCardState extends ConsumerState<ProductCard> {
                         child: Container(
                           padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
-                            color: context.colors.background
-                                .withValues(alpha: 0.6),
+                            color: context.colors.background.withValues(alpha: 0.6),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
                             isFavorite ? Icons.favorite : Icons.favorite_border,
                             size: 18,
                             color: isFavorite
-                                ? context.colors.primary
+                                ? const Color(0xFFFF7A00)
                                 : context.colors.onPrimary,
                           ),
                         ),
@@ -149,13 +147,13 @@ class _ProductCardState extends ConsumerState<ProductCard> {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: context.colors.primary,
+                          color: const Color(0xFFFF3B30),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
                           '-${widget.product.discount!.toStringAsFixed(0)}%',
-                          style: TextStyle(
-                            color: context.colors.textHigh,
+                          style: const TextStyle(
+                            color: Colors.white,
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
                           ),
@@ -167,13 +165,13 @@ class _ProductCardState extends ConsumerState<ProductCard> {
             ),
 
             // Details Area
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Top Info Group
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -185,19 +183,19 @@ class _ProductCardState extends ConsumerState<ProductCard> {
                           style: TextStyle(
                             color: context.colors.textHigh,
                             fontSize: 13,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w600,
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 4),
-                        // Rating
+                        // Rating & Seller
                         Row(
                           children: [
-                            Icon(
-                              Icons.star,
+                            const Icon(
+                              Icons.star_rounded,
                               size: 14,
-                              color: context.colors.warning,
+                              color: Color(0xFFFFB800),
                             ),
                             const SizedBox(width: 4),
                             Text(
@@ -208,117 +206,94 @@ class _ProductCardState extends ConsumerState<ProductCard> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            const SizedBox(width: 4),
-                            Text(
-                              '(${widget.product.reviewCount})',
-                              style: TextStyle(
-                                color: context.colors.textMedium,
-                                fontSize: 11,
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                widget.product.brand ?? 'Milliy Qurilish',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: context.colors.textMedium,
+                                  fontSize: 11,
+                                ),
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 4),
-
-                        // Seller
-                        Text(
-                          widget.product.brand ?? 'Milliy Qurilish',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: context.colors.textMedium,
-                            fontSize: 11,
-                          ),
-                        ),
-
-                        if (widget.showStock) ...[
-                          const SizedBox(height: 4),
-                          Text(
-                            widget.product.stock > 0
-                                ? context.l10n.inStock(
-                                    widget.product.stock,
-                                    widget.product.unit == 'piece'
-                                        ? context.l10n.piece
-                                        : widget.product.unit,
-                                  )
-                                : context.l10n.outOfStock,
-                            style: TextStyle(
-                              color: widget.product.stock > 0
-                                  ? context.colors.success
-                                  : context.colors.danger,
-                              fontSize: 11,
-                            ),
-                          ),
-                        ],
                       ],
                     ),
-                    const SizedBox(height: 6),
-
+                    
                     // Price and Action Group
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        if (widget.product.oldPrice != null &&
-                            widget.product.oldPrice! > widget.product.price)
-                          Text(
-                            AppFormatters.currency(
-                              widget.product.oldPrice!,
-                              Localizations.localeOf(context).languageCode,
-                            ),
-                            style: TextStyle(
-                              color: context.colors.textMedium,
-                              fontSize: 10,
-                              decoration: TextDecoration.lineThrough,
-                            ),
-                          ),
-                        Text(
-                          AppFormatters.currency(
-                            widget.product.price,
-                            Localizations.localeOf(context).languageCode,
-                          ),
-                          style: TextStyle(
-                            color: context.colors.textHigh,
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (widget.product.oldPrice != null &&
+                                  widget.product.oldPrice! > widget.product.price)
+                                Text(
+                                  AppFormatters.currency(
+                                    widget.product.oldPrice!,
+                                    Localizations.localeOf(context).languageCode,
+                                  ),
+                                  style: TextStyle(
+                                    color: context.colors.textMedium,
+                                    fontSize: 10,
+                                    decoration: TextDecoration.lineThrough,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              Text(
+                                AppFormatters.currency(
+                                  widget.product.price,
+                                  Localizations.localeOf(context).languageCode,
+                                ),
+                                style: const TextStyle(
+                                  color: Color(0xFFFF7A00),
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
                           ),
                         ),
-                        if (widget.showCartAction &&
-                            widget.product.stock > 0) ...[
-                          const SizedBox(height: 6),
-                          SizedBox(
-                            width: double.infinity,
-                            height: 32,
-                            child: ElevatedButton(
-                              onPressed: _isLoading
-                                  ? null
-                                  : (isInCart
-                                      ? () => context.push(AppRoutes.cart)
-                                      : _addToCart),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: isInCart
+                        if (widget.showCartAction && widget.product.stock > 0) ...[
+                          const SizedBox(width: 4),
+                          GestureDetector(
+                            onTap: _isLoading
+                                ? null
+                                : (isInCart
+                                    ? () => context.push(AppRoutes.cart)
+                                    : _addToCart),
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: isInCart
                                     ? context.colors.success
-                                    : context.colors.primary,
-                                padding: EdgeInsets.zero,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
+                                    : const Color(0xFFFF7A00),
+                                borderRadius: BorderRadius.circular(8),
                               ),
                               child: _isLoading
-                                  ? SizedBox(
-                                      height: 14,
-                                      width: 14,
+                                  ? const SizedBox(
+                                      height: 18,
+                                      width: 18,
                                       child: CircularProgressIndicator(
-                                        color: context.colors.onPrimary,
+                                        color: Colors.white,
                                         strokeWidth: 2,
                                       ),
                                     )
-                                  : Text(
-                                      isInCart ? context.l10n.inCart : context.l10n.addToCart,
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: context.colors.onPrimary,
-                                        fontWeight: FontWeight.w600,
-                                      ),
+                                  : Icon(
+                                      isInCart
+                                          ? Icons.check
+                                          : Icons.add_shopping_cart,
+                                      size: 18,
+                                      color: Colors.white,
                                     ),
                             ),
                           ),
@@ -328,6 +303,7 @@ class _ProductCardState extends ConsumerState<ProductCard> {
                   ],
                 ),
               ),
+            ),
           ],
         ),
       ),

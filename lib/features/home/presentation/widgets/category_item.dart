@@ -18,23 +18,23 @@ class CategoryItem extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: SizedBox(
-        width: 76,
+        width: 82,
         child: Column(
           children: [
             Container(
-              width: 56,
-              height: 56,
+              width: 64,
+              height: 64,
               decoration: BoxDecoration(
                 color: context.colors.surface,
-                shape: BoxShape.circle,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: context.colors.outline.withValues(alpha: 0.5)),
               ),
-              child: ClipOval(
-                child: Image.asset(
-                  iconAsset,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) =>
-                      Icon(Icons.category, color: context.colors.primary),
-                ),
+              clipBehavior: Clip.hardEdge,
+              child: Image.asset(
+                iconAsset,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) =>
+                    Icon(Icons.category, color: context.colors.primary),
               ),
             ),
             const SizedBox(height: 8),
@@ -46,6 +46,7 @@ class CategoryItem extends StatelessWidget {
               style: TextStyle(
                 color: context.colors.textHigh,
                 fontSize: 12,
+                fontWeight: FontWeight.w500,
                 height: 1.1,
               ),
             ),

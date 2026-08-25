@@ -188,19 +188,30 @@ class _FilterSheetContentState extends ConsumerState<_FilterSheetContent> {
                       ),
                       valueIndicatorColor: context.colors.primary,
                     ),
-                    child: RangeSlider(
-                      values: RangeValues(_minPrice, _maxPrice),
-                      min: 0,
-                      max: 10000000,
-                      divisions: 100,
-                      activeColor: context.colors.primary,
-                      inactiveColor: context.colors.outline,
-                      onChanged: (values) {
-                        setState(() {
-                          _minPrice = values.start;
-                          _maxPrice = values.end;
-                        });
-                      },
+                    Builder(
+                      builder: (context) {
+                        double minVal = 0;
+                        double maxVal = 10000000;
+                        double currentMin = _minPrice;
+                        double currentMax = _maxPrice > _minPrice ? _maxPrice : _minPrice + 1;
+                        int divisions = ((maxVal - minVal) / 1000).clamp(1, 10000).toInt();
+                        if (divisions < 1) divisions = 1;
+
+                        return RangeSlider(
+                          values: RangeValues(currentMin.clamp(minVal, maxVal), currentMax.clamp(minVal, maxVal)),
+                          min: minVal,
+                          max: maxVal,
+                          divisions: divisions,
+                          activeColor: context.colors.primary,
+                          inactiveColor: context.colors.outline,
+                          onChanged: (values) {
+                            setState(() {
+                              _minPrice = values.start;
+                              _maxPrice = values.end;
+                            });
+                          },
+                        );
+                      }
                     ),
                   ),
                   const SizedBox(height: 32),

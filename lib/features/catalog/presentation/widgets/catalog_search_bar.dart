@@ -69,7 +69,7 @@ class _CatalogSearchBarState extends ConsumerState<CatalogSearchBar> {
             prefixIcon: Icon(Icons.search, color: context.colors.textMedium),
             suffixIcon: _controller.text.isNotEmpty
                 ? IconButton(
-                    icon: Icon(Icons.clear, color: context.colors.textMedium),
+                    icon: Icon(Icons.close, color: context.colors.textMedium),
                     onPressed: () {
                       _controller.clear();
                       _onSearchChanged('');

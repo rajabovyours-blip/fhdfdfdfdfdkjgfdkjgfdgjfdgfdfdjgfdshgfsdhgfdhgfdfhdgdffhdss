@@ -387,18 +387,28 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 onTap: isLoading ? () {} : _handleGoogleLogin,
               ),
               
-              if (Platform.isIOS || Platform.isMacOS) ...[
-                const SizedBox(height: 12),
-                _SocialButton(
-                  label: context.l10n.continueWithApple,
-                  iconWidget: Icon(
-                    Icons.apple,
-                    size: 28,
-                    color: context.colors.textHigh,
-                  ),
-                  onTap: isLoading ? () {} : _handleAppleLogin,
-                ),
-              ],
+              const SizedBox(height: 12),
+              Builder(
+                builder: (context) {
+                  final isDark = Theme.of(context).brightness == Brightness.dark;
+                  final bgColor = isDark ? const Color(0xFF1E222D) : const Color(0xFF000000);
+                  final borderColor = isDark ? const Color(0xFF2E3342) : const Color(0xFF000000);
+                  final fgColor = Colors.white;
+
+                  return _SocialButton(
+                    label: context.l10n.continueWithApple,
+                    backgroundColor: bgColor,
+                    borderColor: borderColor,
+                    textColor: fgColor,
+                    iconWidget: Icon(
+                      Icons.apple,
+                      size: 28,
+                      color: fgColor,
+                    ),
+                    onTap: isLoading ? () {} : _handleAppleLogin,
+                  );
+                },
+              ),
 
               const Spacer(flex: 3),
               
@@ -462,11 +472,17 @@ class _SocialButton extends StatelessWidget {
   final String label;
   final Widget iconWidget;
   final VoidCallback onTap;
+  final Color? backgroundColor;
+  final Color? borderColor;
+  final Color? textColor;
 
   const _SocialButton({
     required this.label,
     required this.iconWidget,
     required this.onTap,
+    this.backgroundColor,
+    this.borderColor,
+    this.textColor,
   });
 
   @override
@@ -477,8 +493,8 @@ class _SocialButton extends StatelessWidget {
       child: Container(
         height: 56,
         decoration: BoxDecoration(
-          color: context.colors.surface,
-          border: Border.all(color: context.colors.outline),
+          color: backgroundColor ?? context.colors.surface,
+          border: Border.all(color: borderColor ?? context.colors.outline),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Row(
@@ -490,7 +506,7 @@ class _SocialButton extends StatelessWidget {
               child: Text(
                 label,
                 style: TextStyle(
-                  color: context.colors.textHigh,
+                  color: textColor ?? context.colors.textHigh,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
