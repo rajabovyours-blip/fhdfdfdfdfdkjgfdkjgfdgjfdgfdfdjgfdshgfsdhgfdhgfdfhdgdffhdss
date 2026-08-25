@@ -245,7 +245,6 @@ class AuthController extends StateNotifier<AuthState> {
       fullName: 'Bekzodbek (Dev)',
       phone: phone,
       email: 'dev@milliymetr.uz',
-      createdAt: DateTime.now(),
     );
     await _repository.saveDemoSession(devUser);
     state = AuthState.authenticated(devUser);
