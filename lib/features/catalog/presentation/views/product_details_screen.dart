@@ -280,7 +280,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // 1. Seller / Manufacturer
+                              // 1. Brand / Manufacturer
                               Text(
                                 product.brand ?? 'Milliy Qurilish',
                                 style: TextStyle(

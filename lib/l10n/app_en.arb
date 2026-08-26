@@ -199,7 +199,7 @@
   "totalProducts": "Products",
   "pendingActions": "Pending Actions",
   "complaints": "Complaints",
-  "sellerDashboard": "Seller Dashboard",
+
   "salesOverview": "Sales Overview",
   "todaySales": "Today's Sales",
   "totalSales": "Total Sales",
@@ -309,7 +309,7 @@
   "retail": "Retail",
   "applyFilters": "Apply Filters",
   "registrationSubmitted": "Registration submitted",
-  "becomeASeller": "Become a Seller",
+
   "orderDetails": "Order Details",
   "verificationStatus": "Verification Status",
   "storeProfileUpdated": "Store Profile Updated",

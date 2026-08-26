@@ -629,9 +629,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get complaints => 'Жалобы';
 
   @override
-  String get sellerDashboard => 'Панель продавца';
-
-  @override
   String get salesOverview => 'Обзор продаж';
 
   @override
@@ -965,9 +962,6 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get registrationSubmitted => 'Регистрация отправлена';
-
-  @override
-  String get becomeASeller => 'Стать продавцом';
 
   @override
   String get orderDetails => 'Детали заказа';

@@ -40,41 +40,26 @@ async def seed():
         )
         db.add(admin)
         
-        print("Creating seller user...")
-        seller = User(
-            full_name="Premium Seller",
-            phone="+998901234568",
-            hashed_password=get_password_hash("seller123"),
-            role=RoleEnum.SELLER
-        )
-        db.add(seller)
-        
-        print("Creating customer user...")
-        customer = User(
-            full_name="John Doe",
-            phone="+998901234569",
-            hashed_password=get_password_hash("customer123"),
-            role=RoleEnum.USER
-        )
-        db.add(customer)
-        
-        print("Creating categories...")
-        cat1 = Category(
-            name={"uz": "Elektronika", "ru": "Электроника", "en": "Electronics"},
-            description={"uz": "Barcha elektronika", "ru": "Вся электроника", "en": "All electronics"},
-            icon_url="https://example.com/icon.png",
-            is_featured=True
-        )
-        db.add(cat1)
-        await db.commit() # Commit to get ID
+        print("Creating 61 standard categories...")
+        categories = []
+        for i in range(1, 62):
+            cat = Category(
+                name={"uz": f"Kategoriya {i}", "ru": f"Категория {i}", "en": f"Category {i}"},
+                description={"uz": f"Tavsif {i}", "ru": f"Описание {i}", "en": f"Description {i}"},
+                icon_url=f"assets/images/categories/cat-{i}.webp",
+                is_featured=(i <= 8)
+            )
+            db.add(cat)
+            categories.append(cat)
+            
+        await db.commit() # Commit to get IDs
         
         print("Creating products...")
         prod1 = Product(
             name={"uz": "Smartfon iPhone 15", "ru": "Смартфон iPhone 15", "en": "iPhone 15 Smartphone"},
             description={"uz": "Zo'r telefon", "ru": "Отличный телефон", "en": "Great phone"},
             price=12000000.0,
-            category_id=cat1.id,
-            seller_id=seller.id,
+            category_id=categories[0].id,
             stock=10
         )
         db.add(prod1)

@@ -184,7 +184,7 @@ class _ProductCardState extends ConsumerState<ProductCard> {
                           overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 4),
-                        // Rating & Seller
+                        // Rating & Brand
                         Row(
                           children: [
                             const Icon(

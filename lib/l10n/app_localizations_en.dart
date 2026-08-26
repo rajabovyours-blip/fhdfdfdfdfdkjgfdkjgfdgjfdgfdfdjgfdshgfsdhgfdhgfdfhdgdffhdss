@@ -629,9 +629,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get complaints => 'Complaints';
 
   @override
-  String get sellerDashboard => 'Seller Dashboard';
-
-  @override
   String get salesOverview => 'Sales Overview';
 
   @override
@@ -966,9 +963,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get registrationSubmitted => 'Registration submitted';
-
-  @override
-  String get becomeASeller => 'Become a Seller';
 
   @override
   String get orderDetails => 'Order Details';

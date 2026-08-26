@@ -199,7 +199,7 @@
   "totalProducts": "Товары",
   "pendingActions": "Ожидающие действия",
   "complaints": "Жалобы",
-  "sellerDashboard": "Панель продавца",
+
   "salesOverview": "Обзор продаж",
   "todaySales": "Продажи за сегодня",
   "totalSales": "Всего продаж",
@@ -309,7 +309,7 @@
   "retail": "В розницу",
   "applyFilters": "Применить фильтры",
   "registrationSubmitted": "Регистрация отправлена",
-  "becomeASeller": "Стать продавцом",
+
   "orderDetails": "Детали заказа",
   "verificationStatus": "Статус верификации",
   "storeProfileUpdated": "Профиль магазина обновлен",

@@ -635,9 +635,6 @@ class AppLocalizationsUz extends AppLocalizations {
   String get complaints => 'Shikoyatlar';
 
   @override
-  String get sellerDashboard => 'Sotuvchi paneli';
-
-  @override
   String get salesOverview => 'Sotuvlar xulosasi';
 
   @override
@@ -975,9 +972,6 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get registrationSubmitted => 'Ro\'yxatdan o\'tish yuborildi';
-
-  @override
-  String get becomeASeller => 'Sotuvchi bo\'lish';
 
   @override
   String get orderDetails => 'Buyurtma tafsilotlari';

@@ -199,7 +199,7 @@
   "totalProducts": "Mahsulotlar",
   "pendingActions": "Kutilayotgan amallar",
   "complaints": "Shikoyatlar",
-  "sellerDashboard": "Sotuvchi paneli",
+
   "salesOverview": "Sotuvlar xulosasi",
   "todaySales": "Bugungi sotuv",
   "totalSales": "Jami sotuv",
@@ -309,7 +309,7 @@
   "retail": "Chakana",
   "applyFilters": "Filtrlarni qo'llash",
   "registrationSubmitted": "Ro'yxatdan o'tish yuborildi",
-  "becomeASeller": "Sotuvchi bo'lish",
+
   "orderDetails": "Buyurtma tafsilotlari",
   "verificationStatus": "Tasdiqlash holati",
   "storeProfileUpdated": "Do'kon profili yangilandi",

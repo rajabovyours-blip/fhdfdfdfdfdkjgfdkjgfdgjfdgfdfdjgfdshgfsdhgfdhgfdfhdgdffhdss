@@ -1294,12 +1294,6 @@ abstract class AppLocalizations {
   /// **'Shikoyatlar'**
   String get complaints;
 
-  /// No description provided for @sellerDashboard.
-  ///
-  /// In uz, this message translates to:
-  /// **'Sotuvchi paneli'**
-  String get sellerDashboard;
-
   /// No description provided for @salesOverview.
   ///
   /// In uz, this message translates to:
@@ -1953,12 +1947,6 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Ro\'yxatdan o\'tish yuborildi'**
   String get registrationSubmitted;
-
-  /// No description provided for @becomeASeller.
-  ///
-  /// In uz, this message translates to:
-  /// **'Sotuvchi bo\'lish'**
-  String get becomeASeller;
 
   /// No description provided for @orderDetails.
   ///
