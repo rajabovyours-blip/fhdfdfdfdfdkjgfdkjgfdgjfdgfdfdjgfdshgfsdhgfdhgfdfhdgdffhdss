@@ -35,35 +35,37 @@ class CategoryCard extends StatelessWidget {
           ),
         ],
       ),
-      clipBehavior: Clip.hardEdge,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Upper 65%
+          // 1. Top Image (Flex 65%)
           Expanded(
             flex: 65,
-            child: BrandImageLoader(
-              imageUrl: assetPath,
-              borderRadius: 0,
+            child: ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(13)),
+              child: BrandImageLoader(
+                imageUrl: assetPath,
+                fit: BoxFit.cover,
+                borderRadius: 0,
+              ),
             ),
           ),
-          // Lower 35%
+          // 2. Bottom Title (Flex 35%)
           Expanded(
             flex: 35,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-              child: Center(
-                child: Text(
-                  category.name.get(Localizations.localeOf(context).languageCode),
-                  style: TextStyle(
-                    color: context.colors.textHigh,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    height: 1.2,
-                  ),
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 4.0),
+              alignment: Alignment.center,
+              child: Text(
+                category.name.get(Localizations.localeOf(context).languageCode),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: context.colors.textHigh,
+                  fontSize: 11.0,
+                  fontWeight: FontWeight.w600,
+                  height: 1.15,
                 ),
               ),
             ),

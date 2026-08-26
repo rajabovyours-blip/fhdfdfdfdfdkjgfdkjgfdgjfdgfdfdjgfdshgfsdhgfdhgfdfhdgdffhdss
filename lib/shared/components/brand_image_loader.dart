@@ -40,7 +40,7 @@ class BrandImageLoader extends StatelessWidget {
               opacity: 0.45,
               child: Image.asset(
                 'assets/images/milliy_metr_logo.png',
-                width: (width != null) ? (width! * 0.45).clamp(24.0, 56.0) : 42.0,
+                width: (width != null) ? (width! * 0.45).clamp(24.0, 56.0) : 40.0,
                 fit: BoxFit.contain,
                 errorBuilder: (_, __, ___) => const Icon(
                   Icons.construction_rounded,

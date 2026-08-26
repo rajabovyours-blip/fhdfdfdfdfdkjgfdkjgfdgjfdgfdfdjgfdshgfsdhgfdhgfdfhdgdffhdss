@@ -263,41 +263,39 @@ class _ProductCardState extends ConsumerState<ProductCard> {
                             ],
                           ),
                         ),
-                        if (widget.showCartAction && widget.product.stock > 0) ...[
-                          const SizedBox(width: 4),
-                          GestureDetector(
-                            onTap: _isLoading
-                                ? null
-                                : (isInCart
-                                    ? () => context.push(AppRoutes.cart)
-                                    : _addToCart),
-                            child: Container(
-                              padding: const EdgeInsets.all(6),
-                              decoration: BoxDecoration(
-                                color: isInCart
-                                    ? context.colors.success
-                                    : const Color(0xFFFF7A00),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: _isLoading
-                                  ? const SizedBox(
-                                      height: 18,
-                                      width: 18,
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                        strokeWidth: 2,
-                                      ),
-                                    )
-                                  : Icon(
-                                      isInCart
-                                          ? Icons.check
-                                          : Icons.add_shopping_cart,
-                                      size: 18,
-                                      color: Colors.white,
-                                    ),
+                        const SizedBox(width: 4),
+                        GestureDetector(
+                          onTap: _isLoading
+                              ? null
+                              : (isInCart
+                                  ? () => context.push(AppRoutes.cart)
+                                  : _addToCart),
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: isInCart
+                                  ? context.colors.success
+                                  : const Color(0xFFFF7A00),
+                              borderRadius: BorderRadius.circular(8),
                             ),
+                            child: _isLoading
+                                ? const SizedBox(
+                                    height: 18,
+                                    width: 18,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : Icon(
+                                    isInCart
+                                        ? Icons.check
+                                        : Icons.add_shopping_cart_rounded,
+                                    size: 18,
+                                    color: Colors.white,
+                                  ),
                           ),
-                        ],
+                        ),
                       ],
                     ),
                   ],

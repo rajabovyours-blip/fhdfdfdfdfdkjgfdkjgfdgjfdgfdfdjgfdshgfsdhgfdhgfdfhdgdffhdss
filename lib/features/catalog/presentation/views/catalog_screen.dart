@@ -139,9 +139,9 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                     sliver: SliverGrid(
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 3,
-                        crossAxisSpacing: 12,
+                        crossAxisSpacing: 10,
                         mainAxisSpacing: 16,
-                        childAspectRatio: 1.15, // Updated aspect ratio
+                        childAspectRatio: 0.74,
                       ),
                       delegate: SliverChildBuilderDelegate(
                         (context, index) {
