@@ -16,12 +16,32 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
     final nameRuController = TextEditingController(text: isEditing ? category['name_ru'] ?? '' : '');
     final nameEnController = TextEditingController(text: isEditing ? category['name_en'] ?? '' : '');
     final idController = TextEditingController(text: isEditing ? category['id'] : '');
-    final imageController = TextEditingController(text: isEditing ? category['image_url'] : 'assets/images/categories/cat-1.webp');
+    final imageController = TextEditingController(
+      text: isEditing ? category['image_url'] : 'assets/images/categories/cat-1.webp',
+    );
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(isEditing ? "Kategoriyani tahrirlash" : "Yangi kategoriya qo'shish"),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFF7A00).withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                isEditing ? Icons.edit : Icons.add_box_rounded,
+                color: const Color(0xFFFF7A00),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(isEditing ? 'Kategoriyani tahrirlash' : "Yangi kategoriya qo'shish"),
+            ),
+          ],
+        ),
         content: SizedBox(
           width: 500,
           child: SingleChildScrollView(
@@ -31,7 +51,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                 if (!isEditing)
                   TextField(
                     controller: idController,
-                    decoration: const InputDecoration(labelText: "Kategoriya ID (masalan, cat-62)"),
+                    decoration: const InputDecoration(labelText: 'Kategoriya ID (masalan, cat-62)'),
                   ),
                 const SizedBox(height: 16),
                 TextField(
@@ -41,12 +61,12 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                 const SizedBox(height: 16),
                 TextField(
                   controller: nameRuController,
-                  decoration: const InputDecoration(labelText: "Nomi (Ruscha)"),
+                  decoration: const InputDecoration(labelText: 'Nomi (Ruscha)'),
                 ),
                 const SizedBox(height: 16),
                 TextField(
                   controller: nameEnController,
-                  decoration: const InputDecoration(labelText: "Nomi (Inglizcha)"),
+                  decoration: const InputDecoration(labelText: 'Nomi (Inglizcha)'),
                 ),
                 const SizedBox(height: 16),
                 TextField(
@@ -60,7 +80,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text("Bekor qilish"),
+            child: const Text('Bekor qilish'),
           ),
           ElevatedButton(
             onPressed: () {
@@ -78,7 +98,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
               }
               Navigator.pop(context);
             },
-            child: const Text("Saqlash"),
+            child: const Text('Saqlash'),
           ),
         ],
       ),
@@ -88,32 +108,59 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
   @override
   Widget build(BuildContext context) {
     final categories = ref.watch(categoriesProvider);
+    final isMobile = MediaQuery.of(context).size.width < 600;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "Kategoriyalar",
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
+          // ─── Header (responsive) ─────────────────────────────────────
+          isMobile
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Kategoriyalar',
+                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
-              ),
-              ElevatedButton.icon(
-                onPressed: () => _showCategoryDialog(context, ref),
-                icon: const Icon(Icons.add),
-                label: const Text("Kategoriya qo'shish"),
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(200, 48),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () => _showCategoryDialog(context, ref),
+                        icon: const Icon(Icons.add, size: 18),
+                        label: const Text("Kategoriya qo'shish"),
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(double.infinity, 48),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Kategoriyalar',
+                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: () => _showCategoryDialog(context, ref),
+                      icon: const Icon(Icons.add),
+                      label: const Text("Kategoriya qo'shish"),
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(200, 48),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
           const SizedBox(height: 24),
+          // ─── Categories Table ────────────────────────────────────────
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(20),
@@ -126,24 +173,42 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
               scrollDirection: Axis.horizontal,
               child: DataTable(
                 columns: const [
-                  DataColumn(label: Text("Rasm")),
-                  DataColumn(label: Text("ID")),
-                  DataColumn(label: Text("Nomi (UZ)")),
-                  DataColumn(label: Text("Nomi (RU)")),
-                  DataColumn(label: Text("Nomi (EN)")),
-                  DataColumn(label: Text("Amallar")),
+                  DataColumn(label: Text('Rasm')),
+                  DataColumn(label: Text('ID')),
+                  DataColumn(label: Text('Nomi (UZ)')),
+                  DataColumn(label: Text('Nomi (RU)')),
+                  DataColumn(label: Text('Nomi (EN)')),
+                  DataColumn(label: Text('Amallar')),
                 ],
                 rows: categories.map((category) {
+                  final imageUrl = category['image_url']?.toString();
+                  final isAsset = imageUrl != null && imageUrl.startsWith('assets/');
+                  final isNetwork = imageUrl != null && imageUrl.startsWith('http');
+
                   return DataRow(
                     cells: [
                       DataCell(
-                        CircleAvatar(
-                          backgroundImage: category['image_url'] != null
-                              ? (category['image_url'].toString().startsWith('http')
-                                  ? NetworkImage(category['image_url'])
-                                  : AssetImage(category['image_url']) as ImageProvider)
-                              : null,
-                          child: category['image_url'] == null ? const Icon(Icons.category) : null,
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                          ),
+                          clipBehavior: Clip.antiAlias,
+                          child: isAsset
+                              ? Image.asset(
+                                  imageUrl,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (_, __, ___) => const Icon(Icons.category, size: 20),
+                                )
+                              : isNetwork
+                                  ? Image.network(
+                                      imageUrl,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (_, __, ___) => const Icon(Icons.category, size: 20),
+                                    )
+                                  : const Icon(Icons.category, size: 20),
                         ),
                       ),
                       DataCell(Text(category['id'].toString())),
@@ -178,4 +243,3 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
     );
   }
 }
-

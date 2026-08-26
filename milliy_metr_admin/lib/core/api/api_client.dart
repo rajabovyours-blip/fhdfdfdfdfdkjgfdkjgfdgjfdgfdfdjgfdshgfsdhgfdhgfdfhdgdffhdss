@@ -1,16 +1,27 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../config/app_config.dart';
 import 'auth_interceptor.dart';
 
 final dioProvider = Provider<Dio>((ref) {
-  final dio = Dio(BaseOptions(
-    baseUrl: const String.fromEnvironment('API_URL', defaultValue: 'https://milliy-metr-backend-hdol.onrender.com/api/v1'),
-    connectTimeout: const Duration(seconds: 10),
-    receiveTimeout: const Duration(seconds: 10),
-  ));
+  final dio = Dio(
+    BaseOptions(
+      baseUrl: AppConfig.baseUrl,
+      connectTimeout: const Duration(seconds: 15),
+      receiveTimeout: const Duration(seconds: 15),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    ),
+  );
 
-  dio.interceptors.add(AuthInterceptor(const FlutterSecureStorage()));
+  dio.interceptors.add(AuthInterceptor());
+  dio.interceptors.add(LogInterceptor(
+    requestBody: true,
+    responseBody: true,
+    error: true,
+  ));
 
   return dio;
 });

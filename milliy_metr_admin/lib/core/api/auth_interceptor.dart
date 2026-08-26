@@ -1,15 +1,18 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthInterceptor extends Interceptor {
-  final FlutterSecureStorage _storage;
-
-  AuthInterceptor(this._storage);
+  AuthInterceptor();
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
-    // Authentication is disabled for the admin panel. 
-    // We do not attach any Authorization token to prevent 401 errors from invalid tokens.
+    // Authentication is disabled for the admin panel.
+    // No Authorization token is attached to prevent 401/403 errors.
     handler.next(options);
+  }
+
+  @override
+  void onError(DioException err, ErrorInterceptorHandler handler) {
+    // Let errors pass through for the UI to handle
+    handler.next(err);
   }
 }

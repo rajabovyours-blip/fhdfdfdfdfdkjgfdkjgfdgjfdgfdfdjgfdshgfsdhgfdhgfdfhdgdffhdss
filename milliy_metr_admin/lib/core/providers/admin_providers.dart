@@ -1,18 +1,55 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../api/api_client.dart';
 
+// ─── Users Provider ─────────────────────────────────────────────────────────
 final usersProvider = FutureProvider<List<dynamic>>((ref) async {
   final dio = ref.watch(dioProvider);
-  final response = await dio.get('/users/');
-  return response.data as List<dynamic>;
+  try {
+    final response = await dio.get('/users/');
+    final data = response.data;
+    if (data is Map && data['data'] != null) {
+      return data['data'] as List<dynamic>;
+    }
+    if (data is List) return data;
+    return [];
+  } catch (_) {
+    return [];
+  }
 });
 
+// ─── Products Provider ──────────────────────────────────────────────────────
 final productsProvider = FutureProvider<List<dynamic>>((ref) async {
   final dio = ref.watch(dioProvider);
-  final response = await dio.get('/products/');
-  return response.data as List<dynamic>;
+  try {
+    final response = await dio.get('/products/');
+    final data = response.data;
+    if (data is Map && data['data'] != null) {
+      return data['data'] as List<dynamic>;
+    }
+    if (data is List) return data;
+    return [];
+  } catch (_) {
+    return [];
+  }
 });
 
+// ─── Orders Provider ────────────────────────────────────────────────────────
+final ordersProvider = FutureProvider<List<dynamic>>((ref) async {
+  final dio = ref.watch(dioProvider);
+  try {
+    final response = await dio.get('/orders/');
+    final data = response.data;
+    if (data is Map && data['data'] != null) {
+      return data['data'] as List<dynamic>;
+    }
+    if (data is List) return data;
+    return [];
+  } catch (_) {
+    return [];
+  }
+});
+
+// ─── Categories Provider (StateNotifier with local 61 defaults) ─────────
 class CategoriesNotifier extends StateNotifier<List<Map<String, dynamic>>> {
   CategoriesNotifier() : super(_initialCategories);
 
@@ -23,7 +60,7 @@ class CategoriesNotifier extends StateNotifier<List<Map<String, dynamic>>> {
   void updateCategory(Map<String, dynamic> category) {
     state = [
       for (final cat in state)
-        if (cat['id'] == category['id']) category else cat
+        if (cat['id'] == category['id']) category else cat,
     ];
   }
 
@@ -100,23 +137,33 @@ final categoriesProvider = StateNotifierProvider<CategoriesNotifier, List<Map<St
   return CategoriesNotifier();
 });
 
-
-// Assuming endpoints for banners and reviews. If they fail, return empty list.
+// ─── Banners Provider ───────────────────────────────────────────────────────
 final bannersProvider = FutureProvider<List<dynamic>>((ref) async {
   final dio = ref.watch(dioProvider);
   try {
     final response = await dio.get('/banners/');
-    return response.data as List<dynamic>;
+    final data = response.data;
+    if (data is Map && data['data'] != null) {
+      return data['data'] as List<dynamic>;
+    }
+    if (data is List) return data;
+    return [];
   } catch (_) {
     return [];
   }
 });
 
+// ─── Reviews Provider ───────────────────────────────────────────────────────
 final reviewsProvider = FutureProvider<List<dynamic>>((ref) async {
   final dio = ref.watch(dioProvider);
   try {
     final response = await dio.get('/reviews/');
-    return response.data as List<dynamic>;
+    final data = response.data;
+    if (data is Map && data['data'] != null) {
+      return data['data'] as List<dynamic>;
+    }
+    if (data is List) return data;
+    return [];
   } catch (_) {
     return [];
   }

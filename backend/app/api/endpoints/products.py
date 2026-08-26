@@ -41,3 +41,37 @@ async def get_product(id: str, db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Product not found")
         
     return APIResponse(data=ProductModel.model_validate(product))
+
+from pydantic import BaseModel as PydanticBaseModel
+from typing import Dict
+
+class ProductCreateRequest(PydanticBaseModel):
+    name: Dict[str, str]
+    description: Dict[str, str]
+    category_id: UUID
+    price: float
+    unit: str = "pcs"
+    stock: int = 0
+    images: list = []
+    brand: str | None = None
+
+@router.post("", response_model=APIResponse[ProductModel])
+async def create_product(payload: ProductCreateRequest, db: AsyncSession = Depends(get_db)):
+    import uuid as _uuid
+    product = Product(
+        id=_uuid.uuid4(),
+        sku=f"SKU-{_uuid.uuid4().hex[:8].upper()}",
+        name=payload.name,
+        description=payload.description,
+        category_id=payload.category_id,
+        price=payload.price,
+        unit=payload.unit,
+        stock=payload.stock,
+        images=payload.images,
+        brand=payload.brand,
+        currency="UZS",
+    )
+    db.add(product)
+    await db.commit()
+    await db.refresh(product)
+    return APIResponse(data=ProductModel.model_validate(product))
