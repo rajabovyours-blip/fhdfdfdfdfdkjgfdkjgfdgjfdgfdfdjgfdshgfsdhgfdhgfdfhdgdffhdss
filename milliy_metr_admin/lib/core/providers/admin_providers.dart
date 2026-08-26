@@ -168,3 +168,18 @@ final reviewsProvider = FutureProvider<List<dynamic>>((ref) async {
     return [];
   }
 });
+
+// ─── Analytics Provider ──────────────────────────────────────────────────────
+final analyticsProvider = FutureProvider<Map<String, dynamic>>((ref) async {
+  final dio = ref.watch(dioProvider);
+  try {
+    final response = await dio.get('/analytics/dashboard');
+    final data = response.data;
+    if (data is Map && data['data'] != null) {
+      return data['data'] as Map<String, dynamic>;
+    }
+    return data as Map<String, dynamic>;
+  } catch (_) {
+    return {};
+  }
+});

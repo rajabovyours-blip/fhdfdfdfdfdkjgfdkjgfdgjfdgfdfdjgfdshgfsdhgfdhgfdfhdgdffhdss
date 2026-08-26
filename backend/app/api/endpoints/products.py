@@ -75,3 +75,50 @@ async def create_product(payload: ProductCreateRequest, db: AsyncSession = Depen
     await db.commit()
     await db.refresh(product)
     return APIResponse(data=ProductModel.model_validate(product))
+
+@router.put("/{id}", response_model=APIResponse[ProductModel])
+async def update_product(id: str, payload: ProductCreateRequest, db: AsyncSession = Depends(get_db)):
+    try:
+        product_id = UUID(str(id))
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid UUID format")
+        
+    result = await db.execute(select(Product).where(Product.id == product_id))
+    product = result.scalar_one_or_none()
+    
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+        
+    product.name = payload.name
+    product.description = payload.description
+    product.category_id = payload.category_id
+    product.price = payload.price
+    product.unit = payload.unit
+    product.stock = payload.stock
+    if payload.images:
+        product.images = payload.images
+    if payload.brand:
+        product.brand = payload.brand
+        
+    await db.commit()
+    await db.refresh(product)
+    
+    return APIResponse(data=ProductModel.model_validate(product))
+
+@router.delete("/{id}", response_model=APIResponse[dict])
+async def delete_product(id: str, db: AsyncSession = Depends(get_db)):
+    try:
+        product_id = UUID(str(id))
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid UUID format")
+        
+    result = await db.execute(select(Product).where(Product.id == product_id))
+    product = result.scalar_one_or_none()
+    
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+        
+    await db.delete(product)
+    await db.commit()
+    
+    return APIResponse(data={"success": True, "message": "Product deleted successfully"})

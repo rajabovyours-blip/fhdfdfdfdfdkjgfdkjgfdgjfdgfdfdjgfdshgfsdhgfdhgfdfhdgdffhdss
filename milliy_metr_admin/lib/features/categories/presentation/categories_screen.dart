@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:dio/dio.dart';
 import '../../../core/providers/admin_providers.dart';
-
+import '../../../core/api/api_client.dart';
 class CategoriesScreen extends ConsumerStatefulWidget {
   const CategoriesScreen({super.key});
 
@@ -69,9 +71,42 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                   decoration: const InputDecoration(labelText: 'Nomi (Inglizcha)'),
                 ),
                 const SizedBox(height: 16),
-                TextField(
-                  controller: imageController,
-                  decoration: const InputDecoration(labelText: "Rasm URL yoki asset yo'li"),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: imageController,
+                        decoration: const InputDecoration(labelText: "Rasm URL yoki asset yo'li"),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    ElevatedButton.icon(
+                      onPressed: () async {
+                        final result = await FilePicker.pickFiles(type: FileType.image);
+                        if (result != null && result.files.single.bytes != null) {
+                          try {
+                            final dio = ref.read(dioProvider);
+                            final formData = FormData.fromMap({
+                              'file': MultipartFile.fromBytes(
+                                result.files.single.bytes!,
+                                filename: result.files.single.name,
+                              ),
+                            });
+                            final response = await dio.post('/upload/image', data: formData);
+                            if (response.data['data'] != null && response.data['data']['url'] != null) {
+                              imageController.text = response.data['data']['url'];
+                            }
+                          } catch (e) {
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Xatolik: $e')));
+                            }
+                          }
+                        }
+                      },
+                      icon: const Icon(Icons.upload_file),
+                      label: const Text('Yuklash'),
+                    ),
+                  ],
                 ),
               ],
             ),

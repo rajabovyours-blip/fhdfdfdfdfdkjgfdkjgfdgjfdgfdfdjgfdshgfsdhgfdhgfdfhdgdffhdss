@@ -18,7 +18,7 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
   @override
   Future<List<BannerModel>> getBanners() async {
     try {
-      final response = await dio.get('/home/banners');
+      final response = await dio.get('/banners?active_only=true');
 
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data['data'] ?? [];

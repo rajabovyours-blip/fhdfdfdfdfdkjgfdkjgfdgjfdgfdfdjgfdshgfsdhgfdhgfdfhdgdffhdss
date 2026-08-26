@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:dio/dio.dart';
 import '../../../core/providers/admin_providers.dart';
+import '../../../core/api/api_client.dart';
 
 class BannersScreen extends ConsumerStatefulWidget {
   const BannersScreen({super.key});
@@ -11,53 +14,168 @@ class BannersScreen extends ConsumerStatefulWidget {
 
 class _BannersScreenState extends ConsumerState<BannersScreen> {
   void _showBannerDialog(BuildContext context, {Map<String, dynamic>? banner}) {
+    final titleController = TextEditingController(text: banner?['title'] ?? '');
+    final linkController = TextEditingController(text: banner?['link_url'] ?? '');
+    final imageController = TextEditingController(text: banner?['image_url'] ?? '');
+    bool isActive = banner?['is_active'] ?? true;
+    bool isLoading = false;
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(banner == null ? "Yangi banner qo'shish" : "Bannerni tahrirlash"),
-        content: SizedBox(
-          width: 500,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  decoration: const InputDecoration(labelText: "Sarlavha (Title)"),
-                  controller: TextEditingController(text: banner?['title'] ?? ''),
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  decoration: const InputDecoration(labelText: "Quyi sarlavha (Subtitle)"),
-                  controller: TextEditingController(text: banner?['subtitle'] ?? ''),
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  decoration: const InputDecoration(labelText: "Tugma matni (CTA text)"),
-                  controller: TextEditingController(text: banner?['cta'] ?? ''),
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  decoration: const InputDecoration(labelText: "Rasm URL"),
-                  controller: TextEditingController(text: banner?['image_url'] ?? ''),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    const Text("Faollik holati"),
-                    const Spacer(),
-                    Switch(value: true, onChanged: (val) {}),
-                  ],
-                ),
-              ],
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: Text(banner == null ? "Yangi banner qo'shish" : "Bannerni tahrirlash"),
+          content: SizedBox(
+            width: 500,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    decoration: const InputDecoration(labelText: "Sarlavha (Title)"),
+                    controller: titleController,
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    decoration: const InputDecoration(labelText: "Havola (Link URL)"),
+                    controller: linkController,
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          decoration: const InputDecoration(labelText: "Rasm URL"),
+                          controller: imageController,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      ElevatedButton.icon(
+                        onPressed: () async {
+                          final result = await FilePicker.pickFiles(type: FileType.image);
+                          if (result != null && result.files.single.bytes != null) {
+                            try {
+                              final dio = ref.read(dioProvider);
+                              final formData = FormData.fromMap({
+                                'file': MultipartFile.fromBytes(
+                                  result.files.single.bytes!,
+                                  filename: result.files.single.name,
+                                ),
+                              });
+                              final response = await dio.post('/upload/image', data: formData);
+                              if (response.data['data'] != null && response.data['data']['url'] != null) {
+                                imageController.text = response.data['data']['url'];
+                              }
+                            } catch (e) {
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Xatolik: $e')));
+                              }
+                            }
+                          }
+                        },
+                        icon: const Icon(Icons.upload_file),
+                        label: const Text('Yuklash'),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      const Text("Faollik holati"),
+                      const Spacer(),
+                      Switch(
+                        value: isActive, 
+                        onChanged: (val) {
+                          setDialogState(() => isActive = val);
+                        }
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context), child: const Text("Bekor qilish")),
+            ElevatedButton.icon(
+              onPressed: isLoading
+                  ? null
+                  : () async {
+                      if (imageController.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Rasm kiritilishi shart"), backgroundColor: Colors.red));
+                        return;
+                      }
+                      setDialogState(() => isLoading = true);
+                      try {
+                        final dio = ref.read(dioProvider);
+                        if (banner == null) {
+                          await dio.post('/banners/', data: {
+                            'title': titleController.text,
+                            'link_url': linkController.text,
+                            'image_url': imageController.text,
+                            'is_active': isActive,
+                            'order_index': 0,
+                          });
+                        } else {
+                          // update isn't implemented in backend yet, but we could recreate or add PUT endpoint. 
+                          // For now, let's assume we recreate it by deleting and inserting
+                          await dio.delete('/banners/${banner['id']}');
+                          await dio.post('/banners/', data: {
+                            'title': titleController.text,
+                            'link_url': linkController.text,
+                            'image_url': imageController.text,
+                            'is_active': isActive,
+                            'order_index': 0,
+                          });
+                        }
+                        if (context.mounted) {
+                          Navigator.pop(context);
+                          ref.invalidate(bannersProvider);
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Banner saqlandi"), backgroundColor: Colors.green));
+                        }
+                      } catch (e) {
+                        setDialogState(() => isLoading = false);
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Xatolik: $e"), backgroundColor: Colors.red));
+                        }
+                      }
+                    },
+              icon: isLoading ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)) : const Icon(Icons.save),
+              label: Text(isLoading ? 'Saqlanmoqda...' : 'Saqlash'),
+            ),
+          ],
         ),
+      ),
+    );
+  }
+  
+  void _deleteBanner(String id) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("Bannerni o'chirish"),
+        content: const Text("Rostdan ham o'chirmoqchimisiz?"),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Bekor qilish")),
-          ElevatedButton(onPressed: () => Navigator.pop(context), child: const Text("Saqlash")),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text("Yo'q")),
+          ElevatedButton(onPressed: () => Navigator.pop(ctx, true), style: ElevatedButton.styleFrom(backgroundColor: Colors.red), child: const Text("Ha, o'chirish")),
         ],
       ),
     );
+    
+    if (confirm == true) {
+      try {
+        final dio = ref.read(dioProvider);
+        await dio.delete('/banners/$id');
+        ref.invalidate(bannersProvider);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Banner o'chirildi"), backgroundColor: Colors.green));
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Xatolik: $e"), backgroundColor: Colors.red));
+        }
+      }
+    }
   }
 
   @override
@@ -73,7 +191,7 @@ class _BannersScreenState extends ConsumerState<BannersScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Bannerlar va Aksiyalar",
+                "Bannerlar",
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -135,9 +253,23 @@ class _BannersScreenState extends ConsumerState<BannersScreen> {
                             ),
                           ),
                           DataCell(Text(banner['title'] ?? 'Banner')),
-                          DataCell(Text(banner['link'] ?? 'yo\'q')),
+                          DataCell(Text(banner['link_url'] ?? 'yo\'q')),
                           DataCell(
-                            Switch(value: true, onChanged: (v) {}),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: (banner['is_active'] == true ? const Color(0xFF10B981) : Colors.grey).withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                banner['is_active'] == true ? 'Faol' : 'Nofaol',
+                                style: TextStyle(
+                                  color: banner['is_active'] == true ? const Color(0xFF10B981) : Colors.grey,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
                           ),
                           DataCell(
                             Row(
@@ -149,7 +281,7 @@ class _BannersScreenState extends ConsumerState<BannersScreen> {
                                 ),
                                 IconButton(
                                   icon: const Icon(Icons.delete, color: Colors.red),
-                                  onPressed: () {},
+                                  onPressed: () => _deleteBanner(banner['id']),
                                 ),
                               ],
                             ),
@@ -169,4 +301,3 @@ class _BannersScreenState extends ConsumerState<BannersScreen> {
     );
   }
 }
-

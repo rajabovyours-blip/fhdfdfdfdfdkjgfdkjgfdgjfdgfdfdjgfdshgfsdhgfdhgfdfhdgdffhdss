@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:dio/dio.dart';
 import '../../../core/providers/admin_providers.dart';
 import '../../../core/api/api_client.dart';
 
@@ -15,16 +17,28 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
   String _searchQuery = '';
   String? _selectedCategory;
 
-  void _showAddProductDialog(BuildContext context) {
-    final nameUzController = TextEditingController();
-    final nameRuController = TextEditingController();
-    final nameEnController = TextEditingController();
-    final descController = TextEditingController();
-    final priceController = TextEditingController();
-    final imageUrlController = TextEditingController();
-    String selectedUnit = 'dona';
-    String? selectedCategoryId;
-    bool inStock = true;
+  void _showProductDialog(BuildContext context, {Map<String, dynamic>? product}) {
+    final isEditing = product != null;
+    
+    final nameUzController = TextEditingController(text: isEditing ? (product['name'] is Map ? product['name']['uz'] : product['name']) : '');
+    final nameRuController = TextEditingController(text: isEditing ? (product['name'] is Map ? product['name']['ru'] : '') : '');
+    final nameEnController = TextEditingController(text: isEditing ? (product['name'] is Map ? product['name']['en'] : '') : '');
+    final descController = TextEditingController(text: isEditing ? (product['description'] is Map ? product['description']['uz'] : product['description']) : '');
+    final priceController = TextEditingController(text: isEditing ? product['price'].toString() : '');
+    
+    String imageUrl = '';
+    if (isEditing) {
+      if (product['images'] != null && (product['images'] as List).isNotEmpty) {
+        imageUrl = product['images'][0].toString();
+      } else {
+        imageUrl = product['image_url']?.toString() ?? '';
+      }
+    }
+    final imageUrlController = TextEditingController(text: imageUrl);
+    
+    String selectedUnit = isEditing ? (product['unit'] ?? 'dona') : 'dona';
+    String? selectedCategoryId = isEditing ? product['category_id']?.toString() : null;
+    bool inStock = isEditing ? ((product['stock'] ?? 0) > 0) : true;
     bool isLoading = false;
 
     final categories = ref.read(categoriesProvider);
@@ -41,10 +55,10 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                   color: const Color(0xFFFF7A00).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(Icons.add_box_rounded, color: Color(0xFFFF7A00)),
+                child: Icon(isEditing ? Icons.edit : Icons.add_box_rounded, color: const Color(0xFFFF7A00)),
               ),
               const SizedBox(width: 12),
-              const Text("Yangi mahsulot qo'shish"),
+              Text(isEditing ? "Mahsulotni tahrirlash" : "Yangi mahsulot qo'shish"),
             ],
           ),
           content: SizedBox(
@@ -154,12 +168,45 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                   const SizedBox(height: 20),
                   const Text('Rasm URL', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
                   const SizedBox(height: 8),
-                  TextField(
-                    controller: imageUrlController,
-                    decoration: const InputDecoration(
-                      hintText: 'https://... yoki assets/images/...',
-                      prefixIcon: Icon(Icons.image),
-                    ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: imageUrlController,
+                          decoration: const InputDecoration(
+                            hintText: 'https://... yoki assets/images/...',
+                            prefixIcon: Icon(Icons.image),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      ElevatedButton.icon(
+                        onPressed: () async {
+                          final result = await FilePicker.pickFiles(type: FileType.image);
+                          if (result != null && result.files.single.bytes != null) {
+                            try {
+                              final dio = ref.read(dioProvider);
+                              final formData = FormData.fromMap({
+                                'file': MultipartFile.fromBytes(
+                                  result.files.single.bytes!,
+                                  filename: result.files.single.name,
+                                ),
+                              });
+                              final response = await dio.post('/upload/image', data: formData);
+                              if (response.data['data'] != null && response.data['data']['url'] != null) {
+                                imageUrlController.text = response.data['data']['url'];
+                              }
+                            } catch (e) {
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Xatolik: $e')));
+                              }
+                            }
+                          }
+                        },
+                        icon: const Icon(Icons.upload_file),
+                        label: const Text('Yuklash'),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 20),
                   const Text('Tavsif', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
@@ -210,7 +257,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
 
                       try {
                         final dio = ref.read(dioProvider);
-                        await dio.post('/products/', data: {
+                        final payload = {
                           'name': {
                             'uz': nameUzController.text,
                             'ru': nameRuController.text.isNotEmpty ? nameRuController.text : nameUzController.text,
@@ -226,15 +273,21 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                           'unit': selectedUnit,
                           'stock': inStock ? 100 : 0,
                           'images': imageUrlController.text.isNotEmpty ? [imageUrlController.text] : [],
-                        });
+                        };
+
+                        if (isEditing) {
+                          await dio.put('/products/${product['id']}', data: payload);
+                        } else {
+                          await dio.post('/products/', data: payload);
+                        }
 
                         if (context.mounted) {
                           Navigator.pop(context);
                           ref.invalidate(productsProvider);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Mahsulot muvaffaqiyatli qo'shildi!"),
-                              backgroundColor: Color(0xFF10B981),
+                            SnackBar(
+                              content: Text(isEditing ? "Mahsulot yangilandi!" : "Mahsulot qo'shildi!"),
+                              backgroundColor: const Color(0xFF10B981),
                             ),
                           );
                         }
@@ -263,6 +316,37 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
         ),
       ),
     );
+  }
+  
+  void _deleteProduct(BuildContext context, String id) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("Mahsulotni o'chirish"),
+        content: const Text("Rostdan ham ushbu mahsulotni o'chirmoqchimisiz?"),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text("Yo'q")),
+          ElevatedButton(onPressed: () => Navigator.pop(ctx, true), style: ElevatedButton.styleFrom(backgroundColor: Colors.red), child: const Text("Ha, o'chirish")),
+        ],
+      ),
+    );
+    
+    if (confirm == true) {
+      try {
+        final dio = ref.read(dioProvider);
+        await dio.delete('/products/$id');
+        ref.invalidate(productsProvider);
+        if (mounted) {
+           ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Mahsulot o'chirildi"), backgroundColor: Colors.green),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Xatolik: $e"), backgroundColor: Colors.red));
+        }
+      }
+    }
   }
 
   @override
@@ -303,7 +387,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                           ),
                         ),
                         ElevatedButton.icon(
-                          onPressed: () => _showAddProductDialog(context),
+                          onPressed: () => _showProductDialog(context),
                           icon: const Icon(Icons.add, size: 18),
                           label: const Text("Mahsulot qo'shish"),
                         ),
@@ -334,7 +418,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                         ),
                         const SizedBox(width: 16),
                         ElevatedButton.icon(
-                          onPressed: () => _showAddProductDialog(context),
+                          onPressed: () => _showProductDialog(context),
                           icon: const Icon(Icons.add),
                           label: const Text("Mahsulot qo'shish"),
                         ),
@@ -472,11 +556,11 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                               children: [
                                 IconButton(
                                   icon: const Icon(Icons.edit, color: Colors.blue),
-                                  onPressed: () {},
+                                  onPressed: () => _showProductDialog(context, product: product),
                                 ),
                                 IconButton(
                                   icon: const Icon(Icons.delete, color: Colors.red),
-                                  onPressed: () {},
+                                  onPressed: () => _deleteProduct(context, product['id']),
                                 ),
                               ],
                             ),
@@ -552,6 +636,20 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
               });
             },
           ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () {
+                setState(() {
+                  _searchQuery = '';
+                  _selectedCategory = null;
+                });
+              },
+              icon: const Icon(Icons.clear),
+              label: const Text('Filtrlarni tozalash'),
+            ),
+          )
         ],
       );
     }
@@ -593,6 +691,17 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
               });
             },
           ),
+        ),
+        const SizedBox(width: 16),
+        ElevatedButton.icon(
+          onPressed: () {
+            setState(() {
+              _searchQuery = '';
+              _selectedCategory = null;
+            });
+          },
+          icon: const Icon(Icons.clear),
+          label: const Text('Tozalash'),
         ),
       ],
     );
