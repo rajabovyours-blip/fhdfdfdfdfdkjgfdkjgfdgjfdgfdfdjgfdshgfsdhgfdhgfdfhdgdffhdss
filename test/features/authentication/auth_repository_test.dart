@@ -71,7 +71,11 @@ class MockLocalDataSource implements AuthLocalDataSource {
 
   Future<String?> getRefreshToken() async => null;
 
+  @override
+  Future<void> saveUserData(String data) async {}
 
+  @override
+  Future<String?> getUserData() async => null;
 }
 
 void main() {
