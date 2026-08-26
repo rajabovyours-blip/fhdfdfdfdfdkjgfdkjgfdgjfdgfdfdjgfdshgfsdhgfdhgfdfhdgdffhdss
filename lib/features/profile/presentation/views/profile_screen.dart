@@ -141,6 +141,15 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
+  String _getInitials(String? fullName) {
+    if (fullName == null || fullName.trim().isEmpty) return '?';
+    final parts = fullName.trim().split(RegExp(r'\s+'));
+    if (parts.length > 1) {
+      return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+    }
+    return parts[0].substring(0, 1).toUpperCase();
+  }
+
   Widget _buildHeader(BuildContext context, dynamic user) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -148,11 +157,18 @@ class ProfileScreen extends ConsumerWidget {
         children: [
           CircleAvatar(
             radius: 40,
-            backgroundColor: context.colors.surfaceVariant,
+            backgroundColor: context.colors.primary.withOpacity(0.1),
             backgroundImage:
                 user.avatarUrl != null ? NetworkImage(user.avatarUrl!) : null,
             child: user.avatarUrl == null
-                ? Icon(Icons.person, size: 40, color: context.colors.textMedium)
+                ? Text(
+                    _getInitials(user.fullName),
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: context.colors.primary,
+                    ),
+                  )
                 : null,
           ),
           const SizedBox(width: 20),

@@ -998,6 +998,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addAddress => 'Add Address';
 
   @override
+  String get addressLabel => 'Label (e.g. Home, Office)';
+
+  @override
+  String get district => 'District';
+
+  @override
+  String get streetBuilding => 'Street/Building';
+
+  @override
+  String get saveAddress => 'Save Address';
+
+  @override
+  String get fieldRequired => 'Required';
+
+  @override
   String get compareProducts => 'Compare Products';
 
   @override
@@ -1131,4 +1146,46 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get guestWishlistDesc => 'Log in to view your favorite products.';
+
+  @override
+  String get discountsChip => 'Discounts';
+
+  @override
+  String get expressDeliveryChip => 'Fast Delivery';
+
+  @override
+  String get directFactoryChip => 'Direct from Factory';
+
+  @override
+  String get popularChip => 'Popular';
+
+  @override
+  String get servicesChip => 'Master Services';
+
+  @override
+  String get qualityGuaranteeBadge => '100% Quality Guarantee';
+
+  @override
+  String get fastDeliveryBadge => 'Express Shipping';
+
+  @override
+  String get securePaymentBadge => 'Secure Payment';
+
+  @override
+  String get orderStatusAll => 'All';
+
+  @override
+  String get orderStatusPending => 'Pending';
+
+  @override
+  String get orderStatusConfirmed => 'Confirmed';
+
+  @override
+  String get orderStatusProcessing => 'Processing';
+
+  @override
+  String get orderStatusDelivered => 'Delivered';
+
+  @override
+  String get orderStatusCancelled => 'Cancelled';
 }

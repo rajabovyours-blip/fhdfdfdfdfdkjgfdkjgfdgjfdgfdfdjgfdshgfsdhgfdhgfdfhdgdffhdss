@@ -47,6 +47,15 @@ class _PersonalInformationScreenState
     super.dispose();
   }
 
+  String _getInitials(String? fullName) {
+    if (fullName == null || fullName.trim().isEmpty) return '?';
+    final parts = fullName.trim().split(RegExp(r'\s+'));
+    if (parts.length > 1) {
+      return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+    }
+    return parts[0].substring(0, 1).toUpperCase();
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -102,9 +111,7 @@ class _PersonalInformationScreenState
                       radius: 50,
                       backgroundColor: context.colors.surfaceVariant,
                       child: Text(
-                        _nameController.text.isNotEmpty
-                            ? _nameController.text[0].toUpperCase()
-                            : '?',
+                        _getInitials(_nameController.text),
                         style: TextStyle(
                           fontSize: 36,
                           fontWeight: FontWeight.bold,

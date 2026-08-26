@@ -118,7 +118,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
                 children: [
                   Row(
                     children: [
-                      Flexible(
+                      Expanded(
                         child: Text(
                           title,
                           style: TextStyle(

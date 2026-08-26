@@ -2014,6 +2014,36 @@ abstract class AppLocalizations {
   /// **'Manzil qo\'shish'**
   String get addAddress;
 
+  /// No description provided for @addressLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Nomi (masalan, Uy, Ishxona)'**
+  String get addressLabel;
+
+  /// No description provided for @district.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tuman'**
+  String get district;
+
+  /// No description provided for @streetBuilding.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ko\'cha/Uy'**
+  String get streetBuilding;
+
+  /// No description provided for @saveAddress.
+  ///
+  /// In uz, this message translates to:
+  /// **'Manzilni saqlash'**
+  String get saveAddress;
+
+  /// No description provided for @fieldRequired.
+  ///
+  /// In uz, this message translates to:
+  /// **'Majburiy'**
+  String get fieldRequired;
+
   /// No description provided for @compareProducts.
   ///
   /// In uz, this message translates to:
@@ -2277,6 +2307,90 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Sevimlilarni ko\'rish uchun tizimga kiring.'**
   String get guestWishlistDesc;
+
+  /// No description provided for @discountsChip.
+  ///
+  /// In uz, this message translates to:
+  /// **'Aksiyalar'**
+  String get discountsChip;
+
+  /// No description provided for @expressDeliveryChip.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tezkor yetkazish'**
+  String get expressDeliveryChip;
+
+  /// No description provided for @directFactoryChip.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'g\'ridan-to\'g\'ri zavoddan'**
+  String get directFactoryChip;
+
+  /// No description provided for @popularChip.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ommabop'**
+  String get popularChip;
+
+  /// No description provided for @servicesChip.
+  ///
+  /// In uz, this message translates to:
+  /// **'Usta xizmati'**
+  String get servicesChip;
+
+  /// No description provided for @qualityGuaranteeBadge.
+  ///
+  /// In uz, this message translates to:
+  /// **'100% Sifat kafolati'**
+  String get qualityGuaranteeBadge;
+
+  /// No description provided for @fastDeliveryBadge.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tezkor yetkazib berish'**
+  String get fastDeliveryBadge;
+
+  /// No description provided for @securePaymentBadge.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xavfsiz to\'lov'**
+  String get securePaymentBadge;
+
+  /// No description provided for @orderStatusAll.
+  ///
+  /// In uz, this message translates to:
+  /// **'Barchasi'**
+  String get orderStatusAll;
+
+  /// No description provided for @orderStatusPending.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kutilmoqda'**
+  String get orderStatusPending;
+
+  /// No description provided for @orderStatusConfirmed.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tasdiqlangan'**
+  String get orderStatusConfirmed;
+
+  /// No description provided for @orderStatusProcessing.
+  ///
+  /// In uz, this message translates to:
+  /// **'Jarayonda'**
+  String get orderStatusProcessing;
+
+  /// No description provided for @orderStatusDelivered.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yetkazildi'**
+  String get orderStatusDelivered;
+
+  /// No description provided for @orderStatusCancelled.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bekor qilingan'**
+  String get orderStatusCancelled;
 }
 
 class _AppLocalizationsDelegate

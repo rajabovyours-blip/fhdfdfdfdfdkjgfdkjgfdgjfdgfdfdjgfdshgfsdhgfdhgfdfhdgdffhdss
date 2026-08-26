@@ -47,7 +47,7 @@ class CategoryAssetHelper {
       return 'assets/images/categories/cat-14.webp';
     } else if (name.contains('lock') || name.contains('hardware') || name.contains('qulf')) {
       return 'assets/images/categories/cat-15.webp';
-    } else if (name.contains('floor') || name.contains('laminate') || name.contains('pol')) {
+    } else if (name.contains('foundation') || name.contains('poydevor')) {
       return 'assets/images/categories/cat-16.webp';
     } else if (name.contains('waterproof') || name.contains('gidroizolyatsiya')) {
       return 'assets/images/categories/cat-17.webp';
@@ -55,8 +55,10 @@ class CategoryAssetHelper {
       return 'assets/images/categories/cat-18.webp';
     } else if (name.contains('adhesive') || name.contains('glue') || name.contains('yelim') || name.contains('kley')) {
       return 'assets/images/categories/cat-19.webp';
-    } else if (name.contains('fasten') || name.contains('nail') || name.contains('screw') || name.contains('bolt') || name.contains('mix') || name.contains('shurup')) {
+    } else if (name.contains('foam') || name.contains("ko'pik")) {
       return 'assets/images/categories/cat-20.webp';
+    } else if (name.contains('pipe') || name.contains('quvur') || name.contains('truba')) {
+      return 'assets/images/categories/cat-21.webp';
     }
 
     // 3. Fallback: Hash deterministically to 21-61

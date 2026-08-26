@@ -15,6 +15,12 @@ class CategoriesScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(context.l10n.categories),
+        leading: Navigator.of(context).canPop()
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+                onPressed: () => context.pop(),
+              )
+            : null,
       ),
       body: RefreshIndicator(
         onRefresh: () =>

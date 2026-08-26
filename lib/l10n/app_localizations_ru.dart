@@ -997,6 +997,21 @@ class AppLocalizationsRu extends AppLocalizations {
   String get addAddress => 'Добавить адрес';
 
   @override
+  String get addressLabel => 'Название (например, Дом, Офис)';
+
+  @override
+  String get district => 'Район';
+
+  @override
+  String get streetBuilding => 'Улица/Дом';
+
+  @override
+  String get saveAddress => 'Сохранить адрес';
+
+  @override
+  String get fieldRequired => 'Обязательно';
+
+  @override
   String get compareProducts => 'Сравнить продукты';
 
   @override
@@ -1131,4 +1146,46 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get guestWishlistDesc =>
       'Войдите, чтобы просмотреть избранные товары.';
+
+  @override
+  String get discountsChip => 'Скидки';
+
+  @override
+  String get expressDeliveryChip => 'Быстрая доставка';
+
+  @override
+  String get directFactoryChip => 'Напрямую с завода';
+
+  @override
+  String get popularChip => 'Популярное';
+
+  @override
+  String get servicesChip => 'Услуги мастеров';
+
+  @override
+  String get qualityGuaranteeBadge => '100% Гарантия качества';
+
+  @override
+  String get fastDeliveryBadge => 'Быстрая доставка';
+
+  @override
+  String get securePaymentBadge => 'Безопасная оплата';
+
+  @override
+  String get orderStatusAll => 'Все';
+
+  @override
+  String get orderStatusPending => 'В ожидании';
+
+  @override
+  String get orderStatusConfirmed => 'Подтвержден';
+
+  @override
+  String get orderStatusProcessing => 'В обработке';
+
+  @override
+  String get orderStatusDelivered => 'Доставлен';
+
+  @override
+  String get orderStatusCancelled => 'Отменен';
 }

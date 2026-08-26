@@ -1007,6 +1007,21 @@ class AppLocalizationsUz extends AppLocalizations {
   String get addAddress => 'Manzil qo\'shish';
 
   @override
+  String get addressLabel => 'Nomi (masalan, Uy, Ishxona)';
+
+  @override
+  String get district => 'Tuman';
+
+  @override
+  String get streetBuilding => 'Ko\'cha/Uy';
+
+  @override
+  String get saveAddress => 'Manzilni saqlash';
+
+  @override
+  String get fieldRequired => 'Majburiy';
+
+  @override
   String get compareProducts => 'Mahsulotlarni taqqoslash';
 
   @override
@@ -1140,4 +1155,46 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get guestWishlistDesc => 'Sevimlilarni ko\'rish uchun tizimga kiring.';
+
+  @override
+  String get discountsChip => 'Aksiyalar';
+
+  @override
+  String get expressDeliveryChip => 'Tezkor yetkazish';
+
+  @override
+  String get directFactoryChip => 'To\'g\'ridan-to\'g\'ri zavoddan';
+
+  @override
+  String get popularChip => 'Ommabop';
+
+  @override
+  String get servicesChip => 'Usta xizmati';
+
+  @override
+  String get qualityGuaranteeBadge => '100% Sifat kafolati';
+
+  @override
+  String get fastDeliveryBadge => 'Tezkor yetkazib berish';
+
+  @override
+  String get securePaymentBadge => 'Xavfsiz to\'lov';
+
+  @override
+  String get orderStatusAll => 'Barchasi';
+
+  @override
+  String get orderStatusPending => 'Kutilmoqda';
+
+  @override
+  String get orderStatusConfirmed => 'Tasdiqlangan';
+
+  @override
+  String get orderStatusProcessing => 'Jarayonda';
+
+  @override
+  String get orderStatusDelivered => 'Yetkazildi';
+
+  @override
+  String get orderStatusCancelled => 'Bekor qilingan';
 }

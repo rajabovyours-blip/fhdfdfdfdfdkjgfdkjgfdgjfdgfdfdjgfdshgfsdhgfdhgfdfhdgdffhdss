@@ -1,3 +1,4 @@
+import 'dart:convert' as dart_convert;
 import 'package:fpdart/fpdart.dart';
 import 'package:milliy_metr/core/errors/failures.dart';
 import 'package:milliy_metr/features/authentication/data/datasources/auth_local_datasource.dart';
@@ -132,11 +133,31 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, UserEntity>> getCurrentUser() async {
     try {
       final userModel = await remoteDataSource.getCurrentUser();
+      // Cache user data
+      await localDataSource.saveUserData(
+          const dart_convert.JsonEncoder().convert(userModel.toJson()));
       return Right(userModel.toEntity());
     } on Failure catch (e) {
       return Left(e);
     } catch (e) {
       return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, UserEntity?>> getCachedUser() async {
+    try {
+      final userDataStr = await localDataSource.getUserData();
+      if (userDataStr != null && userDataStr.isNotEmpty) {
+        final Map<String, dynamic> userMap =
+            dart_convert.jsonDecode(userDataStr);
+        // Note: Assuming UserModel has fromJson
+        final userEntity = UserEntity.fromJson(userMap);
+        return Right(userEntity);
+      }
+      return const Right(null);
+    } catch (e) {
+      return const Right(null);
     }
   }
 
@@ -157,5 +178,7 @@ class AuthRepositoryImpl implements AuthRepository {
       refreshToken: null,
     );
     await localDataSource.saveToken(token);
+    await localDataSource.saveUserData(
+        const dart_convert.JsonEncoder().convert(user.toJson()));
   }
 }

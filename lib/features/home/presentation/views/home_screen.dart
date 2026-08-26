@@ -60,8 +60,7 @@ class HomeScreen extends ConsumerWidget {
                         child: SectionHeader(
                           title: context.l10n.categories,
                           onViewAll: () {
-                            // Using bottom navigation to switch tabs is better, but this will do
-                            // Actually, typically the bottom nav is managed by go_router StatefulShellRoute
+                            context.push(AppRoutes.categories);
                           },
                         ),
                       ),

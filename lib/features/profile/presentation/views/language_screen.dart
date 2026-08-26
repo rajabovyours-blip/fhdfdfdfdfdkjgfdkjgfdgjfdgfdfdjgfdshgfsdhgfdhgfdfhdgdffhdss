@@ -62,6 +62,13 @@ class LanguageScreen extends ConsumerWidget {
               code: 'ru',
               isSelected: !isSystem && currentLocale.languageCode == 'ru',
             ),
+            _buildLanguageOption(
+              context: context,
+              ref: ref,
+              title: 'English',
+              code: 'en',
+              isSelected: !isSystem && currentLocale.languageCode == 'en',
+            ),
           ],
         ),
       ),

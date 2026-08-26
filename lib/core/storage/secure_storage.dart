@@ -22,4 +22,12 @@ class SecureStorage {
   static Future<void> clearAll() async {
     await _storage.deleteAll();
   }
+
+  static Future<void> saveUserData(String userData) async {
+    await _storage.write(key: 'user_data', value: userData);
+  }
+
+  static Future<String?> getUserData() async {
+    return await _storage.read(key: 'user_data');
+  }
 }

@@ -45,40 +45,40 @@ class _AddAddressScreenState extends ConsumerState<AddAddressScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Label (e.g. Home, Office)',
+                decoration: InputDecoration(
+                  labelText: context.l10n.addressLabel,
                 ),
-                validator: (v) => v!.isEmpty ? 'Required' : null,
+                validator: (v) => v!.isEmpty ? context.l10n.fieldRequired : null,
                 onSaved: (v) => label = v!,
               ),
               const SizedBox(height: 16),
               TextFormField(
-                decoration: const InputDecoration(labelText: 'Region'),
-                validator: (v) => v!.isEmpty ? 'Required' : null,
+                decoration: InputDecoration(labelText: context.l10n.region),
+                validator: (v) => v!.isEmpty ? context.l10n.fieldRequired : null,
                 onSaved: (v) => region = v!,
               ),
               const SizedBox(height: 16),
               TextFormField(
-                decoration: const InputDecoration(labelText: 'District'),
-                validator: (v) => v!.isEmpty ? 'Required' : null,
+                decoration: InputDecoration(labelText: context.l10n.district),
+                validator: (v) => v!.isEmpty ? context.l10n.fieldRequired : null,
                 onSaved: (v) => district = v!,
               ),
               const SizedBox(height: 16),
               TextFormField(
-                decoration: const InputDecoration(labelText: 'Street/Building'),
-                validator: (v) => v!.isEmpty ? 'Required' : null,
+                decoration: InputDecoration(labelText: context.l10n.streetBuilding),
+                validator: (v) => v!.isEmpty ? context.l10n.fieldRequired : null,
                 onSaved: (v) => street = v!,
               ),
               const SizedBox(height: 16),
               TextFormField(
-                decoration: const InputDecoration(labelText: 'Phone Number'),
+                decoration: InputDecoration(labelText: context.l10n.phoneNumber),
                 keyboardType: TextInputType.phone,
-                validator: (v) => v!.isEmpty ? 'Required' : null,
+                validator: (v) => v!.isEmpty ? context.l10n.fieldRequired : null,
                 onSaved: (v) => phone = v!,
               ),
               const SizedBox(height: 32),
               AppButton(
-                text: 'Save Address',
+                text: context.l10n.saveAddress,
                 onPressed: _submit,
               ),
             ],

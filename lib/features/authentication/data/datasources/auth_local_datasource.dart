@@ -5,6 +5,8 @@ abstract class AuthLocalDataSource {
   Future<void> saveToken(TokenModel token);
   Future<void> clearSession();
   Future<String?> getAccessToken();
+  Future<void> saveUserData(String userData);
+  Future<String?> getUserData();
 }
 
 class AuthLocalDataSourceImpl implements AuthLocalDataSource {
@@ -24,5 +26,15 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   @override
   Future<String?> getAccessToken() async {
     return await SecureStorage.getToken();
+  }
+
+  @override
+  Future<void> saveUserData(String userData) async {
+    await SecureStorage.saveUserData(userData);
+  }
+
+  @override
+  Future<String?> getUserData() async {
+    return await SecureStorage.getUserData();
   }
 }

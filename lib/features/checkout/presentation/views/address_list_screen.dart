@@ -63,10 +63,14 @@ class _AddressListScreenState extends ConsumerState<AddressListScreen> {
               },
             ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color(0xFFFF7A00),
+        foregroundColor: Colors.white,
+        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         onPressed: () {
           context.push('/add-address');
         },
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.add_rounded, size: 28),
       ),
     );
   }

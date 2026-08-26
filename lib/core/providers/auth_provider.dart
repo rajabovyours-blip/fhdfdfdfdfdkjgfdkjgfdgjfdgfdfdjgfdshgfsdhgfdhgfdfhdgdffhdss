@@ -90,10 +90,30 @@ class AuthController extends StateNotifier<AuthState> {
 
   Future<void> checkAuthStatus() async {
     state = const AuthState.loading();
+    // Try to get cached user first for immediate UI render
+    final cachedResult = await _repository.getCachedUser();
+    cachedResult.fold(
+      (_) {},
+      (user) {
+        if (user != null) {
+          state = AuthState.authenticated(user);
+        }
+      },
+    );
+
     final result = await _repository.getCurrentUser();
     if (!mounted) return;
     result.fold(
-      (failure) => state = const AuthState.unauthenticated(),
+      (failure) {
+        // If we already have a cached user, don't unauthenticate just because of network failure
+        final isAuthenticated = state.maybeWhen(
+          authenticated: (_) => true,
+          orElse: () => false,
+        );
+        if (!isAuthenticated) {
+          state = const AuthState.unauthenticated();
+        }
+      },
       (user) => state = AuthState.authenticated(user),
     );
   }

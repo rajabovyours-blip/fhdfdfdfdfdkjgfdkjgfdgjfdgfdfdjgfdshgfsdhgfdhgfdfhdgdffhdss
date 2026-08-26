@@ -88,7 +88,56 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
                 }).toList();
 
                 if (filtered.isEmpty) {
-                  return Center(child: Text(context.l10n.noOrdersFound));
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(32.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(24),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).cardColor,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.receipt_long_outlined,
+                              size: 64,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          Text(
+                            context.l10n.noOrdersFound,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 32),
+                          SizedBox(
+                            height: 44,
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: () => context.go('/home'),
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: Text(
+                                context.l10n.viewProducts,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
                 }
 
                 return ListView.separated(

@@ -198,6 +198,10 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
     final currentCtrl = TextEditingController();
     final newCtrl = TextEditingController();
     final confirmCtrl = TextEditingController();
+    
+    bool obscureCurrent = true;
+    bool obscureNew = true;
+    bool obscureConfirm = true;
 
     showModalBottomSheet(
       context: context,
@@ -207,87 +211,116 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (ctx) {
-        return Padding(
-          padding: EdgeInsets.fromLTRB(
-            20,
-            24,
-            20,
-            MediaQuery.of(ctx).viewInsets.bottom + 24,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                l10n.changePassword,
-                style: TextStyle(
-                  color: context.colors.textHigh,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setStateSheet) {
+            return Padding(
+              padding: EdgeInsets.fromLTRB(
+                20,
+                24,
+                20,
+                MediaQuery.of(ctx).viewInsets.bottom + 24,
               ),
-              const SizedBox(height: 20),
-              _buildPasswordField(currentCtrl, l10n.currentPassword),
-              const SizedBox(height: 12),
-              _buildPasswordField(newCtrl, l10n.newPassword),
-              const SizedBox(height: 12),
-              _buildPasswordField(confirmCtrl, l10n.confirmPassword),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  if (newCtrl.text.length < 8) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(l10n.passwordTooShort),
-                        backgroundColor: context.colors.danger,
-                      ),
-                    );
-                    return;
-                  }
-                  if (newCtrl.text != confirmCtrl.text) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(l10n.passwordsDoNotMatch),
-                        backgroundColor: context.colors.danger,
-                      ),
-                    );
-                    return;
-                  }
-                  Navigator.pop(ctx);
-                  /* ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(l10n.requiresBackendIntegration),
-                      backgroundColor: context.colors.primary,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    l10n.changePassword,
+                    style: TextStyle(
+                      color: context.colors.textHigh,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
                     ),
-                  ); */
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: context.colors.primary,
-                  foregroundColor: context.colors.background,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
                   ),
-                ),
-                child: Text(l10n.save),
+                  const SizedBox(height: 20),
+                  _buildPasswordField(
+                    controller: currentCtrl,
+                    label: l10n.currentPassword,
+                    obscureText: obscureCurrent,
+                    onToggle: () => setStateSheet(() => obscureCurrent = !obscureCurrent),
+                  ),
+                  const SizedBox(height: 12),
+                  _buildPasswordField(
+                    controller: newCtrl,
+                    label: l10n.newPassword,
+                    obscureText: obscureNew,
+                    onToggle: () => setStateSheet(() => obscureNew = !obscureNew),
+                  ),
+                  const SizedBox(height: 12),
+                  _buildPasswordField(
+                    controller: confirmCtrl,
+                    label: l10n.confirmPassword,
+                    obscureText: obscureConfirm,
+                    onToggle: () => setStateSheet(() => obscureConfirm = !obscureConfirm),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (newCtrl.text.length < 8) {
+                        ScaffoldMessenger.of(context).clearSnackBars();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(l10n.passwordTooShort),
+                            backgroundColor: context.colors.danger,
+                            duration: const Duration(seconds: 2),
+                          ),
+                        );
+                        return;
+                      }
+                      if (newCtrl.text != confirmCtrl.text) {
+                        ScaffoldMessenger.of(context).clearSnackBars();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(l10n.passwordsDoNotMatch),
+                            backgroundColor: context.colors.danger,
+                            duration: const Duration(seconds: 2),
+                          ),
+                        );
+                        return;
+                      }
+                      Navigator.pop(ctx);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: context.colors.primary,
+                      foregroundColor: context.colors.background,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(l10n.save),
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
   }
 
-  Widget _buildPasswordField(TextEditingController controller, String label) {
+  Widget _buildPasswordField({
+    required TextEditingController controller,
+    required String label,
+    required bool obscureText,
+    required VoidCallback onToggle,
+  }) {
     return TextField(
       controller: controller,
-      obscureText: true,
+      obscureText: obscureText,
       style: TextStyle(color: context.colors.textHigh),
       decoration: InputDecoration(
         labelText: label,
         labelStyle: TextStyle(color: context.colors.textMedium),
         filled: true,
         fillColor: context.colors.surfaceVariant,
+        suffixIcon: IconButton(
+          icon: Icon(
+            obscureText ? Icons.visibility_off : Icons.visibility,
+            color: context.colors.textMedium,
+          ),
+          onPressed: onToggle,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: context.colors.outline),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 void showAppToast(BuildContext context, {required String message, bool isSuccess = true}) {
   final isDark = Theme.of(context).brightness == Brightness.dark;
-  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+  ScaffoldMessenger.of(context).clearSnackBars();
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       behavior: SnackBarBehavior.floating,
