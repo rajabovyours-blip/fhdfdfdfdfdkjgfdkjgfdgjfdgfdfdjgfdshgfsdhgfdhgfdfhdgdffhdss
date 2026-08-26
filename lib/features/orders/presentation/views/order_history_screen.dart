@@ -17,13 +17,24 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
   final List<String> statuses = [
     'Pending',
     'Confirmed',
-    'Packed',
-    'Shipped',
+    'Processing',
     'Delivered',
     'Cancelled',
   ];
   String selectedStatus = 'All';
   String searchText = '';
+
+  String getLocalizedOrderStatus(String status, BuildContext context) {
+    switch (status.toLowerCase()) {
+      case 'all': return context.l10n.orderStatusAll;
+      case 'pending': return context.l10n.orderStatusPending;
+      case 'confirmed': return context.l10n.orderStatusConfirmed;
+      case 'processing': return context.l10n.orderStatusProcessing;
+      case 'delivered': return context.l10n.orderStatusDelivered;
+      case 'cancelled': return context.l10n.orderStatusCancelled;
+      default: return status;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +64,7 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4),
                   child: FilterChip(
-                    label: Text(status),
+                    label: Text(getLocalizedOrderStatus(status, context)),
                     selected: selectedStatus == status,
                     onSelected: (_) => setState(() => selectedStatus = status),
                   ),
@@ -93,7 +104,7 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         subtitle: Text(
-                          '${context.l10n.status}: ${order.status}\n${context.l10n.total}: ${CurrencyFormatter.format(order.total, context)}',
+                          '${context.l10n.status}: ${getLocalizedOrderStatus(order.status, context)}\n${context.l10n.total}: ${CurrencyFormatter.format(order.total, context)}',
                         ),
                         isThreeLine: true,
                         trailing: const Icon(Icons.chevron_right),

@@ -362,5 +362,19 @@
   "piece": "dona",
   "guestModeTitle": "Tizimga kiring",
   "guestCartDesc": "Savatchani ko'rish uchun tizimga kiring.",
-  "guestWishlistDesc": "Sevimlilarni ko'rish uchun tizimga kiring."
+  "guestWishlistDesc": "Sevimlilarni ko'rish uchun tizimga kiring.",
+  "discountsChip": "Aksiyalar",
+  "expressDeliveryChip": "Tezkor yetkazish",
+  "directFactoryChip": "To'g'ridan-to'g'ri zavoddan",
+  "popularChip": "Ommabop",
+  "servicesChip": "Usta xizmati",
+  "qualityGuaranteeBadge": "100% Sifat kafolati",
+  "fastDeliveryBadge": "Tezkor yetkazib berish",
+  "securePaymentBadge": "Xavfsiz to'lov",
+  "orderStatusAll": "Barchasi",
+  "orderStatusPending": "Kutilmoqda",
+  "orderStatusConfirmed": "Tasdiqlangan",
+  "orderStatusProcessing": "Jarayonda",
+  "orderStatusDelivered": "Yetkazildi",
+  "orderStatusCancelled": "Bekor qilingan"
 }

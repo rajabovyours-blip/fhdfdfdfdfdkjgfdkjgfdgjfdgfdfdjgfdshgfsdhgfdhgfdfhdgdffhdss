@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -30,8 +31,10 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(categoryNotifierProvider);
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: context.colors.background,
+      backgroundColor: isDark ? const Color(0xFF0E1015) : const Color(0xFFF9FAFB),
       appBar: AppBar(
         backgroundColor: context.colors.background,
         elevation: 0,
@@ -44,12 +47,16 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
           ),
         ),
       ),
-      body: SafeArea(
-        child: RefreshIndicator(
-          color: context.colors.primary,
-          backgroundColor: context.colors.surface,
-          onRefresh: () => ref.read(categoryNotifierProvider.notifier).loadCategories(),
-          child: CustomScrollView(
+      body: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
+        child: SafeArea(
+          bottom: false,
+          child: RefreshIndicator(
+            color: context.colors.primary,
+            backgroundColor: context.colors.surface,
+            onRefresh: () => ref.read(categoryNotifierProvider.notifier).loadCategories(),
+            child: CustomScrollView(
+              physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
             slivers: [
               SliverToBoxAdapter(child: CatalogSearchBar()),
               const SliverToBoxAdapter(child: SizedBox(height: 8)),

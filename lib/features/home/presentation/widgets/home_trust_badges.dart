@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
+import 'package:milliy_metr/l10n/l10n_extension.dart';
 
 class HomeTrustBadges extends StatelessWidget {
   const HomeTrustBadges({super.key});
@@ -17,11 +18,11 @@ class HomeTrustBadges extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildBadge(context, Icons.verified_outlined, "100% Sifat\nkafolati"),
+          _buildBadge(context, Icons.verified_outlined, context.l10n.qualityGuaranteeBadge.replaceAll(" ", "\n", 1)),
           _buildDivider(context),
-          _buildBadge(context, Icons.bolt_outlined, "Tezkor\nyetkazish"),
+          _buildBadge(context, Icons.bolt_outlined, context.l10n.fastDeliveryBadge.replaceAll(" ", "\n", 1)),
           _buildDivider(context),
-          _buildBadge(context, Icons.credit_card_outlined, "Xavfsiz\nto'lov"),
+          _buildBadge(context, Icons.credit_card_outlined, context.l10n.securePaymentBadge.replaceAll(" ", "\n", 1)),
         ],
       ),
     );

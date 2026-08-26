@@ -362,5 +362,19 @@
   "piece": "шт",
   "guestModeTitle": "Войдите в систему",
   "guestCartDesc": "Войдите, чтобы просмотреть корзину.",
-  "guestWishlistDesc": "Войдите, чтобы просмотреть избранные товары."
+  "guestWishlistDesc": "Войдите, чтобы просмотреть избранные товары.",
+  "discountsChip": "Скидки",
+  "expressDeliveryChip": "Быстрая доставка",
+  "directFactoryChip": "Напрямую с завода",
+  "popularChip": "Популярное",
+  "servicesChip": "Услуги мастеров",
+  "qualityGuaranteeBadge": "100% Гарантия качества",
+  "fastDeliveryBadge": "Быстрая доставка",
+  "securePaymentBadge": "Безопасная оплата",
+  "orderStatusAll": "Все",
+  "orderStatusPending": "В ожидании",
+  "orderStatusConfirmed": "Подтвержден",
+  "orderStatusProcessing": "В обработке",
+  "orderStatusDelivered": "Доставлен",
+  "orderStatusCancelled": "Отменен"
 }

@@ -362,5 +362,19 @@
   "piece": "piece",
   "guestModeTitle": "Please Log In",
   "guestCartDesc": "Log in to view and manage your cart.",
-  "guestWishlistDesc": "Log in to view your favorite products."
+  "guestWishlistDesc": "Log in to view your favorite products.",
+  "discountsChip": "Discounts",
+  "expressDeliveryChip": "Fast Delivery",
+  "directFactoryChip": "Direct from Factory",
+  "popularChip": "Popular",
+  "servicesChip": "Master Services",
+  "qualityGuaranteeBadge": "100% Quality Guarantee",
+  "fastDeliveryBadge": "Express Shipping",
+  "securePaymentBadge": "Secure Payment",
+  "orderStatusAll": "All",
+  "orderStatusPending": "Pending",
+  "orderStatusConfirmed": "Confirmed",
+  "orderStatusProcessing": "Processing",
+  "orderStatusDelivered": "Delivered",
+  "orderStatusCancelled": "Cancelled"
 }

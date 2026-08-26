@@ -9,6 +9,7 @@ import 'package:milliy_metr/shared/components/brand_image_loader.dart';
 import 'package:go_router/go_router.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
+import 'package:milliy_metr/shared/widgets/app_snackbar.dart';
 
 class ProductCard extends ConsumerStatefulWidget {
   final ProductEntity product;
@@ -51,13 +52,7 @@ class _ProductCardState extends ConsumerState<ProductCard> {
         setState(() {
           _isOptimisticCartAdded = false;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.errorOccurred),
-            backgroundColor: context.colors.danger,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+        AppSnackBar.showError(context, context.l10n.errorOccurred);
       }
     } finally {
       if (mounted) {
@@ -97,7 +92,7 @@ class _ProductCardState extends ConsumerState<ProductCard> {
           children: [
             // Image Area
             AspectRatio(
-              aspectRatio: 1.0,
+              aspectRatio: 1.05,
               child: Stack(
                 fit: StackFit.expand,
                 children: [

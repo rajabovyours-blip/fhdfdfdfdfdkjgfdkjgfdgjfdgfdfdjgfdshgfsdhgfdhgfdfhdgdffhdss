@@ -85,7 +85,7 @@ class HomeScreen extends ConsumerWidget {
                         sliver: SliverGrid(
                           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
-                            childAspectRatio: 0.55,
+                            childAspectRatio: 0.63,
                             crossAxisSpacing: 12,
                             mainAxisSpacing: 16,
                           ),

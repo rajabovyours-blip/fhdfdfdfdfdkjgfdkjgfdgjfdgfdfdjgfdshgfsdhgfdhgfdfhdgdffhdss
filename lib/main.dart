@@ -49,7 +49,13 @@ class MilliyMetrApp extends ConsumerWidget {
           onTap: () {
             FocusManager.instance.primaryFocus?.unfocus();
           },
-          child: child ?? const SizedBox.shrink(),
+          child: ScrollConfiguration(
+            behavior: ScrollConfiguration.of(context).copyWith(
+              physics: const BouncingScrollPhysics(),
+              overscroll: false,
+            ),
+            child: child ?? const SizedBox.shrink(),
+          ),
         );
       },
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
+import 'package:milliy_metr/l10n/l10n_extension.dart';
 
 class HomeActionChips extends StatelessWidget {
   const HomeActionChips({super.key});
@@ -7,11 +8,11 @@ class HomeActionChips extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final actions = [
-      {'icon': Icons.local_offer_outlined, 'label': 'Aksiyalar'},
-      {'icon': Icons.local_shipping_outlined, 'label': 'Tezkor yetkazish'},
-      {'icon': Icons.factory_outlined, 'label': 'To\'g\'ridan-to\'g\'ri zavoddan'},
-      {'icon': Icons.star_outline_rounded, 'label': 'Ommabop'},
-      {'icon': Icons.handyman_outlined, 'label': 'Usta xizmati'},
+      {'icon': Icons.local_offer_outlined, 'label': context.l10n.discountsChip},
+      {'icon': Icons.local_shipping_outlined, 'label': context.l10n.expressDeliveryChip},
+      {'icon': Icons.factory_outlined, 'label': context.l10n.directFactoryChip},
+      {'icon': Icons.star_outline_rounded, 'label': context.l10n.popularChip},
+      {'icon': Icons.handyman_outlined, 'label': context.l10n.servicesChip},
     ];
 
     return SizedBox(

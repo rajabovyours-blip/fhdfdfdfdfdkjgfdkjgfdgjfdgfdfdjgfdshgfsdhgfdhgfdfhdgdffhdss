@@ -52,10 +52,14 @@ class _CategoryProductsScreenState extends ConsumerState<CategoryProductsScreen>
         backgroundColor: context.colors.background,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: context.colors.textHigh),
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            size: 20,
+            color: context.colors.textHigh,
+          ),
           onPressed: () {
             ref.read(catalogNotifierProvider.notifier).clearFilters();
-            context.pop();
+            Navigator.of(context).maybePop();
           },
         ),
         title: Text(
@@ -219,7 +223,7 @@ class _CategoryProductsScreenState extends ConsumerState<CategoryProductsScreen>
                                 crossAxisCount: 2,
                                 mainAxisSpacing: 16,
                                 crossAxisSpacing: 16,
-                                childAspectRatio: 0.55,
+                                childAspectRatio: 0.63,
                               ),
                               delegate: SliverChildBuilderDelegate(
                                 (context, index) {

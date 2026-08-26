@@ -476,7 +476,7 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
             crossAxisCount: crossAxisCount,
             mainAxisSpacing: mainAxisSpacing,
             crossAxisSpacing: crossAxisSpacing,
-            childAspectRatio: 0.55,
+            childAspectRatio: 0.63,
           ),
           itemCount: 6,
           itemBuilder: (context, index) {
