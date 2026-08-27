@@ -31,6 +31,24 @@
 
   <title>Milliy Metr - Admin Panel</title>
   <link rel="manifest" href="manifest.json">
+
+  <style>
+    html, body {
+      overflow: hidden;
+      overscroll-behavior: none;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-y;
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+    }
+    /* Prevent pull-to-refresh and edge swipe navigation */
+    body {
+      overscroll-behavior-y: none;
+      overscroll-behavior-x: none;
+    }
+  </style>
 </head>
 <body>
   <!--

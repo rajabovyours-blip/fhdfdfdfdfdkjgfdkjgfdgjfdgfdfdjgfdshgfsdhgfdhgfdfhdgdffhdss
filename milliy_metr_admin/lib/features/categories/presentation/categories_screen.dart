@@ -146,6 +146,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
     final isMobile = MediaQuery.of(context).size.width < 600;
 
     return SingleChildScrollView(
+      physics: const ClampingScrollPhysics(),
       padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -205,6 +206,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
               border: Border.all(color: Theme.of(context).colorScheme.outline),
             ),
             child: SingleChildScrollView(
+              physics: const ClampingScrollPhysics(),
               scrollDirection: Axis.horizontal,
               child: DataTable(
                 columns: const [

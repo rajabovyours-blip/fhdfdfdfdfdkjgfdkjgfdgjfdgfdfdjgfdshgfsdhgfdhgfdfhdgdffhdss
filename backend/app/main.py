@@ -43,6 +43,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 from app.api.router import api_router
@@ -57,3 +58,4 @@ app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 @app.get("/health")
 async def health_check():
     return {"status": "ok"}
+

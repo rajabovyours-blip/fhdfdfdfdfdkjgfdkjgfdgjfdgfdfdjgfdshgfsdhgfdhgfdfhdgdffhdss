@@ -16,10 +16,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   
   @override
   Widget build(BuildContext context) {
-    final bool isMobile = MediaQuery.of(context).size.width < 768;
+    final bool isMobile = MediaQuery.of(context).size.width < 900;
     final analyticsAsync = ref.watch(analyticsProvider);
 
     return SingleChildScrollView(
+      physics: const ClampingScrollPhysics(),
       padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,10 +34,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           const SizedBox(height: 24),
           analyticsAsync.when(
             data: (data) {
-              if (data.isEmpty) {
-                return const Center(child: Text('Ma\'lumot topilmadi'));
-              }
-              
               final totalRevenue = data['total_revenue'] ?? 0;
               final todayOrdersCount = data['today_orders_count'] ?? 0;
               final activeCustomersCount = data['active_customers_count'] ?? 0;

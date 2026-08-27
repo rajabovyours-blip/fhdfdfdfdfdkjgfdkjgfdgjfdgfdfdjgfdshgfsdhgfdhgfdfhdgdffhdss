@@ -16,7 +16,7 @@ class _AdminLayoutState extends State<AdminLayout> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isMobile = MediaQuery.of(context).size.width < 768;
+    final bool isMobile = MediaQuery.of(context).size.width < 900;
 
     return Scaffold(
       appBar: isMobile
@@ -65,6 +65,7 @@ class _AdminLayoutState extends State<AdminLayout> {
           const SizedBox(height: 32),
           Expanded(
             child: ListView(
+              physics: const ClampingScrollPhysics(),
               padding: const EdgeInsets.symmetric(horizontal: 12),
               children: [
                 _buildNavItem(context, 'Dashboard', Icons.dashboard, '/dashboard', isMobile: isMobile),

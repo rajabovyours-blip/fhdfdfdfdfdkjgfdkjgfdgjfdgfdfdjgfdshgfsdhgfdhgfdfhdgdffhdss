@@ -178,8 +178,20 @@ final analyticsProvider = FutureProvider<Map<String, dynamic>>((ref) async {
     if (data is Map && data['data'] != null) {
       return data['data'] as Map<String, dynamic>;
     }
-    return data as Map<String, dynamic>;
+    if (data is Map) return data as Map<String, dynamic>;
+    return _fallbackAnalytics;
   } catch (_) {
-    return {};
+    return _fallbackAnalytics;
   }
 });
+
+const Map<String, dynamic> _fallbackAnalytics = {
+  'total_revenue': 0,
+  'today_orders_count': 0,
+  'active_customers_count': 0,
+  'total_products_count': 0,
+  'monthly_sales': [],
+  'order_status_distribution': [],
+  'recent_orders': [],
+};
+
