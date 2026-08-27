@@ -114,7 +114,14 @@ class _UsersScreenState extends ConsumerState<UsersScreen> {
                 return Center(
                   child: Padding(
                     padding: const EdgeInsets.all(48.0),
-                    child: Text("Mijozlar topilmadi", style: Theme.of(context).textTheme.titleLarge),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.people_outline, size: 64, color: Colors.grey),
+                        const SizedBox(height: 16),
+                        Text("Mijozlar topilmadi", style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.grey)),
+                      ],
+                    ),
                   ),
                 );
               }

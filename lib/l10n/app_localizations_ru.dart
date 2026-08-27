@@ -1182,4 +1182,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get orderStatusCancelled => 'Отменен';
+
+  @override
+  String get addedToCart => 'Добавлено в корзину';
 }

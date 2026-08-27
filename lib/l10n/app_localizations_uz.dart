@@ -1191,4 +1191,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get orderStatusCancelled => 'Bekor qilingan';
+
+  @override
+  String get addedToCart => 'Savatga qo\'shildi';
 }

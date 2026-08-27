@@ -60,7 +60,7 @@ async def broadcast_notification(
         users = result.scalars().all()
 
     if not users:
-        return APIResponse(message="No target users found for this broadcast")
+        return APIResponse(data={"delivered_count": 0}, message="Bildirishnoma tizimda saqlandi")
 
     notifications = []
     for user in users:

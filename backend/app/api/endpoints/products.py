@@ -122,3 +122,61 @@ async def delete_product(id: str, db: AsyncSession = Depends(get_db)):
     await db.commit()
     
     return APIResponse(data={"success": True, "message": "Product deleted successfully"})
+
+import pandas as pd
+from fastapi import UploadFile, File
+
+@router.post("/bulk-upload", response_model=APIResponse[dict])
+async def bulk_upload_products(file: UploadFile = File(...), db: AsyncSession = Depends(get_db)):
+    if not (file.filename.endswith(".csv") or file.filename.endswith(".xlsx")):
+        raise HTTPException(status_code=400, detail="Invalid file format")
+    
+    import io
+    contents = await file.read()
+    
+    try:
+        if file.filename.endswith(".csv"):
+            df = pd.read_csv(io.BytesIO(contents))
+        else:
+            df = pd.read_excel(io.BytesIO(contents))
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Error reading file: {str(e)}")
+        
+    import uuid as _uuid
+    imported = 0
+    failed = 0
+    
+    result = await db.execute(select(Category))
+    categories = result.scalars().all()
+    default_cat_id = categories[0].id if categories else _uuid.uuid4()
+    
+    for index, row in df.iterrows():
+        try:
+            name_uz = str(row.get('name_uz', ''))
+            if not name_uz or name_uz == 'nan':
+                failed += 1
+                continue
+            
+            price = float(row.get('price', 0))
+            
+            product = Product(
+                id=_uuid.uuid4(),
+                sku=f"SKU-{_uuid.uuid4().hex[:8].upper()}",
+                name={"uz": name_uz, "ru": str(row.get('name_ru', name_uz)), "en": str(row.get('name_en', name_uz))},
+                description={"uz": str(row.get('desc_uz', '')), "ru": str(row.get('desc_ru', '')), "en": str(row.get('desc_en', ''))},
+                category_id=default_cat_id,
+                price=price,
+                unit=str(row.get('unit', 'pcs')),
+                stock=int(row.get('stock', 100)),
+                images=[],
+                brand=None,
+                currency="UZS",
+            )
+            db.add(product)
+            imported += 1
+        except Exception as e:
+            failed += 1
+            
+    await db.commit()
+    
+    return APIResponse(data={"imported": imported, "failed": failed}, message="Bulk upload complete")

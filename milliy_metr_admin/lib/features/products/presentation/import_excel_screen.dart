@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 import '../../../core/providers/admin_providers.dart';
+import '../../../core/api/api_client.dart';
 
 class ImportExcelScreen extends ConsumerStatefulWidget {
   const ImportExcelScreen({super.key});
@@ -37,18 +38,14 @@ class _ImportExcelScreenState extends ConsumerState<ImportExcelScreen> {
     });
 
     try {
-      final dio = Dio(BaseOptions(baseUrl: 'http://localhost:8000'));
+      final dio = ref.read(dioProvider);
       final formData = FormData.fromMap({
         'file': MultipartFile.fromBytes(fileBytes, filename: fileName),
       });
 
       final response = await dio.post(
-        '/api/v1/admin/products/bulk-upload',
+        '/products/bulk-upload',
         data: formData,
-        // In a real app, you'd add the auth token here
-        options: Options(
-          headers: {'Authorization': 'Bearer YOUR_TOKEN'},
-        )
       );
 
       if (response.statusCode == 200) {

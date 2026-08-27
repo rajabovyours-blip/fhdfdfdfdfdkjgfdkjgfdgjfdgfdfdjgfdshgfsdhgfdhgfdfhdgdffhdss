@@ -210,7 +210,23 @@ class _BannersScreenState extends ConsumerState<BannersScreen> {
                 return Center(
                   child: Padding(
                     padding: const EdgeInsets.all(48.0),
-                    child: Text("Bannerlar mavjud emas", style: Theme.of(context).textTheme.titleLarge),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.view_carousel_outlined, size: 64, color: Colors.grey),
+                        const SizedBox(height: 16),
+                        Text("Bannerlar mavjud emas", style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.grey)),
+                        const SizedBox(height: 24),
+                        ElevatedButton.icon(
+                          onPressed: () => _showBannerDialog(context),
+                          icon: const Icon(Icons.add),
+                          label: const Text("+ Yangi banner qo'shish"),
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               }

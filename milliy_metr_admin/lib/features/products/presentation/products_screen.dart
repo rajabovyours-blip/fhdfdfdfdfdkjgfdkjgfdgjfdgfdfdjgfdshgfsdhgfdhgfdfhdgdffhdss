@@ -46,264 +46,309 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
     final isMobileDialog = screenWidth < 600;
 
     Widget buildFormBody(StateSetter setDialogState, BuildContext dialogContext) {
-      return SingleChildScrollView(
-        physics: const ClampingScrollPhysics(),
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(dialogContext).viewInsets.bottom + 24,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Mahsulot nomi', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-            const SizedBox(height: 8),
-            TextField(
-              controller: nameUzController,
-              decoration: const InputDecoration(
-                labelText: "Nomi (O'zbekcha)",
-                prefixIcon: Icon(Icons.language),
-              ),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: nameRuController,
-              decoration: const InputDecoration(
-                labelText: 'Nomi (Ruscha)',
-                prefixIcon: Icon(Icons.language),
-              ),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: nameEnController,
-              decoration: const InputDecoration(
-                labelText: 'Nomi (Inglizcha)',
-                prefixIcon: Icon(Icons.language),
-              ),
-            ),
-            const SizedBox(height: 20),
-            const Text('Kategoriya', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-            const SizedBox(height: 8),
-            DropdownButtonFormField<String>(
-              decoration: const InputDecoration(
-                hintText: 'Kategoriya tanlang',
-                prefixIcon: Icon(Icons.category),
-              ),
-              value: selectedCategoryId,
-              items: categories.map((c) {
-                return DropdownMenuItem(
-                  value: c['id'].toString(),
-                  child: Text(c['name'] ?? ''),
-                );
-              }).toList(),
-              onChanged: (val) {
-                setDialogState(() {
-                  selectedCategoryId = val;
-                });
-              },
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('Narxi (UZS)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                      const SizedBox(height: 8),
-                      TextField(
-                        controller: priceController,
-                        keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          hintText: '45000',
-                          prefixIcon: Icon(Icons.attach_money),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text("O'lchov birligi", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                      const SizedBox(height: 8),
-                      DropdownButtonFormField<String>(
-                        value: selectedUnit,
-                        decoration: const InputDecoration(
-                          prefixIcon: Icon(Icons.straighten),
-                        ),
-                        items: const [
-                          DropdownMenuItem(value: 'dona', child: Text('Dona')),
-                          DropdownMenuItem(value: 'qop', child: Text('Qop')),
-                          DropdownMenuItem(value: 'kg', child: Text('Kg')),
-                          DropdownMenuItem(value: 'metr', child: Text('Metr')),
-                          DropdownMenuItem(value: 'm2', child: Text('m²')),
-                          DropdownMenuItem(value: 'litr', child: Text('Litr')),
-                        ],
-                        onChanged: (val) {
-                          setDialogState(() {
-                            selectedUnit = val ?? 'dona';
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            const Text('Rasm URL', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: imageUrlController,
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Flexible(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Mahsulot nomi', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: nameUzController,
                     decoration: const InputDecoration(
-                      hintText: 'https://... yoki assets/images/...',
-                      prefixIcon: Icon(Icons.image),
+                      labelText: "Nomi (O'zbekcha)",
+                      prefixIcon: Icon(Icons.language),
                     ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                ElevatedButton.icon(
-                  onPressed: () async {
-                    final result = await FilePicker.pickFiles(type: FileType.image);
-                    if (result != null && result.files.single.bytes != null) {
-                      try {
-                        final dio = ref.read(dioProvider);
-                        final formData = FormData.fromMap({
-                          'file': MultipartFile.fromBytes(
-                            result.files.single.bytes!,
-                            filename: result.files.single.name,
-                          ),
-                        });
-                        final response = await dio.post('/upload/image', data: formData);
-                        if (response.data['data'] != null && response.data['data']['url'] != null) {
-                          imageUrlController.text = response.data['data']['url'];
-                        }
-                      } catch (e) {
-                        if (dialogContext.mounted) {
-                          ScaffoldMessenger.of(dialogContext).showSnackBar(SnackBar(content: Text('Xatolik: $e')));
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: nameRuController,
+                    decoration: const InputDecoration(
+                      labelText: 'Nomi (Ruscha)',
+                      prefixIcon: Icon(Icons.language),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: nameEnController,
+                    decoration: const InputDecoration(
+                      labelText: 'Nomi (Inglizcha)',
+                      prefixIcon: Icon(Icons.language),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  const Text('Kategoriya', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                  const SizedBox(height: 8),
+                  DropdownButtonFormField<String>(
+                    decoration: const InputDecoration(
+                      hintText: 'Kategoriya tanlang',
+                      prefixIcon: Icon(Icons.category),
+                    ),
+                    value: selectedCategoryId,
+                    items: categories.map((c) {
+                      return DropdownMenuItem(
+                        value: c['id'].toString(),
+                        child: Text(c['name'] ?? ''),
+                      );
+                    }).toList(),
+                    onChanged: (val) {
+                      setDialogState(() {
+                        selectedCategoryId = val;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('Narxi (UZS)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                            const SizedBox(height: 8),
+                            TextField(
+                              controller: priceController,
+                              keyboardType: TextInputType.number,
+                              decoration: const InputDecoration(
+                                hintText: '45000',
+                                prefixIcon: Icon(Icons.attach_money),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text("O'lchov birligi", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                            const SizedBox(height: 8),
+                            DropdownButtonFormField<String>(
+                              value: selectedUnit,
+                              decoration: const InputDecoration(
+                                prefixIcon: Icon(Icons.straighten),
+                              ),
+                              items: const [
+                                DropdownMenuItem(value: 'dona', child: Text('Dona')),
+                                DropdownMenuItem(value: 'qop', child: Text('Qop')),
+                                DropdownMenuItem(value: 'kg', child: Text('Kg')),
+                                DropdownMenuItem(value: 'metr', child: Text('Metr')),
+                                DropdownMenuItem(value: 'm2', child: Text('m²')),
+                                DropdownMenuItem(value: 'litr', child: Text('Litr')),
+                              ],
+                              onChanged: (val) {
+                                setDialogState(() {
+                                  selectedUnit = val ?? 'dona';
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  const Text('Rasm', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                  const SizedBox(height: 8),
+                  InkWell(
+                    onTap: () async {
+                      final result = await FilePicker.pickFiles(type: FileType.image, withData: true);
+                      if (result != null && result.files.single.bytes != null) {
+                        setDialogState(() => isLoading = true);
+                        try {
+                          final dio = ref.read(dioProvider);
+                          final formData = FormData.fromMap({
+                            'file': MultipartFile.fromBytes(
+                              result.files.single.bytes!,
+                              filename: result.files.single.name,
+                            ),
+                          });
+                          final response = await dio.post('/upload/image', data: formData);
+                          if (response.data['data'] != null && response.data['data']['url'] != null) {
+                            setDialogState(() {
+                              imageUrlController.text = response.data['data']['url'];
+                            });
+                          }
+                        } catch (e) {
+                          if (dialogContext.mounted) {
+                            ScaffoldMessenger.of(dialogContext).showSnackBar(SnackBar(content: Text('Xatolik: $e')));
+                          }
+                        } finally {
+                          setDialogState(() => isLoading = false);
                         }
                       }
-                    }
-                  },
-                  icon: const Icon(Icons.upload_file),
-                  label: const Text('Yuklash'),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            const Text('Tavsif', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-            const SizedBox(height: 8),
-            TextField(
-              controller: descController,
-              maxLines: 3,
-              decoration: const InputDecoration(
-                hintText: 'Mahsulot haqida...',
-                prefixIcon: Icon(Icons.description),
+                    },
+                    child: Container(
+                      height: 120,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                        borderRadius: BorderRadius.circular(12),
+                        image: imageUrlController.text.isNotEmpty
+                            ? DecorationImage(image: NetworkImage(imageUrlController.text), fit: BoxFit.cover)
+                            : null,
+                      ),
+                      child: imageUrlController.text.isEmpty
+                          ? const Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.add_a_photo, size: 32, color: Colors.grey),
+                                SizedBox(height: 8),
+                                Text("Rasm yuklash", style: TextStyle(color: Colors.grey)),
+                              ],
+                            )
+                          : Stack(
+                              children: [
+                                Positioned(
+                                  right: 8,
+                                  top: 8,
+                                  child: IconButton(
+                                    icon: const Icon(Icons.delete, color: Colors.red),
+                                    style: IconButton.styleFrom(backgroundColor: Colors.white),
+                                    onPressed: () {
+                                      setDialogState(() {
+                                        imageUrlController.text = '';
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  const Text('Tavsif', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: descController,
+                    maxLines: 3,
+                    decoration: const InputDecoration(
+                      hintText: 'Mahsulot haqida...',
+                      prefixIcon: Icon(Icons.description),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  SwitchListTile(
+                    title: const Text('Omborda mavjud'),
+                    subtitle: Text(inStock ? 'Sotuvda' : 'Tugagan'),
+                    value: inStock,
+                    activeColor: const Color(0xFFFF7A00),
+                    onChanged: (val) {
+                      setDialogState(() {
+                        inStock = val;
+                      });
+                    },
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 16),
-            SwitchListTile(
-              title: const Text('Omborda mavjud'),
-              subtitle: Text(inStock ? 'Sotuvda' : 'Tugagan'),
-              value: inStock,
-              activeColor: const Color(0xFFFF7A00),
-              onChanged: (val) {
-                setDialogState(() {
-                  inStock = val;
-                });
-              },
+          ),
+          
+          // 3. Pinned Bottom Action Bar (Always Visible)
+          Container(
+            padding: EdgeInsets.only(
+              left: 20,
+              right: 20,
+              top: 12,
+              bottom: MediaQuery.of(dialogContext).viewInsets.bottom > 0 ? 12 : 24,
             ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              border: const Border(top: BorderSide(color: Colors.white12)),
+            ),
+            child: Row(
               children: [
-                TextButton(
-                  onPressed: () => Navigator.pop(dialogContext),
-                  child: const Text('Bekor qilish'),
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.pop(dialogContext),
+                    child: const Text("Bekor qilish"),
+                  ),
                 ),
                 const SizedBox(width: 12),
-                ElevatedButton.icon(
-                  onPressed: isLoading
-                      ? null
-                      : () async {
-                          if (nameUzController.text.isEmpty || priceController.text.isEmpty) {
-                            ScaffoldMessenger.of(dialogContext).showSnackBar(
-                              const SnackBar(
-                                content: Text("Nomi va narxini kiriting"),
-                                backgroundColor: Colors.red,
-                              ),
-                            );
-                            return;
-                          }
-                          setDialogState(() => isLoading = true);
-
-                          try {
-                            final dio = ref.read(dioProvider);
-                            final payload = {
-                              'name': {
-                                'uz': nameUzController.text,
-                                'ru': nameRuController.text.isNotEmpty ? nameRuController.text : nameUzController.text,
-                                'en': nameEnController.text.isNotEmpty ? nameEnController.text : nameUzController.text,
-                              },
-                              'description': {
-                                'uz': descController.text.isNotEmpty ? descController.text : '',
-                                'ru': descController.text.isNotEmpty ? descController.text : '',
-                                'en': descController.text.isNotEmpty ? descController.text : '',
-                              },
-                              'category_id': selectedCategoryId ?? categories.first['id'],
-                              'price': double.tryParse(priceController.text) ?? 0,
-                              'unit': selectedUnit,
-                              'stock': inStock ? 100 : 0,
-                              'images': imageUrlController.text.isNotEmpty ? [imageUrlController.text] : [],
-                              'image_url': imageUrlController.text.isNotEmpty ? imageUrlController.text : '',
-                            };
-
-                            if (isEditing) {
-                              await dio.put('/products/${product['id']}', data: payload);
-                            } else {
-                              await dio.post('/products/', data: payload);
-                            }
-
-                            if (dialogContext.mounted) {
-                              Navigator.pop(dialogContext);
-                              ref.invalidate(productsProvider);
+                Expanded(
+                  flex: 2,
+                  child: ElevatedButton(
+                    onPressed: isLoading
+                        ? null
+                        : () async {
+                            if (nameUzController.text.isEmpty || priceController.text.isEmpty) {
                               ScaffoldMessenger.of(dialogContext).showSnackBar(
-                                SnackBar(
-                                  content: Text(isEditing ? "Mahsulot yangilandi!" : "Mahsulot qo'shildi!"),
-                                  backgroundColor: const Color(0xFF10B981),
-                                ),
-                              );
-                            }
-                          } catch (e) {
-                            setDialogState(() => isLoading = false);
-                            if (dialogContext.mounted) {
-                              ScaffoldMessenger.of(dialogContext).showSnackBar(
-                                SnackBar(
-                                  content: Text('Xatolik: $e'),
+                                const SnackBar(
+                                  content: Text("Nomi va narxini kiriting"),
                                   backgroundColor: Colors.red,
                                 ),
                               );
+                              return;
                             }
-                          }
-                        },
-                  icon: isLoading
-                      ? const SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                        )
-                      : const Icon(Icons.save),
-                  label: Text(isLoading ? 'Saqlanmoqda...' : 'Saqlash'),
+                            setDialogState(() => isLoading = true);
+
+                            try {
+                              final dio = ref.read(dioProvider);
+                              final payload = {
+                                'name': {
+                                  'uz': nameUzController.text,
+                                  'ru': nameRuController.text.isNotEmpty ? nameRuController.text : nameUzController.text,
+                                  'en': nameEnController.text.isNotEmpty ? nameEnController.text : nameUzController.text,
+                                },
+                                'description': {
+                                  'uz': descController.text.isNotEmpty ? descController.text : '',
+                                  'ru': descController.text.isNotEmpty ? descController.text : '',
+                                  'en': descController.text.isNotEmpty ? descController.text : '',
+                                },
+                                'category_id': selectedCategoryId ?? categories.first['id'],
+                                'price': double.tryParse(priceController.text) ?? 0,
+                                'unit': selectedUnit,
+                                'stock': inStock ? 100 : 0,
+                                'images': imageUrlController.text.isNotEmpty ? [imageUrlController.text] : [],
+                                'image_url': imageUrlController.text.isNotEmpty ? imageUrlController.text : '',
+                              };
+
+                              if (isEditing) {
+                                await dio.put('/products/${product['id']}', data: payload);
+                              } else {
+                                await dio.post('/products/', data: payload);
+                              }
+
+                              if (dialogContext.mounted) {
+                                Navigator.pop(dialogContext);
+                                ref.invalidate(productsProvider);
+                                ScaffoldMessenger.of(dialogContext).showSnackBar(
+                                  SnackBar(
+                                    content: Text(isEditing ? "Mahsulot yangilandi!" : "Mahsulot qo'shildi!"),
+                                    backgroundColor: const Color(0xFF10B981),
+                                  ),
+                                );
+                              }
+                            } catch (e) {
+                              setDialogState(() => isLoading = false);
+                              if (dialogContext.mounted) {
+                                ScaffoldMessenger.of(dialogContext).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Xatolik: $e'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                            }
+                          },
+                    child: isLoading
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                          )
+                        : const Text('Saqlash'),
+                  ),
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+        ],
       );
     }
 

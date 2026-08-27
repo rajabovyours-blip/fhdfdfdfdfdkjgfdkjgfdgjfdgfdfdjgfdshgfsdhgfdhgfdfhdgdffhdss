@@ -2379,6 +2379,12 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Bekor qilingan'**
   String get orderStatusCancelled;
+
+  /// No description provided for @addedToCart.
+  ///
+  /// In uz, this message translates to:
+  /// **'Savatga qo\'shildi'**
+  String get addedToCart;
 }
 
 class _AppLocalizationsDelegate

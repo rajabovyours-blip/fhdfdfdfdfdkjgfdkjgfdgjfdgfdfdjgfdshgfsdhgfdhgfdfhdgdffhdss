@@ -45,6 +45,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
 
   Future<void> _sendBroadcast() async {
     if (_titleController.text.trim().isEmpty || _bodyController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Sarlavha va matn kiritilishi shart!')));
       return;
     }
@@ -63,6 +64,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
       final response = await dio.post('/notifications/broadcast', data: data);
       
       if (mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(response.data['message'] ?? 'Bildirishnoma muvaffaqiyatli yuborildi'),
@@ -78,6 +80,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
       }
     } catch (e) {
       if (mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Xatolik: $e')));
       }
     } finally {

@@ -1182,4 +1182,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get orderStatusCancelled => 'Cancelled';
+
+  @override
+  String get addedToCart => 'Added to cart';
 }

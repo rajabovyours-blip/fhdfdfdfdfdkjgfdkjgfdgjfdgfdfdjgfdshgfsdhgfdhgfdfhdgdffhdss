@@ -140,6 +140,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     if (monthlySales.isEmpty) {
       monthlySales = [
         {"month": "Yan", "revenue": 0},
+        {"month": "Fev", "revenue": 0},
+        {"month": "Mar", "revenue": 0},
+        {"month": "Apr", "revenue": 0},
+        {"month": "May", "revenue": 0},
+        {"month": "Iyun", "revenue": 0},
       ];
     }
 
@@ -216,7 +221,16 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: Theme.of(context).colorScheme.outline),
         ),
-        child: const Center(child: Text("Buyurtmalar yo'q")),
+        child: const Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.pie_chart_outline, size: 48, color: Colors.grey),
+              SizedBox(height: 16),
+              Text("Hozircha buyurtmalar yo'q", style: TextStyle(color: Colors.grey)),
+            ],
+          ),
+        ),
       );
     }
     
