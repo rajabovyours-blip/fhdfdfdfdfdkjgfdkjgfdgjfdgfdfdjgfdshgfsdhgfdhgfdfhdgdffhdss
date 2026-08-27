@@ -7,7 +7,6 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
-      fontFamily: AppTypography.fontFamily,
       textTheme: AppTypography.lightTextTheme,
       extensions: const [AppColorsExtension.light],
       colorScheme: const ColorScheme.light(
@@ -57,7 +56,6 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
-      fontFamily: AppTypography.fontFamily,
       textTheme: AppTypography.darkTextTheme,
       extensions: const [AppColorsExtension.dark],
       colorScheme: const ColorScheme.dark(

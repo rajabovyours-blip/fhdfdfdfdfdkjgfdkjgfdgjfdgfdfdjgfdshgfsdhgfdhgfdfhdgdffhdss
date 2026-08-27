@@ -64,14 +64,14 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
                   } catch (e) {
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Biometrik xatolik: $e'), backgroundColor: context.colors.error),
+                        SnackBar(content: Text('Biometrik xatolik: $e'), backgroundColor: context.colors.danger),
                       );
                     }
                   }
                 } else {
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: const Text('Qurilmada biometriya qo\'llab-quvvatlanmaydi'), backgroundColor: context.colors.error),
+                      SnackBar(content: const Text('Qurilmada biometriya qo\'llab-quvvatlanmaydi'), backgroundColor: context.colors.danger),
                     );
                   }
                 }

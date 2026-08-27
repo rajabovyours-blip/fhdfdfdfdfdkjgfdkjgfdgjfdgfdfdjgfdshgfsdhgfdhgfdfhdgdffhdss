@@ -101,7 +101,7 @@ class _PersonalInformationScreenState
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: const Text("Xatolik yuz berdi"),
-                        backgroundColor: context.colors.error,
+                        backgroundColor: context.colors.danger,
                       ),
                     );
                   }
@@ -315,7 +315,7 @@ class _PersonalInformationScreenState
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text("Rasm yuklashda xatolik yuz berdi"),
-          backgroundColor: context.colors.error,
+          backgroundColor: context.colors.danger,
         ),
       );
     } finally {
