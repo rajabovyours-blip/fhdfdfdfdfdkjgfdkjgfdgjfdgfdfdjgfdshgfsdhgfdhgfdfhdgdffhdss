@@ -4,10 +4,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:dio/dio.dart';
 import '../../../core/api/api_client.dart';
 
-final dioProvider = Provider<Dio>((ref) {
-  return ApiClient.dio;
-});
-
 class NotificationsScreen extends ConsumerStatefulWidget {
   const NotificationsScreen({super.key});
 
