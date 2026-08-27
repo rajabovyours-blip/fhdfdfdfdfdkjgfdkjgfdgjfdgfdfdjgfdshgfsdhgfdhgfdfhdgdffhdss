@@ -39,9 +39,9 @@ class CartNotifier extends StateNotifier<FeatureState<List<CartItemEntity>>> {
     final repository = _ref.read(cartRepositoryProvider);
     final result = await repository.addToCart(productId, quantity);
     if (result.isLeft()) {
+      // Graceful error handling without throwing an unhandled exception to the UI
       final message = result.fold((l) => l.message, (r) => '');
       state = FeatureState.error(message);
-      throw Exception(message);
     } else {
       await loadCart(silent: true);
     }

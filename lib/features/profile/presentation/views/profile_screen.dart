@@ -9,6 +9,7 @@ import 'package:milliy_metr/features/profile/presentation/widgets/profile_menu_i
 import 'package:milliy_metr/shared/widgets/app_button.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
+import 'package:milliy_metr/features/wishlist/presentation/providers/wishlist_notifier.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -123,7 +124,7 @@ class ProfileScreen extends ConsumerWidget {
         children: [
           _buildHeader(context, user),
           const SizedBox(height: 24),
-          _buildAccountSummary(context),
+          _buildAccountSummary(context, ref),
           const SizedBox(height: 24),
           _buildSectionDivider(context),
           _buildOrdersSection(context),
@@ -214,7 +215,12 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildAccountSummary(BuildContext context) {
+  Widget _buildAccountSummary(BuildContext context, WidgetRef ref) {
+    final wishlistCount = ref.watch(wishlistNotifierProvider).maybeWhen(
+          loaded: (items) => items.length.toString(),
+          orElse: () => '0',
+        );
+        
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: Row(
@@ -222,21 +228,21 @@ class ProfileScreen extends ConsumerWidget {
           AccountSummaryCard(
             icon: Icons.shopping_bag_outlined,
             label: context.l10n.orders,
-            value: '-', 
+            value: '0', 
             onTap: () => context.push(AppRoutes.orders),
           ),
           const SizedBox(width: 12),
           AccountSummaryCard(
             icon: Icons.favorite_border_rounded,
             label: context.l10n.wishlist,
-            value: '-', 
+            value: wishlistCount, 
             onTap: () => context.push('/wishlist'),
           ),
           const SizedBox(width: 12),
           AccountSummaryCard(
             icon: Icons.location_on_outlined,
             label: context.l10n.addresses,
-            value: '-', 
+            value: '0', 
             onTap: () => context.push(AppRoutes.addresses),
           ),
         ],

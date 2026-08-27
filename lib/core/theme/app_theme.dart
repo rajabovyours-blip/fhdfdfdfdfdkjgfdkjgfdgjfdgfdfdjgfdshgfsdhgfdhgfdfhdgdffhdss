@@ -18,6 +18,10 @@ class AppTheme {
         error: Color(0xFFDE3730),
         surface: Color(0xFFFFFFFF),
       ),
+      appBarTheme: const AppBarTheme(
+        surfaceTintColor: Colors.transparent,
+        backgroundColor: Color(0xFFFFFFFF),
+      ),
       scaffoldBackgroundColor: AppColorsExtension.light.background,
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -66,6 +70,10 @@ class AppTheme {
         onSecondary: Colors.white,
         error: Color(0xFFDE3730),
         surface: Color(0xFF161B22),
+      ),
+      appBarTheme: const AppBarTheme(
+        surfaceTintColor: Colors.transparent,
+        backgroundColor: Color(0xFF161B22),
       ),
       scaffoldBackgroundColor: AppColorsExtension.dark.background,
       elevatedButtonTheme: ElevatedButtonThemeData(

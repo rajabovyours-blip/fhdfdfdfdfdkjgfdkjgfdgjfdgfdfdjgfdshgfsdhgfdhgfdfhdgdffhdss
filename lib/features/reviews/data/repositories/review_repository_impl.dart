@@ -14,6 +14,10 @@ class ReviewRepositoryImpl implements ReviewRepository {
   Future<Either<Failure, List<ReviewEntity>>> getProductReviews(
     String productId,
   ) async {
+    if (productId.trim().isEmpty) {
+      return const Right([]);
+    }
+    
     try {
       final response = await dio.get('/products/$productId/reviews');
       if (response.statusCode == 200) {

@@ -12,7 +12,6 @@ import 'package:milliy_metr/features/home/presentation/widgets/category_carousel
 import 'package:milliy_metr/features/home/presentation/widgets/section_header.dart';
 import 'package:milliy_metr/features/home/presentation/widgets/home_action_chips.dart';
 import 'package:milliy_metr/features/home/presentation/widgets/flash_deals_section.dart';
-import 'package:milliy_metr/features/home/presentation/widgets/home_trust_badges.dart';
 import 'package:milliy_metr/shared/components/product_card.dart';
 
 import 'package:milliy_metr/features/home/presentation/widgets/home_skeleton.dart';
@@ -104,10 +103,6 @@ class HomeScreen extends ConsumerWidget {
                         ),
                       ),
                       
-                      const SliverToBoxAdapter(
-                        child: HomeTrustBadges(),
-                      ),
-
                       // Bottom padding
                       const SliverToBoxAdapter(child: SizedBox(height: 32)),
                     ],

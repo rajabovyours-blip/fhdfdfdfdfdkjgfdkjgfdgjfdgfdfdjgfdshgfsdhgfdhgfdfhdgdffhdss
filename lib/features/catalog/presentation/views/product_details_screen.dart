@@ -14,6 +14,7 @@ import 'package:milliy_metr/features/reviews/presentation/widgets/review_compose
 import 'package:milliy_metr/features/reviews/presentation/providers/review_providers.dart';
 import 'package:milliy_metr/shared/components/product_image.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ProductDetailsScreen extends ConsumerStatefulWidget {
   final String productId;
@@ -74,16 +75,18 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
       await ref
           .read(cartNotifierProvider.notifier)
           .addToCart(productId, _quantity);
-    } catch (e) {
+          
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(e.toString().replaceAll('Exception: ', '')),
-            backgroundColor: context.colors.danger,
+            content: Text(context.l10n.addedToCart),
+            backgroundColor: context.colors.success,
             behavior: SnackBarBehavior.floating,
           ),
         );
       }
+    } catch (e) {
+      // Handled gracefully in notifier now
     } finally {
       if (mounted) {
         setState(() {
@@ -144,17 +147,20 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
             },
             orElse: () => const SizedBox.shrink(),
           ),
-          IconButton(
-            icon: Icon(Icons.share, color: context.colors.textHigh),
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(context.l10n.share),
-                  backgroundColor: context.colors.primary,
-                  duration: const Duration(seconds: 1),
-                ),
+          state.maybeWhen(
+            loaded: (product) {
+              return IconButton(
+                icon: Icon(Icons.share_outlined, color: context.colors.textHigh),
+                onPressed: () {
+                  final title = product.name.get(Localizations.localeOf(context).languageCode);
+                  Share.share('Milliy Metr: $title - ${AppFormatters.currency(product.price, Localizations.localeOf(context).languageCode)}\nhttps://milliymetr.uz/products/${product.id}');
+                },
               );
             },
+            orElse: () => IconButton(
+              icon: Icon(Icons.share_outlined, color: context.colors.textHigh),
+              onPressed: null,
+            ),
           ),
           const SizedBox(width: 8),
         ],
