@@ -43,7 +43,23 @@ async def get_products(
         query = query.where(Product.discount_price.isnot(None))
         
     if search:
-        search_term = f"%{search.lower()}%"
+        search_lower = search.lower().replace("'", "").replace("", "")
+        synonyms = {
+            'kraska': "bo'yoq",
+            'sement': 'cement',
+            'oboy': "gulqog'oz",
+            'gipsokarton': 'gips karton',
+            'shpatlevka': 'shpaklyovka',
+            'shurup': 'vint',
+            'kley': 'yelim',
+            'truba': 'quvur',
+            'armatura': 'temir',
+        }
+        for k, v in synonyms.items():
+            if k in search_lower:
+                search_lower = search_lower.replace(k, v)
+
+        search_term = f"%{search_lower}%"
         # Search in JSON name field. Cast to String for simple ILIKE search
         query = query.where(
             or_(

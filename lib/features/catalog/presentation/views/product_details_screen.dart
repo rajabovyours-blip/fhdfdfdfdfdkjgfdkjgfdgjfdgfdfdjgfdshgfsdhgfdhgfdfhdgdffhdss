@@ -30,8 +30,16 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
   int _selectedImageIndex = 0;
   bool _isDescriptionExpanded = false;
   bool _isAddingToCart = false;
+  final TextEditingController _calcController = TextEditingController();
+  double _calcResult = 0;
 
   @override
+  @override
+  void dispose() {
+    _calcController.dispose();
+    super.dispose();
+  }
+
   Widget build(BuildContext context) {
     final state = ref.watch(productDetailsNotifierProvider(widget.productId));
     final cartState = ref.watch(cartNotifierProvider);
@@ -371,6 +379,30 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                       fontWeight: FontWeight.w900,
                                     ),
                                   ),
+                                  const SizedBox(height: 8),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: context.colors.success.withValues(alpha: 0.1),
+                                      borderRadius: BorderRadius.circular(6),
+                                      border: Border.all(color: context.colors.success.withValues(alpha: 0.3)),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(Icons.discount, color: context.colors.success, size: 14),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          "10+ dona olinsa: 5% chegirma",
+                                          style: TextStyle(
+                                            color: context.colors.success,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ],
                               ),
                               const SizedBox(height: 24),
@@ -491,6 +523,102 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                   ),
                                 ),
 
+                              // Material Calculator
+                              if (['m2', 'm3', 'metr', 'kg'].contains(product.unit)) ...[
+                                const SizedBox(height: 24),
+                                Container(
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: context.colors.surface,
+                                    borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(color: context.colors.outline),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Icon(Icons.calculate, color: context.colors.primary),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            "Kalkulyator",
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: context.colors.textHigh,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 12),
+                                      TextField(
+                                        controller: _calcController,
+                                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                        decoration: InputDecoration(
+                                          labelText: "Xona / Maydon o'lchami ()",
+                                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                        ),
+                                        onChanged: (val) {
+                                          final parsed = double.tryParse(val) ?? 0;
+                                          setState(() {
+                                            _calcResult = parsed * 1.05; // 5% reserve
+                                          });
+                                        },
+                                      ),
+                                      if (_calcResult > 0) ...[
+                                        const SizedBox(height: 12),
+                                        Container(
+                                          padding: const EdgeInsets.all(12),
+                                          decoration: BoxDecoration(
+                                            color: context.colors.background,
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                "Zaxira bilan (+5%):",
+                                                style: TextStyle(color: context.colors.textMedium),
+                                              ),
+                                              Text(
+                                                " ",
+                                                style: TextStyle(
+                                                  color: context.colors.textHigh,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(height: 12),
+                                        SizedBox(
+                                          width: double.infinity,
+                                          child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: context.colors.primary,
+                                              foregroundColor: Colors.white,
+                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                            ),
+                                            onPressed: () {
+                                              ref.read(cartNotifierProvider.notifier).addToCart(product.id, _calcResult.ceil());
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                SnackBar(
+                                                  content: Text(" dona savatga qo'shildi"),
+                                                  backgroundColor: context.colors.success,
+                                                ),
+                                              );
+                                            },
+                                            child: const Text("Hisoblangan miqdorni savatga qo'shish"),
+                                          ),
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                ),
+                              ],
+                              
                               // Specifications
                               if (product.specifications != null &&
                                   product.specifications!.isNotEmpty) ...[
@@ -1126,12 +1254,38 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                         : Text(
                             context.l10n.addToCart,
                             style: const TextStyle(
-                              fontSize: 16,
+                              fontSize: 14,
                               fontWeight: FontWeight.bold,
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                   ),
           ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: outOfStock ? null : () => _showFastBuyBottomSheet(context, product),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: context.colors.warning,
+                              foregroundColor: Colors.black,
+                              elevation: 0,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text(
+                              "Hozir xarid qilish",
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
         ],
       ),
     );

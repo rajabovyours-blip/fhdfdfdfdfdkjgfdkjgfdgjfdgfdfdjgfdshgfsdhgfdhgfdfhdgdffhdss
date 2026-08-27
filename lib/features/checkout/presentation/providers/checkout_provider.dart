@@ -49,7 +49,7 @@ class CheckoutState {
     this.cartItems = const [],
     this.addresses = const [],
     this.selectedAddress,
-    this.deliveryMethod = 'Standard Delivery',
+    this.deliveryMethod = 'Kuryer (Yengil yuklar)',
     this.paymentMethod = 'Payme',
     this.couponCode = '',
     this.notes = '',
@@ -320,8 +320,20 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
             (sum, item) => sum + (item.product.price * item.quantity),
           );
 
-  double get shippingFee =>
-      state.deliveryMethod == 'Express Delivery' ? 120000 : 50000;
+  double get shippingFee {
+    switch (state.deliveryMethod) {
+      case 'Kuryer (Yengil yuklar)':
+        return 20000;
+      case 'Labo / Kichik yuk mashinasi':
+        return 70000;
+      case 'Porter / Gazel':
+        return 150000;
+      case "Ombordan o'zi olib ketish (Samovyvoz)":
+        return 0;
+      default:
+        return 20000;
+    }
+  }
   double get discount => state.couponCode.isNotEmpty ? 10000 : 0;
   double get tax => subtotal * 0.01;
   double get total => subtotal + shippingFee + tax - discount;

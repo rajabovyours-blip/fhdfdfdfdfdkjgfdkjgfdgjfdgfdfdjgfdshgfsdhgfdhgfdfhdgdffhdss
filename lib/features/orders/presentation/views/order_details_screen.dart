@@ -41,49 +41,7 @@ class OrderDetailsScreen extends ConsumerWidget {
                     const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
-              // Simplified vertical stepper based on actual status
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Column(
-                    children: [
-                      Icon(Icons.check_circle, color: context.colors.success),
-                      Container(
-                        width: 2,
-                        height: 40,
-                        color: order.status == 'Pending'
-                            ? context.colors.textMedium
-                            : context.colors.success,
-                      ),
-                      Icon(
-                        order.status == 'Pending'
-                            ? Icons.radio_button_unchecked
-                            : Icons.check_circle,
-                        color: order.status == 'Pending'
-                            ? context.colors.textMedium
-                            : context.colors.success,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          context.l10n.orderPlaced,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 40),
-                        Text(
-                          context.l10n.processingShipped,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+              _buildTrackingStepper(context, order.status),
               const SizedBox(height: 24),
               const Divider(),
               Text(
@@ -197,6 +155,95 @@ class OrderDetailsScreen extends ConsumerWidget {
           ),
         ),
       ),
+    );
+  }
+  Widget _buildTrackingStepper(BuildContext context, String status) {
+    final colors = context.colors;
+    
+    // Determine active step based on status
+    int currentStep = 0;
+    switch (status.toLowerCase()) {
+      case 'pending': currentStep = 0; break;
+      case 'processing': currentStep = 1; break;
+      case 'shipped': currentStep = 2; break;
+      case 'delivered': currentStep = 3; break;
+      default: currentStep = 0;
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: colors.outline),
+      ),
+      child: Column(
+        children: [
+          _buildStep(context, "Buyurtma qabul qilindi", "Pending", currentStep >= 0, isLast: false),
+          _buildStep(context, "Qadoqlanmoqda", "Processing", currentStep >= 1, isLast: false),
+          _buildStep(context, "Yo'lga chiqdi", "Shipped", currentStep >= 2, isLast: false),
+          _buildStep(context, "Yetkazib berildi", "Delivered", currentStep >= 3, isLast: true),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStep(BuildContext context, String title, String subtitle, bool isActive, {bool isLast = false}) {
+    final colors = context.colors;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Column(
+          children: [
+            Container(
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isActive ? colors.primary : colors.surface,
+                border: Border.all(
+                  color: isActive ? colors.primary : colors.outline,
+                  width: 2,
+                ),
+              ),
+              child: isActive 
+                ? const Icon(Icons.check, size: 14, color: Colors.white)
+                : null,
+            ),
+            if (!isLast)
+              Container(
+                width: 2,
+                height: 32,
+                color: isActive ? colors.primary : colors.outline,
+              ),
+          ],
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
+                  color: isActive ? colors.textHigh : colors.textMedium,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                subtitle,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: colors.textMedium,
+                ),
+              ),
+              if (!isLast) const SizedBox(height: 16),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

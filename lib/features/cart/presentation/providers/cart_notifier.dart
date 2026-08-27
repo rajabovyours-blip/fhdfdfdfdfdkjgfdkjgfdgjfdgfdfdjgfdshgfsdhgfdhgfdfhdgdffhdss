@@ -251,7 +251,20 @@ class CartNotifier extends StateNotifier<FeatureState<List<CartItemEntity>>> {
   }
 
   double get shippingFee => 50000;
-  double get discount => 0;
+  double get discount {
+    return state.maybeWhen(
+      loaded: (items) {
+        double d = 0;
+        for (var e in items.where((i) => i.isSelected)) {
+          if (e.quantity >= 10) {
+            d += (e.product.price * e.quantity) * 0.05;
+          }
+        }
+        return d;
+      },
+      orElse: () => 0.0,
+    );
+  }
   double get tax => subtotal * 0.01;
   double get total => subtotal + shippingFee + tax - discount;
   int get itemCount => state.maybeWhen(
