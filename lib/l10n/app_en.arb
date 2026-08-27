@@ -381,5 +381,6 @@
   "orderStatusConfirmed": "Confirmed",
   "orderStatusProcessing": "Processing",
   "orderStatusDelivered": "Delivered",
-  "orderStatusCancelled": "Cancelled"
+  "orderStatusCancelled": "Cancelled",
+  "addedToCart": "Added to cart"
 }

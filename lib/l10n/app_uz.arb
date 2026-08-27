@@ -381,5 +381,6 @@
   "orderStatusConfirmed": "Tasdiqlangan",
   "orderStatusProcessing": "Jarayonda",
   "orderStatusDelivered": "Yetkazildi",
-  "orderStatusCancelled": "Bekor qilingan"
+  "orderStatusCancelled": "Bekor qilingan",
+  "addedToCart": "Savatga qo'shildi"
 }

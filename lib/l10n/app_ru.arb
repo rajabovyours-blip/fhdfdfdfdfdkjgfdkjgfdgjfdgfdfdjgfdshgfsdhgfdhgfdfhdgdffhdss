@@ -381,5 +381,6 @@
   "orderStatusConfirmed": "Подтвержден",
   "orderStatusProcessing": "В обработке",
   "orderStatusDelivered": "Доставлен",
-  "orderStatusCancelled": "Отменен"
+  "orderStatusCancelled": "Отменен",
+  "addedToCart": "Добавлено в корзину"
 }
