@@ -46,7 +46,7 @@ class _ProductCardState extends ConsumerState<ProductCard> {
     try {
       await ref
           .read(cartNotifierProvider.notifier)
-          .addToCart(widget.product.id, 1);
+          .addToCart(widget.product, 1);
     } catch (e) {
       if (mounted) {
         setState(() {

@@ -79,7 +79,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
           label: context.l10n.undo,
           textColor: context.colors.secondary,
           onPressed: () {
-            notifier.addToCart(item.product.id, item.quantity);
+            notifier.addToCart(item.product, item.quantity);
           },
         ),
       ),
@@ -138,10 +138,40 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                     ...cartItems.map((item) {
                       return CartItemCard(
                         item: item,
-                        onIncrement: () =>
-                            notifier.updateCartItem(item.id, item.quantity + 1),
-                        onDecrement: () =>
-                            notifier.updateCartItem(item.id, item.quantity - 1),
+                        onIncrement: () {
+                          final maxQty = item.product.stock > 0 ? item.product.stock : 99;
+                          if (item.quantity < maxQty) {
+                            notifier.updateCartItem(item.id, item.quantity + 1);
+                          }
+                        },
+                        onDecrement: () {
+                          if (item.quantity <= 1) {
+                            showDialog(
+                              context: context,
+                              builder: (ctx) => AlertDialog(
+                                backgroundColor: context.colors.surface,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                title: Text('Tasdiqlash', style: TextStyle(color: context.colors.textHigh)),
+                                content: Text('Ushbu mahsulotni savatdan olib tashlamoqchimisiz?', style: TextStyle(color: context.colors.textMedium)),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(ctx),
+                                    child: Text(context.l10n.cancel, style: TextStyle(color: context.colors.textMedium)),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(ctx);
+                                      _removeItemWithUndo(item);
+                                    },
+                                    child: Text(context.l10n.clear, style: TextStyle(color: context.colors.danger)),
+                                  ),
+                                ],
+                              ),
+                            );
+                          } else {
+                            notifier.updateCartItem(item.id, item.quantity - 1);
+                          }
+                        },
                         onRemove: () => _removeItemWithUndo(item),
                       );
                     }),

@@ -31,4 +31,12 @@ class PreferencesManager {
   static String getThemeMode() {
     return _prefs.getString('theme_mode') ?? 'system';
   }
+
+  static Future<void> setBool(String key, bool value) async {
+    await _prefs.setBool(key, value);
+  }
+
+  static bool getBool(String key, {bool defaultValue = false}) {
+    return _prefs.getBool(key) ?? defaultValue;
+  }
 }

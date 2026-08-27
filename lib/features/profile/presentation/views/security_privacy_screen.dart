@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
+import 'package:milliy_metr/shared/widgets/app_snackbar.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:milliy_metr/core/providers/auth_provider.dart';
+import 'package:milliy_metr/core/storage/preferences.dart';
 
 class SecurityPrivacyScreen extends StatefulWidget {
   const SecurityPrivacyScreen({super.key});
@@ -15,6 +17,12 @@ class SecurityPrivacyScreen extends StatefulWidget {
 class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
   bool _biometricEnabled = false;
   bool _twoFactorEnabled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _biometricEnabled = PreferencesManager.getBool('biometric_enabled');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,16 +68,26 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
                     );
                     if (didAuthenticate) {
                       setState(() => _biometricEnabled = true);
+                      await PreferencesManager.setBool('biometric_enabled', true);
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Text('Biometrik kirish yoqildi'),
+                            backgroundColor: context.colors.success,
+                            duration: const Duration(seconds: 2),
+                          ),
+                        );
+                      }
                     }
                   } catch (e) {
-                    if (mounted) {
+                    if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Biometrik xatolik: $e'), backgroundColor: context.colors.danger),
                       );
                     }
                   }
                 } else {
-                  if (mounted) {
+                  if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: const Text('Qurilmada biometriya qo\'llab-quvvatlanmaydi'), backgroundColor: context.colors.danger),
                     );
@@ -77,6 +95,7 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
                 }
               } else {
                 setState(() => _biometricEnabled = false);
+                await PreferencesManager.setBool('biometric_enabled', false);
               }
             },
           ),
@@ -86,27 +105,79 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
             subtitle: l10n.twoFactorAuthDesc,
             value: _twoFactorEnabled,
             onChanged: (val) {
-              setState(() => _twoFactorEnabled = val);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(l10n.featureAvailableSoon),
-                  backgroundColor: context.colors.primary,
-                ),
-              );
+              if (val) {
+                showDialog(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text("SMS Tasdiqlash"),
+                    content: const Text("Ikki bosqichli autentifikatsiyani yoqish uchun telefon raqamingizga SMS kod yuboriladi. Davom etishni xohlaysizmi?"),
+                    actions: [
+                      TextButton(onPressed: () => Navigator.pop(ctx), child: const Text("Bekor qilish")),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(ctx);
+                          setState(() => _twoFactorEnabled = true);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: const Text("Ikki bosqichli autentifikatsiya yoqildi"), backgroundColor: context.colors.success),
+                          );
+                        },
+                        child: const Text("Davom etish"),
+                      ),
+                    ],
+                  ),
+                );
+              } else {
+                setState(() => _twoFactorEnabled = false);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: const Text("Ikki bosqichli autentifikatsiya o'chirildi")),
+                );
+              }
             },
           ),
-          _buildTile(
-            icon: Icons.devices_outlined,
-            title: l10n.activeSessions,
-            subtitle: l10n.activeSessionsDesc,
-            onTap: () {
-              /* ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(l10n.requiresBackendIntegration),
-                  backgroundColor: context.colors.primary,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.activeSessions,
+                  style: TextStyle(
+                    color: context.colors.textHigh,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ); */
-            },
+                const SizedBox(height: 12),
+                Container(
+                  decoration: BoxDecoration(
+                    color: context.colors.surface,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: context.colors.outline),
+                  ),
+                  child: ListTile(
+                    leading: Icon(Icons.phone_iphone_rounded, color: context.colors.textHigh),
+                    title: Text(
+                      "Ushbu qurilma: ",
+                      style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+                    ),
+                    subtitle: Row(
+                      children: [
+                        Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: context.colors.success,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        const Text("Faol seans (Toshkent)", style: TextStyle(fontSize: 12)),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
 
           const SizedBox(height: 8),
@@ -119,8 +190,41 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
             icon: Icons.privacy_tip_outlined,
             title: l10n.dataPrivacy,
             onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(l10n.featureAvailableSoon)),
+              showModalBottomSheet(
+                context: context,
+                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+                builder: (ctx) => Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text("Ma'lumotlar maxfiyligi", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 16),
+                      SwitchListTile(
+                        title: const Text("Xatolik hisobotlarini yuborish"),
+                        subtitle: const Text("Ilovani yaxshilash uchun anonim xatolik ma'lumotlarini yuborish."),
+                        value: true,
+                        onChanged: (v) {},
+                      ),
+                      SwitchListTile(
+                        title: const Text("Reklama profilini yaratish"),
+                        subtitle: const Text("Sizga moslashtirilgan reklamalarni ko'rsatish uchun."),
+                        value: false,
+                        onChanged: (v) {},
+                      ),
+                      const SizedBox(height: 16),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 48,
+                        child: ElevatedButton(
+                          onPressed: () => Navigator.pop(ctx),
+                          style: ElevatedButton.styleFrom(backgroundColor: context.colors.primary, foregroundColor: Colors.white),
+                          child: const Text("Saqlash"),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               );
             },
           ),
@@ -286,24 +390,11 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
                     onPressed: isSaving ? null : () async {
                       if (newCtrl.text.length < 8) {
                         ScaffoldMessenger.of(context).clearSnackBars();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(l10n.passwordTooShort),
-                            backgroundColor: context.colors.danger,
-                            duration: const Duration(seconds: 2),
-                          ),
-                        );
+                        AppSnackBar.showError(context, l10n.passwordTooShort);
                         return;
                       }
                       if (newCtrl.text != confirmCtrl.text) {
-                        ScaffoldMessenger.of(context).clearSnackBars();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(l10n.passwordsDoNotMatch),
-                            backgroundColor: context.colors.danger,
-                            duration: const Duration(seconds: 2),
-                          ),
-                        );
+                        AppSnackBar.showError(context, l10n.passwordsDoNotMatch);
                         return;
                       }
                       
@@ -313,26 +404,16 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
                         final response = await dio.post('/auth/change-password', data: {
                           'old_password': currentCtrl.text,
                           'new_password': newCtrl.text,
-                        });
+                        },);
                         if (response.statusCode == 200) {
                           if (context.mounted) {
                             Navigator.pop(ctx);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text("Parol muvaffaqiyatli o'zgartirildi"),
-                                backgroundColor: context.colors.success,
-                              ),
-                            );
+                            AppSnackBar.showSuccess(context, "Parol muvaffaqiyatli o'zgartirildi");
                           }
                         }
                       } catch (e) {
                         if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: const Text("Xatolik yuz berdi yoxud parol noto'g'ri"),
-                              backgroundColor: context.colors.danger,
-                            ),
-                          );
+                          AppSnackBar.showError(context, "Xatolik yuz berdi yoxud parol noto'g'ri");
                         }
                       } finally {
                         setStateSheet(() => isSaving = false);

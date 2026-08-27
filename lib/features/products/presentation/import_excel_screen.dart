@@ -3,7 +3,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'widgets/import_preview_table.dart';
+import 'package:milliy_metr/features/products/presentation/widgets/import_preview_table.dart';
 
 class ImportExcelScreen extends ConsumerStatefulWidget {
   const ImportExcelScreen({super.key});
@@ -48,7 +48,7 @@ class _ImportExcelScreenState extends ConsumerState<ImportExcelScreen> {
         // In a real app, you'd add the auth token here
         options: Options(
           headers: {'Authorization': 'Bearer YOUR_TOKEN'},
-        )
+        ),
       );
 
       if (response.statusCode == 200) {
@@ -83,7 +83,7 @@ class _ImportExcelScreenState extends ConsumerState<ImportExcelScreen> {
         data: _previewData!['rows'],
         options: Options(
           headers: {'Authorization': 'Bearer YOUR_TOKEN'},
-        )
+        ),
       );
 
       if (response.statusCode == 200 && mounted) {
@@ -162,7 +162,7 @@ class _ImportExcelScreenState extends ConsumerState<ImportExcelScreen> {
                                 child: const Text('Confirm Import'),
                               ),
                             ],
-                          )
+                          ),
                         ],
                       ),
                     ),

@@ -5,6 +5,7 @@ import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:milliy_metr/core/providers/auth_provider.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
+import 'package:milliy_metr/shared/widgets/app_snackbar.dart';
 import 'package:milliy_metr/features/authentication/presentation/widgets/auth_language_selector.dart';
 
 class OtpScreen extends ConsumerStatefulWidget {
@@ -55,12 +56,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
             _otpController.text,
           );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(context.l10n.invalidOtpLength), // Will add to l10n
-          backgroundColor: context.colors.danger,
-        ),
-      );
+      AppSnackBar.showError(context, context.l10n.invalidOtpLength);
     }
   }
 
@@ -70,12 +66,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
           await ref.read(authProvider.notifier).requestOtp(widget.phone);
       if (success && mounted) {
         _startTimer();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.newOtpSent),
-            backgroundColor: context.colors.success,
-          ),
-        );
+        AppSnackBar.showSuccess(context, context.l10n.newOtpSent);
       }
     }
   }
@@ -90,12 +81,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
           }
         },
         error: (message) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(message),
-              backgroundColor: context.colors.danger,
-            ),
-          );
+          AppSnackBar.showError(context, message);
         },
         orElse: () {},
       );

@@ -123,3 +123,28 @@ async def update_order_status(
     await db.commit()
     
     return APIResponse(message="Order status updated", data={"status": order.status})
+
+@router.put("/{id}/cancel", response_model=APIResponse[dict])
+async def cancel_order(
+    id: UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    result = await db.execute(
+        select(Order).where(Order.id == id, Order.user_id == current_user.id)
+    )
+    order = result.scalar_one_or_none()
+    
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+        
+    if order.status.lower() != 'pending':
+        raise HTTPException(status_code=400, detail="Only pending orders can be cancelled")
+        
+    order.status = "Cancelled"
+    
+    # We should restore stock if needed, but for now just update status
+    
+    await db.commit()
+    
+    return APIResponse(message="Order cancelled successfully", data={"status": order.status})

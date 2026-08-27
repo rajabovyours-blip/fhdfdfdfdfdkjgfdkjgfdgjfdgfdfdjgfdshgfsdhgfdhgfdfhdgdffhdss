@@ -35,28 +35,58 @@ class HelpSupportScreen extends StatelessWidget {
 
           // Contact Section
           _buildSectionHeader(context, l10n.contactSupport),
-          _buildContactTile(
-            context,
-            icon: Icons.phone_outlined,
-            title: l10n.callUs,
-            subtitle: '+998 71 200 00 00',
-            onTap: () => _launchUrl('tel:+998712000000'),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              children: [
+                buildSocialTile(
+                  context: context,
+                  iconWidget: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF229ED9),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(Icons.send_rounded, color: Colors.white, size: 20),
+                  ),
+                  title: "Telegram orqali bog'lanish",
+                  subtitle: "@milliy_metr",
+                  onTap: () => _launchUrl('https://t.me/milliy_metr', external: true),
+                ),
+                buildSocialTile(
+                  context: context,
+                  iconWidget: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF833AB4), Color(0xFFFD1D1D), Color(0xFFFCB045)],
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(Icons.camera_alt, color: Colors.white, size: 20),
+                  ),
+                  title: "Instagram sahifamiz",
+                  subtitle: "@milliy_metr",
+                  onTap: () => _launchUrl('https://instagram.com/milliy_metr', external: true),
+                ),
+                buildSocialTile(
+                  context: context,
+                  iconWidget: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.orange,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(Icons.phone_in_talk_rounded, color: Colors.white, size: 20),
+                  ),
+                  title: "Mijozlarni qo'llab-quvvatlash",
+                  subtitle: "+998 (71) 200-00-00",
+                  onTap: () => _launchUrl('tel:+998712000000'),
+                ),
+              ],
+            ),
           ),
-          _buildContactTile(
-            context,
-            icon: Icons.email_outlined,
-            title: l10n.emailUs,
-            subtitle: 'support@milliymetr.uz',
-            onTap: () => _launchUrl('mailto:support@milliymetr.uz'),
-          ),
-          _buildContactTile(
-            context,
-            icon: Icons.send_rounded,
-            iconColor: const Color(0xFF229ED9), // Official Telegram Blue
-            title: l10n.telegram,
-            subtitle: '@milliymetr_support',
-            onTap: () => _launchUrl('https://t.me/milliymetr_support'),
-          ),
+          const SizedBox(height: 8),
 
           Container(height: 8, color: context.colors.surface),
 
@@ -72,6 +102,24 @@ class HelpSupportScreen extends StatelessWidget {
               '1.0.0',
               style: TextStyle(color: context.colors.textMedium, fontSize: 14),
             ),
+          ),
+          ListTile(
+            leading: Icon(Icons.privacy_tip_outlined, color: context.colors.textMedium),
+            title: Text(
+              'Maxfiylik siyosati',
+              style: TextStyle(color: context.colors.textHigh, fontSize: 15),
+            ),
+            trailing: Icon(Icons.chevron_right_rounded, color: context.colors.textMedium, size: 20),
+            onTap: () => _launchUrl('https://milliymetr.uz/privacy'),
+          ),
+          ListTile(
+            leading: Icon(Icons.description_outlined, color: context.colors.textMedium),
+            title: Text(
+              'Foydalanish shartlari',
+              style: TextStyle(color: context.colors.textHigh, fontSize: 15),
+            ),
+            trailing: Icon(Icons.chevron_right_rounded, color: context.colors.textMedium, size: 20),
+            onTap: () => _launchUrl('https://milliymetr.uz/terms'),
           ),
 
           const SizedBox(height: 32),

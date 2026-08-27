@@ -22,8 +22,8 @@ class AppSnackBar {
           borderRadius: BorderRadius.circular(12),
           side: BorderSide(
             color: isSuccess
-                ? const Color(0xFF10B981).withOpacity(0.4)
-                : const Color(0xFFEF4444).withOpacity(0.4),
+                ? const Color(0xFF10B981).withValues(alpha: 0.4)
+                : const Color(0xFFEF4444).withValues(alpha: 0.4),
             width: 1,
           ),
         ),

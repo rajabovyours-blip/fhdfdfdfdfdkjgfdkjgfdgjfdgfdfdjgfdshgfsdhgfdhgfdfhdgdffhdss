@@ -190,10 +190,10 @@ class _FilterSheetContentState extends ConsumerState<_FilterSheetContent> {
                     ),
                     child: Builder(
                       builder: (context) {
-                        double minVal = 0;
-                        double maxVal = 10000000;
-                        double currentMin = _minPrice;
-                        double currentMax = _maxPrice > _minPrice ? _maxPrice : _minPrice + 1;
+                        const double minVal = 0;
+                        const double maxVal = 10000000;
+                        final double currentMin = _minPrice;
+                        final double currentMax = _maxPrice > _minPrice ? _maxPrice : _minPrice + 1;
                         int divisions = ((maxVal - minVal) / 1000).clamp(1, 10000).toInt();
                         if (divisions < 1) divisions = 1;
 
@@ -211,7 +211,7 @@ class _FilterSheetContentState extends ConsumerState<_FilterSheetContent> {
                             });
                           },
                         );
-                      }
+                      },
                     ),
                   ),
                   const SizedBox(height: 32),

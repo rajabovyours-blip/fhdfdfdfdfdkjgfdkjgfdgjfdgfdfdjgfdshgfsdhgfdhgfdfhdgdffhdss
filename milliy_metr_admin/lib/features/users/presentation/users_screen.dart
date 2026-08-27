@@ -40,7 +40,7 @@ class _UsersScreenState extends ConsumerState<UsersScreen> {
                 SwitchListTile(
                   title: const Text("Faollik holati (Bloklash)"),
                   value: isActive,
-                  activeColor: const Color(0xFF10B981),
+                  activeThumbColor: const Color(0xFF10B981),
                   onChanged: (val) {
                     setDialogState(() => isActive = val);
                   },

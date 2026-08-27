@@ -110,7 +110,7 @@ class _AdminLayoutState extends State<AdminLayout> {
           : null,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       selected: isSelected,
-      selectedTileColor: const Color(0xFFFF7A00).withOpacity(0.1),
+      selectedTileColor: const Color(0xFFFF7A00).withValues(alpha: 0.1),
       onTap: () {
         context.go(route);
         if (isMobile) {

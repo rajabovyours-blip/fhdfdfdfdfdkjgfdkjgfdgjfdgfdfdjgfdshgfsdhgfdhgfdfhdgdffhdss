@@ -38,7 +38,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     int cartCount = 0;
     cartState.maybeWhen(
       loaded: (items) {
-        cartCount = items.length;
+        cartCount = items.fold(0, (sum, item) => sum + item.quantity);
       },
       orElse: () {},
     );

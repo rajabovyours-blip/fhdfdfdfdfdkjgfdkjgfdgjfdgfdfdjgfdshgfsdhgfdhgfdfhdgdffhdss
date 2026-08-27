@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:dio/dio.dart';
+import 'package:milliy_metr_admin/core/utils/image_utils.dart';
 import '../../../core/providers/admin_providers.dart';
 import '../../../core/api/api_client.dart';
 
@@ -88,7 +89,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                       hintText: 'Kategoriya tanlang',
                       prefixIcon: Icon(Icons.category),
                     ),
-                    value: selectedCategoryId,
+                    initialValue: selectedCategoryId,
                     items: categories.map((c) {
                       return DropdownMenuItem(
                         value: c['id'].toString(),
@@ -129,7 +130,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                             const Text("O'lchov birligi", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
                             const SizedBox(height: 8),
                             DropdownButtonFormField<String>(
-                              value: selectedUnit,
+                              initialValue: selectedUnit,
                               decoration: const InputDecoration(
                                 prefixIcon: Icon(Icons.straighten),
                               ),
@@ -237,7 +238,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                     title: const Text('Omborda mavjud'),
                     subtitle: Text(inStock ? 'Sotuvda' : 'Tugagan'),
                     value: inStock,
-                    activeColor: const Color(0xFFFF7A00),
+                    activeThumbColor: const Color(0xFFFF7A00),
                     onChanged: (val) {
                       setDialogState(() {
                         inStock = val;
@@ -461,15 +462,13 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
         final dio = ref.read(dioProvider);
         await dio.delete('/products/$id');
         ref.invalidate(productsProvider);
-        if (mounted) {
-           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Mahsulot o'chirildi"), backgroundColor: Colors.green),
-          );
-        }
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Mahsulot o'chirildi"), backgroundColor: Colors.green),
+        );
       } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Xatolik: $e"), backgroundColor: Colors.red));
-        }
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Xatolik: $e"), backgroundColor: Colors.red));
       }
     }
   }
@@ -639,7 +638,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                                   ? ClipRRect(
                                       borderRadius: BorderRadius.circular(8),
                                       child: Image.network(
-                                        imageUrl,
+                                        ImageUtils.getFullImageUrl(imageUrl),
                                         fit: BoxFit.cover,
                                         errorBuilder: (_, __, ___) => const Icon(Icons.image),
                                       ),
@@ -747,7 +746,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
             decoration: const InputDecoration(
               hintText: 'Barcha kategoriyalar',
             ),
-            value: _selectedCategory,
+            initialValue: _selectedCategory,
             isExpanded: true,
             items: [
               const DropdownMenuItem(value: '', child: Text('Barcha kategoriyalar')),
@@ -803,7 +802,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
             decoration: const InputDecoration(
               hintText: 'Barcha kategoriyalar',
             ),
-            value: _selectedCategory,
+            initialValue: _selectedCategory,
             items: [
               const DropdownMenuItem(value: '', child: Text('Barcha kategoriyalar')),
               ...categories.map((c) => DropdownMenuItem(

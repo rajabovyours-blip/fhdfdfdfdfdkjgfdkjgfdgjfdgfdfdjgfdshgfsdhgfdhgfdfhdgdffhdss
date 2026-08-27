@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:dio/dio.dart';
+import 'package:milliy_metr_admin/core/utils/image_utils.dart';
 import '../../../core/providers/admin_providers.dart';
 import '../../../core/api/api_client.dart';
 class CategoriesScreen extends ConsumerStatefulWidget {
@@ -218,9 +219,10 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                   DataColumn(label: Text('Amallar')),
                 ],
                 rows: categories.map((category) {
-                  final imageUrl = category['image_url']?.toString();
-                  final isAsset = imageUrl != null && imageUrl.startsWith('assets/');
-                  final isNetwork = imageUrl != null && imageUrl.startsWith('http');
+                  final rawUrl = category['image_url']?.toString();
+                  final imageUrl = ImageUtils.getFullImageUrl(rawUrl);
+                  final isAsset = imageUrl.startsWith('assets/');
+                  final isNetwork = imageUrl.isNotEmpty && !isAsset;
 
                   return DataRow(
                     cells: [

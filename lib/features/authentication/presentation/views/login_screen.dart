@@ -9,8 +9,8 @@ import 'package:milliy_metr/features/authentication/presentation/widgets/auth_la
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'dart:io' show Platform;
 import 'package:flutter/services.dart';
+import 'package:milliy_metr/shared/widgets/app_snackbar.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   final String? redirect;
@@ -168,12 +168,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     ref.listen(authProvider, (previous, next) {
       next.maybeWhen(
         error: (message) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(message),
-              backgroundColor: context.colors.danger,
-            ),
-          );
+          AppSnackBar.showError(context, message);
         },
         orElse: () {},
       );
@@ -391,14 +386,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   final isDark = Theme.of(context).brightness == Brightness.dark;
                   final bgColor = isDark ? const Color(0xFF1E222D) : const Color(0xFF000000);
                   final borderColor = isDark ? const Color(0xFF2E3342) : const Color(0xFF000000);
-                  final fgColor = Colors.white;
+                  const fgColor = Colors.white;
 
                   return _SocialButton(
                     label: context.l10n.continueWithApple,
                     backgroundColor: bgColor,
                     borderColor: borderColor,
                     textColor: fgColor,
-                    iconWidget: Icon(
+                    iconWidget: const Icon(
                       Icons.apple,
                       size: 28,
                       color: fgColor,

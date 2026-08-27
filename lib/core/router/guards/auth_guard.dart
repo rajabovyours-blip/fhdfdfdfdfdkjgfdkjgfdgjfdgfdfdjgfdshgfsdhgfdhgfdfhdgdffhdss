@@ -67,7 +67,7 @@ class AuthGuard {
         // If it's a protected route, force login and pass the original URL as redirect
         if (_isProtectedRoute(currentPath)) {
           // ADMIN LOGIN IS COMPLETELY REMOVED. Only standard login exists.
-          final loginRoute = AppRoutes.login;
+          const loginRoute = AppRoutes.login;
           return '$loginRoute?redirect=${Uri.encodeComponent(state.uri.toString())}';
         }
         return null;

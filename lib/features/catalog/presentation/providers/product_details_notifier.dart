@@ -23,7 +23,7 @@ class ProductDetailsNotifier
       (l) {
         // Fallback to catalog state if possible
         final catalogState = _ref.read(
-            package_catalog_notifier.catalogNotifierProvider);
+            package_catalog_notifier.catalogNotifierProvider,);
         ProductEntity? fallbackProduct;
         catalogState.maybeWhen(
           loaded: (data) {

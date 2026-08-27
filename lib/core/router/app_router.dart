@@ -75,7 +75,7 @@ final routerNotifierProvider = Provider<RouterNotifier>((ref) {
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final notifier = ref.watch(routerNotifierProvider);
-  final isAdminApp = const bool.fromEnvironment('IS_ADMIN', defaultValue: false);
+  const isAdminApp = bool.fromEnvironment('IS_ADMIN', defaultValue: false);
 
   return GoRouter(
     initialLocation: isAdminApp ? AppRoutes.adminDashboard : AppRoutes.splash,

@@ -10,7 +10,7 @@ class CategoriesNotifier extends StateNotifier<List<Map<String, dynamic>>> {
   void updateCategory(Map<String, dynamic> category) {
     state = [
       for (final cat in state)
-        if (cat['id'] == category['id']) category else cat
+        if (cat['id'] == category['id']) category else cat,
     ];
   }
 

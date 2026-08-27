@@ -18,11 +18,11 @@ class HomeTrustBadges extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildBadge(context, Icons.verified_outlined, context.l10n.qualityGuaranteeBadge.replaceFirst(" ", "\n")),
+          _buildBadge(context, Icons.verified_outlined, context.l10n.qualityGuaranteeBadge.replaceFirst(' ', '\n')),
           _buildDivider(context),
-          _buildBadge(context, Icons.bolt_outlined, context.l10n.fastDeliveryBadge.replaceFirst(" ", "\n")),
+          _buildBadge(context, Icons.bolt_outlined, context.l10n.fastDeliveryBadge.replaceFirst(' ', '\n')),
           _buildDivider(context),
-          _buildBadge(context, Icons.credit_card_outlined, context.l10n.securePaymentBadge.replaceFirst(" ", "\n")),
+          _buildBadge(context, Icons.credit_card_outlined, context.l10n.securePaymentBadge.replaceFirst(' ', '\n')),
         ],
       ),
     );

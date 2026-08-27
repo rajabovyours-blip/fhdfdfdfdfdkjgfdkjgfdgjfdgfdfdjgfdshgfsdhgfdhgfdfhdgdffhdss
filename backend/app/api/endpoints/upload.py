@@ -6,7 +6,7 @@ import shutil
 router = APIRouter()
 
 # Ensure uploads directory exists
-UPLOAD_DIR = "uploads"
+UPLOAD_DIR = "uploads/images"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 @router.post("/image")
@@ -27,7 +27,7 @@ async def upload_image(file: UploadFile = File(...)):
         
     return {
         "data": {
-            "url": f"https://milliymetr-backend.onrender.com/uploads/{unique_filename}",
+            "url": f"/uploads/images/{unique_filename}",
             "filename": unique_filename
         }
     }

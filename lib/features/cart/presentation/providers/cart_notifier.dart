@@ -1,13 +1,34 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:milliy_metr/core/state/feature_state.dart';
 import 'package:milliy_metr/features/checkout/domain/entities/cart_item_entity.dart';
+import 'package:milliy_metr/features/products/domain/entities/product_entity.dart';
 import 'package:milliy_metr/features/cart/presentation/providers/cart_providers.dart';
 import 'package:milliy_metr/core/providers/auth_provider.dart' as milliy_metr_auth_provider;
 
 class CartNotifier extends StateNotifier<FeatureState<List<CartItemEntity>>> {
   final Ref _ref;
 
+  bool _wasAuthenticated = false;
+
   CartNotifier(this._ref) : super(const FeatureState.initial()) {
+    _wasAuthenticated = _ref.read(milliy_metr_auth_provider.authProvider).maybeWhen(
+      authenticated: (_) => true,
+      orElse: () => false,
+    );
+
+    _ref.listen(milliy_metr_auth_provider.authProvider, (previous, next) {
+      final isNowAuthenticated = next.maybeWhen(
+        authenticated: (_) => true,
+        orElse: () => false,
+      );
+      if (!_wasAuthenticated && isNowAuthenticated) {
+        mergeGuestCartOnLogin();
+      } else if (_wasAuthenticated && !isNowAuthenticated) {
+        state = const FeatureState.loaded([]);
+      }
+      _wasAuthenticated = isNowAuthenticated;
+    });
+
     loadCart();
   }
 
@@ -22,7 +43,11 @@ class CartNotifier extends StateNotifier<FeatureState<List<CartItemEntity>>> {
     );
     
     if (!isAuthenticated) {
-      state = const FeatureState.loaded([]);
+      // Preserve guest cart in memory
+      state.maybeWhen(
+        loaded: (items) { if (items.isEmpty) state = const FeatureState.loaded([]); },
+        orElse: () => state = const FeatureState.loaded([]),
+      );
       return;
     }
 
@@ -30,24 +55,99 @@ class CartNotifier extends StateNotifier<FeatureState<List<CartItemEntity>>> {
     final result = await repository.getCartItems();
 
     state = result.fold(
-      (l) => FeatureState.error(l.message),
+      (l) {
+        // Local-first: retain existing items if remote fetch fails
+        final currentItems = state.maybeWhen(
+          loaded: (items) => items,
+          orElse: () => <CartItemEntity>[],
+        );
+        return FeatureState.loaded(currentItems);
+      },
       (r) => FeatureState.loaded(r),
     );
   }
 
-  Future<void> addToCart(String productId, int quantity) async {
+
+  Future<void> mergeGuestCartOnLogin() async {
+    final guestItems = state.maybeWhen(
+      loaded: (items) => List<CartItemEntity>.from(items),
+      orElse: () => <CartItemEntity>[],
+    );
+    
+    // First, load authenticated cart
     final repository = _ref.read(cartRepositoryProvider);
-    final result = await repository.addToCart(productId, quantity);
-    if (result.isLeft()) {
-      // Graceful error handling without throwing an unhandled exception to the UI
-      final message = result.fold((l) => l.message, (r) => '');
-      state = FeatureState.error(message);
+    final result = await repository.getCartItems();
+    
+    if (guestItems.isNotEmpty) {
+      // Sync guest items to remote
+      for (final item in guestItems) {
+        await repository.addToCart(item.product.id, item.quantity);
+      }
+    }
+    
+    // Final fetch to get merged state
+    await loadCart(silent: true);
+  }
+
+  Future<void> addToCart(ProductEntity product, int quantity) async {
+    final currentItems = state.maybeWhen(
+      loaded: (items) => List<CartItemEntity>.from(items),
+      orElse: () => <CartItemEntity>[],
+    );
+    
+    final existingIndex = currentItems.indexWhere((i) => i.product.id == product.id);
+    if (existingIndex >= 0) {
+      currentItems[existingIndex] = currentItems[existingIndex].copyWith(
+        quantity: currentItems[existingIndex].quantity + quantity,
+      );
     } else {
-      await loadCart(silent: true);
+      currentItems.add(CartItemEntity(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        product: product,
+        quantity: quantity,
+        isSelected: true,
+        isSavedForLater: false,
+        isWholesale: false,
+        minimumOrderQuantity: 1,
+        maximumQuantity: 99,
+        warehouseName: 'Asosiy ombor',
+      ),);
+    }
+    
+    state = FeatureState.loaded(currentItems);
+    
+    final isAuthenticated = _ref.read(milliy_metr_auth_provider.authProvider).maybeWhen(
+      authenticated: (_) => true,
+      orElse: () => false,
+    );
+    
+    if (isAuthenticated) {
+      final repository = _ref.read(cartRepositoryProvider);
+      await repository.addToCart(product.id, quantity);
     }
   }
 
   Future<void> updateCartItem(String cartItemId, int quantity) async {
+    final isAuthenticated = _ref.read(milliy_metr_auth_provider.authProvider).maybeWhen(
+      authenticated: (_) => true,
+      orElse: () => false,
+    );
+    
+    if (!isAuthenticated) {
+      state.maybeWhen(
+        loaded: (items) {
+          final newItems = List<CartItemEntity>.from(items);
+          final index = newItems.indexWhere((i) => i.id == cartItemId);
+          if (index >= 0) {
+            newItems[index] = newItems[index].copyWith(quantity: quantity);
+            state = FeatureState.loaded(newItems);
+          }
+        },
+        orElse: () {},
+      );
+      return;
+    }
+
     final repository = _ref.read(cartRepositoryProvider);
     final result = await repository.updateCartItem(cartItemId, quantity);
     if (result.isLeft()) {
@@ -58,6 +158,23 @@ class CartNotifier extends StateNotifier<FeatureState<List<CartItemEntity>>> {
   }
 
   Future<void> removeFromCart(String cartItemId) async {
+    final isAuthenticated = _ref.read(milliy_metr_auth_provider.authProvider).maybeWhen(
+      authenticated: (_) => true,
+      orElse: () => false,
+    );
+    
+    if (!isAuthenticated) {
+      state.maybeWhen(
+        loaded: (items) {
+          final newItems = List<CartItemEntity>.from(items);
+          newItems.removeWhere((i) => i.id == cartItemId);
+          state = FeatureState.loaded(newItems);
+        },
+        orElse: () {},
+      );
+      return;
+    }
+
     final repository = _ref.read(cartRepositoryProvider);
     final result = await repository.removeFromCart(cartItemId);
     if (result.isLeft()) {
@@ -68,6 +185,16 @@ class CartNotifier extends StateNotifier<FeatureState<List<CartItemEntity>>> {
   }
 
   Future<void> clearCart() async {
+    final isAuthenticated = _ref.read(milliy_metr_auth_provider.authProvider).maybeWhen(
+      authenticated: (_) => true,
+      orElse: () => false,
+    );
+    
+    if (!isAuthenticated) {
+      state = const FeatureState.loaded([]);
+      return;
+    }
+
     final repository = _ref.read(cartRepositoryProvider);
     final result = await repository.clearCart();
     if (result.isLeft()) {

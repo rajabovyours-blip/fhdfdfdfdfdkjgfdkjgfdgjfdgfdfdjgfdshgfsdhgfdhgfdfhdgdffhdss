@@ -6,6 +6,7 @@ import 'package:milliy_metr/features/wishlist/presentation/providers/wishlist_no
 import 'package:milliy_metr/features/products/domain/entities/product_entity.dart';
 import 'package:go_router/go_router.dart';
 import 'package:milliy_metr/core/router/route_constants.dart';
+import 'package:milliy_metr/core/utils/search_normalizer.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
 import 'package:milliy_metr/core/providers/auth_provider.dart';
@@ -123,17 +124,16 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
     List<ProductEntity> filtered = products;
 
     if (_searchQuery.isNotEmpty) {
+      final locale = Localizations.localeOf(context).languageCode;
+      final queryLower = SearchNormalizer.normalizeSearch(_searchQuery);
       filtered = filtered
           .where(
             (p) =>
-                p.name
-                    .get(Localizations.localeOf(context).languageCode)
-                    .toLowerCase()
-                    .contains(_searchQuery.toLowerCase()) ||
+                SearchNormalizer.normalizeSearch(p.name.get(locale))
+                    .contains(queryLower) ||
                 (p.brand != null &&
-                    p.brand!
-                        .toLowerCase()
-                        .contains(_searchQuery.toLowerCase())),
+                    SearchNormalizer.normalizeSearch(p.brand!)
+                        .contains(queryLower)),
           )
           .toList();
     }

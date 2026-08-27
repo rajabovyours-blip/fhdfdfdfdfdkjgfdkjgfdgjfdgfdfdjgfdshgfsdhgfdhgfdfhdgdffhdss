@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../data/auth_repository.dart';
+import 'package:milliy_metr/features/auth/data/auth_repository.dart';
 
 final authStateProvider = StateNotifierProvider<AuthNotifier, bool>((ref) {
   return AuthNotifier(ref.watch(authRepositoryProvider));

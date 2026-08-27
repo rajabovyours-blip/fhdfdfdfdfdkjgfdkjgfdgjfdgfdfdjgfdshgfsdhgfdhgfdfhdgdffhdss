@@ -135,7 +135,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final userModel = await remoteDataSource.getCurrentUser();
       // Cache user data
       await localDataSource.saveUserData(
-          const dart_convert.JsonEncoder().convert(userModel.toJson()));
+          const dart_convert.JsonEncoder().convert(userModel.toJson()),);
       return Right(userModel.toEntity());
     } on Failure catch (e) {
       return Left(e);
@@ -179,6 +179,6 @@ class AuthRepositoryImpl implements AuthRepository {
     );
     await localDataSource.saveToken(token);
     await localDataSource.saveUserData(
-        const dart_convert.JsonEncoder().convert(user.toJson()));
+        const dart_convert.JsonEncoder().convert(user.toJson()),);
   }
 }

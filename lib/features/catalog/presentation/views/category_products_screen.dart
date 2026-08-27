@@ -156,53 +156,36 @@ class _CategoryProductsScreenState extends ConsumerState<CategoryProductsScreen>
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Container(
-                              padding: const EdgeInsets.all(24),
-                              decoration: BoxDecoration(
-                                color: context.colors.surface,
-                                shape: BoxShape.circle,
-                                border:
-                                    Border.all(color: context.colors.outline),
-                              ),
-                              child: Icon(
-                                Icons.search_off,
-                                size: 48,
-                                color: context.colors.textMedium,
-                              ),
+                            const Icon(
+                              Icons.inventory_2_outlined,
+                              size: 56,
+                              color: Colors.grey,
                             ),
-                            const SizedBox(height: 24),
-                            Text(
-                              context.l10n.productNotFound,
+                            const SizedBox(height: 16),
+                            const Text(
+                              "Bu toifada hozircha mahsulotlar yo'q",
                               style: TextStyle(
-                                color: context.colors.textHigh,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              context.l10n.searchWithAnotherName,
-                              style: TextStyle(
-                                color: context.colors.textMedium,
-                                fontSize: 14,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
                               ),
                               textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 24),
-                            OutlinedButton(
-                              onPressed: () => ref
-                                  .read(catalogNotifierProvider.notifier)
-                                  .clearFilters(),
-                              style: OutlinedButton.styleFrom(
-                                side: BorderSide(color: context.colors.outline),
+                            ElevatedButton(
+                              onPressed: () => Navigator.pop(context),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: context.colors.primary,
+                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
+                                elevation: 0,
                               ),
-                              child: Text(
-                                context.l10n.clear,
+                              child: const Text(
+                                "Boshqa toifalarni ko'rish",
                                 style: TextStyle(
-                                  color: context.colors.textHigh,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),

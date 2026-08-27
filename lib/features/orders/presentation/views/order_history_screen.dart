@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:milliy_metr/core/router/route_constants.dart';
+import 'package:milliy_metr/core/utils/search_normalizer.dart';
 import 'package:milliy_metr/features/orders/presentation/providers/order_notifier.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
 import 'package:milliy_metr/core/utils/currency_formatter.dart';
@@ -23,6 +24,79 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
   ];
   String selectedStatus = 'All';
   String searchText = '';
+
+
+  Widget _buildStatusBadge(String status, BuildContext context) {
+    Color bgColor;
+    Color fgColor;
+
+    switch (status.toLowerCase()) {
+      case 'pending':
+        bgColor = const Color(0xFFFFF7ED);
+        fgColor = const Color(0xFFFF7A00);
+        break;
+      case 'confirmed':
+        bgColor = const Color(0xFFEFF6FF);
+        fgColor = const Color(0xFF2563EB);
+        break;
+      case 'processing':
+        bgColor = const Color(0xFFFAF5FF);
+        fgColor = const Color(0xFF9333EA);
+        break;
+      case 'delivered':
+        bgColor = const Color(0xFFECFDF5);
+        fgColor = const Color(0xFF10B981);
+        break;
+      case 'cancelled':
+        bgColor = const Color(0xFFFEF2F2);
+        fgColor = const Color(0xFFEF4444);
+        break;
+      default:
+        bgColor = const Color(0xFFF3F4F6);
+        fgColor = const Color(0xFF4B5563);
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: fgColor.withOpacity(0.5)),
+      ),
+      child: Text(
+        getLocalizedOrderStatus(status, context),
+        style: TextStyle(
+          color: fgColor,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  void _showCancelDialog(BuildContext context, String orderId, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Buyurtmani bekor qilish"),
+        content: const Text("Haqiqatan ham ushbu buyurtmani bekor qilmoqchimisiz?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Yo'q"),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              ref.read(orderNotifierProvider.notifier).cancelOrder(orderId);
+            },
+            style: TextButton.styleFrom(foregroundColor: const Color(0xFFEF4444)),
+            child: const Text("Ha, bekor qilish"),
+          ),
+        ],
+      ),
+    );
+  }
 
   String getLocalizedOrderStatus(String status, BuildContext context) {
     switch (status.toLowerCase()) {
@@ -47,7 +121,65 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
           Expanded(
             child: state.maybeWhen(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e) => Center(child: Text(e.toString())),
+              error: (e) => Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(32.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).cardColor,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.wifi_off_rounded,
+                          size: 64,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      const Text(
+                        'Ulanishda xatolik',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        "Tarmoqqa ulanishni tekshirib qayta urinib ko'ring.",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Theme.of(context).textTheme.bodySmall?.color,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 32),
+                      SizedBox(
+                        height: 44,
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () => ref.read(orderNotifierProvider.notifier).loadOrders(),
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: const Text(
+                            'Qayta urinish',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
               loaded: (orders) {
                 if (orders.isEmpty) {
                   return Center(
@@ -106,9 +238,8 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
                   final matchesStatus =
                       selectedStatus == 'All' || order.status == selectedStatus;
                   final matchesSearch = searchText.isEmpty ||
-                      order.orderNumber
-                          .toLowerCase()
-                          .contains(searchText.toLowerCase());
+                      SearchNormalizer.normalizeSearch(order.orderNumber)
+                          .contains(SearchNormalizer.normalizeSearch(searchText));
                   return matchesStatus && matchesSearch;
                 }).toList();
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:milliy_metr/core/utils/image_utils.dart';
 
 class BrandImageLoader extends StatelessWidget {
   final String? imageUrl;
@@ -54,13 +55,15 @@ class BrandImageLoader extends StatelessWidget {
       );
     }
 
-    if (imageUrl == null || imageUrl!.isEmpty) return buildShimmerPlaceholder();
+    final processedUrl = ImageUtils.getFullImageUrl(imageUrl);
 
-    if (imageUrl!.startsWith('assets/')) {
+    if (processedUrl.isEmpty) return buildShimmerPlaceholder();
+
+    if (processedUrl.startsWith('assets/')) {
       return ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius),
         child: Image.asset(
-          imageUrl!,
+          processedUrl,
           width: width,
           height: height,
           fit: fit,
@@ -72,9 +75,11 @@ class BrandImageLoader extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(borderRadius),
       child: CachedNetworkImage(
-        imageUrl: imageUrl!,
+        imageUrl: processedUrl,
         width: width,
         height: height,
+        memCacheWidth: 250,
+        memCacheHeight: 250,
         fit: fit,
         placeholder: (_, __) => buildShimmerPlaceholder(),
         errorWidget: (_, __, ___) => buildShimmerPlaceholder(),

@@ -46,4 +46,22 @@ class AddressEntity {
       addressType: json['address_type'] as String? ?? '',
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'label': label,
+      'region': region,
+      'district': district,
+      'street': street,
+      'building': building,
+      'apartment': apartment,
+      'zip_code': zipCode,
+      'phone': phone,
+      'notes': notes,
+      'is_default': isDefault,
+      'is_current_location': isCurrentLocation,
+      'address_type': addressType,
+    };
+  }
 }

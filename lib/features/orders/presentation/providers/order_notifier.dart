@@ -20,6 +20,27 @@ class OrderNotifier extends StateNotifier<FeatureState<List<OrderEntity>>> {
       (r) => FeatureState.loaded(r),
     );
   }
+
+  Future<void> cancelOrder(String orderId) async {
+    final repository = _ref.read(orderRepositoryProvider);
+    final result = await repository.cancelOrder(orderId);
+    
+    if (result.isRight()) {
+      // Optimistically update state
+      state.maybeWhen(
+        loaded: (orders) {
+          final newOrders = List<OrderEntity>.from(orders);
+          final index = newOrders.indexWhere((o) => o.id == orderId);
+          if (index != -1) {
+            // Can't directly update status easily if entity doesn't have copyWith, so let's just reload
+          }
+        },
+        orElse: () {},
+      );
+      // Let's just reload orders after cancel
+      await loadOrders();
+    }
+  }
 }
 
 final orderNotifierProvider =

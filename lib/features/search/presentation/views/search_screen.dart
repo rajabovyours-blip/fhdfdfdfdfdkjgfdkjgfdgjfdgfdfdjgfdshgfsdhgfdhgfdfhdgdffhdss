@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:milliy_metr/features/search/presentation/providers/search_notifier.dart';
 import 'package:milliy_metr/shared/components/product_card.dart';
 import 'package:milliy_metr/features/search/presentation/widgets/filter_bottom_sheet.dart';
+import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 
 class SearchScreen extends ConsumerWidget {
   const SearchScreen({super.key});
@@ -36,21 +37,47 @@ class SearchScreen extends ConsumerWidget {
       ),
       body: state.query.isEmpty
           ? ListView(
+              padding: const EdgeInsets.all(16),
               children: [
                 if (state.recentSearches.isNotEmpty) ...[
-                  const Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Text(
-                      'Recent Searches',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "So'nggi qidiruvlar",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: context.colors.textHigh,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          notifier.clearRecentSearches();
+                        },
+                        child: Text(
+                          "Tozalash",
+                          style: TextStyle(color: context.colors.primary),
+                        ),
+                      ),
+                    ],
                   ),
-                  ...state.recentSearches.map(
-                    (query) => ListTile(
-                      leading: const Icon(Icons.history),
-                      title: Text(query),
-                      onTap: () => notifier.updateQuery(query),
-                    ),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: state.recentSearches.map((query) {
+                      return ActionChip(
+                        label: Text(query),
+                        backgroundColor: context.colors.surfaceVariant,
+                        labelStyle: TextStyle(color: context.colors.textHigh),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          side: BorderSide(color: context.colors.outline),
+                        ),
+                        onPressed: () => notifier.updateQuery(query),
+                      );
+                    }).toList(),
                   ),
                 ],
               ],

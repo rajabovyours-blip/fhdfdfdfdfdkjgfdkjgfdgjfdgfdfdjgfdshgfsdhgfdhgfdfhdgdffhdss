@@ -79,12 +79,14 @@
 			<string>UIInterfaceOrientationLandscapeLeft</string>
 			<string>UIInterfaceOrientationLandscapeRight</string>
 		</array>
+		<key>NSCameraUsageDescription</key>
+		<string>Milliy Metr profilingizga rasm yuklash uchun kameradan foydalanadi.</string>
 		<key>NSPhotoLibraryUsageDescription</key>
-		<string>Ilovaga mahsulot rasmlari yoki profillarni yuklash uchun galereya ruxsati kerak.</string>
+		<string>Milliy Metr profilingizga rasm tanlash uchun rasmlar kutubxonasidan foydalanadi.</string>
 		<key>NSLocationWhenInUseUsageDescription</key>
-		<string>Ilovaga yetkazib berish manzilini aniqlash uchun joylashuv ruxsati kerak.</string>
+		<string>Yetkazib berish manzilini xaritada aniqlash uchun joylashuv ma'lumotlaridan foydalaniladi.</string>
 		<key>NSLocationAlwaysUsageDescription</key>
-		<string>Ilovaga yetkazib berish manzilini aniqlash uchun joylashuv ruxsati kerak.</string>
+		<string>Yetkazib berish manzilini xaritada aniqlash uchun joylashuv ma'lumotlaridan foydalaniladi.</string>
 		<key>UIStatusBarHidden</key>
 		<false/>
 	</dict>

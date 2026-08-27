@@ -36,7 +36,7 @@ class _AddressListScreenState extends ConsumerState<AddressListScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.location_off_outlined,
-                            size: 64, color: context.colors.textMedium),
+                            size: 64, color: context.colors.textMedium,),
                         const SizedBox(height: 16),
                         Text(
                           "Sizda hozircha manzillar yo'q",
@@ -55,9 +55,9 @@ class _AddressListScreenState extends ConsumerState<AddressListScreen> {
                             backgroundColor: const Color(0xFFFF7A00),
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 24, vertical: 12),
+                                horizontal: 24, vertical: 12,),
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),

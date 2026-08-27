@@ -1,12 +1,12 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../features/dashboard/presentation/dashboard_screen.dart';
-import '../../features/users/presentation/users_screen.dart';
-import '../../features/products/presentation/products_screen.dart';
-import '../../features/products/presentation/import_excel_screen.dart';
-import '../../features/categories/presentation/categories_screen.dart';
-import '../../features/banners/presentation/banners_screen.dart';
+import 'package:milliy_metr/features/dashboard/presentation/dashboard_screen.dart';
+import 'package:milliy_metr/features/users/presentation/users_screen.dart';
+import 'package:milliy_metr/features/products/presentation/products_screen.dart';
+import 'package:milliy_metr/features/products/presentation/import_excel_screen.dart';
+import 'package:milliy_metr/features/categories/presentation/categories_screen.dart';
+import 'package:milliy_metr/features/banners/presentation/banners_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(

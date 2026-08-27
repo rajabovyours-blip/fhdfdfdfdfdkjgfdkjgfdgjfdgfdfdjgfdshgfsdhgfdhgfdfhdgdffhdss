@@ -111,9 +111,9 @@ class _ImportExcelScreenState extends ConsumerState<ImportExcelScreen> {
                 children: [
                   const Icon(Icons.table_view, size: 80, color: Colors.grey),
                   const SizedBox(height: 24),
-                  Text(
+                  const Text(
                     'Mahsulotlarni ommaviy yuklash uchun Excel (.xlsx) yoki CSV faylni tanlang.',
-                    style: const TextStyle(fontSize: 16, color: Colors.grey),
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 32),

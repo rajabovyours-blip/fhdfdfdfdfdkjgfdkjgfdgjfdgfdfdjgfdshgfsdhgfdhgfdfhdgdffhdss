@@ -23,9 +23,10 @@ class CartItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final product = item.product;
     final isOutOfStock = product.stock == 0;
+    final maxQty = product.stock > 0 ? product.stock : 99;
     final isMaxQuantity =
-        item.quantity >= product.stock || item.quantity >= item.maximumQuantity;
-    final isMinQuantity = item.quantity <= item.minimumOrderQuantity;
+        item.quantity >= maxQty || item.quantity >= item.maximumQuantity;
+    
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -203,7 +204,7 @@ class CartItemCard extends StatelessWidget {
                   children: [
                     _QuantityButton(
                       icon: Icons.remove,
-                      onTap: isMinQuantity ? null : onDecrement,
+                      onTap: onDecrement,
                       semanticLabel: 'Mahsulot sonini kamaytirish',
                     ),
                     Container(

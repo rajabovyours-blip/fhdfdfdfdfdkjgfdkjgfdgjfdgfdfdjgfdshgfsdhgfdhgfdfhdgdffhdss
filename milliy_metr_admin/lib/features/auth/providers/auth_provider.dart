@@ -1,14 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../data/auth_repository.dart';
 
 final authStateProvider = StateNotifierProvider<AuthNotifier, bool>((ref) {
-  return AuthNotifier(ref.watch(authRepositoryProvider));
+  return AuthNotifier();
 });
 
 class AuthNotifier extends StateNotifier<bool> {
-  final AuthRepository _repository;
-
-  AuthNotifier(this._repository) : super(true) {
+  AuthNotifier() : super(true) {
     _checkStatus();
   }
 

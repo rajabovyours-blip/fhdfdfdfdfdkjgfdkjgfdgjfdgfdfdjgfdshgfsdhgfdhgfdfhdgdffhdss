@@ -38,7 +38,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     // Actually, in riverpod router, the redirect happens when the provider changes.
     // If the provider is already loaded, it might not re-trigger.
     // We can explicitly navigate to home or login based on current state here:
-    final isAdminApp = const bool.fromEnvironment('IS_ADMIN', defaultValue: false);
+    const isAdminApp = bool.fromEnvironment('IS_ADMIN', defaultValue: false);
     
     if (isAdminApp) {
       context.go(AppRoutes.adminDashboard);

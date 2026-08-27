@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import '../../../core/api/api_client.dart';
+import 'package:milliy_metr/core/api/api_client.dart';
 
 final secureStorageProvider = Provider((ref) => const FlutterSecureStorage());
 
@@ -21,8 +21,8 @@ class AuthRepository {
         'username': email,
         'password': password,
       }, options: Options(
-        contentType: Headers.formUrlEncodedContentType
-      ));
+        contentType: Headers.formUrlEncodedContentType,
+      ),);
 
       final token = response.data['access_token'];
       if (token != null) {

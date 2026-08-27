@@ -3,6 +3,7 @@ import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
 import 'package:milliy_metr/features/reviews/domain/entities/review_entity.dart';
 import 'package:milliy_metr/features/reviews/presentation/widgets/review_card.dart';
+import 'package:go_router/go_router.dart';
 
 class MyReviewsScreen extends StatelessWidget {
   MyReviewsScreen({super.key});
@@ -53,10 +54,32 @@ class MyReviewsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    l10n.noReviewsWrittenDesc,
+                    "Siz hali sharh qoldirmadingiz",
                     style: TextStyle(
                       color: context.colors.textMedium,
                       fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  SizedBox(
+                    height: 48,
+                    width: 200,
+                    child: ElevatedButton(
+                      onPressed: () => context.go('/home'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: context.colors.primary,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text(
+                        "Xarid qilish",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
                 ],

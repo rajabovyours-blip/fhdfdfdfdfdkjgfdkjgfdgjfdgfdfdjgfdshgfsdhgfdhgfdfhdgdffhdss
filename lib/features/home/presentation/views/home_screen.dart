@@ -73,7 +73,7 @@ class HomeScreen extends ConsumerWidget {
 
                       SliverToBoxAdapter(
                         child: SectionHeader(
-                          title: "Ommabop mahsulotlar",
+                          title: 'Ommabop mahsulotlar',
                           onViewAll: () {},
                         ),
                       ),

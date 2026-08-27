@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:dio/dio.dart';
+import 'package:milliy_metr_admin/core/utils/image_utils.dart';
 import '../../../core/providers/admin_providers.dart';
 import '../../../core/api/api_client.dart';
 
@@ -263,7 +264,7 @@ class _BannersScreenState extends ConsumerState<BannersScreen> {
                               child: banner['image_url'] != null
                                   ? ClipRRect(
                                       borderRadius: BorderRadius.circular(8),
-                                      child: Image.network(banner['image_url'], fit: BoxFit.cover, errorBuilder: (_, __, ___) => const Icon(Icons.image)),
+                                      child: Image.network(ImageUtils.getFullImageUrl(banner['image_url']), fit: BoxFit.cover, errorBuilder: (_, __, ___) => const Icon(Icons.image)),
                                     )
                                   : const Icon(Icons.image),
                             ),

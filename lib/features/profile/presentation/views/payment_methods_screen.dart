@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PaymentMethodsScreen extends StatefulWidget {
   const PaymentMethodsScreen({super.key});
@@ -11,6 +12,24 @@ class PaymentMethodsScreen extends StatefulWidget {
 
 class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
   String _selectedMethod = 'cash';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPaymentMethod();
+  }
+
+  Future<void> _loadPaymentMethod() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _selectedMethod = prefs.getString('selected_payment_method') ?? 'cash';
+    });
+  }
+
+  Future<void> _savePaymentMethod(String method) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('selected_payment_method', method);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +49,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
+              ScaffoldMessenger.of(context).clearSnackBars();
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(l10n.paymentMethodSelected),
@@ -40,13 +60,13 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
               );
             },
             child: Text(
-              "Saqlash", // We can use l10n.save if it's there, but "Saqlash" works too.
+              'Saqlash', // We can use l10n.save if it's there, but "Saqlash" works too.
               style: TextStyle(
                 color: context.colors.primary,
                 fontWeight: FontWeight.w600,
               ),
             ),
-          )
+          ),
         ],
       ),
       body: ListView(
@@ -93,6 +113,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
     return GestureDetector(
       onTap: () {
         setState(() => _selectedMethod = id);
+        _savePaymentMethod(id);
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
@@ -183,7 +204,10 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
               activeColor: context.colors.primary,
               // ignore: deprecated_member_use
               onChanged: (val) {
-                if (val != null) setState(() => _selectedMethod = val);
+                if (val != null) {
+                  setState(() => _selectedMethod = val);
+                  _savePaymentMethod(val);
+                }
               },
             ),
           ],

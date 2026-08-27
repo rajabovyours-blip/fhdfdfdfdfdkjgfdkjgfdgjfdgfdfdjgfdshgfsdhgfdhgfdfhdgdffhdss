@@ -3,6 +3,7 @@ import 'package:milliy_metr/l10n/l10n_extension.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:milliy_metr/shared/widgets/app_button.dart';
 import 'package:milliy_metr/features/checkout/presentation/providers/checkout_provider.dart';
+import 'package:milliy_metr/shared/widgets/app_snackbar.dart';
 
 class AddAddressScreen extends ConsumerStatefulWidget {
   const AddAddressScreen({super.key});
@@ -27,28 +28,18 @@ class _AddAddressScreenState extends ConsumerState<AddAddressScreen> {
       
       setState(() => _isSaving = true);
       final success = await ref.read(checkoutProvider.notifier).addNewAddress(
-        label, region, district, street
+        label, region, district, street,
       );
       setState(() => _isSaving = false);
 
       if (success) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Manzil muvaffaqiyatli qo\'shildi'),
-              backgroundColor: Colors.green,
-            ),
-          );
+          AppSnackBar.showSuccess(context, 'Manzil muvaffaqiyatli qo\'shildi');
           Navigator.of(context).pop();
         }
       } else {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Xatolik yuz berdi'),
-              backgroundColor: Colors.red,
-            ),
-          );
+          AppSnackBar.showError(context, 'Xatolik yuz berdi');
         }
       }
     }

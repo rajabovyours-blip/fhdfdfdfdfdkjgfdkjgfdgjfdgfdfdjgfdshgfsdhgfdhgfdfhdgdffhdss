@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:milliy_metr/shared/components/category_card.dart';
 import 'package:milliy_metr/core/router/route_constants.dart';
+import 'package:milliy_metr/core/utils/search_normalizer.dart';
 import 'package:milliy_metr/features/catalog/presentation/widgets/catalog_search_bar.dart';
 import 'package:milliy_metr/features/catalog/presentation/providers/catalog_notifier.dart';
 import 'package:milliy_metr/features/categories/presentation/providers/category_notifier.dart';
@@ -58,7 +59,7 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
             child: CustomScrollView(
               physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
             slivers: [
-              SliverToBoxAdapter(child: CatalogSearchBar()),
+              const SliverToBoxAdapter(child: CatalogSearchBar()),
               const SliverToBoxAdapter(child: SizedBox(height: 8)),
               
               state.maybeWhen(
@@ -122,9 +123,9 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                   var displayCategories = categories;
                   if (searchQuery.isNotEmpty) {
                     final locale = Localizations.localeOf(context).languageCode;
-                    final queryLower = searchQuery.toLowerCase();
+                    final queryLower = SearchNormalizer.normalizeSearch(searchQuery);
                     displayCategories = categories.where((c) {
-                      final nameStr = c.name.get(locale).toLowerCase();
+                      final nameStr = SearchNormalizer.normalizeSearch(c.name.get(locale));
                       return nameStr.contains(queryLower);
                     }).toList();
                   }

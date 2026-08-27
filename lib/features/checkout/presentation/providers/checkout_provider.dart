@@ -8,6 +8,9 @@ import 'package:milliy_metr/features/checkout/domain/usecases/place_order_usecas
 
 import 'package:milliy_metr/features/checkout/data/datasources/checkout_remote_datasource.dart';
 import 'package:milliy_metr/core/providers/auth_provider.dart';
+import 'dart:convert';
+import 'package:milliy_metr/core/storage/preferences.dart';
+import 'package:milliy_metr/features/cart/presentation/providers/cart_notifier.dart';
 
 final checkoutRemoteDataSourceProvider =
     Provider<CheckoutRemoteDataSource>((ref) {
@@ -93,17 +96,33 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
 
   Future<void> load() async {
     state = state.copyWith(isLoading: true, error: null);
+    
+    // Load local addresses
+    final localAddressesStrs = PreferencesManager.getStringList('local_addresses');
+    final localAddresses = localAddressesStrs.map((s) => AddressEntity.fromJson(jsonDecode(s))).toList();
+
     final addressResult = await repository.getAddresses();
 
     addressResult.fold(
-      (addressFailure) => state =
-          state.copyWith(isLoading: false, error: addressFailure.message),
-      (addresses) {
-        final defaultAddress =
-            addresses.where((a) => a.isDefault).firstOrNull();
+      (addressFailure) {
+        final defaultAddress = localAddresses.where((a) => a.isDefault).isNotEmpty 
+            ? localAddresses.where((a) => a.isDefault).first 
+            : (localAddresses.isNotEmpty ? localAddresses.first : null);
         state = state.copyWith(
           isLoading: false,
-          addresses: addresses,
+          error: addressFailure.message,
+          addresses: localAddresses,
+          selectedAddress: defaultAddress,
+        );
+      },
+      (addresses) {
+        final allAddresses = [...addresses, ...localAddresses];
+        final defaultAddress = allAddresses.where((a) => a.isDefault).isNotEmpty
+            ? allAddresses.where((a) => a.isDefault).first
+            : (allAddresses.isNotEmpty ? allAddresses.first : null);
+        state = state.copyWith(
+          isLoading: false,
+          addresses: allAddresses,
           selectedAddress: defaultAddress,
         );
       },
@@ -156,11 +175,74 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
     );
   }
 
+
+  void deleteAddress(String id) {
+    final updated = state.addresses.where((a) => a.id != id).toList();
+    state = state.copyWith(
+      addresses: updated,
+      selectedAddress: state.selectedAddress?.id == id
+          ? (updated.isNotEmpty ? updated.first : null)
+          : state.selectedAddress,
+    );
+  }
+
+  void setDefaultAddress(String id) {
+    final updated = state.addresses.map((a) {
+      if (a.id == id) {
+        return AddressEntity(
+          id: a.id,
+          label: a.label,
+          region: a.region,
+          district: a.district,
+          street: a.street,
+          building: a.building,
+          apartment: a.apartment,
+          isDefault: true,
+          addressType: a.addressType,
+        );
+      } else {
+        return AddressEntity(
+          id: a.id,
+          label: a.label,
+          region: a.region,
+          district: a.district,
+          street: a.street,
+          building: a.building,
+          apartment: a.apartment,
+          isDefault: false,
+          addressType: a.addressType,
+        );
+      }
+    }).toList();
+    state = state.copyWith(addresses: updated);
+  }
+
   Future<bool> addNewAddress(String label, String region, String district, String street) async {
     state = state.copyWith(isLoading: true);
+    
+    final newAddress = AddressEntity(
+      id: 'local_${DateTime.now().millisecondsSinceEpoch}',
+      label: label,
+      region: region,
+      district: district,
+      street: street,
+      building: '',
+      apartment: '',
+      zipCode: '',
+      phone: '',
+      notes: '',
+      isDefault: state.addresses.isEmpty,
+      isCurrentLocation: false,
+      addressType: 'local',
+    );
+    
+    final localStrs = PreferencesManager.getStringList('local_addresses');
+    localStrs.add(jsonEncode(newAddress.toJson()));
+    await PreferencesManager.setStringList('local_addresses', localStrs);
+    
     try {
       final dio = ref.read(dioProvider);
-      final landmark = "$region, $district";
+      final landmark = '$region, $district';
       await dio.post('/addresses', data: {
         'title': label,
         'street': street,
@@ -168,13 +250,13 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
         'lat': 0.0,
         'lng': 0.0,
         'is_default': state.addresses.isEmpty,
-      });
-      await load();
-      return true;
+      },);
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: "Manzil qo'shishda xatolik yuz berdi");
-      return false;
+      // Remote sync fails, but local persists
     }
+    
+    await load();
+    return true;
   }
 
   void setAddress(AddressEntity address) {
@@ -225,7 +307,10 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
     result.fold(
       (failure) =>
           state = state.copyWith(isSubmitting: false, error: failure.message),
-      (order) => state = state.copyWith(isSubmitting: false, order: order),
+      (order) {
+        state = state.copyWith(isSubmitting: false, order: order);
+        ref.read(cartNotifierProvider.notifier).clearCart();
+      },
     );
   }
 

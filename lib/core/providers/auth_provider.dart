@@ -280,7 +280,7 @@ class AuthController extends StateNotifier<AuthState> {
         'full_name': fullName,
         'email': email,
         'avatar_url': avatarUrl,
-      });
+      },);
       // Re-fetch user to update state
       await checkAuthStatus();
       return true;

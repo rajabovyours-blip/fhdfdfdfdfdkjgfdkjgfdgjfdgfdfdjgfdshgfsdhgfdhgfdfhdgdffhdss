@@ -25,21 +25,22 @@ class CategoryModel with _$CategoryModel {
   const CategoryModel._();
 
   CategoryEntity toEntity() {
-    // Intelligently map to one of the manually uploaded 61 category images based on name
-    String getAssetPath(String name) {
-      final hash = name.hashCode.abs();
-      final index = (hash % 61) + 1; // Maps to cat-1.webp ... cat-61.webp
-      return 'assets/images/categories/cat-$index.webp';
+    String resolveCategoryImage(String id, String? rawUrl) {
+      if (rawUrl != null && rawUrl.isNotEmpty && !rawUrl.contains('cat-1.webp')) {
+        return rawUrl;
+      }
+      final numStr = id.replaceAll(RegExp(r'\D'), '');
+      final index = int.tryParse(numStr) ?? 1;
+      final clampedIndex = index.clamp(1, 61);
+      return 'assets/images/categories/cat-$clampedIndex.webp';
     }
 
     return CategoryEntity(
       id: id,
       name: name,
       description: description,
-      iconUrl: (iconUrl == null || iconUrl!.isEmpty || iconUrl == 'null') 
-          ? getAssetPath(name.get('en')) 
-          : iconUrl,
-      imageUrl: imageUrl,
+      iconUrl: resolveCategoryImage(id, iconUrl),
+      imageUrl: resolveCategoryImage(id, imageUrl),
       parentId: parentId,
       productCount: productCount,
       isFeatured: isFeatured,

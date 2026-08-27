@@ -4,6 +4,7 @@ import 'package:milliy_metr/core/state/feature_state.dart';
 import 'package:milliy_metr/features/products/domain/entities/product_entity.dart';
 import 'package:milliy_metr/features/products/presentation/providers/product_providers.dart';
 import 'package:milliy_metr/features/search/domain/entities/search_filter_state.dart';
+import 'package:milliy_metr/core/storage/preferences.dart';
 
 class SearchState {
   final String query;
@@ -43,6 +44,7 @@ class SearchNotifier extends StateNotifier<SearchState> {
             query: '',
             filters: const SearchFilterState(),
             results: const FeatureState.initial(),
+            recentSearches: PreferencesManager.getStringList('recent_searches'),
           ),
         );
 
@@ -67,6 +69,11 @@ class SearchNotifier extends StateNotifier<SearchState> {
   void clearSearch() {
     state = state.copyWith(query: '', results: const FeatureState.initial());
   }
+  
+  void clearRecentSearches() {
+    PreferencesManager.setStringList('recent_searches', []);
+    state = state.copyWith(recentSearches: []);
+  }
 
   void _addRecentSearch(String query) {
     if (query.isEmpty) return;
@@ -74,6 +81,7 @@ class SearchNotifier extends StateNotifier<SearchState> {
     recent.remove(query);
     recent.insert(0, query);
     if (recent.length > 5) recent.removeLast();
+    PreferencesManager.setStringList('recent_searches', recent);
     state = state.copyWith(recentSearches: recent);
   }
 

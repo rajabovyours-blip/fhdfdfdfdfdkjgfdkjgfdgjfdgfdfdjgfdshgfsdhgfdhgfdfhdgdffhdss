@@ -98,3 +98,11 @@ async def update_user(id: str, payload: UserUpdate, db: AsyncSession = Depends(g
     await db.refresh(user)
     
     return APIResponse(data=UserModel.model_validate(user))
+
+@router.delete("/me", response_model=APIResponse[dict])
+async def delete_me(db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
+    # Delete the user. Orders associated with the user might need to be anonymized or cascade deleted depending on DB schema.
+    # Assuming SQLAlchemy relationships handle the cascading or nullifying.
+    await db.delete(current_user)
+    await db.commit()
+    return APIResponse(data={"message": "Hisobingiz muvaffaqiyatli o'chirildi"})

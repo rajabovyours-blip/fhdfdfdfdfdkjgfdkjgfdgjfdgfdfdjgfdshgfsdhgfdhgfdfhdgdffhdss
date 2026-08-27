@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
-import 'dart:ui';
 
 class AppTypography {
   static TextTheme _buildBaseTheme(Color textColor, Color textMedium) {

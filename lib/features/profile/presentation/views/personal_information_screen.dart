@@ -1,8 +1,11 @@
+import 'dart:io';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:milliy_metr/core/providers/auth_provider.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
+import 'package:milliy_metr/shared/widgets/app_snackbar.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:dio/dio.dart';
 
@@ -23,6 +26,7 @@ class _PersonalInformationScreenState
   bool _isEditing = false;
   bool _isSaving = false;
   String? _avatarUrl;
+  String? _localAvatarPath;
   final ImagePicker _picker = ImagePicker();
 
   @override
@@ -88,22 +92,13 @@ class _PersonalInformationScreenState
                     _avatarUrl ?? '',
                   );
                   setState(() => _isSaving = false);
+                  if (!context.mounted) return;
                   
                   if (success) {
                     setState(() => _isEditing = false);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(l10n.profileUpdated),
-                        backgroundColor: context.colors.success,
-                      ),
-                    );
+                    AppSnackBar.showSuccess(context, l10n.profileUpdated);
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: const Text("Xatolik yuz berdi"),
-                        backgroundColor: context.colors.danger,
-                      ),
-                    );
+                    AppSnackBar.showError(context, 'Xatolik yuz berdi');
                   }
                 }
               } else {
@@ -150,15 +145,15 @@ class _PersonalInformationScreenState
                                   onTap: () async {
                                     Navigator.of(context).pop();
                                     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-                                    if (image != null) _uploadImage(image);
-                                  }),
+                                    if (image != null) unawaited(_uploadImage(image));
+                                  },),
                               ListTile(
                                 leading: const Icon(Icons.photo_camera),
                                 title: const Text('Kameradan rasmga olish'),
                                 onTap: () async {
                                   Navigator.of(context).pop();
                                   final XFile? image = await _picker.pickImage(source: ImageSource.camera);
-                                  if (image != null) _uploadImage(image);
+                                  if (image != null) unawaited(_uploadImage(image));
                                 },
                               ),
                             ],
@@ -172,10 +167,12 @@ class _PersonalInformationScreenState
                       CircleAvatar(
                         radius: 50,
                         backgroundColor: context.colors.surfaceVariant,
-                        backgroundImage: _avatarUrl != null && _avatarUrl!.isNotEmpty
-                            ? NetworkImage(_avatarUrl!)
-                            : null,
-                        child: _avatarUrl == null || _avatarUrl!.isEmpty
+                        backgroundImage: _localAvatarPath != null
+                            ? FileImage(File(_localAvatarPath!))
+                            : (_avatarUrl != null && _avatarUrl!.isNotEmpty
+                                ? NetworkImage(_avatarUrl!) as ImageProvider
+                                : null),
+                        child: _localAvatarPath == null && (_avatarUrl == null || _avatarUrl!.isEmpty)
                             ? Text(
                                 _getInitials(_nameController.text),
                                 style: TextStyle(
@@ -298,7 +295,10 @@ class _PersonalInformationScreenState
   }
 
   Future<void> _uploadImage(XFile image) async {
-    setState(() => _isSaving = true);
+    setState(() {
+      _localAvatarPath = image.path;
+      _isSaving = true;
+    });
     try {
       final dio = ref.read(dioProvider);
       final formData = FormData.fromMap({
@@ -312,12 +312,12 @@ class _PersonalInformationScreenState
         });
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text("Rasm yuklashda xatolik yuz berdi"),
-          backgroundColor: context.colors.danger,
-        ),
-      );
+      setState(() {
+        _localAvatarPath = null;
+      });
+      if (mounted) {
+        AppSnackBar.showError(context, 'Rasm yuklashda xatolik yuz berdi');
+      }
     } finally {
       setState(() => _isSaving = false);
     }

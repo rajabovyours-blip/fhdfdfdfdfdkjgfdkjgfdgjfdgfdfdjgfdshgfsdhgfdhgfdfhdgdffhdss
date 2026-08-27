@@ -21,10 +21,10 @@ class FlashDealsSection extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
           child: Row(
             children: [
-              Icon(Icons.timer_outlined, color: const Color(0xFFFF3B30), size: 24),
+              const Icon(Icons.timer_outlined, color: Color(0xFFFF3B30), size: 24),
               const SizedBox(width: 8),
               Text(
-                "Qaynoq Takliflar",
+                'Qaynoq Takliflar',
                 style: TextStyle(
                   color: context.colors.textHigh,
                   fontSize: 18,
@@ -38,9 +38,9 @@ class FlashDealsSection extends StatelessWidget {
                   color: const Color(0xFFFF3B30).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(6),
                 ),
-                child: Text(
-                  "12:34:56",
-                  style: const TextStyle(
+                child: const Text(
+                  '12:34:56',
+                  style: TextStyle(
                     color: Color(0xFFFF3B30),
                     fontWeight: FontWeight.bold,
                     fontSize: 12,
