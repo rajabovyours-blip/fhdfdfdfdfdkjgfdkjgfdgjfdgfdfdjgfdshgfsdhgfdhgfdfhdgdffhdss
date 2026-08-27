@@ -1,19 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:milliy_metr/l10n/l10n_extension.dart';
-import 'package:milliy_metr/core/constants/uzbekistan_regions.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:milliy_metr/shared/widgets/app_button.dart';
-import 'package:milliy_metr/features/checkout/presentation/providers/checkout_provider.dart';
-import 'package:milliy_metr/shared/widgets/app_snackbar.dart';
+﻿import re
 
-class AddAddressScreen extends ConsumerStatefulWidget {
-  const AddAddressScreen({super.key});
+file_path = r'c:\Users\rajab\OneDrive\Desktop\MilliyMetr\lib\features\checkout\presentation\views\add_address_screen.dart'
+with open(file_path, 'r', encoding='utf-8') as f:
+    content = f.read()
 
-  @override
-  ConsumerState<AddAddressScreen> createState() => _AddAddressScreenState();
-}
+# Add import
+if 'uzbekistan_regions.dart' not in content:
+    content = content.replace("import 'package:milliy_metr/l10n/l10n_extension.dart';", "import 'package:milliy_metr/l10n/l10n_extension.dart';\nimport 'package:milliy_metr/core/constants/uzbekistan_regions.dart';")
 
-class _AddAddressScreenState extends ConsumerState<AddAddressScreen> {
+state_replacement = '''class _AddAddressScreenState extends ConsumerState<AddAddressScreen> {
   final _formKey = GlobalKey<FormState>();
   String label = '';
   
@@ -41,7 +36,7 @@ class _AddAddressScreenState extends ConsumerState<AddAddressScreen> {
 
       if (success) {
         if (mounted) {
-          AppSnackBar.showSuccess(context, 'Manzil muvaffaqiyatli qo\'shildi');
+          AppSnackBar.showSuccess(context, 'Manzil muvaffaqiyatli qo\\'shildi');
           Navigator.of(context).pop();
         }
       } else {
@@ -148,4 +143,10 @@ class _AddAddressScreenState extends ConsumerState<AddAddressScreen> {
       ),
     );
   }
-}
+}'''
+
+state_pattern = re.compile(r'class _AddAddressScreenState extends ConsumerState<AddAddressScreen> \{.*\}', re.DOTALL)
+content = re.sub(state_pattern, state_replacement, content)
+
+with open(file_path, 'w', encoding='utf-8') as f:
+    f.write(content)

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:milliy_metr/core/utils/app_formatters.dart';
+import 'package:milliy_metr/core/utils/thousands_separator_input_formatter.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:milliy_metr/features/catalog/presentation/providers/catalog_notifier.dart';
@@ -96,8 +99,11 @@ class _FilterSheetContent extends ConsumerStatefulWidget {
 
 class _FilterSheetContentState extends ConsumerState<_FilterSheetContent> {
   double _minPrice = 0;
-  double _maxPrice = 10000000;
+  double _maxPrice = 50000000;
   String _selectedLocation = 'Barchasi';
+  
+  final TextEditingController _minPriceController = TextEditingController();
+  final TextEditingController _maxPriceController = TextEditingController();
 
   @override
   void initState() {
@@ -106,11 +112,48 @@ class _FilterSheetContentState extends ConsumerState<_FilterSheetContent> {
     state.maybeWhen(
       loaded: (data) {
         _minPrice = data.minPrice ?? 0;
-        _maxPrice = data.maxPrice ?? 10000000;
+        _maxPrice = data.maxPrice ?? 50000000;
         _selectedLocation = data.selectedLocation ?? 'Barchasi';
       },
       orElse: () {},
     );
+    _minPriceController.text = AppFormatters.formatNumber(_minPrice.round());
+    _maxPriceController.text = AppFormatters.formatNumber(_maxPrice.round());
+  }
+
+  @override
+  void dispose() {
+    _minPriceController.dispose();
+    _maxPriceController.dispose();
+    super.dispose();
+  }
+
+  void _onMinPriceChanged(String value) {
+    String cleanVal = value.replaceAll(' ', '');
+    double? parsed = double.tryParse(cleanVal);
+    if (parsed != null) {
+      setState(() {
+        _minPrice = parsed;
+        if (_minPrice > _maxPrice) {
+          _maxPrice = _minPrice;
+          _maxPriceController.text = AppFormatters.formatNumber(_maxPrice.round());
+        }
+      });
+    }
+  }
+
+  void _onMaxPriceChanged(String value) {
+    String cleanVal = value.replaceAll(' ', '');
+    double? parsed = double.tryParse(cleanVal);
+    if (parsed != null) {
+      setState(() {
+        _maxPrice = parsed;
+        if (_maxPrice < _minPrice) {
+          _minPrice = _maxPrice;
+          _minPriceController.text = AppFormatters.formatNumber(_minPrice.round());
+        }
+      });
+    }
   }
 
   @override
@@ -167,18 +210,41 @@ class _FilterSheetContentState extends ConsumerState<_FilterSheetContent> {
                   ),
                   const SizedBox(height: 16),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        '${_minPrice.round()} UZS',
-                        style: TextStyle(color: context.colors.textMedium),
+                      Expanded(
+                        child: TextField(
+                          controller: _minPriceController,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            ThousandsSeparatorInputFormatter(),
+                          ],
+                          decoration: InputDecoration(
+                            labelText: "Dan (so'm)",
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                          ),
+                          onChanged: _onMinPriceChanged,
+                        ),
                       ),
-                      Text(
-                        '${_maxPrice.round()} UZS',
-                        style: TextStyle(color: context.colors.textMedium),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: TextField(
+                          controller: _maxPriceController,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            ThousandsSeparatorInputFormatter(),
+                          ],
+                          decoration: InputDecoration(
+                            labelText: "Gacha (so'm)",
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                          ),
+                          onChanged: _onMaxPriceChanged,
+                        ),
                       ),
                     ],
                   ),
+                  const SizedBox(height: 16),
                   SliderTheme(
                     data: SliderTheme.of(context).copyWith(
                       minThumbSeparation: 100,
@@ -191,7 +257,7 @@ class _FilterSheetContentState extends ConsumerState<_FilterSheetContent> {
                     child: Builder(
                       builder: (context) {
                         const double minVal = 0;
-                        const double maxVal = 10000000;
+                        const double maxVal = 50000000;
                         final double currentMin = _minPrice;
                         final double currentMax = _maxPrice > _minPrice ? _maxPrice : _minPrice + 1;
                         int divisions = ((maxVal - minVal) / 1000).clamp(1, 10000).toInt();
@@ -208,6 +274,8 @@ class _FilterSheetContentState extends ConsumerState<_FilterSheetContent> {
                             setState(() {
                               _minPrice = values.start;
                               _maxPrice = values.end;
+                              _minPriceController.text = AppFormatters.formatNumber(_minPrice.round());
+                              _maxPriceController.text = AppFormatters.formatNumber(_maxPrice.round());
                             });
                           },
                         );

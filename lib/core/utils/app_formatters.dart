@@ -27,4 +27,9 @@ class AppFormatters {
   static String date(DateTime date) {
     return DateFormat('dd.MM.yyyy').format(date);
   }
+
+  static String formatNumber(int number) {
+    final formatter = NumberFormat('#,###', 'en_US');
+    return formatter.format(number).replaceAll(',', ' ');
+  }
 }
