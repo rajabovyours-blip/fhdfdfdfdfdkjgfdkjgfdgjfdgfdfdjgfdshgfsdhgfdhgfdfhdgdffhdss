@@ -109,19 +109,19 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
                 showDialog(
                   context: context,
                   builder: (ctx) => AlertDialog(
-                    title: const Text("SMS Tasdiqlash"),
-                    content: const Text("Ikki bosqichli autentifikatsiyani yoqish uchun telefon raqamingizga SMS kod yuboriladi. Davom etishni xohlaysizmi?"),
+                    title: const Text('SMS Tasdiqlash'),
+                    content: const Text('Ikki bosqichli autentifikatsiyani yoqish uchun telefon raqamingizga SMS kod yuboriladi. Davom etishni xohlaysizmi?'),
                     actions: [
-                      TextButton(onPressed: () => Navigator.pop(ctx), child: const Text("Bekor qilish")),
+                      TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Bekor qilish')),
                       TextButton(
                         onPressed: () {
                           Navigator.pop(ctx);
                           setState(() => _twoFactorEnabled = true);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: const Text("Ikki bosqichli autentifikatsiya yoqildi"), backgroundColor: context.colors.success),
+                            SnackBar(content: const Text('Ikki bosqichli autentifikatsiya yoqildi'), backgroundColor: context.colors.success),
                           );
                         },
-                        child: const Text("Davom etish"),
+                        child: const Text('Davom etish'),
                       ),
                     ],
                   ),
@@ -129,7 +129,7 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
               } else {
                 setState(() => _twoFactorEnabled = false);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: const Text("Ikki bosqichli autentifikatsiya o'chirildi")),
+                  SnackBar(content: const Text('Ikki bosqichli autentifikatsiya o\'chirildi')),
                 );
               }
             },
@@ -198,17 +198,17 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text("Ma'lumotlar maxfiyligi", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      const Text('Ma\'lumotlar maxfiyligi', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                       const SizedBox(height: 16),
                       SwitchListTile(
-                        title: const Text("Xatolik hisobotlarini yuborish"),
-                        subtitle: const Text("Ilovani yaxshilash uchun anonim xatolik ma'lumotlarini yuborish."),
+                        title: const Text('Xatolik hisobotlarini yuborish'),
+                        subtitle: const Text('Ilovani yaxshilash uchun anonim xatolik ma\'lumotlarini yuborish.'),
                         value: true,
                         onChanged: (v) {},
                       ),
                       SwitchListTile(
-                        title: const Text("Reklama profilini yaratish"),
-                        subtitle: const Text("Sizga moslashtirilgan reklamalarni ko'rsatish uchun."),
+                        title: const Text('Reklama profilini yaratish'),
+                        subtitle: const Text('Sizga moslashtirilgan reklamalarni ko\'rsatish uchun.'),
                         value: false,
                         onChanged: (v) {},
                       ),
@@ -219,7 +219,7 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
                         child: ElevatedButton(
                           onPressed: () => Navigator.pop(ctx),
                           style: ElevatedButton.styleFrom(backgroundColor: context.colors.primary, foregroundColor: Colors.white),
-                          child: const Text("Saqlash"),
+                          child: const Text('Saqlash'),
                         ),
                       ),
                     ],

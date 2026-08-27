@@ -194,37 +194,50 @@ class HelpSupportScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildContactTile(
-    BuildContext context, {
-    required IconData icon,
-    Color? iconColor,
+  Widget buildSocialTile({
+    required BuildContext context,
+    required Widget iconWidget,
     required String title,
     required String subtitle,
     required VoidCallback onTap,
   }) {
-    return ListTile(
-      leading: Icon(icon, color: iconColor ?? context.colors.primary),
-      title: Text(
-        title,
-        style: TextStyle(color: context.colors.textHigh, fontSize: 15),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF16181F) : Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: isDark ? Colors.white.withOpacity(0.06) : const Color(0xFFE5E7EB),
+        ),
       ),
-      subtitle: Text(
-        subtitle,
-        style: TextStyle(color: context.colors.textMedium, fontSize: 13),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        leading: iconWidget,
+        title: Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: TextStyle(
+            color: isDark ? Colors.white54 : Colors.black54,
+            fontSize: 12,
+          ),
+        ),
+        trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+        onTap: onTap,
       ),
-      trailing: Icon(
-        Icons.chevron_right_rounded,
-        color: context.colors.textMedium,
-        size: 20,
-      ),
-      onTap: onTap,
     );
   }
 
-  Future<void> _launchUrl(String url) async {
+  Future<void> _launchUrl(String url, {bool external = false}) async {
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+      await launchUrl(
+        uri,
+        mode: external ? LaunchMode.externalApplication : LaunchMode.platformDefault,
+      );
     }
   }
 }

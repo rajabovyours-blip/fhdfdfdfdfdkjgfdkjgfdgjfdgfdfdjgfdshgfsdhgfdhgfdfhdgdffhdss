@@ -26,77 +26,9 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
   String searchText = '';
 
 
-  Widget _buildStatusBadge(String status, BuildContext context) {
-    Color bgColor;
-    Color fgColor;
 
-    switch (status.toLowerCase()) {
-      case 'pending':
-        bgColor = const Color(0xFFFFF7ED);
-        fgColor = const Color(0xFFFF7A00);
-        break;
-      case 'confirmed':
-        bgColor = const Color(0xFFEFF6FF);
-        fgColor = const Color(0xFF2563EB);
-        break;
-      case 'processing':
-        bgColor = const Color(0xFFFAF5FF);
-        fgColor = const Color(0xFF9333EA);
-        break;
-      case 'delivered':
-        bgColor = const Color(0xFFECFDF5);
-        fgColor = const Color(0xFF10B981);
-        break;
-      case 'cancelled':
-        bgColor = const Color(0xFFFEF2F2);
-        fgColor = const Color(0xFFEF4444);
-        break;
-      default:
-        bgColor = const Color(0xFFF3F4F6);
-        fgColor = const Color(0xFF4B5563);
-    }
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: fgColor.withOpacity(0.5)),
-      ),
-      child: Text(
-        getLocalizedOrderStatus(status, context),
-        style: TextStyle(
-          color: fgColor,
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
 
-  void _showCancelDialog(BuildContext context, String orderId, WidgetRef ref) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Buyurtmani bekor qilish"),
-        content: const Text("Haqiqatan ham ushbu buyurtmani bekor qilmoqchimisiz?"),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Yo'q"),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              ref.read(orderNotifierProvider.notifier).cancelOrder(orderId);
-            },
-            style: TextButton.styleFrom(foregroundColor: const Color(0xFFEF4444)),
-            child: const Text("Ha, bekor qilish"),
-          ),
-        ],
-      ),
-    );
-  }
 
   String getLocalizedOrderStatus(String status, BuildContext context) {
     switch (status.toLowerCase()) {

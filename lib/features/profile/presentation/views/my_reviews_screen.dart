@@ -54,7 +54,7 @@ class MyReviewsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    "Siz hali sharh qoldirmadingiz",
+                    'Siz hali sharh qoldirmadingiz',
                     style: TextStyle(
                       color: context.colors.textMedium,
                       fontSize: 14,
@@ -74,7 +74,7 @@ class MyReviewsScreen extends StatelessWidget {
                         ),
                       ),
                       child: const Text(
-                        "Xarid qilish",
+                        'Xarid qilish',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
