@@ -32,6 +32,7 @@ class Notification(Base):
     user_id = Column(Uuid(as_uuid=True), ForeignKey("users.id"), nullable=False)
     title = Column(String, nullable=False)
     body = Column(String, nullable=False)
+    image_url = Column(String, nullable=True)
     is_read = Column(Boolean, default=False)
     
     created_at = Column(DateTime, default=datetime.utcnow)

@@ -51,7 +51,8 @@ class HelpSupportScreen extends StatelessWidget {
           ),
           _buildContactTile(
             context,
-            icon: Icons.send_outlined,
+            icon: Icons.send_rounded,
+            iconColor: const Color(0xFF229ED9), // Official Telegram Blue
             title: l10n.telegram,
             subtitle: '@milliymetr_support',
             onTap: () => _launchUrl('https://t.me/milliymetr_support'),
@@ -79,16 +80,16 @@ class HelpSupportScreen extends StatelessWidget {
           Center(
             child: Column(
               children: [
-                Icon(
-                  Icons.construction,
-                  size: 40,
-                  color: context.colors.primary,
+                Image.asset(
+                  'assets/images/milliy_metr_logo_transparent.png',
+                  height: 64,
+                  fit: BoxFit.contain,
                 ),
                 const SizedBox(height: 8),
                 Text(
                   'Milliy Metr',
                   style: TextStyle(
-                    color: context.colors.primary,
+                    color: context.colors.textHigh,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
@@ -148,12 +149,13 @@ class HelpSupportScreen extends StatelessWidget {
   Widget _buildContactTile(
     BuildContext context, {
     required IconData icon,
+    Color? iconColor,
     required String title,
     required String subtitle,
     required VoidCallback onTap,
   }) {
     return ListTile(
-      leading: Icon(icon, color: context.colors.primary),
+      leading: Icon(icon, color: iconColor ?? context.colors.primary),
       title: Text(
         title,
         style: TextStyle(color: context.colors.textHigh, fontSize: 15),

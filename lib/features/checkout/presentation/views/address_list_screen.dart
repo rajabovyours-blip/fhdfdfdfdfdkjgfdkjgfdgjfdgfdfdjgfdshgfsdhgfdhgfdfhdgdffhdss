@@ -28,40 +28,74 @@ class _AddressListScreenState extends ConsumerState<AddressListScreen> {
       appBar: AppBar(title: Text(context.l10n.myAddresses)),
       body: state.isLoading
           ? const Center(child: CircularProgressIndicator())
-          : ListView.separated(
-              padding: const EdgeInsets.all(16),
-              itemCount: state.addresses.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 12),
-              itemBuilder: (context, index) {
-                final address = state.addresses[index];
-                return Card(
-                  child: ListTile(
-                    leading: Icon(
-                      address.addressType == 'Home'
-                          ? Icons.home
-                          : address.addressType == 'Office'
-                              ? Icons.work
-                              : address.addressType == 'Construction Site'
-                                  ? Icons.construction
-                                  : Icons.location_on,
+          : state.addresses.isEmpty
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.location_off_outlined,
+                            size: 64, color: context.colors.textMedium),
+                        const SizedBox(height: 16),
+                        Text(
+                          "Sizda hozircha manzillar yo'q",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: context.colors.textHigh,
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        ElevatedButton.icon(
+                          onPressed: () => context.push('/add-address'),
+                          icon: const Icon(Icons.add),
+                          label: const Text("Yangi manzil qo'shish"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFFF7A00),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 24, vertical: 12),
+                          ),
+                        )
+                      ],
                     ),
-                    title: Text(
-                      '${address.label} ${address.isDefault ? '(Default)' : ''}',
-                    ),
-                    subtitle: Text(
-                      '${address.region}, ${address.district}, ${address.street}, ${address.building}, ${address.apartment}',
-                    ),
-                    trailing: address.id == state.selectedAddress?.id
-                        ? Icon(Icons.check_circle, color: context.colors.primary)
-                        : null,
-                    onTap: () {
-                      notifier.setAddress(address);
-                      Navigator.of(context).pop();
-                    },
                   ),
-                );
-              },
-            ),
+                )
+              : ListView.separated(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: state.addresses.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 12),
+                  itemBuilder: (context, index) {
+                    final address = state.addresses[index];
+                    return Card(
+                      child: ListTile(
+                        leading: Icon(
+                          address.addressType == 'Home'
+                              ? Icons.home
+                              : address.addressType == 'Office'
+                                  ? Icons.work
+                                  : address.addressType == 'Construction Site'
+                                      ? Icons.construction
+                                      : Icons.location_on,
+                        ),
+                        title: Text(
+                          '${address.label} ${address.isDefault ? '(Default)' : ''}',
+                        ),
+                        subtitle: Text(
+                          '${address.region}, ${address.district}, ${address.street}, ${address.building}, ${address.apartment}',
+                        ),
+                        trailing: address.id == state.selectedAddress?.id
+                            ? Icon(Icons.check_circle, color: context.colors.primary)
+                            : null,
+                        onTap: () {
+                          notifier.setAddress(address);
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    );
+                  },
+                ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color(0xFFFF7A00),
         foregroundColor: Colors.white,

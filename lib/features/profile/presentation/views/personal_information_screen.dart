@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:milliy_metr/core/providers/auth_provider.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:dio/dio.dart';
 
 class PersonalInformationScreen extends ConsumerStatefulWidget {
   const PersonalInformationScreen({super.key});
@@ -19,6 +21,9 @@ class _PersonalInformationScreenState
   late TextEditingController _emailController;
   late TextEditingController _phoneController;
   bool _isEditing = false;
+  bool _isSaving = false;
+  String? _avatarUrl;
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
@@ -34,6 +39,7 @@ class _PersonalInformationScreenState
           _nameController.text = user.fullName;
           _emailController.text = user.email ?? '';
           _phoneController.text = user.phone;
+          _avatarUrl = user.avatarUrl;
         },
       );
     });
@@ -72,28 +78,51 @@ class _PersonalInformationScreenState
         centerTitle: true,
         actions: [
           TextButton(
-            onPressed: () {
+            onPressed: _isSaving ? null : () async {
               if (_isEditing) {
                 if (_formKey.currentState!.validate()) {
-                  setState(() => _isEditing = false);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(l10n.profileUpdated),
-                      backgroundColor: context.colors.success,
-                    ),
+                  setState(() => _isSaving = true);
+                  final success = await ref.read(authProvider.notifier).updateProfile(
+                    _nameController.text,
+                    _emailController.text,
+                    _avatarUrl ?? '',
                   );
+                  setState(() => _isSaving = false);
+                  
+                  if (success) {
+                    setState(() => _isEditing = false);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(l10n.profileUpdated),
+                        backgroundColor: context.colors.success,
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text("Xatolik yuz berdi"),
+                        backgroundColor: context.colors.error,
+                      ),
+                    );
+                  }
                 }
               } else {
                 setState(() => _isEditing = true);
               }
             },
-            child: Text(
-              _isEditing ? l10n.save : l10n.editProfile,
-              style: TextStyle(
-                color: context.colors.primary,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+            child: _isSaving
+                ? SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2, color: context.colors.primary),
+                  )
+                : Text(
+                    _isEditing ? l10n.save : l10n.editProfile,
+                    style: TextStyle(
+                      color: context.colors.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
           ),
         ],
       ),
@@ -105,38 +134,77 @@ class _PersonalInformationScreenState
             children: [
               // Avatar
               Center(
-                child: Stack(
-                  children: [
-                    CircleAvatar(
-                      radius: 50,
-                      backgroundColor: context.colors.surfaceVariant,
-                      child: Text(
-                        _getInitials(_nameController.text),
-                        style: TextStyle(
-                          fontSize: 36,
-                          fontWeight: FontWeight.bold,
-                          color: context.colors.primary,
-                        ),
-                      ),
-                    ),
-                    if (_isEditing)
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color: context.colors.primary,
-                            shape: BoxShape.circle,
+                child: GestureDetector(
+                  onTap: () async {
+                    if (!_isEditing) return;
+                    
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (BuildContext bc) {
+                        return SafeArea(
+                          child: Wrap(
+                            children: <Widget>[
+                              ListTile(
+                                  leading: const Icon(Icons.photo_library),
+                                  title: const Text('Galereyadan tanlash'),
+                                  onTap: () async {
+                                    Navigator.of(context).pop();
+                                    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+                                    if (image != null) _uploadImage(image);
+                                  }),
+                              ListTile(
+                                leading: const Icon(Icons.photo_camera),
+                                title: const Text('Kameradan rasmga olish'),
+                                onTap: () async {
+                                  Navigator.of(context).pop();
+                                  final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+                                  if (image != null) _uploadImage(image);
+                                },
+                              ),
+                            ],
                           ),
-                          child: Icon(
-                            Icons.camera_alt,
-                            size: 18,
-                            color: context.colors.background,
+                        );
+                      },
+                    );
+                  },
+                  child: Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 50,
+                        backgroundColor: context.colors.surfaceVariant,
+                        backgroundImage: _avatarUrl != null && _avatarUrl!.isNotEmpty
+                            ? NetworkImage(_avatarUrl!)
+                            : null,
+                        child: _avatarUrl == null || _avatarUrl!.isEmpty
+                            ? Text(
+                                _getInitials(_nameController.text),
+                                style: TextStyle(
+                                  fontSize: 36,
+                                  fontWeight: FontWeight.bold,
+                                  color: context.colors.primary,
+                                ),
+                              )
+                            : null,
+                      ),
+                      if (_isEditing)
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: context.colors.primary,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.camera_alt,
+                              size: 18,
+                              color: context.colors.background,
+                            ),
                           ),
                         ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: 32),
@@ -227,5 +295,31 @@ class _PersonalInformationScreenState
         ),
       ),
     );
+  }
+
+  Future<void> _uploadImage(XFile image) async {
+    setState(() => _isSaving = true);
+    try {
+      final dio = ref.read(dioProvider);
+      final formData = FormData.fromMap({
+        'file': await MultipartFile.fromFile(image.path, filename: image.name),
+      });
+
+      final response = await dio.post('/upload/image', data: formData);
+      if (response.statusCode == 200) {
+        setState(() {
+          _avatarUrl = response.data['data']['url'];
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text("Rasm yuklashda xatolik yuz berdi"),
+          backgroundColor: context.colors.error,
+        ),
+      );
+    } finally {
+      setState(() => _isSaving = false);
+    }
   }
 }

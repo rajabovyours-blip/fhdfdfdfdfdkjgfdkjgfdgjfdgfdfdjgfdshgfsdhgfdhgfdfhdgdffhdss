@@ -17,10 +17,23 @@ class HomeHeader extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Image.asset(
-                'assets/images/milliy_metr_logo_transparent.png',
-                height: 32,
-                fit: BoxFit.contain,
+              Row(
+                children: [
+                  Image.asset(
+                    'assets/images/milliy_metr_logo_transparent.png',
+                    height: 32,
+                    fit: BoxFit.contain,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Milliy Metr',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: context.colors.textHigh,
+                    ),
+                  ),
+                ],
               ),
               Row(
                 children: [

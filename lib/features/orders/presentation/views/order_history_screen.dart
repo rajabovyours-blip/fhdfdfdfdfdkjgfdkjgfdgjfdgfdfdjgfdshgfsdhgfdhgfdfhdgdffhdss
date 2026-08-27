@@ -44,50 +44,12 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
       appBar: AppBar(title: Text(context.l10n.myOrders)),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: TextField(
-              decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.search),
-                labelText: context.l10n.searchOrders,
-              ),
-              onChanged: (value) => setState(() => searchText = value),
-            ),
-          ),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                'All',
-                ...statuses,
-              ].map((status) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: FilterChip(
-                    label: Text(getLocalizedOrderStatus(status, context)),
-                    selected: selectedStatus == status,
-                    onSelected: (_) => setState(() => selectedStatus = status),
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
           Expanded(
             child: state.maybeWhen(
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (e) => Center(child: Text(e.toString())),
               loaded: (orders) {
-                final filtered = orders.where((order) {
-                  final matchesStatus =
-                      selectedStatus == 'All' || order.status == selectedStatus;
-                  final matchesSearch = searchText.isEmpty ||
-                      order.orderNumber
-                          .toLowerCase()
-                          .contains(searchText.toLowerCase());
-                  return matchesStatus && matchesSearch;
-                }).toList();
-
-                if (filtered.isEmpty) {
+                if (orders.isEmpty) {
                   return Center(
                     child: Padding(
                       padding: const EdgeInsets.all(32.0),
@@ -140,29 +102,83 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
                   );
                 }
 
-                return ListView.separated(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: filtered.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 12),
-                  itemBuilder: (context, index) {
-                    final order = filtered[index];
-                    return Card(
-                      child: ListTile(
-                        title: Text(
-                          context.l10n.orderNumberLabel(order.orderNumber),
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                final filtered = orders.where((order) {
+                  final matchesStatus =
+                      selectedStatus == 'All' || order.status == selectedStatus;
+                  final matchesSearch = searchText.isEmpty ||
+                      order.orderNumber
+                          .toLowerCase()
+                          .contains(searchText.toLowerCase());
+                  return matchesStatus && matchesSearch;
+                }).toList();
+
+                return Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: TextField(
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.search),
+                          labelText: context.l10n.searchOrders,
                         ),
-                        subtitle: Text(
-                          '${context.l10n.status}: ${getLocalizedOrderStatus(order.status, context)}\n${context.l10n.total}: ${CurrencyFormatter.format(order.total, context)}',
-                        ),
-                        isThreeLine: true,
-                        trailing: const Icon(Icons.chevron_right),
-                        onTap: () => context.push(
-                          AppRoutes.orderDetails.replaceFirst(':id', order.id),
-                        ),
+                        onChanged: (value) => setState(() => searchText = value),
                       ),
-                    );
-                  },
+                    ),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          'All',
+                          ...statuses,
+                        ].map((status) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: FilterChip(
+                              label: Text(getLocalizedOrderStatus(status, context)),
+                              selected: selectedStatus == status,
+                              onSelected: (_) => setState(() => selectedStatus = status),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                    Expanded(
+                      child: filtered.isEmpty
+                          ? Center(
+                              child: Text(
+                                context.l10n.noOrdersFound,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            )
+                          : ListView.separated(
+                              padding: const EdgeInsets.all(16),
+                              itemCount: filtered.length,
+                              separatorBuilder: (_, __) => const SizedBox(height: 12),
+                              itemBuilder: (context, index) {
+                                final order = filtered[index];
+                                return Card(
+                                  child: ListTile(
+                                    title: Text(
+                                      context.l10n.orderNumberLabel(order.orderNumber),
+                                      style: const TextStyle(fontWeight: FontWeight.bold),
+                                    ),
+                                    subtitle: Text(
+                                      '${context.l10n.status}: ${getLocalizedOrderStatus(order.status, context)}\n${context.l10n.total}: ${CurrencyFormatter.format(order.total, context)}',
+                                    ),
+                                    isThreeLine: true,
+                                    trailing: const Icon(Icons.chevron_right),
+                                    onTap: () => context.push(
+                                      AppRoutes.orderDetails.replaceFirst(':id', order.id),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                    ),
+                  ],
                 );
               },
               orElse: () => const Center(child: CircularProgressIndicator()),

@@ -26,6 +26,28 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
         backgroundColor: context.colors.background,
         elevation: 0,
         centerTitle: true,
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(l10n.paymentMethodSelected),
+                  backgroundColor: context.colors.success,
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+              );
+            },
+            child: Text(
+              "Saqlash", // We can use l10n.save if it's there, but "Saqlash" works too.
+              style: TextStyle(
+                color: context.colors.primary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          )
+        ],
       ),
       body: ListView(
         padding: const EdgeInsets.all(20),
@@ -36,7 +58,6 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
             icon: Icons.money_outlined,
             title: l10n.cashOnDelivery,
             subtitle: l10n.cashOnDeliveryDesc,
-            isDefault: true,
           ),
           const SizedBox(height: 12),
           _buildPaymentCard(
@@ -65,7 +86,6 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
     required IconData icon,
     required String title,
     required String subtitle,
-    bool isDefault = false,
   }) {
     final isSelected = _selectedMethod == id;
     final l10n = context.l10n;
@@ -73,14 +93,6 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
     return GestureDetector(
       onTap: () {
         setState(() => _selectedMethod = id);
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.paymentMethodSelected),
-            backgroundColor: context.colors.success,
-            duration: const Duration(seconds: 1),
-          ),
-        );
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
@@ -128,7 +140,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
                           ),
                         ),
                       ),
-                      if (isDefault) ...[
+                      if (isSelected) ...[
                         const SizedBox(width: 8),
                         Container(
                           padding: const EdgeInsets.symmetric(

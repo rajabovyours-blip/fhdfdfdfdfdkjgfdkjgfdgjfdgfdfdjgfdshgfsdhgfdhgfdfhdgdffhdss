@@ -8,6 +8,7 @@ import '../../features/products/presentation/import_excel_screen.dart';
 import '../../features/categories/presentation/categories_screen.dart';
 import '../../features/banners/presentation/banners_screen.dart';
 import '../../features/reviews/presentation/reviews_screen.dart';
+import '../../features/notifications/presentation/views/notifications_screen.dart';
 import '../../shared/layouts/admin_layout.dart';
 import '../../features/orders/presentation/orders_screen.dart';
 
@@ -56,6 +57,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/orders',
             builder: (context, state) => const OrdersScreen(),
+          ),
+          GoRoute(
+            path: '/notifications',
+            builder: (context, state) => const NotificationsScreen(),
           ),
         ],
       ),

@@ -31,9 +31,13 @@ class CategoryCarousel extends ConsumerWidget {
             separatorBuilder: (_, __) => const SizedBox(width: 12),
             itemBuilder: (context, index) {
               final cat = displayCategories[index];
+              final String assetPath = cat.iconUrl != null && cat.iconUrl!.isNotEmpty
+                  ? cat.iconUrl!
+                  : 'assets/images/categories/cat-1.webp';
+              
               return CategoryItem(
                 title: cat.name.get(Localizations.localeOf(context).languageCode),
-                iconAsset: CategoryAssetHelper.getAssetPath(cat.id, cat.name.get('en')),
+                iconAsset: assetPath,
                 onTap: () {
                   context.push(AppRoutes.categoryProducts.replaceAll(':id', cat.id));
                 },

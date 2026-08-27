@@ -73,6 +73,7 @@ class _AdminLayoutState extends State<AdminLayout> {
                 _buildNavItem(context, 'Buyurtmalar', Icons.list_alt, '/orders', isMobile: isMobile),
                 _buildNavItem(context, 'Bannerlar', Icons.image, '/banners', isMobile: isMobile),
                 _buildNavItem(context, 'Mijozlar', Icons.people, '/users', isMobile: isMobile),
+                _buildNavItem(context, 'Bildirishnomalar', Icons.notifications, '/notifications', isMobile: isMobile),
               ],
             ),
           ),

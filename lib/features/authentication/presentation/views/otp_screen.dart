@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:milliy_metr/core/providers/auth_provider.dart';
@@ -83,6 +84,11 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
   Widget build(BuildContext context) {
     ref.listen(authProvider, (previous, next) {
       next.maybeWhen(
+        authenticated: (user) {
+          if (mounted) {
+            context.go(widget.redirect ?? '/home');
+          }
+        },
         error: (message) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

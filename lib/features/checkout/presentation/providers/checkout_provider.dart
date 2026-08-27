@@ -156,6 +156,27 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
     );
   }
 
+  Future<bool> addNewAddress(String label, String region, String district, String street) async {
+    state = state.copyWith(isLoading: true);
+    try {
+      final dio = ref.read(dioProvider);
+      final landmark = "$region, $district";
+      await dio.post('/addresses', data: {
+        'title': label,
+        'street': street,
+        'landmark': landmark,
+        'lat': 0.0,
+        'lng': 0.0,
+        'is_default': state.addresses.isEmpty,
+      });
+      await load();
+      return true;
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: "Manzil qo'shishda xatolik yuz berdi");
+      return false;
+    }
+  }
+
   void setAddress(AddressEntity address) {
     state = state.copyWith(selectedAddress: address);
   }

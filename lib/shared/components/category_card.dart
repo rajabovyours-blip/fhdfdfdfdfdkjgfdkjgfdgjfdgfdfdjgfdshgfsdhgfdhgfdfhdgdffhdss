@@ -14,10 +14,9 @@ class CategoryCard extends StatelessWidget {
     final surfaceColor = isDark ? const Color(0xFF16181F) : Colors.white;
     final borderColor = isDark ? Colors.white.withOpacity(0.06) : const Color(0xFFE5E7EB);
 
-    final assetPath = CategoryAssetHelper.getAssetPath(
-      category.id,
-      category.name.get('en'),
-    );
+    final assetPath = category.iconUrl != null && category.iconUrl!.isNotEmpty
+        ? category.iconUrl!
+        : 'assets/images/categories/cat-1.webp';
 
     return Container(
       decoration: BoxDecoration(

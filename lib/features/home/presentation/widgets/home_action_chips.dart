@@ -2,8 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
 
-class HomeActionChips extends StatelessWidget {
+class HomeActionChips extends StatefulWidget {
   const HomeActionChips({super.key});
+
+  @override
+  State<HomeActionChips> createState() => _HomeActionChipsState();
+}
+
+class _HomeActionChipsState extends State<HomeActionChips> {
+  int _selectedIndex = -1;
 
   @override
   Widget build(BuildContext context) {
@@ -24,26 +31,36 @@ class HomeActionChips extends StatelessWidget {
         separatorBuilder: (_, __) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
           final action = actions[index];
+          final isSelected = _selectedIndex == index;
+
           return ActionChip(
             avatar: Icon(
               action['icon'] as IconData,
               size: 16,
-              color: context.colors.primary,
+              color: isSelected ? context.colors.background : context.colors.primary,
             ),
             label: Text(
               action['label'] as String,
               style: TextStyle(
-                color: context.colors.textHigh,
+                color: isSelected ? context.colors.background : context.colors.textHigh,
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
               ),
             ),
-            backgroundColor: context.colors.surface,
-            side: BorderSide(color: context.colors.outline, width: 1),
+            backgroundColor: isSelected ? context.colors.primary : context.colors.surface,
+            side: BorderSide(color: isSelected ? context.colors.primary : context.colors.outline, width: 1),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
-            onPressed: () {},
+            onPressed: () {
+              setState(() {
+                if (_selectedIndex == index) {
+                  _selectedIndex = -1;
+                } else {
+                  _selectedIndex = index;
+                }
+              });
+            },
           );
         },
       ),

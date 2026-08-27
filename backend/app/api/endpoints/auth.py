@@ -255,3 +255,23 @@ from app.api.deps import get_current_user
 async def read_users_me(current_user: User = Depends(get_current_user)):
     user_model = UserModel.model_validate(current_user)
     return APIResponse(data=user_model)
+
+from pydantic import BaseModel as PydanticBaseModel
+
+class ChangePasswordRequest(PydanticBaseModel):
+    old_password: str
+    new_password: str
+
+@router.post("/change-password", response_model=APIResponse[dict])
+async def change_password(
+    payload: ChangePasswordRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    if not verify_password(payload.old_password, current_user.hashed_password):
+        raise HTTPException(status_code=400, detail="Eski parol noto'g'ri (Incorrect old password)")
+        
+    current_user.hashed_password = get_password_hash(payload.new_password)
+    await db.commit()
+    
+    return APIResponse(message="Parol muvaffaqiyatli o'zgartirildi")

@@ -78,11 +78,12 @@ async def create_order(
     return APIResponse(message="Order created successfully", data={"order_id": str(order.id)})
 
 @router.get("", response_model=APIResponse[List[OrderModel]])
+@router.get("/my", response_model=APIResponse[List[OrderModel]])
 async def get_orders(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    result = await db.execute(select(Order).where(Order.user_id == current_user.id))
+    result = await db.execute(select(Order).where(Order.user_id == current_user.id).order_by(Order.created_at.desc()))
     orders = result.scalars().all()
     return APIResponse(data=[OrderModel.model_validate(o) for o in orders])
 

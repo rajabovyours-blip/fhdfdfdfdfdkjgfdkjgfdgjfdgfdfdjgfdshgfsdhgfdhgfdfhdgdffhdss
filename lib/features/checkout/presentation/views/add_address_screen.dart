@@ -18,18 +18,38 @@ class _AddAddressScreenState extends ConsumerState<AddAddressScreen> {
   String street = '';
   String phone = '';
 
-  void _submit() {
+  bool _isSaving = false;
+
+  void _submit() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Add address backend integration missing (POST /addresses required)',
-          ),
-        ),
+      
+      setState(() => _isSaving = true);
+      final success = await ref.read(checkoutProvider.notifier).addNewAddress(
+        label, region, district, street
       );
-      Navigator.of(context).pop();
+      setState(() => _isSaving = false);
+
+      if (success) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Manzil muvaffaqiyatli qo\'shildi'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          Navigator.of(context).pop();
+        }
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Xatolik yuz berdi'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
     }
   }
 
@@ -77,10 +97,12 @@ class _AddAddressScreenState extends ConsumerState<AddAddressScreen> {
                 onSaved: (v) => phone = v!,
               ),
               const SizedBox(height: 32),
-              AppButton(
-                text: context.l10n.saveAddress,
-                onPressed: _submit,
-              ),
+              _isSaving
+                  ? const Center(child: CircularProgressIndicator())
+                  : AppButton(
+                      text: context.l10n.saveAddress,
+                      onPressed: _submit,
+                    ),
             ],
           ),
         ),

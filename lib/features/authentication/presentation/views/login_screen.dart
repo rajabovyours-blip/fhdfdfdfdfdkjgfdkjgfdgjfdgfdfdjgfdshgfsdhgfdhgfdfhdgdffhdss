@@ -189,270 +189,277 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       backgroundColor: context.colors.background,
       resizeToAvoidBottomInset: true,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // 1. TOP: Language Selector
-              const Align(
-                alignment: Alignment.topRight,
-                child: AuthLanguageSelector(),
-              ),
-              
-              const Spacer(flex: 2),
-
-              // 2. LOGO
-              Flexible(
-                flex: 4,
-                child: Center(
-                  child: Image.asset(
-                    'assets/images/milliy_metr_logo_transparent.png',
-                    errorBuilder: (context, error, stackTrace) => Text(
-                      'MILLIY METR',
-                      style: TextStyle(
-                        color: context.colors.textHigh,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 2.0,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              // 3. TITLES
-              Text(
-                context.l10n.loginAction,
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: context.colors.textHigh,
-                  letterSpacing: -0.5,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                context.l10n.loginSubtitle,
-                style: TextStyle(
-                  fontSize: 15,
-                  color: context.colors.textMedium,
-                ),
-                textAlign: TextAlign.center,
-              ),
-
-              const Spacer(flex: 2),
-
-              // 4. PHONE INPUT
-              Text(
-                context.l10n.phoneNumber,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: context.colors.textMedium,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Container(
-                height: 56,
-                decoration: BoxDecoration(
-                  color: context.colors.surface,
-                  border: Border.all(
-                    color: _isPhoneFocused ? context.colors.primary : context.colors.outline,
-                    width: _isPhoneFocused ? 1.5 : 1.0,
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
+        child: CustomScrollView(
+          slivers: [
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Text(
-                        '+998',
-                        style: TextStyle(
-                          color: context.colors.textHigh,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                    // 1. TOP: Language Selector
+                    const Align(
+                      alignment: Alignment.topRight,
+                      child: AuthLanguageSelector(),
                     ),
-                    Container(
-                      width: 1,
-                      height: 24,
-                      color: context.colors.outline,
-                    ),
-                    Expanded(
-                      child: TextFormField(
-                        key: const Key('login_phone_field'),
-                        controller: _phoneController,
-                        focusNode: _phoneFocusNode,
-                        keyboardType: TextInputType.phone,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(9),
-                        ],
-                        style: TextStyle(
-                          color: context.colors.textHigh,
-                          fontSize: 16,
-                          letterSpacing: 1.2,
-                        ),
-                        decoration: InputDecoration(
-                          hintText: '90 123 45 67',
-                          hintStyle: TextStyle(
-                            color: context.colors.textMedium,
-                            letterSpacing: 1.0,
-                          ),
-                          border: InputBorder.none,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
+                    
+                    const Spacer(flex: 2),
+
+                    // 2. LOGO
+                    Flexible(
+                      flex: 4,
+                      child: Center(
+                        child: Image.asset(
+                          'assets/images/milliy_metr_logo_transparent.png',
+                          errorBuilder: (context, error, stackTrace) => Text(
+                            'MILLIY METR',
+                            style: TextStyle(
+                              color: context.colors.textHigh,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 2.0,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
 
-              // 5. LOGIN BUTTON
-              SizedBox(
-                height: 56,
-                child: ElevatedButton(
-                  key: const Key('login_submit_button'),
-                  onPressed: isLoading ? null : _processLogin,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: context.colors.primary,
-                    foregroundColor: context.colors.onPrimary,
-                    disabledBackgroundColor: context.colors.primary.withValues(alpha: 0.5),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: isLoading
-                      ? SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(
-                            color: context.colors.onPrimary,
-                            strokeWidth: 2.5,
-                          ),
-                        )
-                      : Text(
-                          context.l10n.loginAction,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                ),
-              ),
+                    const SizedBox(height: 16),
 
-              const Spacer(flex: 2),
-
-              // 6. DIVIDER
-              Row(
-                children: [
-                  Expanded(child: Divider(color: context.colors.outline)),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Text(
-                      context.l10n.or,
+                    // 3. TITLES
+                    Text(
+                      context.l10n.loginAction,
                       style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: context.colors.textHigh,
+                        letterSpacing: -0.5,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      context.l10n.loginSubtitle,
+                      style: TextStyle(
+                        fontSize: 15,
                         color: context.colors.textMedium,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+
+                    const Spacer(flex: 2),
+
+                    // 4. PHONE INPUT
+                    Text(
+                      context.l10n.phoneNumber,
+                      style: TextStyle(
                         fontSize: 14,
+                        color: context.colors.textMedium,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                  ),
-                  Expanded(child: Divider(color: context.colors.outline)),
-                ],
-              ),
-
-              const Spacer(flex: 2),
-
-              // 7. SOCIAL BUTTONS
-              _SocialButton(
-                label: context.l10n.continueWithGoogle,
-                iconWidget: SvgPicture.asset(
-                  'assets/svg/google_logo.svg',
-                  height: 24,
-                  width: 24,
-                ),
-                onTap: isLoading ? () {} : _handleGoogleLogin,
-              ),
-              
-              const SizedBox(height: 12),
-              Builder(
-                builder: (context) {
-                  final isDark = Theme.of(context).brightness == Brightness.dark;
-                  final bgColor = isDark ? const Color(0xFF1E222D) : const Color(0xFF000000);
-                  final borderColor = isDark ? const Color(0xFF2E3342) : const Color(0xFF000000);
-                  final fgColor = Colors.white;
-
-                  return _SocialButton(
-                    label: context.l10n.continueWithApple,
-                    backgroundColor: bgColor,
-                    borderColor: borderColor,
-                    textColor: fgColor,
-                    iconWidget: Icon(
-                      Icons.apple,
-                      size: 28,
-                      color: fgColor,
+                    const SizedBox(height: 8),
+                    Container(
+                      height: 56,
+                      decoration: BoxDecoration(
+                        color: context.colors.surface,
+                        border: Border.all(
+                          color: _isPhoneFocused ? context.colors.primary : context.colors.outline,
+                          width: _isPhoneFocused ? 1.5 : 1.0,
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Text(
+                              '+998',
+                              style: TextStyle(
+                                color: context.colors.textHigh,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            width: 1,
+                            height: 24,
+                            color: context.colors.outline,
+                          ),
+                          Expanded(
+                            child: TextFormField(
+                              key: const Key('login_phone_field'),
+                              controller: _phoneController,
+                              focusNode: _phoneFocusNode,
+                              keyboardType: TextInputType.phone,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(9),
+                              ],
+                              style: TextStyle(
+                                color: context.colors.textHigh,
+                                fontSize: 16,
+                                letterSpacing: 1.2,
+                              ),
+                              decoration: InputDecoration(
+                                hintText: '90 123 45 67',
+                                hintStyle: TextStyle(
+                                  color: context.colors.textMedium,
+                                  letterSpacing: 1.0,
+                                ),
+                                border: InputBorder.none,
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    onTap: isLoading ? () {} : _handleAppleLogin,
-                  );
-                },
-              ),
+                    const SizedBox(height: 24),
 
-              const Spacer(flex: 3),
-              
-              // 8. LOWER SECTION: REGISTER LINK
-              Center(
-                child: GestureDetector(
-                  key: const Key('register_button'),
-                  onTap: () {
-                    String route = AppRoutes.register;
-                    if (widget.redirect != null) {
-                      route += '?redirect=${Uri.encodeComponent(widget.redirect!)}';
-                    }
-                    context.push(route);
-                  },
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        '${context.l10n.dontHaveAccount} ',
-                        style: TextStyle(
-                          color: context.colors.textMedium,
-                          fontSize: 15,
+                    // 5. LOGIN BUTTON
+                    SizedBox(
+                      height: 56,
+                      child: ElevatedButton(
+                        key: const Key('login_submit_button'),
+                        onPressed: isLoading ? null : _processLogin,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: context.colors.primary,
+                          foregroundColor: context.colors.onPrimary,
+                          disabledBackgroundColor: context.colors.primary.withValues(alpha: 0.5),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: isLoading
+                            ? SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(
+                                  color: context.colors.onPrimary,
+                                  strokeWidth: 2.5,
+                                ),
+                              )
+                            : Text(
+                                context.l10n.loginAction,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                      ),
+                    ),
+
+                    const Spacer(flex: 2),
+
+                    // 6. DIVIDER
+                    Row(
+                      children: [
+                        Expanded(child: Divider(color: context.colors.outline)),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Text(
+                            context.l10n.or,
+                            style: TextStyle(
+                              color: context.colors.textMedium,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                        Expanded(child: Divider(color: context.colors.outline)),
+                      ],
+                    ),
+
+                    const Spacer(flex: 2),
+
+                    // 7. SOCIAL BUTTONS
+                    _SocialButton(
+                      label: context.l10n.continueWithGoogle,
+                      iconWidget: SvgPicture.asset(
+                        'assets/svg/google_logo.svg',
+                        height: 24,
+                        width: 24,
+                      ),
+                      onTap: isLoading ? () {} : _handleGoogleLogin,
+                    ),
+                    
+                    const SizedBox(height: 12),
+                    Builder(
+                      builder: (context) {
+                        final isDark = Theme.of(context).brightness == Brightness.dark;
+                        final bgColor = isDark ? const Color(0xFF1E222D) : const Color(0xFF000000);
+                        final borderColor = isDark ? const Color(0xFF2E3342) : const Color(0xFF000000);
+                        final fgColor = Colors.white;
+
+                        return _SocialButton(
+                          label: context.l10n.continueWithApple,
+                          backgroundColor: bgColor,
+                          borderColor: borderColor,
+                          textColor: fgColor,
+                          iconWidget: Icon(
+                            Icons.apple,
+                            size: 28,
+                            color: fgColor,
+                          ),
+                          onTap: isLoading ? () {} : _handleAppleLogin,
+                        );
+                      },
+                    ),
+
+                    const Spacer(flex: 3),
+                    
+                    // 8. LOWER SECTION: REGISTER LINK
+                    Center(
+                      child: GestureDetector(
+                        key: const Key('register_button'),
+                        onTap: () {
+                          String route = AppRoutes.register;
+                          if (widget.redirect != null) {
+                            route += '?redirect=${Uri.encodeComponent(widget.redirect!)}';
+                          }
+                          context.push(route);
+                        },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '${context.l10n.dontHaveAccount} ',
+                              style: TextStyle(
+                                color: context.colors.textMedium,
+                                fontSize: 15,
+                              ),
+                            ),
+                            Text(
+                              context.l10n.register,
+                              style: TextStyle(
+                                color: context.colors.primary,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Icon(
+                              Icons.arrow_forward_ios_rounded,
+                              size: 12,
+                              color: context.colors.primary,
+                            ),
+                          ],
                         ),
                       ),
-                      Text(
-                        context.l10n.register,
-                        style: TextStyle(
-                          color: context.colors.primary,
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      Icon(
-                        Icons.arrow_forward_ios_rounded,
-                        size: 12,
-                        color: context.colors.primary,
-                      ),
-                    ],
-                  ),
+                    ),
+
+                    const SizedBox(height: 8),
+                  ],
                 ),
               ),
-
-              const SizedBox(height: 8),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

@@ -269,6 +269,26 @@ class AuthController extends StateNotifier<AuthState> {
     await _repository.saveDemoSession(devUser);
     state = AuthState.authenticated(devUser);
   }
+
+  Future<bool> updateProfile(String fullName, String email, String avatarUrl) async {
+    // Save current state in case of failure
+    final currentState = state;
+    try {
+      state = const AuthState.loading();
+      final dio = DioClient().dio;
+      await dio.put('/users/me', data: {
+        'full_name': fullName,
+        'email': email,
+        'avatar_url': avatarUrl,
+      });
+      // Re-fetch user to update state
+      await checkAuthStatus();
+      return true;
+    } catch (e) {
+      state = currentState;
+      return false;
+    }
+  }
 }
 
 final authProvider = StateNotifierProvider<AuthController, AuthState>((ref) {

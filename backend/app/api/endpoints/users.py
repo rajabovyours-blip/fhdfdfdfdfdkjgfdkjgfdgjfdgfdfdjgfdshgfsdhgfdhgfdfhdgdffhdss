@@ -49,6 +49,25 @@ async def get_users(role: Optional[str] = None, db: AsyncSession = Depends(get_d
     return APIResponse(data=user_data_list)
 
 from pydantic import BaseModel as PydanticBaseModel
+
+class UserMeUpdate(PydanticBaseModel):
+    full_name: Optional[str] = None
+    email: Optional[str] = None
+    avatar_url: Optional[str] = None
+
+@router.put("/me", response_model=APIResponse[UserModel])
+async def update_me(payload: UserMeUpdate, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
+    if payload.full_name is not None:
+        current_user.full_name = payload.full_name
+    if payload.email is not None:
+        current_user.email = payload.email
+    if payload.avatar_url is not None:
+        current_user.avatar_url = payload.avatar_url
+        
+    await db.commit()
+    await db.refresh(current_user)
+    return APIResponse(data=UserModel.model_validate(current_user))
+
 class UserUpdate(PydanticBaseModel):
     full_name: Optional[str] = None
     phone_number: Optional[str] = None

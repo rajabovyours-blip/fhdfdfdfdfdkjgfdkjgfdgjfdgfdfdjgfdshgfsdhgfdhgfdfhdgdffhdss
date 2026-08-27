@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
+import 'package:local_auth/local_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:milliy_metr/core/providers/auth_provider.dart';
 
 class SecurityPrivacyScreen extends StatefulWidget {
   const SecurityPrivacyScreen({super.key});
@@ -43,14 +46,38 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
             title: l10n.biometricAuth,
             subtitle: l10n.biometricAuthDesc,
             value: _biometricEnabled,
-            onChanged: (val) {
-              setState(() => _biometricEnabled = val);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(l10n.featureAvailableSoon),
-                  backgroundColor: context.colors.primary,
-                ),
-              );
+            onChanged: (val) async {
+              if (val) {
+                final LocalAuthentication auth = LocalAuthentication();
+                final bool canAuthenticateWithBiometrics = await auth.canCheckBiometrics;
+                final bool canAuthenticate = canAuthenticateWithBiometrics || await auth.isDeviceSupported();
+                
+                if (canAuthenticate) {
+                  try {
+                    final bool didAuthenticate = await auth.authenticate(
+                      localizedReason: 'Biometrik ma\'lumotlarni tasdiqlang',
+                      options: const AuthenticationOptions(biometricOnly: true),
+                    );
+                    if (didAuthenticate) {
+                      setState(() => _biometricEnabled = true);
+                    }
+                  } catch (e) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Biometrik xatolik: $e'), backgroundColor: context.colors.error),
+                      );
+                    }
+                  }
+                } else {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: const Text('Qurilmada biometriya qo\'llab-quvvatlanmaydi'), backgroundColor: context.colors.error),
+                    );
+                  }
+                }
+              } else {
+                setState(() => _biometricEnabled = false);
+              }
             },
           ),
           _buildSwitchTile(
@@ -202,6 +229,7 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
     bool obscureCurrent = true;
     bool obscureNew = true;
     bool obscureConfirm = true;
+    bool isSaving = false;
 
     showModalBottomSheet(
       context: context,
@@ -255,7 +283,7 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: isSaving ? null : () async {
                       if (newCtrl.text.length < 8) {
                         ScaffoldMessenger.of(context).clearSnackBars();
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -278,7 +306,37 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
                         );
                         return;
                       }
-                      Navigator.pop(ctx);
+                      
+                      setStateSheet(() => isSaving = true);
+                      try {
+                        final dio = ProviderScope.containerOf(context).read(dioProvider);
+                        final response = await dio.post('/auth/change-password', data: {
+                          'old_password': currentCtrl.text,
+                          'new_password': newCtrl.text,
+                        });
+                        if (response.statusCode == 200) {
+                          if (context.mounted) {
+                            Navigator.pop(ctx);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text("Parol muvaffaqiyatli o'zgartirildi"),
+                                backgroundColor: context.colors.success,
+                              ),
+                            );
+                          }
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: const Text("Xatolik yuz berdi yoxud parol noto'g'ri"),
+                              backgroundColor: context.colors.danger,
+                            ),
+                          );
+                        }
+                      } finally {
+                        setStateSheet(() => isSaving = false);
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: context.colors.primary,
@@ -288,7 +346,9 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: Text(l10n.save),
+                    child: isSaving
+                        ? SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: context.colors.background, strokeWidth: 2))
+                        : Text(l10n.save),
                   ),
                 ],
               ),
