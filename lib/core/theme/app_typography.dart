@@ -1,73 +1,79 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
+import 'dart:ui';
 
 class AppTypography {
-  static const String fontFamily = 'Inter';
+  static TextTheme _buildBaseTheme(Color textColor, Color textMedium) {
+    final base = GoogleFonts.plusJakartaSansTextTheme();
+    
+    return base.copyWith(
+      displayLarge: GoogleFonts.plusJakartaSans(
+        fontSize: 57,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.25,
+        color: textColor,
+      ),
+      headlineMedium: GoogleFonts.plusJakartaSans(
+        fontSize: 28,
+        fontWeight: FontWeight.w700,
+        color: textColor,
+      ),
+      headlineSmall: GoogleFonts.plusJakartaSans(
+        fontSize: 24,
+        fontWeight: FontWeight.w600,
+        color: textColor,
+      ),
+      titleLarge: GoogleFonts.plusJakartaSans(
+        fontSize: 22,
+        fontWeight: FontWeight.w600,
+        color: textColor,
+      ),
+      titleMedium: GoogleFonts.plusJakartaSans(
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 0.15,
+        color: textColor,
+      ),
+      bodyLarge: GoogleFonts.inter(
+        fontSize: 16,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0.5,
+        color: textColor,
+      ),
+      bodyMedium: GoogleFonts.inter(
+        fontSize: 14,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0.25,
+        color: textMedium,
+      ),
+      bodySmall: GoogleFonts.inter(
+        fontSize: 12,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0.4,
+        color: textMedium,
+      ),
+      labelLarge: GoogleFonts.inter(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 0.1,
+        color: textColor,
+      ),
+    );
+  }
 
-  static TextTheme lightTextTheme = TextTheme(
-    displayLarge: TextStyle(
-      fontFamily: fontFamily,
-      fontSize: 57,
-      fontWeight: FontWeight.w400,
-      letterSpacing: -0.25,
-      color: AppColorsExtension.light.textHigh,
-    ),
-    headlineSmall: TextStyle(
-      fontFamily: fontFamily,
-      fontSize: 24,
-      fontWeight: FontWeight.w400,
-      color: AppColorsExtension.light.textHigh,
-    ),
-    titleLarge: TextStyle(
-      fontFamily: fontFamily,
-      fontSize: 22,
-      fontWeight: FontWeight.w500,
-      color: AppColorsExtension.light.textHigh,
-    ),
-    titleMedium: TextStyle(
-      fontFamily: fontFamily,
-      fontSize: 16,
-      fontWeight: FontWeight.w500,
-      letterSpacing: 0.15,
-      color: AppColorsExtension.light.textHigh,
-    ),
-    bodyLarge: TextStyle(
-      fontFamily: fontFamily,
-      fontSize: 16,
-      fontWeight: FontWeight.w400,
-      letterSpacing: 0.5,
-      color: AppColorsExtension.light.textHigh,
-    ),
-    bodyMedium: TextStyle(
-      fontFamily: fontFamily,
-      fontSize: 14,
-      fontWeight: FontWeight.w400,
-      letterSpacing: 0.25,
-      color: AppColorsExtension.light.textMedium,
-    ),
-    labelLarge: TextStyle(
-      fontFamily: fontFamily,
-      fontSize: 14,
-      fontWeight: FontWeight.w500,
-      letterSpacing: 0.1,
-      color: AppColorsExtension.light.textHigh,
-    ),
-  );
+  static TextTheme get lightTextTheme => _buildBaseTheme(
+        AppColorsExtension.light.textHigh,
+        AppColorsExtension.light.textMedium,
+      );
 
-  static TextTheme darkTextTheme = lightTextTheme.copyWith(
-    displayLarge: lightTextTheme.displayLarge
-        ?.copyWith(color: AppColorsExtension.dark.textHigh),
-    headlineSmall: lightTextTheme.headlineSmall
-        ?.copyWith(color: AppColorsExtension.dark.textHigh),
-    titleLarge: lightTextTheme.titleLarge
-        ?.copyWith(color: AppColorsExtension.dark.textHigh),
-    titleMedium: lightTextTheme.titleMedium
-        ?.copyWith(color: AppColorsExtension.dark.textHigh),
-    bodyLarge: lightTextTheme.bodyLarge
-        ?.copyWith(color: AppColorsExtension.dark.textHigh),
-    bodyMedium: lightTextTheme.bodyMedium
-        ?.copyWith(color: AppColorsExtension.dark.textMedium),
-    labelLarge: lightTextTheme.labelLarge
-        ?.copyWith(color: AppColorsExtension.dark.textHigh),
-  );
+  static TextTheme get darkTextTheme => _buildBaseTheme(
+        AppColorsExtension.dark.textHigh,
+        AppColorsExtension.dark.textMedium,
+      );
+
+  static TextStyle get priceStyle => GoogleFonts.inter(
+        fontWeight: FontWeight.w700,
+        fontFeatures: const [FontFeature.tabularFigures()],
+      );
 }
