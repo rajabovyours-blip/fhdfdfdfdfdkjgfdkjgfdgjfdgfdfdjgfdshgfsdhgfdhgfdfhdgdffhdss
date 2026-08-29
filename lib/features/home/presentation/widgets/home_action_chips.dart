@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
+import 'package:go_router/go_router.dart';
+import 'package:milliy_metr/core/router/route_constants.dart';
 
 class HomeActionChips extends StatefulWidget {
   const HomeActionChips({super.key});
@@ -60,6 +62,23 @@ class _HomeActionChipsState extends State<HomeActionChips> {
                   _selectedIndex = index;
                 }
               });
+              
+              if (_selectedIndex != -1) {
+                String? filterParam;
+                if (index == 0) {
+                  filterParam = 'discount';
+                } else if (index == 1) {
+                  filterParam = 'express_delivery';
+                } else if (index == 3) {
+                  filterParam = 'popular';
+                }
+                
+                if (filterParam != null) {
+                  context.go('${AppRoutes.catalog}?filter=$filterParam');
+                } else {
+                  context.go(AppRoutes.catalog);
+                }
+              }
             },
           );
         },

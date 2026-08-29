@@ -26,7 +26,21 @@ class CartItemCard extends StatelessWidget {
     final maxQty = product.stock > 0 ? product.stock : 99;
     final isMaxQuantity =
         item.quantity >= maxQty || item.quantity >= item.maximumQuantity;
+
+    String getLocalizedUnit(String unit, String langCode) {
+      if (unit == 'dona') {
+        if (langCode == 'en') return 'pcs';
+        if (langCode == 'ru') return 'шт';
+        return 'dona';
+      } else if (unit == 'qop') {
+        if (langCode == 'en') return 'bag';
+        if (langCode == 'ru') return 'мешок';
+        return 'qop';
+      }
+      return unit;
+    }
     
+    final locUnit = getLocalizedUnit(product.unit, Localizations.localeOf(context).languageCode);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -184,7 +198,7 @@ class CartItemCard extends StatelessWidget {
                   )
                 else if (isMaxQuantity && product.stock > 0)
                   Text(
-                    context.l10n.inStock(product.stock, product.unit),
+                    context.l10n.inStock(product.stock, locUnit),
                     style: TextStyle(
                       color: context.colors.warning,
                       fontSize: 12,
@@ -193,7 +207,7 @@ class CartItemCard extends StatelessWidget {
                   )
                 else
                   Text(
-                    context.l10n.inStock(product.stock, product.unit),
+                    context.l10n.inStock(product.stock, locUnit),
                     style:
                         TextStyle(color: context.colors.success, fontSize: 12),
                   ),

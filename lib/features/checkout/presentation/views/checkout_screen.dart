@@ -181,23 +181,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                         ),
                       ),
 
-                      if (state.error != null) ...[
-                        const SizedBox(height: 16),
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: context.colors.danger.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            state.error!,
-                            style: TextStyle(
-                              color: context.colors.danger,
-                              fontSize: 13,
-                            ),
-                          ),
-                        ),
-                      ],
+
                       const SizedBox(height: 40),
                     ],
                   ),
@@ -228,8 +212,17 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                     isLoading: state.isSubmitting,
                     onPressed: () async {
                       await notifier.placeOrder();
-                      if (context.mounted &&
-                          ref.read(checkoutProvider).order != null) {
+                      if (!context.mounted) return;
+                      final error = ref.read(checkoutProvider).error;
+                      if (error != null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(error),
+                            backgroundColor: context.colors.danger,
+                            behavior: SnackBarBehavior.floating,
+                          ),
+                        );
+                      } else if (ref.read(checkoutProvider).order != null) {
                         context.go(AppRoutes.orderSuccess);
                       }
                     },
@@ -284,37 +277,19 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     return Column(
       children: [
         _DeliveryOptionCard(
-          title: "🛵 Kuryer (Yengil yuklar)",
-          subtitle: "Asboblar, santexnika fitinglari",
-          price: _formatCurrency(20000),
-          value: 'Kuryer (Yengil yuklar)',
+          title: context.l10n.deliveryService,
+          subtitle: '',
+          price: _formatCurrency(50000),
+          value: 'Delivery Service',
           groupValue: state.deliveryMethod,
           onChanged: (v) => notifier.setDeliveryMethod(v!),
         ),
         const SizedBox(height: 8),
         _DeliveryOptionCard(
-          title: "🛻 Labo / Kichik yuk mashinasi",
-          subtitle: "1 tonnagacha bo'lgan yuklar",
-          price: _formatCurrency(70000),
-          value: 'Labo / Kichik yuk mashinasi',
-          groupValue: state.deliveryMethod,
-          onChanged: (v) => notifier.setDeliveryMethod(v!),
-        ),
-        const SizedBox(height: 8),
-        _DeliveryOptionCard(
-          title: "🚚 Porter / Gazel",
-          subtitle: "3 tonnagacha bo'lgan yuklar",
-          price: _formatCurrency(150000),
-          value: 'Porter / Gazel',
-          groupValue: state.deliveryMethod,
-          onChanged: (v) => notifier.setDeliveryMethod(v!),
-        ),
-        const SizedBox(height: 8),
-        _DeliveryOptionCard(
-          title: "🏬 Ombordan o'zi olib ketish",
-          subtitle: "Samovyvoz",
-          price: "Bepul (0 so'm)",
-          value: "Ombordan o'zi olib ketish (Samovyvoz)",
+          title: context.l10n.pickupFromWarehouse,
+          subtitle: '',
+          price: _formatCurrency(0),
+          value: 'Pickup from warehouse',
           groupValue: state.deliveryMethod,
           onChanged: (v) => notifier.setDeliveryMethod(v!),
         ),

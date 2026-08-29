@@ -16,7 +16,7 @@ class CategoryRemoteDataSourceImpl implements CategoryRemoteDataSource {
     try {
       final response = await dio.get(
         '/categories',
-        queryParameters: {'tree': tree},
+        queryParameters: {'tree': tree, 'limit': 100},
       );
 
       if (response.statusCode == 200) {

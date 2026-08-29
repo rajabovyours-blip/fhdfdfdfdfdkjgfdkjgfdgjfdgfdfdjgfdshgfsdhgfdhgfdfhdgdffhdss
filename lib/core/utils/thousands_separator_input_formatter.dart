@@ -1,4 +1,4 @@
-﻿import 'package:flutter/services.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 class ThousandsSeparatorInputFormatter extends TextInputFormatter {
@@ -6,12 +6,12 @@ class ThousandsSeparatorInputFormatter extends TextInputFormatter {
 
   @override
   TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
+      TextEditingValue oldValue, TextEditingValue newValue,) {
     if (newValue.text.isEmpty) {
       return newValue.copyWith(text: '');
     }
     
-    String newValueText = newValue.text.replaceAll(separator, '');
+    final String newValueText = newValue.text.replaceAll(separator, '');
     if (newValueText.isEmpty) {
       return newValue.copyWith(text: '');
     }
@@ -20,14 +20,14 @@ class ThousandsSeparatorInputFormatter extends TextInputFormatter {
     final int oldLength = newValue.text.length;
 
     // Parse the value
-    int? parsedValue = int.tryParse(newValueText);
+    final int? parsedValue = int.tryParse(newValueText);
     if (parsedValue == null) {
       return oldValue;
     }
 
     // Format the value
     final formatter = NumberFormat('#,###', 'en_US');
-    String newText = formatter.format(parsedValue).replaceAll(',', separator);
+    final String newText = formatter.format(parsedValue).replaceAll(',', separator);
 
     // Adjust the selection
     if (newValue.selection.isValid) {

@@ -81,7 +81,7 @@ class _AddAddressScreenState extends ConsumerState<AddAddressScreen> {
                   labelText: context.l10n.region,
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                 ),
-                value: _selectedRegion,
+                initialValue: _selectedRegion,
                 items: uzbekistanRegionsData.map((region) {
                   return DropdownMenuItem(
                     value: region,
@@ -102,7 +102,7 @@ class _AddAddressScreenState extends ConsumerState<AddAddressScreen> {
                   labelText: context.l10n.district,
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                 ),
-                value: _selectedDistrict,
+                initialValue: _selectedDistrict,
                 items: _selectedRegion?.districts.map((district) {
                   return DropdownMenuItem(
                     value: district,

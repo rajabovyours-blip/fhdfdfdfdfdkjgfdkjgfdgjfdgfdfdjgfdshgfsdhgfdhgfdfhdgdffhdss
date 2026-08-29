@@ -128,7 +128,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: AppRoutes.catalog,
-                builder: (context, state) => const CatalogScreen(),
+                builder: (context, state) => CatalogScreen(
+                  categoryId: state.uri.queryParameters['category_id'],
+                  filterOption: state.uri.queryParameters['filter'],
+                ),
                 routes: [
                   GoRoute(
                     path: 'category/:id',

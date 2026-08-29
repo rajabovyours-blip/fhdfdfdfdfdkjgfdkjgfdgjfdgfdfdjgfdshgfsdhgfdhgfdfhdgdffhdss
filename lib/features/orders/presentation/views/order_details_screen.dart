@@ -179,10 +179,10 @@ class OrderDetailsScreen extends ConsumerWidget {
       ),
       child: Column(
         children: [
-          _buildStep(context, "Buyurtma qabul qilindi", "Pending", currentStep >= 0, isLast: false),
-          _buildStep(context, "Qadoqlanmoqda", "Processing", currentStep >= 1, isLast: false),
-          _buildStep(context, "Yo'lga chiqdi", "Shipped", currentStep >= 2, isLast: false),
-          _buildStep(context, "Yetkazib berildi", "Delivered", currentStep >= 3, isLast: true),
+          _buildStep(context, 'Buyurtma qabul qilindi', 'Pending', currentStep >= 0, isLast: false),
+          _buildStep(context, 'Qadoqlanmoqda', 'Processing', currentStep >= 1, isLast: false),
+          _buildStep(context, "Yo'lga chiqdi", 'Shipped', currentStep >= 2, isLast: false),
+          _buildStep(context, 'Yetkazib berildi', 'Delivered', currentStep >= 3, isLast: true),
         ],
       ),
     );

@@ -12,7 +12,13 @@ import 'package:milliy_metr/l10n/l10n_extension.dart';
 
 class CategoryProductsScreen extends ConsumerStatefulWidget {
   final String categoryId;
-  const CategoryProductsScreen({super.key, required this.categoryId});
+  final String? filterOption;
+
+  const CategoryProductsScreen({
+    super.key, 
+    required this.categoryId,
+    this.filterOption,
+  });
 
   @override
   ConsumerState<CategoryProductsScreen> createState() => _CategoryProductsScreenState();
@@ -25,7 +31,18 @@ class _CategoryProductsScreenState extends ConsumerState<CategoryProductsScreen>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(catalogNotifierProvider.notifier).setCategory(widget.categoryId);
+      final notifier = ref.read(catalogNotifierProvider.notifier);
+      notifier.clearFilters();
+      
+      if (widget.filterOption != null) {
+        if (widget.filterOption == 'popular') {
+          notifier.setSortOption('popular');
+        } else if (widget.filterOption == 'discount') {
+          // Just as an example, this triggers fetch
+          notifier.setSortOption('discount'); 
+        }
+      }
+      notifier.setCategory(widget.categoryId);
     });
     
     _scrollController.addListener(() {
@@ -59,7 +76,11 @@ class _CategoryProductsScreenState extends ConsumerState<CategoryProductsScreen>
           ),
           onPressed: () {
             ref.read(catalogNotifierProvider.notifier).clearFilters();
-            Navigator.of(context).maybePop();
+            if (Navigator.of(context).canPop()) {
+              Navigator.of(context).pop();
+            } else {
+              context.go(AppRoutes.catalog);
+            }
           },
         ),
         title: Text(

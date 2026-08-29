@@ -129,8 +129,8 @@ class _FilterSheetContentState extends ConsumerState<_FilterSheetContent> {
   }
 
   void _onMinPriceChanged(String value) {
-    String cleanVal = value.replaceAll(' ', '');
-    double? parsed = double.tryParse(cleanVal);
+    final String cleanVal = value.replaceAll(' ', '');
+    final double? parsed = double.tryParse(cleanVal);
     if (parsed != null) {
       setState(() {
         _minPrice = parsed;
@@ -143,8 +143,8 @@ class _FilterSheetContentState extends ConsumerState<_FilterSheetContent> {
   }
 
   void _onMaxPriceChanged(String value) {
-    String cleanVal = value.replaceAll(' ', '');
-    double? parsed = double.tryParse(cleanVal);
+    final String cleanVal = value.replaceAll(' ', '');
+    final double? parsed = double.tryParse(cleanVal);
     if (parsed != null) {
       setState(() {
         _maxPrice = parsed;

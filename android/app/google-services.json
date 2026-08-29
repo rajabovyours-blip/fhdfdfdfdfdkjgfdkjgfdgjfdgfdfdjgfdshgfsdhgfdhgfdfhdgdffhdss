@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:5408559924:android:3eed3d1ea30f7c63fc4b61",
         "android_client_info": {
-          "package_name": "com.example.milliy_metr"
+          "package_name": "uz.milliymetr.app"
         }
       },
       "oauth_client": [
@@ -17,7 +17,7 @@
           "client_id": "5408559924-gme4o899c8aje2gdl55b92a8cp809pbq.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.milliy_metr",
+            "package_name": "uz.milliymetr.app",
             "certificate_hash": "aa1b77dd475cfdcb4f673736c8fc16882b64d70b"
           }
         },

@@ -15,6 +15,14 @@ class PreferencesManager {
     return _prefs.getString('language');
   }
 
+  static Future<void> setString(String key, String value) async {
+    await _prefs.setString(key, value);
+  }
+
+  static String? getString(String key) {
+    return _prefs.getString(key);
+  }
+
 
   static Future<void> setStringList(String key, List<String> value) async {
     await _prefs.setStringList(key, value);

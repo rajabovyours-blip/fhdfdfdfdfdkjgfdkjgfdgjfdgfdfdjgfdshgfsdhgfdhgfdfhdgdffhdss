@@ -109,10 +109,10 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
                 showDialog(
                   context: context,
                   builder: (ctx) => AlertDialog(
-                    title: const Text('SMS Tasdiqlash'),
-                    content: const Text('Ikki bosqichli autentifikatsiyani yoqish uchun telefon raqamingizga SMS kod yuboriladi. Davom etishni xohlaysizmi?'),
+                    title: Text(l10n.smsVerification),
+                    content: Text(l10n.smsVerificationDesc),
                     actions: [
-                      TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Bekor qilish')),
+                      TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l10n.cancel)),
                       TextButton(
                         onPressed: () {
                           Navigator.pop(ctx);
@@ -121,7 +121,7 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
                             SnackBar(content: const Text('Ikki bosqichli autentifikatsiya yoqildi'), backgroundColor: context.colors.success),
                           );
                         },
-                        child: const Text('Davom etish'),
+                        child: Text(l10n.continueBtn),
                       ),
                     ],
                   ),
@@ -129,7 +129,7 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
               } else {
                 setState(() => _twoFactorEnabled = false);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: const Text('Ikki bosqichli autentifikatsiya o\'chirildi')),
+                  const SnackBar(content: Text('Ikki bosqichli autentifikatsiya o\'chirildi')),
                 );
               }
             },
@@ -157,7 +157,7 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
                   child: ListTile(
                     leading: Icon(Icons.phone_iphone_rounded, color: context.colors.textHigh),
                     title: Text(
-                      "Ushbu qurilma: ",
+                      '${l10n.thisDevice} ',
                       style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
                     ),
                     subtitle: Row(
@@ -171,7 +171,7 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
                           ),
                         ),
                         const SizedBox(width: 6),
-                        const Text("Faol seans (Toshkent)", style: TextStyle(fontSize: 12)),
+                        Text('${l10n.activeSession} (Toshkent)', style: const TextStyle(fontSize: 12)),
                       ],
                     ),
                   ),
@@ -190,39 +190,51 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
             icon: Icons.privacy_tip_outlined,
             title: l10n.dataPrivacy,
             onTap: () {
+              bool sendErrors = true;
+              bool createAd = false;
               showModalBottomSheet(
                 context: context,
                 shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-                builder: (ctx) => Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text('Ma\'lumotlar maxfiyligi', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 16),
-                      SwitchListTile(
-                        title: const Text('Xatolik hisobotlarini yuborish'),
-                        subtitle: const Text('Ilovani yaxshilash uchun anonim xatolik ma\'lumotlarini yuborish.'),
-                        value: true,
-                        onChanged: (v) {},
-                      ),
-                      SwitchListTile(
-                        title: const Text('Reklama profilini yaratish'),
-                        subtitle: const Text('Sizga moslashtirilgan reklamalarni ko\'rsatish uchun.'),
-                        value: false,
-                        onChanged: (v) {},
-                      ),
-                      const SizedBox(height: 16),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 48,
-                        child: ElevatedButton(
-                          onPressed: () => Navigator.pop(ctx),
-                          style: ElevatedButton.styleFrom(backgroundColor: context.colors.primary, foregroundColor: Colors.white),
-                          child: const Text('Saqlash'),
+                builder: (ctx) => StatefulBuilder(
+                  builder: (context, setStateSheet) => Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(l10n.dataPrivacy, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 16),
+                        ListTile(
+                          title: Text(l10n.sendErrorReports),
+                          subtitle: Text(l10n.sendErrorReportsDesc),
+                          trailing: Switch.adaptive(
+                            value: sendErrors,
+                            activeColor: context.colors.primary,
+                            onChanged: (v) => setStateSheet(() => sendErrors = v),
+                          ),
+                          onTap: () => setStateSheet(() => sendErrors = !sendErrors),
                         ),
-                      ),
-                    ],
+                        ListTile(
+                          title: Text(l10n.createAdProfile),
+                          subtitle: Text(l10n.createAdProfileDesc),
+                          trailing: Switch.adaptive(
+                            value: createAd,
+                            activeColor: context.colors.primary,
+                            onChanged: (v) => setStateSheet(() => createAd = v),
+                          ),
+                          onTap: () => setStateSheet(() => createAd = !createAd),
+                        ),
+                        const SizedBox(height: 16),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 48,
+                          child: ElevatedButton(
+                            onPressed: () => Navigator.pop(ctx),
+                            style: ElevatedButton.styleFrom(backgroundColor: context.colors.primary, foregroundColor: Colors.white),
+                            child: Text(l10n.save),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               );
@@ -308,8 +320,8 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
     required bool value,
     required ValueChanged<bool> onChanged,
   }) {
-    return SwitchListTile(
-      secondary: Icon(icon, color: context.colors.textMedium),
+    return ListTile(
+      leading: Icon(icon, color: context.colors.textMedium),
       title: Text(
         title,
         style: TextStyle(color: context.colors.textHigh, fontSize: 15),
@@ -318,9 +330,12 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
         subtitle,
         style: TextStyle(color: context.colors.textMedium, fontSize: 13),
       ),
-      value: value,
-      activeThumbColor: context.colors.primary,
-      onChanged: onChanged,
+      trailing: Switch.adaptive(
+        value: value,
+        activeColor: context.colors.primary,
+        onChanged: onChanged,
+      ),
+      onTap: () => onChanged(!value),
     );
   }
 

@@ -133,7 +133,7 @@ class _PersonalInformationScreenState
                   onTap: () async {
                     if (!_isEditing) return;
                     
-                    showModalBottomSheet(
+                    await showModalBottomSheet(
                       context: context,
                       builder: (BuildContext bc) {
                         return SafeArea(

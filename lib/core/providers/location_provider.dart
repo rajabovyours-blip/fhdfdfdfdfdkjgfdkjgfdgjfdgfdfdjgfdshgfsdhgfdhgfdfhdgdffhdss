@@ -1,9 +1,7 @@
-﻿import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:milliy_metr/core/constants/uzbekistan_regions.dart';
 import 'package:milliy_metr/core/services/location_service.dart';
-import 'package:milliy_metr/core/utils/preferences_manager.dart';
+import 'package:milliy_metr/core/storage/preferences.dart';
 
 class LocationState {
   final RegionItem? region;
@@ -37,8 +35,8 @@ class LocationNotifier extends StateNotifier<LocationState> {
   }
 
   Future<void> _loadSavedLocation() async {
-    final regionId = await PreferencesManager.getString('selected_region_id');
-    final districtId = await PreferencesManager.getString('selected_district_id');
+    final regionId = PreferencesManager.getString('selected_region_id');
+    final districtId = PreferencesManager.getString('selected_district_id');
 
     if (regionId != null && districtId != null) {
       try {
@@ -72,7 +70,7 @@ class LocationNotifier extends StateNotifier<LocationState> {
     final position = await _locationService.getCurrentPosition();
     if (position != null) {
       final placemark = await _locationService.getPlacemarkFromCoordinates(
-          position.latitude, position.longitude);
+          position.latitude, position.longitude,);
 
       if (placemark != null) {
         final String? locality = placemark.locality;

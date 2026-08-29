@@ -2385,6 +2385,30 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Savatga qo\'shildi'**
   String get addedToCart;
+
+  /// No description provided for @promoBannerTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qurilish uchun kerakli'**
+  String get promoBannerTitle;
+
+  /// No description provided for @promoBannerSubtitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Eng yaxshi narxlar kafolati'**
+  String get promoBannerSubtitle;
+
+  /// No description provided for @promoBannerButton.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xarid qilish'**
+  String get promoBannerButton;
+
+  /// No description provided for @popularProductsSection.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ommabop mahsulotlar'**
+  String get popularProductsSection;
 }
 
 class _AppLocalizationsDelegate

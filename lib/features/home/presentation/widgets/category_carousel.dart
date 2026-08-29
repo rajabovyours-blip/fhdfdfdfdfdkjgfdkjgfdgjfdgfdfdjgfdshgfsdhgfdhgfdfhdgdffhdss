@@ -37,7 +37,7 @@ class CategoryCarousel extends ConsumerWidget {
                 title: cat.name.get(Localizations.localeOf(context).languageCode),
                 iconAsset: assetPath,
                 onTap: () {
-                  context.push(AppRoutes.categoryProducts.replaceAll(':id', cat.id));
+                  context.go('${AppRoutes.catalog}?category_id=${cat.id}');
                 },
               );
             },

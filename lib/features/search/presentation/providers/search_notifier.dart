@@ -51,13 +51,13 @@ class SearchNotifier extends StateNotifier<SearchState> {
   void updateQuery(String query) {
     state = state.copyWith(query: query);
     _debounceTimer?.cancel();
-    if (query.isEmpty) {
+    if (query.trim().isEmpty) {
       state = state.copyWith(results: const FeatureState.initial());
       return;
     }
     _debounceTimer = Timer(const Duration(milliseconds: 500), () {
       _executeSearch();
-      _addRecentSearch(query);
+      _addRecentSearch(query.trim());
     });
   }
 
@@ -76,7 +76,7 @@ class SearchNotifier extends StateNotifier<SearchState> {
   }
 
   void _addRecentSearch(String query) {
-    if (query.isEmpty) return;
+    if (query.trim().isEmpty) return;
     final recent = List<String>.from(state.recentSearches);
     recent.remove(query);
     recent.insert(0, query);
@@ -86,7 +86,7 @@ class SearchNotifier extends StateNotifier<SearchState> {
   }
 
   Future<void> _executeSearch() async {
-    if (state.query.isEmpty && state.filters == const SearchFilterState()) {
+    if (state.query.trim().isEmpty && state.filters == const SearchFilterState()) {
       return;
     }
 
@@ -94,7 +94,7 @@ class SearchNotifier extends StateNotifier<SearchState> {
     final repository = _ref.read(productRepositoryProvider);
 
     final result = await repository.getProducts(
-      searchQuery: state.query,
+      searchQuery: state.query.trim(),
       filters: state.filters.toQueryParameters(),
     );
 
@@ -108,6 +108,6 @@ class SearchNotifier extends StateNotifier<SearchState> {
 }
 
 final searchNotifierProvider =
-    StateNotifierProvider<SearchNotifier, SearchState>((ref) {
+    StateNotifierProvider.autoDispose<SearchNotifier, SearchState>((ref) {
   return SearchNotifier(ref);
 });

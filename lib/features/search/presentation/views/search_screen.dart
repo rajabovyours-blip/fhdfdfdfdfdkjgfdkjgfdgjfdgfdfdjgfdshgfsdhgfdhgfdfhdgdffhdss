@@ -20,8 +20,8 @@ class SearchScreen extends ConsumerWidget {
       appBar: AppBar(
         title: TextField(
           autofocus: true,
-          decoration: const InputDecoration(
-            hintText: 'Search...',
+          decoration: InputDecoration(
+            hintText: context.l10n.searchPlaceholder,
             border: InputBorder.none,
           ),
           onChanged: notifier.updateQuery,
@@ -44,7 +44,7 @@ class SearchScreen extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "So'nggi qidiruvlar",
+                        context.l10n.recentSearches,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
@@ -56,7 +56,7 @@ class SearchScreen extends ConsumerWidget {
                           notifier.clearRecentSearches();
                         },
                         child: Text(
-                          "Tozalash",
+                          context.l10n.clear,
                           style: TextStyle(color: context.colors.primary),
                         ),
                       ),

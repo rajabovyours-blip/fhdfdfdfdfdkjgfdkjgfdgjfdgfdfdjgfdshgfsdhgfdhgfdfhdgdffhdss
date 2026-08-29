@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class HelpSupportScreen extends StatelessWidget {
   const HelpSupportScreen({super.key});
@@ -42,46 +43,52 @@ class HelpSupportScreen extends StatelessWidget {
                 buildSocialTile(
                   context: context,
                   iconWidget: Container(
-                    padding: const EdgeInsets.all(8),
+                    width: 36,
+                    height: 36,
                     decoration: BoxDecoration(
                       color: const Color(0xFF229ED9),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Icon(Icons.send_rounded, color: Colors.white, size: 20),
+                    padding: const EdgeInsets.all(8),
+                    child: SvgPicture.asset('assets/svg/telegram.svg', colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn)),
                   ),
-                  title: "Telegram orqali bog'lanish",
-                  subtitle: "@milliy_metr",
+                  title: l10n.contactViaTelegram,
+                  subtitle: '@milliy_metr',
                   onTap: () => _launchUrl('https://t.me/milliy_metr', external: true),
                 ),
                 buildSocialTile(
                   context: context,
                   iconWidget: Container(
-                    padding: const EdgeInsets.all(8),
+                    width: 36,
+                    height: 36,
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
                         colors: [Color(0xFF833AB4), Color(0xFFFD1D1D), Color(0xFFFCB045)],
                       ),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Icon(Icons.camera_alt, color: Colors.white, size: 20),
+                    padding: const EdgeInsets.all(8),
+                    child: SvgPicture.asset('assets/svg/instagram.svg'),
                   ),
-                  title: "Instagram sahifamiz",
-                  subtitle: "@milliy_metr",
+                  title: l10n.ourInstagramPage,
+                  subtitle: '@milliy_metr',
                   onTap: () => _launchUrl('https://instagram.com/milliy_metr', external: true),
                 ),
                 buildSocialTile(
                   context: context,
                   iconWidget: Container(
-                    padding: const EdgeInsets.all(8),
+                    width: 36,
+                    height: 36,
                     decoration: BoxDecoration(
                       color: Colors.orange,
                       borderRadius: BorderRadius.circular(10),
                     ),
+                    padding: const EdgeInsets.all(8),
                     child: const Icon(Icons.phone_in_talk_rounded, color: Colors.white, size: 20),
                   ),
-                  title: "Mijozlarni qo'llab-quvvatlash",
-                  subtitle: "+998 (71) 200-00-00",
-                  onTap: () => _launchUrl('tel:+998712000000'),
+                  title: l10n.customerSupport,
+                  subtitle: '+998 50 072 33 33',
+                  onTap: () => _launchUrl('tel:+998500723333'),
                 ),
               ],
             ),
@@ -106,7 +113,7 @@ class HelpSupportScreen extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.privacy_tip_outlined, color: context.colors.textMedium),
             title: Text(
-              'Maxfiylik siyosati',
+              l10n.privacyPolicy,
               style: TextStyle(color: context.colors.textHigh, fontSize: 15),
             ),
             trailing: Icon(Icons.chevron_right_rounded, color: context.colors.textMedium, size: 20),
@@ -115,7 +122,7 @@ class HelpSupportScreen extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.description_outlined, color: context.colors.textMedium),
             title: Text(
-              'Foydalanish shartlari',
+              l10n.termsOfUse,
               style: TextStyle(color: context.colors.textHigh, fontSize: 15),
             ),
             trailing: Icon(Icons.chevron_right_rounded, color: context.colors.textMedium, size: 20),
@@ -208,7 +215,7 @@ class HelpSupportScreen extends StatelessWidget {
         color: isDark ? const Color(0xFF16181F) : Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: isDark ? Colors.white.withOpacity(0.06) : const Color(0xFFE5E7EB),
+          color: isDark ? Colors.white.withValues(alpha: 0.06) : const Color(0xFFE5E7EB),
         ),
       ),
       child: ListTile(
@@ -233,11 +240,13 @@ class HelpSupportScreen extends StatelessWidget {
 
   Future<void> _launchUrl(String url, {bool external = false}) async {
     final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
+    try {
       await launchUrl(
         uri,
         mode: external ? LaunchMode.externalApplication : LaunchMode.platformDefault,
       );
+    } catch (e) {
+      debugPrint('Could not launch $url');
     }
   }
 }

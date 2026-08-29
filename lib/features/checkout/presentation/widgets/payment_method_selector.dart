@@ -59,7 +59,7 @@ class PaymentMethodSelector extends StatelessWidget {
         id: 'Cash on Delivery',
         name: l10n.cashOnDelivery,
         description: l10n.cashOnDeliveryDesc,
-        iconAsset: 'assets/images/payment_cash.jpg',
+        iconAsset: 'assets/svg/payment_cash.svg',
       ),
     ];
 

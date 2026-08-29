@@ -1185,4 +1185,16 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get addedToCart => 'Добавлено в корзину';
+
+  @override
+  String get promoBannerTitle => 'Всё для стройки';
+
+  @override
+  String get promoBannerSubtitle => 'Гарантия лучших цен';
+
+  @override
+  String get promoBannerButton => 'В магазин';
+
+  @override
+  String get popularProductsSection => 'Популярные товары';
 }

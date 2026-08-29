@@ -49,7 +49,7 @@ class CheckoutState {
     this.cartItems = const [],
     this.addresses = const [],
     this.selectedAddress,
-    this.deliveryMethod = 'Kuryer (Yengil yuklar)',
+    this.deliveryMethod = 'Delivery Service',
     this.paymentMethod = 'Payme',
     this.couponCode = '',
     this.notes = '',
@@ -187,7 +187,7 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
   }
 
   void setDefaultAddress(String id) {
-    final updated = state.addresses.map((a) {
+    final updated = state.addresses.map<AddressEntity>((a) {
       if (a.id == id) {
         return AddressEntity(
           id: a.id,
@@ -197,7 +197,11 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
           street: a.street,
           building: a.building,
           apartment: a.apartment,
+          zipCode: a.zipCode,
+          phone: a.phone,
+          notes: a.notes,
           isDefault: true,
+          isCurrentLocation: a.isCurrentLocation,
           addressType: a.addressType,
         );
       } else {
@@ -209,7 +213,11 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
           street: a.street,
           building: a.building,
           apartment: a.apartment,
+          zipCode: a.zipCode,
+          phone: a.phone,
+          notes: a.notes,
           isDefault: false,
+          isCurrentLocation: a.isCurrentLocation,
           addressType: a.addressType,
         );
       }
@@ -322,16 +330,12 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
 
   double get shippingFee {
     switch (state.deliveryMethod) {
-      case 'Kuryer (Yengil yuklar)':
-        return 20000;
-      case 'Labo / Kichik yuk mashinasi':
-        return 70000;
-      case 'Porter / Gazel':
-        return 150000;
-      case "Ombordan o'zi olib ketish (Samovyvoz)":
+      case 'Delivery Service':
+        return 50000;
+      case 'Pickup from warehouse':
         return 0;
       default:
-        return 20000;
+        return 50000;
     }
   }
   double get discount => state.couponCode.isNotEmpty ? 10000 : 0;

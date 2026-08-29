@@ -1185,4 +1185,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addedToCart => 'Added to cart';
+
+  @override
+  String get promoBannerTitle => 'Essentials for construction';
+
+  @override
+  String get promoBannerSubtitle => 'Best price guarantee';
+
+  @override
+  String get promoBannerButton => 'Shop now';
+
+  @override
+  String get popularProductsSection => 'Popular Products';
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:milliy_metr/features/home/domain/entities/home_entities.dart';
+import 'package:milliy_metr/l10n/l10n_extension.dart';
 
 class PromotionalBanner extends StatefulWidget {
   final List<BannerEntity> banners;
@@ -66,7 +67,7 @@ class _PromotionalBannerState extends State<PromotionalBanner> {
                           children: [
                             Flexible(
                               child: Text(
-                                banner.title.get(languageCode),
+                                banner.id == 'banner_1' ? context.l10n.promoBannerTitle : banner.title.get(languageCode),
                                 style: TextStyle(
                                   color: context.colors.textHigh,
                                   fontSize: 16,
@@ -80,7 +81,7 @@ class _PromotionalBannerState extends State<PromotionalBanner> {
                             const SizedBox(height: 8),
                             Flexible(
                               child: Text(
-                                banner.subtitle.get(languageCode),
+                                banner.id == 'banner_1' ? context.l10n.promoBannerSubtitle : banner.subtitle.get(languageCode),
                                 style: TextStyle(
                                   color: context.colors.textHigh.withValues(alpha: 0.8),
                                   fontSize: 12,
@@ -94,11 +95,11 @@ class _PromotionalBannerState extends State<PromotionalBanner> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 16, vertical: 8,),
                               decoration: BoxDecoration(
-                                color: context.colors.textHigh,
+                                color: Colors.white,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
-                                banner.cta.get(languageCode),
+                                banner.id == 'banner_1' ? context.l10n.promoBannerButton : banner.cta.get(languageCode),
                                 style: TextStyle(
                                   color: context.colors.primary,
                                   fontSize: 12,

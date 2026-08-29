@@ -1194,4 +1194,16 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get addedToCart => 'Savatga qo\'shildi';
+
+  @override
+  String get promoBannerTitle => 'Qurilish uchun kerakli';
+
+  @override
+  String get promoBannerSubtitle => 'Eng yaxshi narxlar kafolati';
+
+  @override
+  String get promoBannerButton => 'Xarid qilish';
+
+  @override
+  String get popularProductsSection => 'Ommabop mahsulotlar';
 }

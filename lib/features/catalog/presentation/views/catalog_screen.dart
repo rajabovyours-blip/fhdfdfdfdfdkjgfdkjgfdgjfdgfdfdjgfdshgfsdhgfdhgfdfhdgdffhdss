@@ -12,8 +12,17 @@ import 'package:milliy_metr/features/categories/presentation/providers/category_
 
 import 'package:milliy_metr/l10n/l10n_extension.dart';
 
+import 'package:milliy_metr/features/catalog/presentation/views/category_products_screen.dart';
+
 class CatalogScreen extends ConsumerStatefulWidget {
-  const CatalogScreen({super.key});
+  final String? categoryId;
+  final String? filterOption;
+
+  const CatalogScreen({
+    super.key, 
+    this.categoryId,
+    this.filterOption,
+  });
 
   @override
   ConsumerState<CatalogScreen> createState() => _CatalogScreenState();
@@ -24,12 +33,21 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(categoryNotifierProvider.notifier).loadCategories();
+      if (widget.categoryId == null && widget.filterOption == null) {
+        ref.read(categoryNotifierProvider.notifier).loadCategories();
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (widget.categoryId != null || widget.filterOption != null) {
+      return CategoryProductsScreen(
+        categoryId: widget.categoryId ?? 'Barchasi',
+        filterOption: widget.filterOption,
+      );
+    }
+
     final state = ref.watch(categoryNotifierProvider);
 
     final isDark = Theme.of(context).brightness == Brightness.dark;

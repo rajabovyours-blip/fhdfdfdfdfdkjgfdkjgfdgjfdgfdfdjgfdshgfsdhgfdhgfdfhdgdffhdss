@@ -22,6 +22,17 @@ class CheckoutRemoteDataSourceImpl implements CheckoutRemoteDataSource {
         throw ServerException('Failed to place order');
       }
     } on DioException catch (e) {
+      final responseData = e.response?.data;
+      if (responseData != null) {
+        print('DioException response (placeOrder): $responseData');
+        if (responseData is Map) {
+          if (responseData['detail'] != null) {
+            throw ServerException(responseData['detail'].toString());
+          } else if (responseData['message'] != null) {
+            throw ServerException(responseData['message'].toString());
+          }
+        }
+      }
       throw ServerException(e.message ?? 'Network error');
     }
   }

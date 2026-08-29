@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class PaymentMethodsScreen extends StatefulWidget {
   const PaymentMethodsScreen({super.key});
@@ -60,7 +61,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
               );
             },
             child: Text(
-              'Saqlash', // We can use l10n.save if it's there, but "Saqlash" works too.
+              l10n.save,
               style: TextStyle(
                 color: context.colors.primary,
                 fontWeight: FontWeight.w600,
@@ -75,7 +76,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
           _buildPaymentCard(
             context,
             id: 'cash',
-            icon: Icons.money_outlined,
+            iconWidget: SvgPicture.asset('assets/svg/payment_cash.svg'),
             title: l10n.cashOnDelivery,
             subtitle: l10n.cashOnDeliveryDesc,
           ),
@@ -83,7 +84,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
           _buildPaymentCard(
             context,
             id: 'click',
-            icon: Icons.touch_app_outlined,
+            iconWidget: SvgPicture.asset('assets/svg/payment_click.svg'),
             title: l10n.clickPayment,
             subtitle: l10n.clickPaymentDesc,
           ),
@@ -91,7 +92,14 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
           _buildPaymentCard(
             context,
             id: 'card',
-            icon: Icons.credit_card_outlined,
+            iconWidget: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SvgPicture.asset('assets/svg/payment_visa.svg', width: 24, height: 24),
+                const SizedBox(width: 4),
+                SvgPicture.asset('assets/svg/payment_mastercard.svg', width: 24, height: 24),
+              ],
+            ),
             title: l10n.bankCard,
             subtitle: l10n.bankCardDesc,
           ),
@@ -103,7 +111,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
   Widget _buildPaymentCard(
     BuildContext context, {
     required String id,
-    required IconData icon,
+    required Widget iconWidget,
     required String title,
     required String subtitle,
   }) {
@@ -136,12 +144,13 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
                     : context.colors.surfaceVariant,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(
-                icon,
-                color: isSelected
-                    ? context.colors.primary
-                    : context.colors.textMedium,
-                size: 24,
+              child: SizedBox(
+                width: id == 'card' ? 60 : 24,
+                height: 24,
+                child: FittedBox(
+                  fit: BoxFit.contain,
+                  child: iconWidget,
+                ),
               ),
             ),
             const SizedBox(width: 16),

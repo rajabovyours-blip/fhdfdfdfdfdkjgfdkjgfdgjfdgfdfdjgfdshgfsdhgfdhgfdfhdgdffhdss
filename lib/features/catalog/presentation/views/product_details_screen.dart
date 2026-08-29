@@ -40,6 +40,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
     super.dispose();
   }
 
+  @override
   Widget build(BuildContext context) {
     final state = ref.watch(productDetailsNotifierProvider(widget.productId));
     final cartState = ref.watch(cartNotifierProvider);
@@ -55,8 +56,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
       orElse: () {},
     );
 
-    final int displayQuantity =
-        cartItem != null ? cartItem!.quantity : _quantity;
+
 
     return Scaffold(
       backgroundColor: context.colors.background,
@@ -98,7 +98,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                   final title = product.name.get(Localizations.localeOf(context).languageCode);
                   SharePlus.instance.share(ShareParams(
                     text: 'Milliy Metr: $title - ${AppFormatters.currency(product.price, Localizations.localeOf(context).languageCode)}\nhttps://milliymetr.uz/products/${product.id}',
-                  ));
+                  ),);
                 },
               );
             },
@@ -178,7 +178,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                             Localizations.localeOf(context)
                                                 .languageCode,
                                           ),
-                                          fit: BoxFit.contain,
+                                          fit: BoxFit.cover,
                                         );
                                       },
                                     ),
@@ -221,7 +221,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                     Localizations.localeOf(context)
                                         .languageCode,
                                   ),
-                                  fit: BoxFit.contain,
+                                  fit: BoxFit.cover,
                                 ),
                         ),
 
@@ -233,7 +233,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                             children: [
                               // 1. Brand / Manufacturer
                               Text(
-                                product.brand ?? 'Milliy Qurilish',
+                                product.brand ?? context.l10n.brandDefault,
                                 style: TextStyle(
                                   color: context.colors.textMedium,
                                   fontSize: 13,
@@ -393,7 +393,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                         Icon(Icons.discount, color: context.colors.success, size: 14),
                                         const SizedBox(width: 4),
                                         Text(
-                                          "10+ dona olinsa: 5% chegirma",
+                                          context.l10n.bulkDiscount,
                                           style: TextStyle(
                                             color: context.colors.success,
                                             fontSize: 12,
@@ -471,27 +471,32 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                               const SizedBox(height: 24),
 
                               // Description
+                              const SizedBox(height: 16),
                               Text(
                                 context.l10n.aboutProduct,
                                 style: TextStyle(
                                   color: context.colors.textHigh,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w800,
                                 ),
                               ),
-                              const SizedBox(height: 8),
-                              Text(
-                                product.description.get(
-                                  Localizations.localeOf(context).languageCode,
-                                ),
-                                maxLines: _isDescriptionExpanded ? null : 4,
-                                overflow: _isDescriptionExpanded
-                                    ? null
-                                    : TextOverflow.fade,
-                                style: TextStyle(
-                                  color: context.colors.textDisabled,
-                                  fontSize: 14,
-                                  height: 1.5,
+                              const SizedBox(height: 12),
+                              Container(
+                                padding: const EdgeInsets.symmetric(vertical: 4),
+                                child: Text(
+                                  product.description.get(
+                                    Localizations.localeOf(context).languageCode,
+                                  ),
+                                  maxLines: _isDescriptionExpanded ? null : 4,
+                                  overflow: _isDescriptionExpanded
+                                      ? null
+                                      : TextOverflow.fade,
+                                  style: TextStyle(
+                                    color: context.colors.textMedium,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500,
+                                    height: 1.6,
+                                  ),
                                 ),
                               ),
                               if (product.description
@@ -541,7 +546,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                           Icon(Icons.calculate, color: context.colors.primary),
                                           const SizedBox(width: 8),
                                           Text(
-                                            "Kalkulyator",
+                                            'Kalkulyator',
                                             style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
@@ -578,11 +583,11 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text(
-                                                "Zaxira bilan (+5%):",
+                                                'Zaxira bilan (+5%):',
                                                 style: TextStyle(color: context.colors.textMedium),
                                               ),
                                               Text(
-                                                " ",
+                                                ' ',
                                                 style: TextStyle(
                                                   color: context.colors.textHigh,
                                                   fontWeight: FontWeight.bold,
@@ -602,10 +607,10 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                             ),
                                             onPressed: () {
-                                              ref.read(cartNotifierProvider.notifier).addToCart(product.id, _calcResult.ceil());
+                                              ref.read(cartNotifierProvider.notifier).addToCart(product, _calcResult.ceil());
                                               ScaffoldMessenger.of(context).showSnackBar(
                                                 SnackBar(
-                                                  content: Text(" dona savatga qo'shildi"),
+                                                  content: const Text(" dona savatga qo'shildi"),
                                                   backgroundColor: context.colors.success,
                                                 ),
                                               );
@@ -710,7 +715,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                     Padding(
                                       padding: const EdgeInsets.all(16),
                                       child: Text(
-                                        "Xususiyatlari",
+                                        context.l10n.specificationsLabel,
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
@@ -719,11 +724,11 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                       ),
                                     ),
                                     Divider(height: 1, color: context.colors.outline),
-                                    _buildSpecRow(context, 'Kafolat', '1 yil'),
+                                    _buildSpecRow(context, context.l10n.warranty, '1 yil'),
                                     Divider(height: 1, color: context.colors.outline),
-                                    _buildSpecRow(context, 'Ishlab chiqaruvchi', product.brand ?? ''),
+                                    _buildSpecRow(context, context.l10n.manufacturer, product.brand ?? ''),
                                     Divider(height: 1, color: context.colors.outline),
-                                    _buildSpecRow(context, 'Yetkazib berish', '1-3 kun'),
+                                    _buildSpecRow(context, context.l10n.deliveryLabel, '1-3 kun'),
                                     const SizedBox(height: 8),
                                   ],
                                 ),
@@ -737,9 +742,9 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                   height: 48,
                                   child: OutlinedButton.icon(
                                     icon: const Icon(Icons.edit_note, size: 20),
-                                    label: const Text(
-                                      "Sharh qoldirish",
-                                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                                    label: Text(
+                                      context.l10n.leaveReviewBtn,
+                                      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                                     ),
                                     style: OutlinedButton.styleFrom(
                                       foregroundColor: context.colors.primary,
@@ -1192,7 +1197,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                           },
                         ),
                         Text(
-                          "Savatda: ",
+                          'Savatda: ',
                           style: TextStyle(
                             color: context.colors.primary,
                             fontWeight: FontWeight.bold,
@@ -1202,7 +1207,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                         IconButton(
                           icon: Icon(Icons.add, color: context.colors.primary),
                           onPressed: () {
-                            ref.read(cartNotifierProvider.notifier).addToCart(product.id, 1);
+                            ref.read(cartNotifierProvider.notifier).addToCart(product, 1);
                           },
                         ),
                       ],
@@ -1212,8 +1217,8 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                     onPressed: outOfStock ? null : () async {
                       setState(() => _isAddingToCart = true);
                       try {
-                        await ref.read(cartNotifierProvider.notifier).addToCart(product.id, 1);
-                        if (mounted) {
+                        await ref.read(cartNotifierProvider.notifier).addToCart(product, 1);
+                        if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(context.l10n.addedToCart),
@@ -1265,19 +1270,24 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: ElevatedButton(
-                            onPressed: outOfStock ? null : () => _showFastBuyBottomSheet(context, product),
+                            onPressed: outOfStock ? null : () async {
+                              await ref.read(cartNotifierProvider.notifier).addToCart(product, 1);
+                              if (context.mounted) {
+                                context.push(AppRoutes.checkout);
+                              }
+                            },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: context.colors.warning,
-                              foregroundColor: Colors.black,
+                              backgroundColor: context.colors.textHigh,
+                              foregroundColor: context.colors.primary,
                               elevation: 0,
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
-                            child: const Text(
-                              "Hozir xarid qilish",
-                              style: TextStyle(
+                            child: Text(
+                              context.l10n.buyNowBtn,
+                              style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
                               ),

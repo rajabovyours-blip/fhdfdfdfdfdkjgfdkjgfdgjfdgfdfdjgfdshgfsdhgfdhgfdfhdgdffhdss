@@ -76,7 +76,7 @@ class CartNotifier extends StateNotifier<FeatureState<List<CartItemEntity>>> {
     
     // First, load authenticated cart
     final repository = _ref.read(cartRepositoryProvider);
-    final result = await repository.getCartItems();
+    await repository.getCartItems();
     
     if (guestItems.isNotEmpty) {
       // Sync guest items to remote
@@ -250,7 +250,7 @@ class CartNotifier extends StateNotifier<FeatureState<List<CartItemEntity>>> {
     );
   }
 
-  double get shippingFee => 50000;
+  double get shippingFee => 0.0;
   double get discount {
     return state.maybeWhen(
       loaded: (items) {

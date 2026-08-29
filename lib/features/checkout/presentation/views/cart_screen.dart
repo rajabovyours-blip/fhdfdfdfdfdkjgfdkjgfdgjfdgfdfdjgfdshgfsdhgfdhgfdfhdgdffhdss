@@ -23,7 +23,14 @@ class _CartScreenState extends ConsumerState<CartScreen> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => ref.read(cartNotifierProvider.notifier).loadCart());
+    Future.microtask(() {
+      final state = ref.read(cartNotifierProvider);
+      final notifier = ref.read(cartNotifierProvider.notifier);
+      state.maybeWhen(
+        loaded: (_) => notifier.loadCart(silent: true),
+        orElse: () => notifier.loadCart(),
+      );
+    });
   }
 
   void _showClearCartDialog() {
@@ -370,6 +377,16 @@ class _CartScreenState extends ConsumerState<CartScreen> {
               value:
                   '-${AppFormatters.currency(notifier.discount, Localizations.localeOf(context).languageCode)}',
               valueColor: context.colors.success,
+            ),
+          ],
+          if (notifier.tax > 0) ...[
+            const SizedBox(height: 12),
+            _SummaryRow(
+              label: context.l10n.taxFee,
+              value: AppFormatters.currency(
+                notifier.tax,
+                Localizations.localeOf(context).languageCode,
+              ),
             ),
           ],
           Padding(

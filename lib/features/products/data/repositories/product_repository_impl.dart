@@ -40,10 +40,21 @@ class ProductRepositoryImpl implements ProductRepository {
       );
       return Right(models.map((m) => m.toEntity()).toList());
     } on ServerException catch (_) {
-      return Right(_getMockProducts());
+      return Right(_filterMockProducts(searchQuery, _getMockProducts()));
     } catch (_) {
-      return Right(_getMockProducts());
+      return Right(_filterMockProducts(searchQuery, _getMockProducts()));
     }
+  }
+
+  List<ProductEntity> _filterMockProducts(String? query, List<ProductEntity> products) {
+    if (query == null || query.trim().isEmpty) return products;
+    final lowerQuery = query.toLowerCase();
+    return products.where((p) {
+      final nameUz = p.name.uz.toLowerCase();
+      final nameRu = p.name.ru.toLowerCase();
+      final nameEn = p.name.en.toLowerCase();
+      return nameUz.contains(lowerQuery) || nameRu.contains(lowerQuery) || nameEn.contains(lowerQuery);
+    }).toList();
   }
 
   List<ProductEntity> _getMockProducts() {
