@@ -189,9 +189,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get specialOffers => 'Специальные предложения';
 
   @override
-  String get searchPlaceholder => 'Поиск';
-
-  @override
   String get salesType => 'Тип продажи';
 
   @override
@@ -247,7 +244,22 @@ class AppLocalizationsRu extends AppLocalizations {
   String get filter => 'Фильтр';
 
   @override
-  String get priceRange => 'Диапазон цен (UZS)';
+  String get priceRange => 'Диапазон цен (сум)';
+
+  @override
+  String get priceLowToHigh => 'Сначала дешевые';
+
+  @override
+  String get priceHighToLow => 'Сначала дорогие';
+
+  @override
+  String get fromPrice => 'От (сум)';
+
+  @override
+  String get toPrice => 'До (сум)';
+
+  @override
+  String get currency => 'сум';
 
   @override
   String get region => 'Регион';
@@ -507,12 +519,6 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get newest => 'Сначала новые';
-
-  @override
-  String get priceLowToHigh => 'Сначала дешевые';
-
-  @override
-  String get priceHighToLow => 'Сначала дорогие';
 
   @override
   String get rating => 'По рейтингу';

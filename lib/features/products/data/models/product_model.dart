@@ -30,7 +30,7 @@ class ProductModel with _$ProductModel {
     Map<String, String>? specifications,
     List<String>? certificates,
     String? deliveryInformation,
-    required String location,
+    String? location,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) = _ProductModel;

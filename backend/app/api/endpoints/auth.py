@@ -35,9 +35,6 @@ async def register(user_in: UserCreate, db: AsyncSession = Depends(get_db)):
 
 @router.post("/check-phone", response_model=APIResponse[dict])
 async def check_phone(check_in: CheckPhone, db: AsyncSession = Depends(get_db)):
-    if check_in.phone == "+998908431337":
-        return APIResponse(data={"exists": True})
-        
     result = await db.execute(select(User).where(User.phone == check_in.phone))
     exists = result.scalar_one_or_none() is not None
     return APIResponse(data={"exists": exists})
@@ -83,11 +80,6 @@ async def admin_login(form_data: OAuth2PasswordRequestForm = Depends(), db: Asyn
 
 @router.post("/request-otp", response_model=APIResponse[dict])
 async def request_otp(otp_in: OTPRequest):
-    if otp_in.phone == "+998908431337":
-        otp_service.request_otp(otp_in.phone)
-        otp_service.store[otp_in.phone].otp = "111111"
-        return APIResponse(message="OTP requested successfully (Dev Bypass: 111111).")
-
     # 1. Generate and store OTP securely
     otp_code = otp_service.request_otp(otp_in.phone)
     
@@ -118,10 +110,7 @@ async def request_otp(otp_in: OTPRequest):
 @router.post("/verify-otp", response_model=APIResponse[TokenModel])
 async def verify_otp(otp_in: OTPVerify, db: AsyncSession = Depends(get_db)):
     # 1. Verify OTP securely
-    if otp_in.phone == "+998908431337" and otp_in.otp == "111111":
-        pass # Dev bypass
-    else:
-        otp_service.verify_otp(otp_in.phone, otp_in.otp)
+    otp_service.verify_otp(otp_in.phone, otp_in.otp)
     
     # 2. Check if user exists, else create minimal user profile
     result = await db.execute(select(User).where(User.phone == otp_in.phone))
@@ -137,10 +126,7 @@ async def verify_otp(otp_in: OTPVerify, db: AsyncSession = Depends(get_db)):
         if otp_in.surname:
             name_parts.append(otp_in.surname.strip())
             
-        if otp_in.phone == "+998908431337":
-            final_name = "Bekzodbek (Dev)"
-        else:
-            final_name = " ".join(name_parts) if name_parts else "New User"
+        final_name = " ".join(name_parts) if name_parts else "New User"
         
         user = User(
             id=uuid.uuid4(),

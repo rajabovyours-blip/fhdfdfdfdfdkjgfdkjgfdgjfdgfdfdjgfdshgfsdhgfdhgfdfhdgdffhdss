@@ -12,11 +12,20 @@ class CategoryBase(BaseModel):
     is_active: bool
     model_config = {"from_attributes": True}
 
-    @model_validator(mode='after')
-    def set_localized_name(self, info: ValidationInfo):
+    @model_validator(mode='before')
+    @classmethod
+    def set_localized_name(cls, data: Any, info: ValidationInfo):
         lang = info.context.get("lang", "uz") if info.context else "uz"
-        self.name = getattr(self, f"name_{lang}", self.name_uz)
-        return self
+        
+        if hasattr(data, "name") and isinstance(data.name, dict):
+            name_val = data.name.get(lang, data.name.get("uz", ""))
+            return {
+                "id": data.id,
+                "name": name_val,
+                "icon_url": data.icon_url,
+                "is_active": data.is_active
+            }
+        return data
 
 class CategoryTree(CategoryBase):
     subcategories: List['CategoryTree'] = []
@@ -40,11 +49,23 @@ class ProductSummary(BaseModel):
     images: List[ProductImageResponse] = []
     model_config = {"from_attributes": True}
 
-    @model_validator(mode='after')
-    def set_localized_name(self, info: ValidationInfo):
+    @model_validator(mode='before')
+    @classmethod
+    def set_localized_name(cls, data: Any, info: ValidationInfo):
         lang = info.context.get("lang", "uz") if info.context else "uz"
-        self.name = getattr(self, f"name_{lang}", self.name_uz)
-        return self
+        
+        # SQLAlchemy model
+        if hasattr(data, "name") and isinstance(data.name, dict):
+            name_val = data.name.get(lang, data.name.get("uz", ""))
+            return {
+                "id": data.id,
+                "name": name_val,
+                "price": data.price,
+                "old_price": data.old_price,
+                "rating": data.rating,
+                "images": data.images
+            }
+        return data
 
 class ProductDetail(ProductSummary):
     description: str = ""
@@ -54,12 +75,34 @@ class ProductDetail(ProductSummary):
     stock: int
     category_id: UUID4
 
-    @model_validator(mode='after')
-    def set_localized_desc(self, info: ValidationInfo):
+    @model_validator(mode='before')
+    @classmethod
+    def set_localized_desc(cls, data: Any, info: ValidationInfo):
+        # We also need to call the parent validator since we are overriding it, or do we?
+        # Actually Pydantic v2 calls both before validators in MRO order.
         lang = info.context.get("lang", "uz") if info.context else "uz"
-        desc = getattr(self, f"description_{lang}", self.description_uz)
-        self.description = desc if desc else ""
-        return self
+        
+        if isinstance(data, dict):
+            return data
+            
+        # SQLAlchemy model
+        if hasattr(data, "description") and isinstance(data.description, dict):
+            desc_val = data.description.get(lang, data.description.get("uz", ""))
+            
+            # Reconstruct the dict that Pydantic will validate
+            name_val = data.name.get(lang, data.name.get("uz", "")) if (hasattr(data, "name") and isinstance(data.name, dict)) else ""
+            return {
+                "id": data.id,
+                "name": name_val,
+                "price": data.price,
+                "old_price": data.old_price,
+                "rating": data.rating,
+                "images": data.images,
+                "description": desc_val,
+                "stock": data.stock,
+                "category_id": data.category_id
+            }
+        return data
 
 class BannerResponse(BaseModel):
     id: int

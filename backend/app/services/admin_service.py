@@ -36,18 +36,16 @@ class AdminService:
             raise AppError("Category not found", code="NOT_FOUND", status_code=404)
 
         new_product = Product(
-            created_by_id=created_by_id,
             category_id=data.category_id,
-            name_uz=data.name_uz,
-            name_ru=data.name_ru,
-            name_en=data.name_en,
-            description_uz=data.description_uz,
-            description_ru=data.description_ru,
-            description_en=data.description_en,
+            name={"uz": data.name_uz, "ru": data.name_ru, "en": data.name_en},
+            description={"uz": data.description_uz or "", "ru": data.description_ru or "", "en": data.description_en or ""},
             price=data.price,
             old_price=data.old_price,
             stock=data.stock,
-            status="approved" # Admin products are automatically approved
+            stock_status="in_stock" if data.stock > 0 else "out_of_stock",
+            sku=f"SKU-{uuid.uuid4().hex[:8].upper()}",
+            currency="UZS",
+            unit="pcs",
         )
         self.db.add(new_product)
         await self.db.commit()
@@ -60,16 +58,13 @@ class AdminService:
         if not product:
             raise AppError("Product not found", code="NOT_FOUND", status_code=404)
 
-        product.name_uz = data.name_uz
-        product.name_ru = data.name_ru
-        product.name_en = data.name_en
-        product.description_uz = data.description_uz
-        product.description_ru = data.description_ru
-        product.description_en = data.description_en
+        product.name = {"uz": data.name_uz, "ru": data.name_ru, "en": data.name_en}
+        product.description = {"uz": data.description_uz or "", "ru": data.description_ru or "", "en": data.description_en or ""}
         product.price = data.price
         product.old_price = data.old_price
         product.stock = data.stock
         product.category_id = data.category_id
+        product.stock_status = "in_stock" if data.stock > 0 else "out_of_stock"
 
         await self.db.commit()
         await self.db.refresh(product)

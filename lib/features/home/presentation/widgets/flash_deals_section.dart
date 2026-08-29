@@ -17,16 +17,18 @@ class FlashDealsSection extends StatefulWidget {
 }
 
 class _FlashDealsSectionState extends State<FlashDealsSection> {
-  late Duration duration;
+  late DateTime targetTime;
   Timer? timer;
 
   @override
   void initState() {
     super.initState();
-    duration = const Duration(hours: 12, minutes: 34, seconds: 56);
+    // Simulate a target time of 12h 34m 56s from initialization
+    targetTime = DateTime.now().add(const Duration(hours: 12, minutes: 34, seconds: 56));
+    
     timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (duration.inSeconds > 0) {
-        setState(() => duration -= const Duration(seconds: 1));
+      if (mounted) {
+        setState(() {});
       } else {
         timer?.cancel();
       }
@@ -40,6 +42,7 @@ class _FlashDealsSectionState extends State<FlashDealsSection> {
   }
 
   String formatDuration(Duration d) {
+    if (d.isNegative) d = Duration.zero;
     String twoDigits(int n) => n.toString().padLeft(2, '0');
     final h = twoDigits(d.inHours);
     final m = twoDigits(d.inMinutes.remainder(60));
@@ -77,7 +80,7 @@ class _FlashDealsSectionState extends State<FlashDealsSection> {
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
-                  formatDuration(duration),
+                  formatDuration(targetTime.difference(DateTime.now())),
                   style: const TextStyle(
                     color: Color(0xFFFF3B30),
                     fontWeight: FontWeight.bold,

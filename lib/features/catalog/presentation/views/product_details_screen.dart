@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,7 +27,6 @@ class ProductDetailsScreen extends ConsumerStatefulWidget {
 }
 
 class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
-  final int _quantity = 1;
   int _selectedImageIndex = 0;
   bool _isDescriptionExpanded = false;
   bool _isAddingToCart = false;
@@ -44,19 +44,6 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(productDetailsNotifierProvider(widget.productId));
     final cartState = ref.watch(cartNotifierProvider);
-
-    CartItemEntity? cartItem;
-    cartState.maybeWhen(
-      loaded: (items) {
-        try {
-          cartItem =
-              items.firstWhere((item) => item.product.id == widget.productId);
-        } catch (_) {}
-      },
-      orElse: () {},
-    );
-
-
 
     return Scaffold(
       backgroundColor: context.colors.background,
@@ -439,8 +426,8 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            product.location.isNotEmpty
-                                                ? product.location
+                                            (product.location?.isNotEmpty ?? false)
+                                                ? product.location!
                                                 : context.l10n.tashkent,
                                             style: TextStyle(
                                               color: context.colors.textHigh,
@@ -1273,7 +1260,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                             onPressed: outOfStock ? null : () async {
                               await ref.read(cartNotifierProvider.notifier).addToCart(product, 1);
                               if (context.mounted) {
-                                context.push(AppRoutes.checkout);
+                                unawaited(context.push(AppRoutes.checkout));
                               }
                             },
                             style: ElevatedButton.styleFrom(

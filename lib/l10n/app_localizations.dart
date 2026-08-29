@@ -436,17 +436,11 @@ abstract class AppLocalizations {
   /// **'Qayta yuborish'**
   String get resendCode;
 
-  /// No description provided for @specialOffers.
+  /// Maxsus takliflar qismi uchun sarlavha
   ///
   /// In uz, this message translates to:
-  /// **'Maxsus takliflar'**
+  /// **'Qaynoq takliflar'**
   String get specialOffers;
-
-  /// No description provided for @searchPlaceholder.
-  ///
-  /// In uz, this message translates to:
-  /// **'Qidirish'**
-  String get searchPlaceholder;
 
   /// No description provided for @salesType.
   ///
@@ -556,11 +550,41 @@ abstract class AppLocalizations {
   /// **'Filtr'**
   String get filter;
 
-  /// No description provided for @priceRange.
+  /// Narx oralig'i (so'm)
   ///
   /// In uz, this message translates to:
-  /// **'Narx oralig‘i (UZS)'**
+  /// **'Narx oralig\'i (so\'m)'**
   String get priceRange;
+
+  /// Narx: pastdan yuqoriga
+  ///
+  /// In uz, this message translates to:
+  /// **'Narx: pastdan yuqoriga'**
+  String get priceLowToHigh;
+
+  /// Narx: yuqoridan pastga
+  ///
+  /// In uz, this message translates to:
+  /// **'Narx: yuqoridan pastga'**
+  String get priceHighToLow;
+
+  /// Dan (so'm)
+  ///
+  /// In uz, this message translates to:
+  /// **'Dan (so\'m)'**
+  String get fromPrice;
+
+  /// Gacha (so'm)
+  ///
+  /// In uz, this message translates to:
+  /// **'Gacha (so\'m)'**
+  String get toPrice;
+
+  /// Valyuta nomi
+  ///
+  /// In uz, this message translates to:
+  /// **'so\'m'**
+  String get currency;
 
   /// No description provided for @region.
   ///
@@ -1059,18 +1083,6 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Yangi qo‘shilgan'**
   String get newest;
-
-  /// No description provided for @priceLowToHigh.
-  ///
-  /// In uz, this message translates to:
-  /// **'Narx: pastdan yuqoriga'**
-  String get priceLowToHigh;
-
-  /// No description provided for @priceHighToLow.
-  ///
-  /// In uz, this message translates to:
-  /// **'Narx: yuqoridan pastga'**
-  String get priceHighToLow;
 
   /// No description provided for @rating.
   ///

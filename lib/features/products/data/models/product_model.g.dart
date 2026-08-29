@@ -40,7 +40,7 @@ _$ProductModelImpl _$$ProductModelImplFromJson(Map<String, dynamic> json) =>
           ?.map((e) => e as String)
           .toList(),
       deliveryInformation: json['deliveryInformation'] as String?,
-      location: json['location'] as String,
+      location: json['location'] as String?,
       createdAt: json['createdAt'] == null
           ? null
           : DateTime.parse(json['createdAt'] as String),

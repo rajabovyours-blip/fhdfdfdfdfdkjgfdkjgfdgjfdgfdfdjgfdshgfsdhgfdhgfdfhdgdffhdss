@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:milliy_metr/core/network/interceptors/auth_interceptor.dart';
 import 'package:milliy_metr/core/network/interceptors/logging_interceptor.dart';
 import 'package:milliy_metr/core/network/interceptors/language_interceptor.dart';
+import 'package:milliy_metr/core/network/interceptors/dio_error_interceptor.dart';
 import 'package:milliy_metr/core/constants/api_constants.dart';
 
 
@@ -22,6 +23,7 @@ class DioClient {
       AuthInterceptor(),
       LanguageInterceptor(),
       LoggingInterceptor(),
+      DioErrorInterceptor(),
     ]);
   }
 

@@ -192,11 +192,11 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              '${(_currentFilters.minPrice ?? 0).round()} UZS',
+              '${(_currentFilters.minPrice ?? 0).round()} ${context.l10n.currency}',
               style: TextStyle(color: context.colors.textMedium),
             ),
             Text(
-              '${(_currentFilters.maxPrice ?? 10000000).round()} UZS',
+              '${(_currentFilters.maxPrice ?? 10000000).round()} ${context.l10n.currency}',
               style: TextStyle(color: context.colors.textMedium),
             ),
           ],

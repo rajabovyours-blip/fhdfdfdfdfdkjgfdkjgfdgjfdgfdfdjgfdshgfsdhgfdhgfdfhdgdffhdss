@@ -42,7 +42,7 @@ mixin _$ProductModel {
   Map<String, String>? get specifications => throw _privateConstructorUsedError;
   List<String>? get certificates => throw _privateConstructorUsedError;
   String? get deliveryInformation => throw _privateConstructorUsedError;
-  String get location => throw _privateConstructorUsedError;
+  String? get location => throw _privateConstructorUsedError;
   DateTime? get createdAt => throw _privateConstructorUsedError;
   DateTime? get updatedAt => throw _privateConstructorUsedError;
 
@@ -81,7 +81,7 @@ abstract class $ProductModelCopyWith<$Res> {
       Map<String, String>? specifications,
       List<String>? certificates,
       String? deliveryInformation,
-      String location,
+      String? location,
       DateTime? createdAt,
       DateTime? updatedAt});
 }
@@ -121,7 +121,7 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
     Object? specifications = freezed,
     Object? certificates = freezed,
     Object? deliveryInformation = freezed,
-    Object? location = null,
+    Object? location = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
@@ -214,10 +214,10 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
           ? _value.deliveryInformation
           : deliveryInformation // ignore: cast_nullable_to_non_nullable
               as String?,
-      location: null == location
+      location: freezed == location
           ? _value.location
           : location // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -261,7 +261,7 @@ abstract class _$$ProductModelImplCopyWith<$Res>
       Map<String, String>? specifications,
       List<String>? certificates,
       String? deliveryInformation,
-      String location,
+      String? location,
       DateTime? createdAt,
       DateTime? updatedAt});
 }
@@ -299,7 +299,7 @@ class __$$ProductModelImplCopyWithImpl<$Res>
     Object? specifications = freezed,
     Object? certificates = freezed,
     Object? deliveryInformation = freezed,
-    Object? location = null,
+    Object? location = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
@@ -392,10 +392,10 @@ class __$$ProductModelImplCopyWithImpl<$Res>
           ? _value.deliveryInformation
           : deliveryInformation // ignore: cast_nullable_to_non_nullable
               as String?,
-      location: null == location
+      location: freezed == location
           ? _value.location
           : location // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -434,7 +434,7 @@ class _$ProductModelImpl extends _ProductModel {
       final Map<String, String>? specifications,
       final List<String>? certificates,
       this.deliveryInformation,
-      required this.location,
+      this.location,
       this.createdAt,
       this.updatedAt})
       : _images = images,
@@ -521,7 +521,7 @@ class _$ProductModelImpl extends _ProductModel {
   @override
   final String? deliveryInformation;
   @override
-  final String location;
+  final String? location;
   @override
   final DateTime? createdAt;
   @override
@@ -647,7 +647,7 @@ abstract class _ProductModel extends ProductModel {
       final Map<String, String>? specifications,
       final List<String>? certificates,
       final String? deliveryInformation,
-      required final String location,
+      final String? location,
       final DateTime? createdAt,
       final DateTime? updatedAt}) = _$ProductModelImpl;
   const _ProductModel._() : super._();
@@ -700,7 +700,7 @@ abstract class _ProductModel extends ProductModel {
   @override
   String? get deliveryInformation;
   @override
-  String get location;
+  String? get location;
   @override
   DateTime? get createdAt;
   @override

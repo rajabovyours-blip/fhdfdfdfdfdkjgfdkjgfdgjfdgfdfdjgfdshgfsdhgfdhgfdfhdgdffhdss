@@ -187,10 +187,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get resendCode => 'Qayta yuborish';
 
   @override
-  String get specialOffers => 'Maxsus takliflar';
-
-  @override
-  String get searchPlaceholder => 'Qidirish';
+  String get specialOffers => 'Qaynoq takliflar';
 
   @override
   String get salesType => 'Sotuv turi';
@@ -249,7 +246,22 @@ class AppLocalizationsUz extends AppLocalizations {
   String get filter => 'Filtr';
 
   @override
-  String get priceRange => 'Narx oralig‘i (UZS)';
+  String get priceRange => 'Narx oralig\'i (so\'m)';
+
+  @override
+  String get priceLowToHigh => 'Narx: pastdan yuqoriga';
+
+  @override
+  String get priceHighToLow => 'Narx: yuqoridan pastga';
+
+  @override
+  String get fromPrice => 'Dan (so\'m)';
+
+  @override
+  String get toPrice => 'Gacha (so\'m)';
+
+  @override
+  String get currency => 'so\'m';
 
   @override
   String get region => 'Hudud';
@@ -513,12 +525,6 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get newest => 'Yangi qo‘shilgan';
-
-  @override
-  String get priceLowToHigh => 'Narx: pastdan yuqoriga';
-
-  @override
-  String get priceHighToLow => 'Narx: yuqoridan pastga';
 
   @override
   String get rating => 'Reyting';

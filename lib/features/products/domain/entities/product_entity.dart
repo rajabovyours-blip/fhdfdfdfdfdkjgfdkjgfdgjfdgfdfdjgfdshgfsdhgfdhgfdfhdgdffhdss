@@ -24,7 +24,7 @@ class ProductEntity extends Equatable {
   final Map<String, String>? specifications;
   final List<String>? certificates;
   final String? deliveryInformation;
-  final String location;
+  final String? location;
   final DateTime? createdAt;
   final DateTime? updatedAt;
   const ProductEntity({
@@ -50,7 +50,7 @@ class ProductEntity extends Equatable {
     this.specifications,
     this.certificates,
     this.deliveryInformation,
-    required this.location,
+    this.location,
     this.createdAt,
     this.updatedAt,
   });
@@ -88,7 +88,7 @@ class ProductEntity extends Equatable {
           ?.map((e) => e.toString())
           .toList(),
       deliveryInformation: json['deliveryInformation'] as String?,
-      location: json['location'] as String? ?? '',
+      location: json['location'] as String?,
       createdAt: json['createdAt'] != null
           ? DateTime.tryParse(json['createdAt'])
           : null,

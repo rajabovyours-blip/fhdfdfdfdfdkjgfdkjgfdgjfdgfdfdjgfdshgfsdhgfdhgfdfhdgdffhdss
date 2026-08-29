@@ -56,8 +56,10 @@
   "didNotReceiveCode": "Kodni olmadingizmi?",
   "resendCodeIn": "Qayta yuborish ({seconds} s)",
   "resendCode": "Qayta yuborish",
-  "specialOffers": "Maxsus takliflar",
-  "searchPlaceholder": "Qidirish",
+  "specialOffers": "Qaynoq takliflar",
+  "@specialOffers": {
+    "description": "Maxsus takliflar qismi uchun sarlavha"
+  },
   "salesType": "Sotuv turi",
   "determineLocation": "Manzilni aniqlash",
   "deliveryAddress": "Yetkazib berish manzili",
@@ -76,7 +78,30 @@
   "sortNewest": "Yangi mahsulotlar",
   "sortRating": "Reyting bo‘yicha",
   "filter": "Filtr",
-  "priceRange": "Narx oralig‘i (UZS)",
+  "priceRange": "Narx oralig'i (so'm)",
+  "@priceRange": {
+    "description": "Narx oralig'i (so'm)"
+  },
+  "priceLowToHigh": "Narx: pastdan yuqoriga",
+  "@priceLowToHigh": {
+    "description": "Narx: pastdan yuqoriga"
+  },
+  "priceHighToLow": "Narx: yuqoridan pastga",
+  "@priceHighToLow": {
+    "description": "Narx: yuqoridan pastga"
+  },
+  "fromPrice": "Dan (so'm)",
+  "@fromPrice": {
+    "description": "Dan (so'm)"
+  },
+  "toPrice": "Gacha (so'm)",
+  "@toPrice": {
+    "description": "Gacha (so'm)"
+  },
+  "currency": "so'm",
+  "@currency": {
+    "description": "Valyuta nomi"
+  },
   "region": "Hudud",
   "all": "Barchasi",
   "clear": "Tozalash",

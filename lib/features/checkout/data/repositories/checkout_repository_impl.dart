@@ -38,12 +38,11 @@ class CheckoutRepositoryImpl implements CheckoutRepository {
     try {
       final payload = {
         'items':
-            items.map((e) => {'id': e.id, 'quantity': e.quantity}).toList(),
-        'address_id': address.id,
+            items.map((e) => {'product_id': e.product.id, 'quantity': e.quantity}).toList(),
+        'delivery_address': '${address.region}, ${address.district}, ${address.street}', 
         'payment_method': paymentMethod,
         'delivery_method': deliveryMethod,
-        'coupon_code': couponCode,
-        'notes': notes,
+        'customer_notes': notes,
       };
 
       final data = await remoteDataSource.placeOrder(payload);

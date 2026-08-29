@@ -24,7 +24,7 @@ class CheckoutRemoteDataSourceImpl implements CheckoutRemoteDataSource {
     } on DioException catch (e) {
       final responseData = e.response?.data;
       if (responseData != null) {
-        print('DioException response (placeOrder): $responseData');
+        // print removed
         if (responseData is Map) {
           if (responseData['detail'] != null) {
             throw ServerException(responseData['detail'].toString());

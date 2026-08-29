@@ -208,7 +208,7 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
                           subtitle: Text(l10n.sendErrorReportsDesc),
                           trailing: Switch.adaptive(
                             value: sendErrors,
-                            activeColor: context.colors.primary,
+                            activeTrackColor: context.colors.primary,
                             onChanged: (v) => setStateSheet(() => sendErrors = v),
                           ),
                           onTap: () => setStateSheet(() => sendErrors = !sendErrors),
@@ -218,7 +218,7 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
                           subtitle: Text(l10n.createAdProfileDesc),
                           trailing: Switch.adaptive(
                             value: createAd,
-                            activeColor: context.colors.primary,
+                            activeTrackColor: context.colors.primary,
                             onChanged: (v) => setStateSheet(() => createAd = v),
                           ),
                           onTap: () => setStateSheet(() => createAd = !createAd),
@@ -320,8 +320,8 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
     required bool value,
     required ValueChanged<bool> onChanged,
   }) {
-    return ListTile(
-      leading: Icon(icon, color: context.colors.textMedium),
+    return SwitchListTile.adaptive(
+      secondary: Icon(icon, color: context.colors.textMedium),
       title: Text(
         title,
         style: TextStyle(color: context.colors.textHigh, fontSize: 15),
@@ -330,12 +330,9 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
         subtitle,
         style: TextStyle(color: context.colors.textMedium, fontSize: 13),
       ),
-      trailing: Switch.adaptive(
-        value: value,
-        activeColor: context.colors.primary,
-        onChanged: onChanged,
-      ),
-      onTap: () => onChanged(!value),
+      value: value,
+      activeTrackColor: context.colors.primary,
+      onChanged: onChanged,
     );
   }
 

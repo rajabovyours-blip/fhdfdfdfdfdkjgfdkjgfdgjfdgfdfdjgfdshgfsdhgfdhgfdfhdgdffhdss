@@ -189,9 +189,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get specialOffers => 'Special Offers';
 
   @override
-  String get searchPlaceholder => 'Search';
-
-  @override
   String get salesType => 'Sales Type';
 
   @override
@@ -248,6 +245,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get priceRange => 'Price Range (UZS)';
+
+  @override
+  String get priceLowToHigh => 'Price: Low to High';
+
+  @override
+  String get priceHighToLow => 'Price: High to Low';
+
+  @override
+  String get fromPrice => 'From (UZS)';
+
+  @override
+  String get toPrice => 'To (UZS)';
+
+  @override
+  String get currency => 'UZS';
 
   @override
   String get region => 'Region';
@@ -507,12 +519,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get newest => 'Newest';
-
-  @override
-  String get priceLowToHigh => 'Price: Low to High';
-
-  @override
-  String get priceHighToLow => 'Price: High to Low';
 
   @override
   String get rating => 'Rating';
