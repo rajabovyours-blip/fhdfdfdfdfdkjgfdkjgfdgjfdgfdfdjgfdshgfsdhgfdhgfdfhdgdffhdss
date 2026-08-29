@@ -1187,14 +1187,94 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addedToCart => 'Added to cart';
 
   @override
-  String get promoBannerTitle => 'Essentials for construction';
+  String get promoBannerTitle => 'Qurilish uchun kerakli';
 
   @override
-  String get promoBannerSubtitle => 'Best price guarantee';
+  String get promoBannerSubtitle => 'Eng yaxshi narxlar kafolati';
 
   @override
   String get promoBannerButton => 'Shop now';
 
   @override
   String get popularProductsSection => 'Popular Products';
+
+  @override
+  String get recentSearches => 'Recent searches';
+
+  @override
+  String get bulkDiscount => 'Buy 10+ items: 5% discount';
+
+  @override
+  String get specificationsLabel => 'Specifications';
+
+  @override
+  String get warranty => 'Warranty';
+
+  @override
+  String get manufacturer => 'Manufacturer';
+
+  @override
+  String get deliveryLabel => 'Delivery';
+
+  @override
+  String get leaveReviewBtn => 'Leave a review';
+
+  @override
+  String get buyNowBtn => 'Buy Now';
+
+  @override
+  String get taxFee => 'Tax / Fee';
+
+  @override
+  String get deliveryService => 'Delivery Service';
+
+  @override
+  String get pickupFromWarehouse => 'Pickup from warehouse';
+
+  @override
+  String get smsVerification => 'SMS Verification';
+
+  @override
+  String get smsVerificationDesc =>
+      'To enable two-factor authentication, an SMS code will be sent to your phone. Do you want to continue?';
+
+  @override
+  String get continueBtn => 'Continue';
+
+  @override
+  String get thisDevice => 'This device:';
+
+  @override
+  String get activeSession => 'Active session';
+
+  @override
+  String get sendErrorReports => 'Send error reports';
+
+  @override
+  String get sendErrorReportsDesc =>
+      'Send anonymous error data to improve the app.';
+
+  @override
+  String get createAdProfile => 'Create advertising profile';
+
+  @override
+  String get createAdProfileDesc => 'To show you personalized ads.';
+
+  @override
+  String get contactViaTelegram => 'Contact via Telegram';
+
+  @override
+  String get ourInstagramPage => 'Our Instagram page';
+
+  @override
+  String get customerSupport => 'Customer Support';
+
+  @override
+  String get privacyPolicy => 'Privacy Policy';
+
+  @override
+  String get termsOfUse => 'Terms of Use';
+
+  @override
+  String get brandDefault => 'No brand';
 }

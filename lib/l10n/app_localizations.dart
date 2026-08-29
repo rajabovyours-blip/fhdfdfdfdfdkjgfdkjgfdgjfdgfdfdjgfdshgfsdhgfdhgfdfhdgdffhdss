@@ -619,7 +619,7 @@ abstract class AppLocalizations {
   /// No description provided for @inStock.
   ///
   /// In uz, this message translates to:
-  /// **'Mavjud: {stock} {unit}'**
+  /// **'Omborda: {stock} {unit}'**
   String inStock(Object stock, Object unit);
 
   /// No description provided for @delivery.
@@ -2409,6 +2409,162 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Ommabop mahsulotlar'**
   String get popularProductsSection;
+
+  /// No description provided for @recentSearches.
+  ///
+  /// In uz, this message translates to:
+  /// **'So\'nggi qidiruvlar'**
+  String get recentSearches;
+
+  /// No description provided for @bulkDiscount.
+  ///
+  /// In uz, this message translates to:
+  /// **'10+ dona olinsa: 5% chegirma'**
+  String get bulkDiscount;
+
+  /// No description provided for @specificationsLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xususiyatlari'**
+  String get specificationsLabel;
+
+  /// No description provided for @warranty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kafolat'**
+  String get warranty;
+
+  /// No description provided for @manufacturer.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ishlab chiqaruvchi'**
+  String get manufacturer;
+
+  /// No description provided for @deliveryLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yetkazib berish'**
+  String get deliveryLabel;
+
+  /// No description provided for @leaveReviewBtn.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sharh qoldirish'**
+  String get leaveReviewBtn;
+
+  /// No description provided for @buyNowBtn.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hozir xarid qilish'**
+  String get buyNowBtn;
+
+  /// No description provided for @taxFee.
+  ///
+  /// In uz, this message translates to:
+  /// **'Soliq / Yig\'im'**
+  String get taxFee;
+
+  /// No description provided for @deliveryService.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yetkazib berish xizmati'**
+  String get deliveryService;
+
+  /// No description provided for @pickupFromWarehouse.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ombordan o\'zi olib ketish'**
+  String get pickupFromWarehouse;
+
+  /// No description provided for @smsVerification.
+  ///
+  /// In uz, this message translates to:
+  /// **'SMS Tasdiqlash'**
+  String get smsVerification;
+
+  /// No description provided for @smsVerificationDesc.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ikki bosqichli autentifikatsiyani yoqish uchun telefon raqamingizga SMS kod yuboriladi. Davom etishni xohlaysizmi?'**
+  String get smsVerificationDesc;
+
+  /// No description provided for @continueBtn.
+  ///
+  /// In uz, this message translates to:
+  /// **'Davom etish'**
+  String get continueBtn;
+
+  /// No description provided for @thisDevice.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ushbu qurilma:'**
+  String get thisDevice;
+
+  /// No description provided for @activeSession.
+  ///
+  /// In uz, this message translates to:
+  /// **'Faol seans'**
+  String get activeSession;
+
+  /// No description provided for @sendErrorReports.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xatolik hisobotlarini yuborish'**
+  String get sendErrorReports;
+
+  /// No description provided for @sendErrorReportsDesc.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ilovani yaxshilash uchun anonim xatolik ma\'lumotlarini yuborish.'**
+  String get sendErrorReportsDesc;
+
+  /// No description provided for @createAdProfile.
+  ///
+  /// In uz, this message translates to:
+  /// **'Reklama profilini yaratish'**
+  String get createAdProfile;
+
+  /// No description provided for @createAdProfileDesc.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sizga moslashtirilgan reklamalarni ko\'rsatish uchun.'**
+  String get createAdProfileDesc;
+
+  /// No description provided for @contactViaTelegram.
+  ///
+  /// In uz, this message translates to:
+  /// **'Telegram orqali bog\'lanish'**
+  String get contactViaTelegram;
+
+  /// No description provided for @ourInstagramPage.
+  ///
+  /// In uz, this message translates to:
+  /// **'Instagram sahifamiz'**
+  String get ourInstagramPage;
+
+  /// No description provided for @customerSupport.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mijozlarni qo\'llab-quvvatlash'**
+  String get customerSupport;
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In uz, this message translates to:
+  /// **'Maxfiylik siyosati'**
+  String get privacyPolicy;
+
+  /// No description provided for @termsOfUse.
+  ///
+  /// In uz, this message translates to:
+  /// **'Foydalanish shartlari'**
+  String get termsOfUse;
+
+  /// No description provided for @brandDefault.
+  ///
+  /// In uz, this message translates to:
+  /// **'Brend kiritilmagan'**
+  String get brandDefault;
 }
 
 class _AppLocalizationsDelegate

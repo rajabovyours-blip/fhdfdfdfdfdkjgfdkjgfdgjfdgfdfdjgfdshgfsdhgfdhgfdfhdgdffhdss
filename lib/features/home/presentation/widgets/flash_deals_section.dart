@@ -1,18 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'dart:async';
 import 'package:milliy_metr/core/router/route_constants.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
+import 'package:milliy_metr/l10n/l10n_extension.dart';
 import 'package:milliy_metr/features/products/domain/entities/product_entity.dart';
 import 'package:milliy_metr/shared/components/product_card.dart';
 
-class FlashDealsSection extends StatelessWidget {
+class FlashDealsSection extends StatefulWidget {
   final List<ProductEntity> products;
 
   const FlashDealsSection({super.key, required this.products});
 
   @override
+  State<FlashDealsSection> createState() => _FlashDealsSectionState();
+}
+
+class _FlashDealsSectionState extends State<FlashDealsSection> {
+  late Duration duration;
+  Timer? timer;
+
+  @override
+  void initState() {
+    super.initState();
+    duration = const Duration(hours: 12, minutes: 34, seconds: 56);
+    timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (duration.inSeconds > 0) {
+        setState(() => duration -= const Duration(seconds: 1));
+      } else {
+        timer?.cancel();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
+  }
+
+  String formatDuration(Duration d) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    final h = twoDigits(d.inHours);
+    final m = twoDigits(d.inMinutes.remainder(60));
+    final s = twoDigits(d.inSeconds.remainder(60));
+    return '$h:$m:$s';
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if (products.isEmpty) return const SizedBox.shrink();
+    final l10n = context.l10n;
+    if (widget.products.isEmpty) return const SizedBox.shrink();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -24,7 +62,7 @@ class FlashDealsSection extends StatelessWidget {
               const Icon(Icons.timer_outlined, color: Color(0xFFFF3B30), size: 24),
               const SizedBox(width: 8),
               Text(
-                'Qaynoq Takliflar',
+                l10n.specialOffers,
                 style: TextStyle(
                   color: context.colors.textHigh,
                   fontSize: 18,
@@ -38,9 +76,9 @@ class FlashDealsSection extends StatelessWidget {
                   color: const Color(0xFFFF3B30).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(6),
                 ),
-                child: const Text(
-                  '12:34:56',
-                  style: TextStyle(
+                child: Text(
+                  formatDuration(duration),
+                  style: const TextStyle(
                     color: Color(0xFFFF3B30),
                     fontWeight: FontWeight.bold,
                     fontSize: 12,
@@ -55,10 +93,10 @@ class FlashDealsSection extends StatelessWidget {
           child: ListView.separated(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             scrollDirection: Axis.horizontal,
-            itemCount: products.length,
+            itemCount: widget.products.length,
             separatorBuilder: (_, __) => const SizedBox(width: 12),
             itemBuilder: (context, index) {
-              final product = products[index];
+              final product = widget.products[index];
               return SizedBox(
                 width: 160, // Fixed width for horizontal scrolling
                 child: ProductCard(

@@ -284,7 +284,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String inStock(Object stock, Object unit) {
-    return 'Mavjud: $stock $unit';
+    return 'Omborda: $stock $unit';
   }
 
   @override
@@ -1206,4 +1206,85 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get popularProductsSection => 'Ommabop mahsulotlar';
+
+  @override
+  String get recentSearches => 'So\'nggi qidiruvlar';
+
+  @override
+  String get bulkDiscount => '10+ dona olinsa: 5% chegirma';
+
+  @override
+  String get specificationsLabel => 'Xususiyatlari';
+
+  @override
+  String get warranty => 'Kafolat';
+
+  @override
+  String get manufacturer => 'Ishlab chiqaruvchi';
+
+  @override
+  String get deliveryLabel => 'Yetkazib berish';
+
+  @override
+  String get leaveReviewBtn => 'Sharh qoldirish';
+
+  @override
+  String get buyNowBtn => 'Hozir xarid qilish';
+
+  @override
+  String get taxFee => 'Soliq / Yig\'im';
+
+  @override
+  String get deliveryService => 'Yetkazib berish xizmati';
+
+  @override
+  String get pickupFromWarehouse => 'Ombordan o\'zi olib ketish';
+
+  @override
+  String get smsVerification => 'SMS Tasdiqlash';
+
+  @override
+  String get smsVerificationDesc =>
+      'Ikki bosqichli autentifikatsiyani yoqish uchun telefon raqamingizga SMS kod yuboriladi. Davom etishni xohlaysizmi?';
+
+  @override
+  String get continueBtn => 'Davom etish';
+
+  @override
+  String get thisDevice => 'Ushbu qurilma:';
+
+  @override
+  String get activeSession => 'Faol seans';
+
+  @override
+  String get sendErrorReports => 'Xatolik hisobotlarini yuborish';
+
+  @override
+  String get sendErrorReportsDesc =>
+      'Ilovani yaxshilash uchun anonim xatolik ma\'lumotlarini yuborish.';
+
+  @override
+  String get createAdProfile => 'Reklama profilini yaratish';
+
+  @override
+  String get createAdProfileDesc =>
+      'Sizga moslashtirilgan reklamalarni ko\'rsatish uchun.';
+
+  @override
+  String get contactViaTelegram => 'Telegram orqali bog\'lanish';
+
+  @override
+  String get ourInstagramPage => 'Instagram sahifamiz';
+
+  @override
+  String get customerSupport => 'Mijozlarni qo\'llab-quvvatlash';
+
+  @override
+  String get privacyPolicy => 'Maxfiylik siyosati';
+
+  @override
+  String get termsOfUse => 'Foydalanish shartlari';
+
+  @override
+  String get brandDefault => 'Brend kiritilmagan';
 }

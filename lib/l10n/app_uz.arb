@@ -409,5 +409,8 @@
   "ourInstagramPage": "Instagram sahifamiz",
   "customerSupport": "Mijozlarni qo'llab-quvvatlash",
   "privacyPolicy": "Maxfiylik siyosati",
-  "termsOfUse": "Foydalanish shartlari"
+  "termsOfUse": "Foydalanish shartlari",
+  "brandDefault": "Brend kiritilmagan",
+  "fromPrice": "Dan (so'm)",
+  "toPrice": "Gacha (so'm)"
 }

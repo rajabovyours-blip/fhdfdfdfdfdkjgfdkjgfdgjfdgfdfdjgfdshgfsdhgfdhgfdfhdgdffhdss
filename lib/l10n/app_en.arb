@@ -407,5 +407,8 @@
   "ourInstagramPage": "Our Instagram page",
   "customerSupport": "Customer Support",
   "privacyPolicy": "Privacy Policy",
-  "termsOfUse": "Terms of Use"
+  "termsOfUse": "Terms of Use",
+  "brandDefault": "No brand",
+  "fromPrice": "From (UZS)",
+  "toPrice": "To (UZS)"
 }

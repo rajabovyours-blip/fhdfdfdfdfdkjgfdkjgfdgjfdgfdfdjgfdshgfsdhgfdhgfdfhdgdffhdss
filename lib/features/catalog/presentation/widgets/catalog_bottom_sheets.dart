@@ -220,7 +220,7 @@ class _FilterSheetContentState extends ConsumerState<_FilterSheetContent> {
                             ThousandsSeparatorInputFormatter(),
                           ],
                           decoration: InputDecoration(
-                            labelText: "Dan (so'm)",
+                            labelText: context.l10n.fromPrice,
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                           ),
                           onChanged: _onMinPriceChanged,
@@ -236,7 +236,7 @@ class _FilterSheetContentState extends ConsumerState<_FilterSheetContent> {
                             ThousandsSeparatorInputFormatter(),
                           ],
                           decoration: InputDecoration(
-                            labelText: "Gacha (so'm)",
+                            labelText: context.l10n.toPrice,
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                           ),
                           onChanged: _onMaxPriceChanged,

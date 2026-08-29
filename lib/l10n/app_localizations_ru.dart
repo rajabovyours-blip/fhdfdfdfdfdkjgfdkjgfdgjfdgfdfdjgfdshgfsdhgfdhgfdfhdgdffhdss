@@ -1197,4 +1197,84 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get popularProductsSection => 'Популярные товары';
+
+  @override
+  String get recentSearches => 'Последние поиски';
+
+  @override
+  String get bulkDiscount => 'Скидка 5% от 10+ штук';
+
+  @override
+  String get specificationsLabel => 'Характеристики';
+
+  @override
+  String get warranty => 'Гарантия';
+
+  @override
+  String get manufacturer => 'Производитель';
+
+  @override
+  String get deliveryLabel => 'Доставка';
+
+  @override
+  String get leaveReviewBtn => 'Оставить отзыв';
+
+  @override
+  String get buyNowBtn => 'Купить сейчас';
+
+  @override
+  String get taxFee => 'Налог / Сбор';
+
+  @override
+  String get deliveryService => 'Служба доставки';
+
+  @override
+  String get pickupFromWarehouse => 'Самовывоз со склада';
+
+  @override
+  String get smsVerification => 'СМС Подтверждение';
+
+  @override
+  String get smsVerificationDesc =>
+      'Для включения двухфакторной аутентификации на ваш телефон будет отправлен СМС-код. Продолжить?';
+
+  @override
+  String get continueBtn => 'Продолжить';
+
+  @override
+  String get thisDevice => 'Это устройство:';
+
+  @override
+  String get activeSession => 'Активный сеанс';
+
+  @override
+  String get sendErrorReports => 'Отправлять отчеты об ошибках';
+
+  @override
+  String get sendErrorReportsDesc =>
+      'Отправлять анонимные данные об ошибках для улучшения приложения.';
+
+  @override
+  String get createAdProfile => 'Создать рекламный профиль';
+
+  @override
+  String get createAdProfileDesc => 'Для показа персонализированной рекламы.';
+
+  @override
+  String get contactViaTelegram => 'Связаться через Telegram';
+
+  @override
+  String get ourInstagramPage => 'Наша страница в Instagram';
+
+  @override
+  String get customerSupport => 'Служба поддержки';
+
+  @override
+  String get privacyPolicy => 'Политика конфиденциальности';
+
+  @override
+  String get termsOfUse => 'Условия использования';
+
+  @override
+  String get brandDefault => 'Без бренда';
 }

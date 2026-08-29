@@ -409,5 +409,8 @@
   "ourInstagramPage": "Наша страница в Instagram",
   "customerSupport": "Служба поддержки",
   "privacyPolicy": "Политика конфиденциальности",
-  "termsOfUse": "Условия использования"
+  "termsOfUse": "Условия использования",
+  "brandDefault": "Без бренда",
+  "fromPrice": "От (сум)",
+  "toPrice": "До (сум)"
 }

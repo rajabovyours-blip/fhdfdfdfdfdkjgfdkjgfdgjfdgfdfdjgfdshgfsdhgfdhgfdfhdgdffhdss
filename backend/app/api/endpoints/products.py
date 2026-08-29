@@ -102,18 +102,30 @@ async def get_product(id: str, db: AsyncSession = Depends(get_db)):
         
     return APIResponse(data=ProductModel.model_validate(product))
 
-from pydantic import BaseModel as PydanticBaseModel
-from typing import Dict
+from pydantic.alias_generators import to_camel
+from pydantic import BaseModel as PydanticBaseModel, ConfigDict, model_validator
 
 class ProductCreateRequest(PydanticBaseModel):
-    name: Dict[str, str]
-    description: Dict[str, str]
+    name: Union[Dict[str, str], str]
+    description: Union[Dict[str, str], str]
     category_id: UUID
     price: float
     unit: str = "pcs"
     stock: int = 0
     images: list = []
     brand: str | None = None
+
+    @model_validator(mode='before')
+    @classmethod
+    def convert_strings_to_dicts(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            if isinstance(data.get('name'), str):
+                val = data['name']
+                data['name'] = {'uz': val, 'ru': val, 'en': val}
+            if isinstance(data.get('description'), str):
+                val = data['description']
+                data['description'] = {'uz': val, 'ru': val, 'en': val}
+        return data
 
 @router.post("", response_model=APIResponse[ProductModel])
 async def create_product(payload: ProductCreateRequest, db: AsyncSession = Depends(get_db)):
