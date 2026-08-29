@@ -104,6 +104,7 @@ async def get_product(id: str, db: AsyncSession = Depends(get_db)):
 
 from pydantic.alias_generators import to_camel
 from pydantic import BaseModel as PydanticBaseModel, ConfigDict, model_validator
+from typing import Union, Any, Dict
 
 class ProductCreateRequest(PydanticBaseModel):
     name: Union[Dict[str, str], str]
