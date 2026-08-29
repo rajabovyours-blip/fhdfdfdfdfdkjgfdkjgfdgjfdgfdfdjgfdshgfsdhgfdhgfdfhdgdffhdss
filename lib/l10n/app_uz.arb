@@ -60,6 +60,7 @@
   "@specialOffers": {
     "description": "Maxsus takliflar qismi uchun sarlavha"
   },
+  "searchPlaceholder": "Qidirish",
   "salesType": "Sotuv turi",
   "determineLocation": "Manzilni aniqlash",
   "deliveryAddress": "Yetkazib berish manzili",

@@ -442,6 +442,12 @@ abstract class AppLocalizations {
   /// **'Qaynoq takliflar'**
   String get specialOffers;
 
+  /// No description provided for @searchPlaceholder.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qidirish'**
+  String get searchPlaceholder;
+
   /// No description provided for @salesType.
   ///
   /// In uz, this message translates to:

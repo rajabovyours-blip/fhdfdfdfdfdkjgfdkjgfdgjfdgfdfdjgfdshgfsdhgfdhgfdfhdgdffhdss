@@ -189,6 +189,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get specialOffers => 'Специальные предложения';
 
   @override
+  String get searchPlaceholder => 'Поиск';
+
+  @override
   String get salesType => 'Тип продажи';
 
   @override
