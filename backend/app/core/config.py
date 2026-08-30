@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     # Eskiz SMS
     ESKIZ_EMAIL: str = ""
     ESKIZ_PASSWORD: str = ""
-    ESKIZ_TEST_MODE: bool = True
+    ESKIZ_TEST_MODE: bool = False
 
     DATABASE_URL: str | None = None
 
