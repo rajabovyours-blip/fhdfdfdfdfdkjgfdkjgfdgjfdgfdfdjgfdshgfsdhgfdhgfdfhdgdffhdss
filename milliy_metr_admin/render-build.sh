@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 set -o errexit
 
-echo "Downloading Flutter SDK..."
-git clone https://github.com/flutter/flutter.git -b stable
+echo "Using existing Flutter SDK..."
+# Render environment already has or caches Flutter in /opt/render/flutter
+export PATH="$PATH:/opt/render/flutter/bin:$HOME/flutter/bin:`pwd`/flutter/bin"
 
-export PATH="$PATH:`pwd`/flutter/bin"
+echo "Checking Flutter version..."
+flutter --version
 
 echo "Configuring Flutter for Web..."
 flutter config --enable-web
