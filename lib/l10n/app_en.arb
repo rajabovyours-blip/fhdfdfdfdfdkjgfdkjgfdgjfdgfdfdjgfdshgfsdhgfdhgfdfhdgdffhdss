@@ -429,5 +429,7 @@
   "passwordChangeError": "An error occurred or password is incorrect",
   "biometricError": "Biometric error",
   "noAddressesSaved": "You don't have any saved addresses yet",
-  "pleaseSelectRegionDistrict": "Please select a region and district"
+  "pleaseSelectRegionDistrict": "Please select a region and district",
+  "promoBannerTitle": "All you need for construction",
+  "promoBannerSubtitle": "Best price guarantee"
 }

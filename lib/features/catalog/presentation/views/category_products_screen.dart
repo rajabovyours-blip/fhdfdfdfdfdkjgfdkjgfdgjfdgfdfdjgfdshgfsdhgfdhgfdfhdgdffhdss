@@ -193,7 +193,14 @@ class _CategoryProductsScreenState extends ConsumerState<CategoryProductsScreen>
                             ),
                             const SizedBox(height: 24),
                             ElevatedButton(
-                              onPressed: () => Navigator.pop(context),
+                              onPressed: () {
+                                ref.read(catalogNotifierProvider.notifier).clearFilters();
+                                if (Navigator.of(context).canPop()) {
+                                  Navigator.pop(context);
+                                } else {
+                                  context.go(AppRoutes.catalog);
+                                }
+                              },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: context.colors.primary,
                                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),

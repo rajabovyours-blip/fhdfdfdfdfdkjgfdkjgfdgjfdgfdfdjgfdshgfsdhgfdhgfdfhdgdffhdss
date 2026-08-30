@@ -119,7 +119,7 @@ class CartItemCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        product.brand ?? 'Milliy Qurilish',
+                        product.brand ?? context.l10n.brandDefault,
                         style: TextStyle(
                           color: context.colors.textMedium,
                           fontSize: 12,

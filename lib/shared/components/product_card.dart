@@ -197,7 +197,7 @@ class _ProductCardState extends ConsumerState<ProductCard> {
                             const SizedBox(width: 6),
                             Expanded(
                               child: Text(
-                                widget.product.brand ?? 'Milliy Qurilish',
+                                widget.product.brand ?? context.l10n.brandDefault,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(

@@ -1,20 +1,20 @@
 {
   "project_info": {
-    "project_number": "5408559924",
-    "project_id": "milliymetr-51505",
-    "storage_bucket": "milliymetr-51505.firebasestorage.app"
+    "project_number": "433156009799",
+    "project_id": "milliy-metr",
+    "storage_bucket": "milliy-metr.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:5408559924:android:3eed3d1ea30f7c63fc4b61",
+        "mobilesdk_app_id": "1:433156009799:android:6ae7c52041f50924f7a662",
         "android_client_info": {
           "package_name": "uz.milliymetr.app"
         }
       },
       "oauth_client": [
         {
-          "client_id": "5408559924-gme4o899c8aje2gdl55b92a8cp809pbq.apps.googleusercontent.com",
+          "client_id": "433156009799-op4rsucja7jo5ud06lid29dofalg0121.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "uz.milliymetr.app",
@@ -22,20 +22,20 @@
           }
         },
         {
-          "client_id": "5408559924-kl0rm498vdr2qo39prt5k6g5v0vjvsqt.apps.googleusercontent.com",
+          "client_id": "433156009799-tia3qrtgo44tq5eaj9n7b03r4t7q6f5j.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBseSmpUnajjRRPy3XZcpXvYd9fb54YuQs"
+          "current_key": "AIzaSyC-JStf3kEV1u-3Ub5Tr7kv7OQxJ0lKApA"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "5408559924-kl0rm498vdr2qo39prt5k6g5v0vjvsqt.apps.googleusercontent.com",
+              "client_id": "433156009799-tia3qrtgo44tq5eaj9n7b03r4t7q6f5j.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

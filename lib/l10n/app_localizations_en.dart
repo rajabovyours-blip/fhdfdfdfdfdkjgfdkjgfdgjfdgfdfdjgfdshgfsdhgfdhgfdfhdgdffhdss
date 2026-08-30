@@ -1227,10 +1227,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addedToCart => 'Added to cart';
 
   @override
-  String get promoBannerTitle => 'Qurilish uchun kerakli';
+  String get promoBannerTitle => 'All you need for construction';
 
   @override
-  String get promoBannerSubtitle => 'Eng yaxshi narxlar kafolati';
+  String get promoBannerSubtitle => 'Best price guarantee';
 
   @override
   String get promoBannerButton => 'Shop now';

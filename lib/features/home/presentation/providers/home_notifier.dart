@@ -43,17 +43,17 @@ class HomeNotifier extends StateNotifier<FeatureState<HomeData>> {
           id: 'banner_1',
           imageUrl: 'assets/images/categories/cat-1.webp',
           linkUrl: '',
-          title: const LocalizedString(uz: 'Qurilish uchun kerakli barcha materiallar bir joyda', ru: '', en: ''),
-          subtitle: const LocalizedString(uz: 'Eng yaxshi narxlar kafolati', ru: '', en: ''),
-          cta: const LocalizedString(uz: 'Xarid qilish', ru: '', en: ''),
+          title: const LocalizedString(uz: 'Qurilish uchun kerakli barcha materiallar bir joyda', ru: 'Все необходимые строительные материалы в одном месте', en: 'All the necessary construction materials in one place'),
+          subtitle: const LocalizedString(uz: 'Eng yaxshi narxlar kafolati', ru: 'Гарантия лучших цен', en: 'Best price guarantee'),
+          cta: const LocalizedString(uz: 'Xarid qilish', ru: 'В магазин', en: 'Shop now'),
         ),
         BannerEntity(
           id: 'banner_2',
           imageUrl: 'assets/images/categories/cat-2.webp',
           linkUrl: '',
-          title: const LocalizedString(uz: 'Katta chegirmalar mavsumi', ru: '', en: ''),
-          subtitle: const LocalizedString(uz: 'Ommabop mahsulotlarga 20% gacha chegirma', ru: '', en: ''),
-          cta: const LocalizedString(uz: "Ko'rish", ru: '', en: ''),
+          title: const LocalizedString(uz: 'Katta chegirmalar mavsumi', ru: 'Сезон больших скидок', en: 'Huge discount season'),
+          subtitle: const LocalizedString(uz: 'Ommabop mahsulotlarga 20% gacha chegirma', ru: 'Скидки до 20% на популярные товары', en: 'Up to 20% off on popular products'),
+          cta: const LocalizedString(uz: "Ko'rish", ru: 'Посмотреть', en: 'View'),
         ),
       ];
     }
