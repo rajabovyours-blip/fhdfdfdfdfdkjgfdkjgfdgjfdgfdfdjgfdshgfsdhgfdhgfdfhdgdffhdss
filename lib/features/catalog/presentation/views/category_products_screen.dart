@@ -183,9 +183,9 @@ class _CategoryProductsScreenState extends ConsumerState<CategoryProductsScreen>
                               color: Colors.grey,
                             ),
                             const SizedBox(height: 16),
-                            const Text(
-                              "Bu toifada hozircha mahsulotlar yo'q",
-                              style: TextStyle(
+                            Text(
+                              context.l10n.noSuchProductFound,
+                              style: const TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -202,9 +202,9 @@ class _CategoryProductsScreenState extends ConsumerState<CategoryProductsScreen>
                                 ),
                                 elevation: 0,
                               ),
-                              child: const Text(
-                                "Boshqa toifalarni ko'rish",
-                                style: TextStyle(
+                              child: Text(
+                                context.l10n.catalog,
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
                                 ),

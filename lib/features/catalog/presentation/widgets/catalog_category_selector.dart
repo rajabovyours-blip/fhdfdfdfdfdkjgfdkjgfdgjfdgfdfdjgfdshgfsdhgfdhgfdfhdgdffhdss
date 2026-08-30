@@ -31,6 +31,7 @@ class CatalogCategorySelector extends ConsumerWidget {
     return SizedBox(
       height: 48,
       child: ListView.separated(
+        key: const PageStorageKey('catalog_category_selector_scroll_key'),
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         scrollDirection: Axis.horizontal,
         itemCount: categories.length,

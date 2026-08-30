@@ -23,6 +23,8 @@ async def get_products(
     has_discount: Optional[bool] = None,
     sort_by: Optional[str] = None,
     search: Optional[str] = None,
+    page: int = 1,
+    limit: int = 20,
     db: AsyncSession = Depends(get_db)
 ):
     query = select(Product)
@@ -78,6 +80,8 @@ async def get_products(
         query = query.order_by(Product.rating.desc())
     elif sort_by == 'popular':
         query = query.order_by(Product.sold_count.desc())
+        
+    query = query.offset((page - 1) * limit).limit(limit)
         
     result = await db.execute(query)
     products = result.scalars().all()

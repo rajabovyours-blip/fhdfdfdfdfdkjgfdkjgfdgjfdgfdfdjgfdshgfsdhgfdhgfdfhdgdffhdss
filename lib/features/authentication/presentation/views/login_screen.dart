@@ -12,6 +12,34 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/services.dart';
 import 'package:milliy_metr/shared/widgets/app_snackbar.dart';
 
+class _PhoneFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    // Keep only digits
+    String digits = newValue.text.replaceAll(RegExp(r'\D'), '');
+    if (digits.length > 9) {
+      digits = digits.substring(0, 9);
+    }
+    
+    // Format as ## ### ## ##
+    String formatted = '';
+    for (int i = 0; i < digits.length; i++) {
+      if (i == 2 || i == 5 || i == 7) {
+        formatted += ' ';
+      }
+      formatted += digits[i];
+    }
+    
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: formatted.length),
+    );
+  }
+}
+
 class LoginScreen extends ConsumerStatefulWidget {
   final String? redirect;
 
@@ -54,12 +82,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Future<void> _processLogin() async {
     final phoneBody = _phoneController.text.replaceAll(RegExp(r'\D'), '');
-    final cleanPhone = phoneBody;
-    if (cleanPhone == '908431337' || cleanPhone == '998908431337') {
-      await ref.read(authProvider.notifier).instantDevLogin('+998908431337');
-      if (mounted) context.pop();
-      return;
-    }
+
 
     if (phoneBody.length != 9) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -286,8 +309,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         focusNode: _phoneFocusNode,
                         keyboardType: TextInputType.phone,
                         inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(9),
+                          FilteringTextInputFormatter.allow(RegExp(r'[\d\s]')),
+                          _PhoneFormatter(),
                         ],
                         style: TextStyle(
                           color: context.colors.textHigh,

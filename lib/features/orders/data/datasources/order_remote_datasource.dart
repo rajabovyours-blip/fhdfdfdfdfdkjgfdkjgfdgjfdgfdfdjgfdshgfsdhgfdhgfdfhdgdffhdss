@@ -29,7 +29,7 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
   @override
   Future<dynamic> getOrderById(String orderId) async {
     try {
-      final response = await dio.get('/orders/');
+      final response = await dio.get('/orders/$orderId');
       if (response.statusCode == 200) {
         return response.data['data'];
       } else {
@@ -43,7 +43,7 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
   @override
   Future<void> cancelOrder(String orderId) async {
     try {
-      final response = await dio.post('/orders//cancel');
+      final response = await dio.post('/orders/$orderId/cancel');
       if (response.statusCode != 200 && response.statusCode != 204) {
         throw ServerException('Failed to cancel order');
       }

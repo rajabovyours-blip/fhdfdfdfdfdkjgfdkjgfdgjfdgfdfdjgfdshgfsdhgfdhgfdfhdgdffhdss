@@ -26,6 +26,7 @@ class _AddAddressScreenState extends ConsumerState<AddAddressScreen> {
   bool _isSaving = false;
 
   void _submit() async {
+    if (_isSaving) return;
     if (_formKey.currentState!.validate() && _selectedRegion != null && _selectedDistrict != null) {
       _formKey.currentState!.save();
       
@@ -46,12 +47,12 @@ class _AddAddressScreenState extends ConsumerState<AddAddressScreen> {
         }
       } else {
         if (mounted) {
-          AppSnackBar.showError(context, 'Xatolik yuz berdi');
+          AppSnackBar.showError(context, context.l10n.errorOccurred);
         }
       }
     } else {
       if (_selectedRegion == null || _selectedDistrict == null) {
-         AppSnackBar.showError(context, 'Iltimos, viloyat va tumanni tanlang');
+         AppSnackBar.showError(context, context.l10n.pleaseSelectRegionDistrict);
       }
     }
   }

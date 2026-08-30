@@ -27,6 +27,7 @@ class _HomeActionChipsState extends State<HomeActionChips> {
     return SizedBox(
       height: 48,
       child: ListView.separated(
+        key: const PageStorageKey('home_action_chips_scroll_key'),
         padding: const EdgeInsets.symmetric(horizontal: 16),
         scrollDirection: Axis.horizontal,
         itemCount: actions.length,

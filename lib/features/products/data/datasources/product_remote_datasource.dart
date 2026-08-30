@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:milliy_metr/core/errors/app_exception.dart';
+import 'package:milliy_metr/core/errors/dio_error_mapper.dart';
 import 'package:milliy_metr/features/products/data/models/product_model.dart';
 
 abstract class ProductRemoteDataSource {
@@ -33,19 +34,38 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
         'limit': limit,
         if (categoryId != null) 'category_id': categoryId,
         if (searchQuery != null) 'search': searchQuery,
-        if (filters != null) ...filters,
+        if (filters != null)
+          ...filters.map((k, v) => MapEntry(
+                k.replaceAllMapped(RegExp(r'[A-Z]'),
+                    (m) => '_${m.group(0)!.toLowerCase()}'),
+                v,
+              )),
       };
 
-      final response = await dio.get('/products', queryParameters: queryParams);
+      final response = await dio.get(
+        '/products',
+        queryParameters: queryParams,
+      );
 
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data['data'] ?? [];
-        return data.map((e) => ProductModel.fromJson(e)).toList();
+        return data.map((e) {
+          try {
+            return ProductModel.fromJson(e);
+          } catch (err, stack) {
+            debugPrint('Product parsing error for item: $e\nError: $err\nStack: $stack');
+            return null;
+          }
+        }).whereType<ProductModel>().toList();
       } else {
         throw ServerException('Failed to load products');
       }
     } on DioException catch (e) {
-      throw ServerException(e.message ?? 'Network error');
+      throw ServerException(DioErrorMapper.extractErrorMessage(e));
+    } catch (e, stacktrace) {
+      print('Product parsing error: $e');
+      print(stacktrace);
+      throw ServerException(DioErrorMapper.extractErrorMessage(e));
     }
   }
 
@@ -60,7 +80,10 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
         throw ServerException('Product not found');
       }
     } on DioException catch (e) {
-      throw ServerException(e.message ?? 'Network error');
+      throw ServerException(DioErrorMapper.extractErrorMessage(e));
+    } catch (e) {
+      throw ServerException(DioErrorMapper.extractErrorMessage(e));
     }
   }
 }
+

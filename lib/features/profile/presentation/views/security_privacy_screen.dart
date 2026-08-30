@@ -22,6 +22,7 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
   void initState() {
     super.initState();
     _biometricEnabled = PreferencesManager.getBool('biometric_enabled');
+    _twoFactorEnabled = PreferencesManager.getBool('two_factor_enabled');
   }
 
   @override
@@ -56,18 +57,20 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
             value: _biometricEnabled,
             onChanged: (val) async {
               if (val) {
+                // Eagerly update to avoid bounce back
+                setState(() => _biometricEnabled = true);
                 final LocalAuthentication auth = LocalAuthentication();
                 final bool canAuthenticateWithBiometrics = await auth.canCheckBiometrics;
                 final bool canAuthenticate = canAuthenticateWithBiometrics || await auth.isDeviceSupported();
                 
                 if (canAuthenticate) {
                   try {
+                    await Future.delayed(const Duration(milliseconds: 150));
                     final bool didAuthenticate = await auth.authenticate(
                       localizedReason: 'Biometrik ma\'lumotlarni tasdiqlang',
                       options: const AuthenticationOptions(biometricOnly: true),
                     );
                     if (didAuthenticate) {
-                      setState(() => _biometricEnabled = true);
                       await PreferencesManager.setBool('biometric_enabled', true);
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -78,15 +81,20 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
                           ),
                         );
                       }
+                    } else {
+                      // Revert if cancelled
+                      setState(() => _biometricEnabled = false);
                     }
                   } catch (e) {
+                    setState(() => _biometricEnabled = false);
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Biometrik xatolik: $e'), backgroundColor: context.colors.danger),
+                        SnackBar(content: Text('''${context.l10n.biometricError}: $e'''), backgroundColor: context.colors.danger),
                       );
                     }
                   }
                 } else {
+                  setState(() => _biometricEnabled = false);
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: const Text('Qurilmada biometriya qo\'llab-quvvatlanmaydi'), backgroundColor: context.colors.danger),
@@ -106,28 +114,45 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
             value: _twoFactorEnabled,
             onChanged: (val) {
               if (val) {
+                // Eagerly update to avoid bounce-back
+                setState(() => _twoFactorEnabled = true);
                 showDialog(
                   context: context,
                   builder: (ctx) => AlertDialog(
                     title: Text(l10n.smsVerification),
                     content: Text(l10n.smsVerificationDesc),
                     actions: [
-                      TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l10n.cancel)),
                       TextButton(
                         onPressed: () {
                           Navigator.pop(ctx);
-                          setState(() => _twoFactorEnabled = true);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: const Text('Ikki bosqichli autentifikatsiya yoqildi'), backgroundColor: context.colors.success),
-                          );
+                          // Revert if cancelled
+                          setState(() => _twoFactorEnabled = false);
+                        },
+                        child: Text(l10n.cancel),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          Navigator.pop(ctx);
+                          await PreferencesManager.setBool('two_factor_enabled', true);
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: const Text('Ikki bosqichli autentifikatsiya yoqildi'), backgroundColor: context.colors.success),
+                            );
+                          }
                         },
                         child: Text(l10n.continueBtn),
                       ),
                     ],
                   ),
-                );
+                ).then((_) {
+                  // Revert if dialog is dismissed by tapping outside
+                  if (PreferencesManager.getBool('two_factor_enabled') != true) {
+                    setState(() => _twoFactorEnabled = false);
+                  }
+                });
               } else {
                 setState(() => _twoFactorEnabled = false);
+                PreferencesManager.setBool('two_factor_enabled', false);
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Ikki bosqichli autentifikatsiya o\'chirildi')),
                 );
@@ -420,12 +445,12 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
                         if (response.statusCode == 200) {
                           if (context.mounted) {
                             Navigator.pop(ctx);
-                            AppSnackBar.showSuccess(context, "Parol muvaffaqiyatli o'zgartirildi");
+                            AppSnackBar.showSuccess(context, l10n.passwordChangedSuccessfully);
                           }
                         }
                       } catch (e) {
                         if (context.mounted) {
-                          AppSnackBar.showError(context, "Xatolik yuz berdi yoxud parol noto'g'ri");
+                          AppSnackBar.showError(context, context.l10n.passwordChangeError);
                         }
                       } finally {
                         setStateSheet(() => isSaving = false);

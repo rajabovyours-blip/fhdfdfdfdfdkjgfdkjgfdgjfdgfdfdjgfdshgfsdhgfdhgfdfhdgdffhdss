@@ -1,3 +1,4 @@
+import 'package:milliy_metr/core/constants/uzbekistan_regions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:milliy_metr/core/utils/app_formatters.dart';
@@ -158,14 +159,11 @@ class _FilterSheetContentState extends ConsumerState<_FilterSheetContent> {
 
   @override
   Widget build(BuildContext context) {
+    final locale = Localizations.localeOf(context).languageCode;
+    
     final locations = [
       context.l10n.all,
-      'Farg‘ona',
-      'Toshkent',
-      'Andijon',
-      'Namangan',
-      'Samarqand',
-      'Buxoro',
+      ...uzbekistanRegionsData.map((r) => r.getName(locale)),
     ];
     return DraggableScrollableSheet(
       initialChildSize: 0.8,

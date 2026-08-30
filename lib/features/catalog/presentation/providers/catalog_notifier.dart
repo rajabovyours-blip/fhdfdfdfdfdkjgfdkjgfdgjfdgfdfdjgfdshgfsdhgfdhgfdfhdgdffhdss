@@ -85,10 +85,10 @@ class CatalogNotifier extends StateNotifier<FeatureState<CatalogData>> {
 
     final filters = <String, dynamic>{};
     if (currentData?.minPrice != null) {
-      filters['minPrice'] = currentData?.minPrice;
+      filters['min_price'] = currentData?.minPrice?.toInt();
     }
     if (currentData?.maxPrice != null) {
-      filters['maxPrice'] = currentData?.maxPrice;
+      filters['max_price'] = currentData?.maxPrice?.toInt();
     }
     if (currentData?.selectedLocation != null) {
       filters['location'] = currentData?.selectedLocation;

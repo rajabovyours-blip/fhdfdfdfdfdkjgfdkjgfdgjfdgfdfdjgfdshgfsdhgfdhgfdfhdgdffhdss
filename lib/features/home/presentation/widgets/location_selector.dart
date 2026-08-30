@@ -43,7 +43,6 @@ class _LocationSelectorState extends State<LocationSelector> {
       if (placemarks.isNotEmpty) {
         if (!mounted) return;
         final Placemark place = placemarks.first;
-        // e.g. "Chilonzor, Uzbekistan" or "Tashkent, Uzbekistan"
         final String locality = place.locality ?? place.subAdministrativeArea ?? place.administrativeArea ?? '';
         final String country = place.country ?? '';
         String address = [locality, country].where((s) => s.isNotEmpty).join(', ');
@@ -58,6 +57,12 @@ class _LocationSelectorState extends State<LocationSelector> {
       }
     } catch (e) {
       if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(context.l10n.errorOccurred),
+            backgroundColor: context.colors.danger,
+          ),
+        );
         setState(() {
           _location = context.l10n.tashkentUzbekistan;
         });
@@ -67,27 +72,51 @@ class _LocationSelectorState extends State<LocationSelector> {
 
   Future<void> _requestLocation() async {
     setState(() => _isLoading = true);
+    
+    // Block background touches while permission dialog might be open
+    showDialog(
+      context: context,
+      barrierColor: Colors.transparent,
+      barrierDismissible: false,
+      builder: (context) => const PopScope(
+        canPop: false,
+        child: SizedBox.expand(),
+      ),
+    );
 
-    final status = await Permission.location.request();
+    try {
+      final status = await Permission.location.request();
 
-    if (status.isGranted) {
-      await _fetchLocation();
-    } else if (status.isPermanentlyDenied) {
+      if (status.isGranted) {
+        await _fetchLocation();
+      } else if (status.isPermanentlyDenied) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(context.l10n.pleaseAllowFromSettings),
+              action: SnackBarAction(
+                label: context.l10n.settings,
+                onPressed: () => openAppSettings(),
+              ),
+            ),
+          );
+        }
+      }
+    } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(context.l10n.pleaseAllowFromSettings),
-            action: SnackBarAction(
-              label: context.l10n.settings,
-              onPressed: () => openAppSettings(),
-            ),
+            content: Text(context.l10n.errorOccurred),
+            backgroundColor: context.colors.danger,
           ),
         );
       }
-    }
-
-    if (mounted) {
-      setState(() => _isLoading = false);
+    } finally {
+      if (mounted) {
+        // Pop the barrier dialog
+        Navigator.of(context, rootNavigator: true).pop();
+        setState(() => _isLoading = false);
+      }
     }
   }
 

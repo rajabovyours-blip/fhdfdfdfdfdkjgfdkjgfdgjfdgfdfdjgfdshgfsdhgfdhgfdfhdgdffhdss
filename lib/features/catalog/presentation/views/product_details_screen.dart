@@ -8,7 +8,7 @@ import 'package:milliy_metr/features/wishlist/presentation/providers/wishlist_no
 import 'package:milliy_metr/features/cart/presentation/providers/cart_notifier.dart';
 import 'package:go_router/go_router.dart';
 import 'package:milliy_metr/core/router/route_constants.dart';
-import 'package:milliy_metr/features/checkout/domain/entities/cart_item_entity.dart';
+
 import 'package:milliy_metr/features/reviews/presentation/widgets/review_card.dart';
 import 'package:milliy_metr/features/reviews/presentation/widgets/review_composer_sheet.dart';
 import 'package:milliy_metr/features/reviews/presentation/providers/review_providers.dart';
@@ -43,7 +43,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(productDetailsNotifierProvider(widget.productId));
-    final cartState = ref.watch(cartNotifierProvider);
+
 
     return Scaffold(
       backgroundColor: context.colors.background,

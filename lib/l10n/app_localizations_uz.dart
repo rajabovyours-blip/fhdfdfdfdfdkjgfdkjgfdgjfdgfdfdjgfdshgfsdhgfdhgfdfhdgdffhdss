@@ -784,7 +784,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get faqPaymentAnswer =>
-      'Hozirda naqd pul bilan to\'lov qabul qilinadi. Boshqa to\'lov usullari tez orada qo\'shiladi.';
+      'Hozirda buyurtmani qabul qilib olganda naqd pul to\'lash, shuningdek Click, Payme, Visa, Mastercard va Uzum Nasiya orqali to\'lovlar qabul qilinadi.';
 
   @override
   String get faqReturn => 'Mahsulotni qaytarish mumkinmi?';
@@ -1296,4 +1296,29 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get brandDefault => 'Brend kiritilmagan';
+
+  @override
+  String get networkError =>
+      'Internet aloqasi mavjud emas yoki server bilan ulanishda xatolik yuz berdi.';
+
+  @override
+  String get serverError =>
+      'Serverda vaqtinchalik profilaktika. Birozdan so\'ng urinib ko\'ring.';
+
+  @override
+  String get passwordChangedSuccessfully =>
+      'Parol muvaffaqiyatli o\'zgartirildi';
+
+  @override
+  String get passwordChangeError => 'Xatolik yuz berdi yoxud parol noto\'g\'ri';
+
+  @override
+  String get biometricError => 'Biometrik xatolik';
+
+  @override
+  String get noAddressesSaved => 'Sizda hozircha manzillar yo\'q';
+
+  @override
+  String get pleaseSelectRegionDistrict =>
+      'Iltimos, viloyat va tumanni tanlang';
 }

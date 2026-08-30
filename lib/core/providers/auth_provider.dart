@@ -13,8 +13,10 @@ import 'package:milliy_metr/features/authentication/domain/usecases/request_otp_
 import 'package:milliy_metr/features/authentication/domain/usecases/verify_otp_usecase.dart';
 import 'package:milliy_metr/features/authentication/domain/usecases/social_login_usecase.dart';
 import 'package:milliy_metr/features/authentication/presentation/providers/auth_state.dart';
-import 'package:milliy_metr/features/authentication/domain/entities/user_entity.dart';
 
+import 'package:milliy_metr/core/events/auth_events.dart';
+import 'dart:async';
+import 'package:flutter/foundation.dart';
 final dioProvider = Provider<Dio>((ref) => DioClient().dio);
 
 final authLocalDataSourceProvider = Provider<AuthLocalDataSource>((ref) {
@@ -64,10 +66,13 @@ class AuthController extends StateNotifier<AuthState> {
   final SocialLoginUseCase _socialLoginUseCase;
   final LogoutUseCase _logoutUseCase;
   final AuthRepository _repository;
+  final Dio _dio;
 
   // Temporarily hold registration info before OTP is verified
   String? _tempFullName;
   String? _tempSurname;
+
+  StreamSubscription? _authSubscription;
 
   AuthController({
     required LoginUseCase loginUseCase,
@@ -77,6 +82,7 @@ class AuthController extends StateNotifier<AuthState> {
     required SocialLoginUseCase socialLoginUseCase,
     required LogoutUseCase logoutUseCase,
     required AuthRepository repository,
+    required Dio dio,
   })  : _loginUseCase = loginUseCase,
         _registerUseCase = registerUseCase,
         _requestOtpUseCase = requestOtpUseCase,
@@ -84,9 +90,26 @@ class AuthController extends StateNotifier<AuthState> {
         _socialLoginUseCase = socialLoginUseCase,
         _logoutUseCase = logoutUseCase,
         _repository = repository,
+        _dio = dio,
         super(const AuthState.initial()) {
     checkAuthStatus();
+    _listenToAuthEvents();
   }
+
+  void _listenToAuthEvents() {
+    _authSubscription = AuthEventBus.stream.listen((event) {
+      if (event is SessionExpiredEvent) {
+        state = const AuthState.unauthenticated();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _authSubscription?.cancel();
+    super.dispose();
+  }
+
 
   Future<void> checkAuthStatus() async {
     state = const AuthState.loading();
@@ -243,50 +266,35 @@ class AuthController extends StateNotifier<AuthState> {
     state = const AuthState.unauthenticated();
   }
 
-  Future<void> demoBypassAuth() async {
-    state = const AuthState.loading();
-    await Future.delayed(const Duration(milliseconds: 500));
-    // For demo purposes, we can bypass the backend and just simulate an authenticated state
-    // But since auth needs a UserEntity, we just use checkAuthStatus which relies on token.
-    // If there's no token, we can just save a dummy token in secure storage and then check!
-    const dummyUser = UserEntity(
-      id: 'demo-google-123',
-      fullName: 'Demo User',
-      phone: '+998901234567',
-    );
-    await _repository.saveDemoSession(dummyUser);
-    state = const AuthState.authenticated(dummyUser);
-  }
 
-  Future<void> instantDevLogin(String phone) async {
-    state = const AuthState.loading();
-    final devUser = UserEntity(
-      id: 'dev-master-user-001',
-      fullName: 'Bekzodbek (Dev)',
-      phone: phone,
-      email: 'dev@milliymetr.uz',
-    );
-    await _repository.saveDemoSession(devUser);
-    state = AuthState.authenticated(devUser);
-  }
 
-  Future<bool> updateProfile(String fullName, String email, String avatarUrl) async {
+  Future<String?> updateProfile(String fullName, String email, String avatarUrl) async {
     // Save current state in case of failure
     final currentState = state;
     try {
-      state = const AuthState.loading();
-      final dio = DioClient().dio;
-      await dio.put('/users/me', data: {
+      await _dio.put('/users/me', data: {
         'full_name': fullName,
-        'email': email,
+        'fullName': fullName,
+        'email': email.isEmpty ? null : email,
         'avatar_url': avatarUrl,
+        'avatarUrl': avatarUrl,
       },);
-      // Re-fetch user to update state
-      await checkAuthStatus();
-      return true;
+      // Re-fetch user silently to avoid loading flash
+      final result = await _repository.getCurrentUser();
+      if (mounted) {
+        result.fold(
+          (failure) => state = currentState,
+          (user) => state = AuthState.authenticated(user),
+        );
+      }
+      return null;
+    } on DioException catch (e) {
+      debugPrint('Profile update failed: ${e.response?.data}');
+      state = currentState;
+      return e.response?.data?['detail'] ?? 'Profile update failed';
     } catch (e) {
       state = currentState;
-      return false;
+      return 'An unexpected error occurred';
     }
   }
 }
@@ -300,5 +308,6 @@ final authProvider = StateNotifierProvider<AuthController, AuthState>((ref) {
     socialLoginUseCase: ref.watch(socialLoginUseCaseProvider),
     logoutUseCase: ref.watch(logoutUseCaseProvider),
     repository: ref.watch(authRepositoryProvider),
+    dio: ref.watch(dioProvider),
   );
 });

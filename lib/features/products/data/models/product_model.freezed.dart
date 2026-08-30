@@ -24,8 +24,8 @@ mixin _$ProductModel {
   String? get sku => throw _privateConstructorUsedError;
   LocalizedString get name => throw _privateConstructorUsedError;
   LocalizedString get description => throw _privateConstructorUsedError;
-  List<String> get images => throw _privateConstructorUsedError;
-  List<String> get videos => throw _privateConstructorUsedError;
+  List<String>? get images => throw _privateConstructorUsedError;
+  List<String>? get videos => throw _privateConstructorUsedError;
   String? get brand => throw _privateConstructorUsedError;
   String get categoryId => throw _privateConstructorUsedError;
   String? get subcategoryId => throw _privateConstructorUsedError;
@@ -33,11 +33,11 @@ mixin _$ProductModel {
   double? get oldPrice => throw _privateConstructorUsedError;
   String get currency => throw _privateConstructorUsedError;
   String get unit => throw _privateConstructorUsedError;
-  int get moq => throw _privateConstructorUsedError;
-  int get stock => throw _privateConstructorUsedError;
-  String get stockStatus => throw _privateConstructorUsedError;
-  double get rating => throw _privateConstructorUsedError;
-  int get reviewCount => throw _privateConstructorUsedError;
+  int? get moq => throw _privateConstructorUsedError;
+  int? get stock => throw _privateConstructorUsedError;
+  String? get stockStatus => throw _privateConstructorUsedError;
+  double? get rating => throw _privateConstructorUsedError;
+  int? get reviewCount => throw _privateConstructorUsedError;
   double? get discount => throw _privateConstructorUsedError;
   Map<String, String>? get specifications => throw _privateConstructorUsedError;
   List<String>? get certificates => throw _privateConstructorUsedError;
@@ -63,8 +63,8 @@ abstract class $ProductModelCopyWith<$Res> {
       String? sku,
       LocalizedString name,
       LocalizedString description,
-      List<String> images,
-      List<String> videos,
+      List<String>? images,
+      List<String>? videos,
       String? brand,
       String categoryId,
       String? subcategoryId,
@@ -72,11 +72,11 @@ abstract class $ProductModelCopyWith<$Res> {
       double? oldPrice,
       String currency,
       String unit,
-      int moq,
-      int stock,
-      String stockStatus,
-      double rating,
-      int reviewCount,
+      int? moq,
+      int? stock,
+      String? stockStatus,
+      double? rating,
+      int? reviewCount,
       double? discount,
       Map<String, String>? specifications,
       List<String>? certificates,
@@ -103,8 +103,8 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
     Object? sku = freezed,
     Object? name = null,
     Object? description = null,
-    Object? images = null,
-    Object? videos = null,
+    Object? images = freezed,
+    Object? videos = freezed,
     Object? brand = freezed,
     Object? categoryId = null,
     Object? subcategoryId = freezed,
@@ -112,11 +112,11 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
     Object? oldPrice = freezed,
     Object? currency = null,
     Object? unit = null,
-    Object? moq = null,
-    Object? stock = null,
-    Object? stockStatus = null,
-    Object? rating = null,
-    Object? reviewCount = null,
+    Object? moq = freezed,
+    Object? stock = freezed,
+    Object? stockStatus = freezed,
+    Object? rating = freezed,
+    Object? reviewCount = freezed,
     Object? discount = freezed,
     Object? specifications = freezed,
     Object? certificates = freezed,
@@ -142,14 +142,14 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as LocalizedString,
-      images: null == images
+      images: freezed == images
           ? _value.images
           : images // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      videos: null == videos
+              as List<String>?,
+      videos: freezed == videos
           ? _value.videos
           : videos // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+              as List<String>?,
       brand: freezed == brand
           ? _value.brand
           : brand // ignore: cast_nullable_to_non_nullable
@@ -178,26 +178,26 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
           ? _value.unit
           : unit // ignore: cast_nullable_to_non_nullable
               as String,
-      moq: null == moq
+      moq: freezed == moq
           ? _value.moq
           : moq // ignore: cast_nullable_to_non_nullable
-              as int,
-      stock: null == stock
+              as int?,
+      stock: freezed == stock
           ? _value.stock
           : stock // ignore: cast_nullable_to_non_nullable
-              as int,
-      stockStatus: null == stockStatus
+              as int?,
+      stockStatus: freezed == stockStatus
           ? _value.stockStatus
           : stockStatus // ignore: cast_nullable_to_non_nullable
-              as String,
-      rating: null == rating
+              as String?,
+      rating: freezed == rating
           ? _value.rating
           : rating // ignore: cast_nullable_to_non_nullable
-              as double,
-      reviewCount: null == reviewCount
+              as double?,
+      reviewCount: freezed == reviewCount
           ? _value.reviewCount
           : reviewCount // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       discount: freezed == discount
           ? _value.discount
           : discount // ignore: cast_nullable_to_non_nullable
@@ -243,8 +243,8 @@ abstract class _$$ProductModelImplCopyWith<$Res>
       String? sku,
       LocalizedString name,
       LocalizedString description,
-      List<String> images,
-      List<String> videos,
+      List<String>? images,
+      List<String>? videos,
       String? brand,
       String categoryId,
       String? subcategoryId,
@@ -252,11 +252,11 @@ abstract class _$$ProductModelImplCopyWith<$Res>
       double? oldPrice,
       String currency,
       String unit,
-      int moq,
-      int stock,
-      String stockStatus,
-      double rating,
-      int reviewCount,
+      int? moq,
+      int? stock,
+      String? stockStatus,
+      double? rating,
+      int? reviewCount,
       double? discount,
       Map<String, String>? specifications,
       List<String>? certificates,
@@ -281,8 +281,8 @@ class __$$ProductModelImplCopyWithImpl<$Res>
     Object? sku = freezed,
     Object? name = null,
     Object? description = null,
-    Object? images = null,
-    Object? videos = null,
+    Object? images = freezed,
+    Object? videos = freezed,
     Object? brand = freezed,
     Object? categoryId = null,
     Object? subcategoryId = freezed,
@@ -290,11 +290,11 @@ class __$$ProductModelImplCopyWithImpl<$Res>
     Object? oldPrice = freezed,
     Object? currency = null,
     Object? unit = null,
-    Object? moq = null,
-    Object? stock = null,
-    Object? stockStatus = null,
-    Object? rating = null,
-    Object? reviewCount = null,
+    Object? moq = freezed,
+    Object? stock = freezed,
+    Object? stockStatus = freezed,
+    Object? rating = freezed,
+    Object? reviewCount = freezed,
     Object? discount = freezed,
     Object? specifications = freezed,
     Object? certificates = freezed,
@@ -320,14 +320,14 @@ class __$$ProductModelImplCopyWithImpl<$Res>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as LocalizedString,
-      images: null == images
+      images: freezed == images
           ? _value._images
           : images // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      videos: null == videos
+              as List<String>?,
+      videos: freezed == videos
           ? _value._videos
           : videos // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+              as List<String>?,
       brand: freezed == brand
           ? _value.brand
           : brand // ignore: cast_nullable_to_non_nullable
@@ -356,26 +356,26 @@ class __$$ProductModelImplCopyWithImpl<$Res>
           ? _value.unit
           : unit // ignore: cast_nullable_to_non_nullable
               as String,
-      moq: null == moq
+      moq: freezed == moq
           ? _value.moq
           : moq // ignore: cast_nullable_to_non_nullable
-              as int,
-      stock: null == stock
+              as int?,
+      stock: freezed == stock
           ? _value.stock
           : stock // ignore: cast_nullable_to_non_nullable
-              as int,
-      stockStatus: null == stockStatus
+              as int?,
+      stockStatus: freezed == stockStatus
           ? _value.stockStatus
           : stockStatus // ignore: cast_nullable_to_non_nullable
-              as String,
-      rating: null == rating
+              as String?,
+      rating: freezed == rating
           ? _value.rating
           : rating // ignore: cast_nullable_to_non_nullable
-              as double,
-      reviewCount: null == reviewCount
+              as double?,
+      reviewCount: freezed == reviewCount
           ? _value.reviewCount
           : reviewCount // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       discount: freezed == discount
           ? _value.discount
           : discount // ignore: cast_nullable_to_non_nullable
@@ -416,8 +416,8 @@ class _$ProductModelImpl extends _ProductModel {
       this.sku,
       required this.name,
       required this.description,
-      final List<String> images = const [],
-      final List<String> videos = const [],
+      final List<String>? images,
+      final List<String>? videos,
       this.brand,
       required this.categoryId,
       this.subcategoryId,
@@ -425,11 +425,11 @@ class _$ProductModelImpl extends _ProductModel {
       this.oldPrice,
       required this.currency,
       required this.unit,
-      required this.moq,
-      required this.stock,
-      required this.stockStatus,
-      required this.rating,
-      required this.reviewCount,
+      this.moq,
+      this.stock,
+      this.stockStatus,
+      this.rating,
+      this.reviewCount,
       this.discount,
       final Map<String, String>? specifications,
       final List<String>? certificates,
@@ -454,22 +454,24 @@ class _$ProductModelImpl extends _ProductModel {
   final LocalizedString name;
   @override
   final LocalizedString description;
-  final List<String> _images;
+  final List<String>? _images;
   @override
-  @JsonKey()
-  List<String> get images {
+  List<String>? get images {
+    final value = _images;
+    if (value == null) return null;
     if (_images is EqualUnmodifiableListView) return _images;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_images);
+    return EqualUnmodifiableListView(value);
   }
 
-  final List<String> _videos;
+  final List<String>? _videos;
   @override
-  @JsonKey()
-  List<String> get videos {
+  List<String>? get videos {
+    final value = _videos;
+    if (value == null) return null;
     if (_videos is EqualUnmodifiableListView) return _videos;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_videos);
+    return EqualUnmodifiableListView(value);
   }
 
   @override
@@ -487,15 +489,15 @@ class _$ProductModelImpl extends _ProductModel {
   @override
   final String unit;
   @override
-  final int moq;
+  final int? moq;
   @override
-  final int stock;
+  final int? stock;
   @override
-  final String stockStatus;
+  final String? stockStatus;
   @override
-  final double rating;
+  final double? rating;
   @override
-  final int reviewCount;
+  final int? reviewCount;
   @override
   final double? discount;
   final Map<String, String>? _specifications;
@@ -629,8 +631,8 @@ abstract class _ProductModel extends ProductModel {
       final String? sku,
       required final LocalizedString name,
       required final LocalizedString description,
-      final List<String> images,
-      final List<String> videos,
+      final List<String>? images,
+      final List<String>? videos,
       final String? brand,
       required final String categoryId,
       final String? subcategoryId,
@@ -638,11 +640,11 @@ abstract class _ProductModel extends ProductModel {
       final double? oldPrice,
       required final String currency,
       required final String unit,
-      required final int moq,
-      required final int stock,
-      required final String stockStatus,
-      required final double rating,
-      required final int reviewCount,
+      final int? moq,
+      final int? stock,
+      final String? stockStatus,
+      final double? rating,
+      final int? reviewCount,
       final double? discount,
       final Map<String, String>? specifications,
       final List<String>? certificates,
@@ -664,9 +666,9 @@ abstract class _ProductModel extends ProductModel {
   @override
   LocalizedString get description;
   @override
-  List<String> get images;
+  List<String>? get images;
   @override
-  List<String> get videos;
+  List<String>? get videos;
   @override
   String? get brand;
   @override
@@ -682,15 +684,15 @@ abstract class _ProductModel extends ProductModel {
   @override
   String get unit;
   @override
-  int get moq;
+  int? get moq;
   @override
-  int get stock;
+  int? get stock;
   @override
-  String get stockStatus;
+  String? get stockStatus;
   @override
-  double get rating;
+  double? get rating;
   @override
-  int get reviewCount;
+  int? get reviewCount;
   @override
   double? get discount;
   @override

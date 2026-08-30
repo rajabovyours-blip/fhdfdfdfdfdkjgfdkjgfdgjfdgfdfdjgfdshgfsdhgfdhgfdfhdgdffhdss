@@ -777,7 +777,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get faqPaymentAnswer =>
-      'В настоящее время принимается оплата наличными при получении. Другие способы оплаты будут добавлены в ближайшее время.';
+      'В настоящее время принимаются оплата наличными при доставке, а также Click, Payme, Visa, Mastercard и Uzum Nasiya.';
 
   @override
   String get faqReturn => 'Можно ли вернуть товар?';
@@ -1286,4 +1286,27 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get brandDefault => 'Без бренда';
+
+  @override
+  String get networkError => 'Нет подключения к интернету или ошибка сервера.';
+
+  @override
+  String get serverError =>
+      'Сервер временно недоступен для обслуживания. Пожалуйста, повторите попытку позже.';
+
+  @override
+  String get passwordChangedSuccessfully => 'Пароль успешно изменен';
+
+  @override
+  String get passwordChangeError => 'Произошла ошибка или пароль неверен';
+
+  @override
+  String get biometricError => 'Биометрическая ошибка';
+
+  @override
+  String get noAddressesSaved => 'У вас пока нет сохраненных адресов';
+
+  @override
+  String get pleaseSelectRegionDistrict =>
+      'Пожалуйста, выберите область и район';
 }

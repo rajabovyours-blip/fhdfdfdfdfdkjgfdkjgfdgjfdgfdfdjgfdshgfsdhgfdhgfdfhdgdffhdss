@@ -1,7 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:milliy_metr/core/errors/app_exception.dart';
 import 'package:milliy_metr/core/errors/failures.dart';
-import 'package:milliy_metr/core/localization/localized_string.dart';
+
 import 'package:milliy_metr/features/products/domain/entities/product_entity.dart';
 import 'package:milliy_metr/features/products/data/datasources/product_remote_datasource.dart';
 

@@ -186,8 +186,6 @@
   "placingOrder": "Buyurtma qabul qilinmoqda...",
   "confirmOrder": "Buyurtmani tasdiqlash",
   "newest": "Yangi qo‘shilgan",
-  "priceLowToHigh": "Narx: pastdan yuqoriga",
-  "priceHighToLow": "Narx: yuqoridan pastga",
   "rating": "Reyting",
   "removedFromWishlist": "Sevimlilardan olib tashlandi",
   "searchInWishlist": "Sevimlilardan qidirish",
@@ -270,7 +268,7 @@
   "faqDelivery": "Yetkazib berish qancha vaqt oladi?",
   "faqDeliveryAnswer": "Standart yetkazib berish 2-3 ish kunini oladi. Tezkor yetkazib berish esa 1 kun ichida amalga oshiriladi.",
   "faqPayment": "Qanday to'lov usullari mavjud?",
-  "faqPaymentAnswer": "Hozirda naqd pul bilan to'lov qabul qilinadi. Boshqa to'lov usullari tez orada qo'shiladi.",
+  "faqPaymentAnswer": "Hozirda buyurtmani qabul qilib olganda naqd pul to'lash, shuningdek Click, Payme, Visa, Mastercard va Uzum Nasiya orqali to'lovlar qabul qilinadi.",
   "faqReturn": "Mahsulotni qaytarish mumkinmi?",
   "faqReturnAnswer": "Ha, 14 kun ichida mahsulotni qaytarish mumkin. Mahsulot ishlatilmagan va original qadoqda bo'lishi kerak.",
   "faqWarranty": "Kafolat mavjudmi?",
@@ -437,6 +435,11 @@
   "privacyPolicy": "Maxfiylik siyosati",
   "termsOfUse": "Foydalanish shartlari",
   "brandDefault": "Brend kiritilmagan",
-  "fromPrice": "Dan (so'm)",
-  "toPrice": "Gacha (so'm)"
+  "networkError": "Internet aloqasi mavjud emas yoki server bilan ulanishda xatolik yuz berdi.",
+  "serverError": "Serverda vaqtinchalik profilaktika. Birozdan so'ng urinib ko'ring.",
+  "passwordChangedSuccessfully": "Parol muvaffaqiyatli o'zgartirildi",
+  "passwordChangeError": "Xatolik yuz berdi yoxud parol noto'g'ri",
+  "biometricError": "Biometrik xatolik",
+  "noAddressesSaved": "Sizda hozircha manzillar yo'q",
+  "pleaseSelectRegionDistrict": "Iltimos, viloyat va tumanni tanlang"
 }

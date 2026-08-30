@@ -1585,7 +1585,7 @@ abstract class AppLocalizations {
   /// No description provided for @faqPaymentAnswer.
   ///
   /// In uz, this message translates to:
-  /// **'Hozirda naqd pul bilan to\'lov qabul qilinadi. Boshqa to\'lov usullari tez orada qo\'shiladi.'**
+  /// **'Hozirda buyurtmani qabul qilib olganda naqd pul to\'lash, shuningdek Click, Payme, Visa, Mastercard va Uzum Nasiya orqali to\'lovlar qabul qilinadi.'**
   String get faqPaymentAnswer;
 
   /// No description provided for @faqReturn.
@@ -2583,6 +2583,48 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Brend kiritilmagan'**
   String get brandDefault;
+
+  /// No description provided for @networkError.
+  ///
+  /// In uz, this message translates to:
+  /// **'Internet aloqasi mavjud emas yoki server bilan ulanishda xatolik yuz berdi.'**
+  String get networkError;
+
+  /// No description provided for @serverError.
+  ///
+  /// In uz, this message translates to:
+  /// **'Serverda vaqtinchalik profilaktika. Birozdan so\'ng urinib ko\'ring.'**
+  String get serverError;
+
+  /// No description provided for @passwordChangedSuccessfully.
+  ///
+  /// In uz, this message translates to:
+  /// **'Parol muvaffaqiyatli o\'zgartirildi'**
+  String get passwordChangedSuccessfully;
+
+  /// No description provided for @passwordChangeError.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xatolik yuz berdi yoxud parol noto\'g\'ri'**
+  String get passwordChangeError;
+
+  /// No description provided for @biometricError.
+  ///
+  /// In uz, this message translates to:
+  /// **'Biometrik xatolik'**
+  String get biometricError;
+
+  /// No description provided for @noAddressesSaved.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sizda hozircha manzillar yo\'q'**
+  String get noAddressesSaved;
+
+  /// No description provided for @pleaseSelectRegionDistrict.
+  ///
+  /// In uz, this message translates to:
+  /// **'Iltimos, viloyat va tumanni tanlang'**
+  String get pleaseSelectRegionDistrict;
 }
 
 class _AppLocalizationsDelegate

@@ -11,6 +11,8 @@ import 'package:milliy_metr/l10n/app_localizations.dart';
 
 
 
+final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
@@ -36,6 +38,7 @@ class MilliyMetrApp extends ConsumerWidget {
 
     return MaterialApp.router(
       title: 'Milliy Metr',
+      scaffoldMessengerKey: scaffoldMessengerKey,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,

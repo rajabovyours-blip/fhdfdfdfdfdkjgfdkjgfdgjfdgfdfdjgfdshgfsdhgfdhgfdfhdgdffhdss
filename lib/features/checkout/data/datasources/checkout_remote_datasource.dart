@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:milliy_metr/core/errors/app_exception.dart';
+import 'package:milliy_metr/core/errors/dio_error_mapper.dart';
 
 abstract class CheckoutRemoteDataSource {
   Future<dynamic> placeOrder(Map<String, dynamic> data);
@@ -22,18 +23,9 @@ class CheckoutRemoteDataSourceImpl implements CheckoutRemoteDataSource {
         throw ServerException('Failed to place order');
       }
     } on DioException catch (e) {
-      final responseData = e.response?.data;
-      if (responseData != null) {
-        // print removed
-        if (responseData is Map) {
-          if (responseData['detail'] != null) {
-            throw ServerException(responseData['detail'].toString());
-          } else if (responseData['message'] != null) {
-            throw ServerException(responseData['message'].toString());
-          }
-        }
-      }
-      throw ServerException(e.message ?? 'Network error');
+      throw ServerException(DioErrorMapper.extractErrorMessage(e));
+    } catch (e) {
+      throw ServerException(DioErrorMapper.extractErrorMessage(e));
     }
   }
 
@@ -47,7 +39,9 @@ class CheckoutRemoteDataSourceImpl implements CheckoutRemoteDataSource {
         throw ServerException('Failed to fetch addresses');
       }
     } on DioException catch (e) {
-      throw ServerException(e.message ?? 'Network error');
+      throw ServerException(DioErrorMapper.extractErrorMessage(e));
+    } catch (e) {
+      throw ServerException(DioErrorMapper.extractErrorMessage(e));
     }
   }
 
@@ -59,7 +53,9 @@ class CheckoutRemoteDataSourceImpl implements CheckoutRemoteDataSource {
         throw ServerException('Failed to add address');
       }
     } on DioException catch (e) {
-      throw ServerException(e.message ?? 'Network error');
+      throw ServerException(DioErrorMapper.extractErrorMessage(e));
+    } catch (e) {
+      throw ServerException(DioErrorMapper.extractErrorMessage(e));
     }
   }
 }

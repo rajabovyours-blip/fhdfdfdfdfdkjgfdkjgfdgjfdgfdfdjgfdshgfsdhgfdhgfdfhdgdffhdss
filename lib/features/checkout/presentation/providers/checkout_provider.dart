@@ -227,6 +227,20 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
 
   Future<bool> addNewAddress(String label, String region, String district, String street) async {
     state = state.copyWith(isLoading: true);
+
+    // Check for duplicates
+    final bool isDuplicate = state.addresses.any((a) =>
+        a.region == region &&
+        a.district == district &&
+        a.street == street);
+
+    if (isDuplicate) {
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Bu manzil allaqachon mavjud',
+      );
+      return false;
+    }
     
     final newAddress = AddressEntity(
       id: 'local_${DateTime.now().millisecondsSinceEpoch}',
@@ -244,21 +258,31 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
       addressType: 'local',
     );
     
-    final localStrs = PreferencesManager.getStringList('local_addresses');
-    localStrs.add(jsonEncode(newAddress.toJson()));
-    await PreferencesManager.setStringList('local_addresses', localStrs);
+    final localStrs = List<String>.from(PreferencesManager.getStringList('local_addresses'));
+    
+    // Check for duplicates
+    final bool alreadyExists = state.addresses.any((a) => 
+        a.street == street && a.region == region && a.district == district);
+    
+    if (!alreadyExists) {
+      localStrs.add(jsonEncode(newAddress.toJson()));
+      await PreferencesManager.setStringList('local_addresses', localStrs);
+    }
     
     try {
       final dio = ref.read(dioProvider);
       final landmark = '$region, $district';
-      await dio.post('/addresses', data: {
-        'title': label,
-        'street': street,
-        'landmark': landmark,
-        'lat': 0.0,
-        'lng': 0.0,
-        'is_default': state.addresses.isEmpty,
-      },);
+      await dio.post(
+        '/addresses',
+        data: {
+          'title': label,
+          'street': street,
+          'landmark': landmark,
+          'lat': 0.0,
+          'lng': 0.0,
+          'is_default': state.addresses.isEmpty,
+        },
+      );
     } catch (e) {
       // Remote sync fails, but local persists
     }

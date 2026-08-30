@@ -777,7 +777,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get faqPaymentAnswer =>
-      'Currently, cash on delivery is accepted. Other payment methods will be added soon.';
+      'Currently, Cash on Delivery, Click, Payme, Visa, Mastercard, and Uzum Nasiya are accepted.';
 
   @override
   String get faqReturn => 'Can I return a product?';
@@ -1286,4 +1286,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get brandDefault => 'No brand';
+
+  @override
+  String get networkError => 'No internet connection or server error.';
+
+  @override
+  String get serverError =>
+      'Server is temporarily down for maintenance. Please try again later.';
+
+  @override
+  String get passwordChangedSuccessfully => 'Password changed successfully';
+
+  @override
+  String get passwordChangeError =>
+      'An error occurred or password is incorrect';
+
+  @override
+  String get biometricError => 'Biometric error';
+
+  @override
+  String get noAddressesSaved => 'You don\'t have any saved addresses yet';
+
+  @override
+  String get pleaseSelectRegionDistrict =>
+      'Please select a region and district';
 }

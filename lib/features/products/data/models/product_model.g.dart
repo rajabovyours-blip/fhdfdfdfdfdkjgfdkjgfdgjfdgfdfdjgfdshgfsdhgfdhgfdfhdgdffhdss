@@ -12,14 +12,10 @@ _$ProductModelImpl _$$ProductModelImplFromJson(Map<String, dynamic> json) =>
       sku: json['sku'] as String?,
       name: LocalizedString.fromJson(json['name']),
       description: LocalizedString.fromJson(json['description']),
-      images: (json['images'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          const [],
-      videos: (json['videos'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          const [],
+      images:
+          (json['images'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      videos:
+          (json['videos'] as List<dynamic>?)?.map((e) => e as String).toList(),
       brand: json['brand'] as String?,
       categoryId: json['categoryId'] as String,
       subcategoryId: json['subcategoryId'] as String?,
@@ -27,11 +23,11 @@ _$ProductModelImpl _$$ProductModelImplFromJson(Map<String, dynamic> json) =>
       oldPrice: (json['oldPrice'] as num?)?.toDouble(),
       currency: json['currency'] as String,
       unit: json['unit'] as String,
-      moq: (json['moq'] as num).toInt(),
-      stock: (json['stock'] as num).toInt(),
-      stockStatus: json['stockStatus'] as String,
-      rating: (json['rating'] as num).toDouble(),
-      reviewCount: (json['reviewCount'] as num).toInt(),
+      moq: (json['moq'] as num?)?.toInt(),
+      stock: (json['stock'] as num?)?.toInt(),
+      stockStatus: json['stockStatus'] as String?,
+      rating: (json['rating'] as num?)?.toDouble(),
+      reviewCount: (json['reviewCount'] as num?)?.toInt(),
       discount: (json['discount'] as num?)?.toDouble(),
       specifications: (json['specifications'] as Map<String, dynamic>?)?.map(
         (k, e) => MapEntry(k, e as String),

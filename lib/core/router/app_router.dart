@@ -40,6 +40,7 @@ import 'package:milliy_metr/features/wishlist/presentation/views/wishlist_screen
 import 'package:milliy_metr/features/reviews/presentation/views/all_reviews_screen.dart';
 import 'package:milliy_metr/features/reviews/presentation/views/review_photo_viewer_screen.dart';
 
+import 'package:milliy_metr/main.dart';
 import 'package:milliy_metr/features/admin/presentation/views/admin_audit_logs_screen.dart';
 import 'package:milliy_metr/features/admin/presentation/views/admin_categories_screen.dart';
 import 'package:milliy_metr/features/admin/presentation/views/admin_complaints_screen.dart';
@@ -81,6 +82,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     initialLocation: isAdminApp ? AppRoutes.adminDashboard : AppRoutes.splash,
     refreshListenable: notifier,
     redirect: (context, state) {
+      // Clear snackbars on route change to prevent them sticking
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        scaffoldMessengerKey.currentState?.clearSnackBars();
+      });
       // COMPLETELY REMOVE AUTHENTICATION GUARDS FOR ADMIN
       if (isAdminApp) return null;
       return AuthGuard.redirect(context, state, ref);

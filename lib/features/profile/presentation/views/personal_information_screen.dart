@@ -86,7 +86,7 @@ class _PersonalInformationScreenState
               if (_isEditing) {
                 if (_formKey.currentState!.validate()) {
                   setState(() => _isSaving = true);
-                  final success = await ref.read(authProvider.notifier).updateProfile(
+                  final error = await ref.read(authProvider.notifier).updateProfile(
                     _nameController.text,
                     _emailController.text,
                     _avatarUrl ?? '',
@@ -94,11 +94,11 @@ class _PersonalInformationScreenState
                   setState(() => _isSaving = false);
                   if (!context.mounted) return;
                   
-                  if (success) {
+                  if (error == null) {
                     setState(() => _isEditing = false);
                     AppSnackBar.showSuccess(context, l10n.profileUpdated);
                   } else {
-                    AppSnackBar.showError(context, 'Xatolik yuz berdi');
+                    AppSnackBar.showError(context, error);
                   }
                 }
               } else {
@@ -316,7 +316,7 @@ class _PersonalInformationScreenState
         _localAvatarPath = null;
       });
       if (mounted) {
-        AppSnackBar.showError(context, 'Rasm yuklashda xatolik yuz berdi');
+        AppSnackBar.showError(context, context.l10n.errorOccurred);
       }
     } finally {
       setState(() => _isSaving = false);

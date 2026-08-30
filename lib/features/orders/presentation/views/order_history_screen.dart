@@ -72,16 +72,16 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
                         ),
                       ),
                       const SizedBox(height: 24),
-                      const Text(
-                        'Ulanishda xatolik',
-                        style: TextStyle(
+                      Text(
+                        context.l10n.errorOccurred,
+                        style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        "Tarmoqqa ulanishni tekshirib qayta urinib ko'ring.",
+                        context.l10n.networkError,
                         style: TextStyle(
                           fontSize: 14,
                           color: Theme.of(context).textTheme.bodySmall?.color,

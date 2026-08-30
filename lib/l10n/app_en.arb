@@ -165,8 +165,6 @@
   "placingOrder": "Placing order...",
   "confirmOrder": "Confirm Order",
   "newest": "Newest",
-  "priceLowToHigh": "Price: Low to High",
-  "priceHighToLow": "Price: High to Low",
   "rating": "Rating",
   "removedFromWishlist": "Removed from wishlist",
   "searchInWishlist": "Search in wishlist",
@@ -249,7 +247,7 @@
   "faqDelivery": "How long does delivery take?",
   "faqDeliveryAnswer": "Standard delivery takes 2-3 business days. Express delivery is completed within 1 day.",
   "faqPayment": "What payment methods are available?",
-  "faqPaymentAnswer": "Currently, cash on delivery is accepted. Other payment methods will be added soon.",
+  "faqPaymentAnswer": "Currently, Cash on Delivery, Click, Payme, Visa, Mastercard, and Uzum Nasiya are accepted.",
   "faqReturn": "Can I return a product?",
   "faqReturnAnswer": "Yes, you can return a product within 14 days. The product must be unused and in its original packaging.",
   "faqWarranty": "Is there a warranty?",
@@ -414,6 +412,11 @@
   "privacyPolicy": "Privacy Policy",
   "termsOfUse": "Terms of Use",
   "brandDefault": "No brand",
-  "fromPrice": "From (UZS)",
-  "toPrice": "To (UZS)"
+  "networkError": "No internet connection or server error.",
+  "serverError": "Server is temporarily down for maintenance. Please try again later.",
+  "passwordChangedSuccessfully": "Password changed successfully",
+  "passwordChangeError": "An error occurred or password is incorrect",
+  "biometricError": "Biometric error",
+  "noAddressesSaved": "You don't have any saved addresses yet",
+  "pleaseSelectRegionDistrict": "Please select a region and district"
 }

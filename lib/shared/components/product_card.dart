@@ -35,12 +35,10 @@ class ProductCard extends ConsumerStatefulWidget {
 
 class _ProductCardState extends ConsumerState<ProductCard> {
   bool _isLoading = false;
-  bool _isOptimisticCartAdded = false;
 
   Future<void> _addToCart() async {
     setState(() {
       _isLoading = true;
-      _isOptimisticCartAdded = true;
     });
 
     try {
@@ -49,9 +47,6 @@ class _ProductCardState extends ConsumerState<ProductCard> {
           .addToCart(widget.product, 1);
     } catch (e) {
       if (mounted) {
-        setState(() {
-          _isOptimisticCartAdded = false;
-        });
         AppSnackBar.showError(context, context.l10n.errorOccurred);
       }
     } finally {
@@ -70,12 +65,12 @@ class _ProductCardState extends ConsumerState<ProductCard> {
       orElse: () => false,
     );
 
-    final bool isInCart = widget.showCartAction
-        ? (ref.watch(cartNotifierProvider).maybeWhen(
-              loaded: (items) => items.any((item) => item.product.id == widget.product.id),
-              orElse: () => false,
-            ) || _isOptimisticCartAdded)
-        : false;
+    final bool isInCart = ref.watch(cartNotifierProvider.select(
+      (state) => state.maybeWhen(
+        loaded: (items) => items.any((item) => item.product.id == widget.product.id),
+        orElse: () => false,
+      ),
+    ));
 
     return GestureDetector(
       onTap: widget.onTap,
