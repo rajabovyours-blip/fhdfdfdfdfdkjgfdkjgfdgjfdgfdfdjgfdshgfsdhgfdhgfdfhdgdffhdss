@@ -76,6 +76,25 @@ CATEGORIES = [
 
 async def seed_data(session: AsyncSession):
     """Idempotent seed: only creates categories if none exist. Never creates demo products."""
+    # Ensure an admin user exists
+    from app.models.user import User, RoleEnum
+    from app.auth.security import get_password_hash
+    
+    admin_check = await session.execute(select(User).where(User.email == "admin@milliymetr.uz"))
+    if not admin_check.scalar_one_or_none():
+        admin = User(
+            id=uuid.uuid4(),
+            full_name="Administrator",
+            phone="+998000000000",
+            email="admin@milliymetr.uz",
+            hashed_password=get_password_hash("admin123"),
+            role=RoleEnum.ADMIN,
+            is_active=True
+        )
+        session.add(admin)
+        await session.commit()
+        print("✅ Seeded default admin user (admin@milliymetr.uz).")
+
     result = await session.execute(select(func.count()).select_from(Category))
     count = result.scalar()
     

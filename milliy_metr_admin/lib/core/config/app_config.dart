@@ -1,4 +1,6 @@
 class AppConfig {
-  // Configurable base URL
-  static const String baseUrl = 'https://milliymetr-backend.onrender.com/api/v1';
+  static const String baseUrl = String.fromEnvironment(
+    'API_URL',
+    defaultValue: 'https://milliymetr-backend.onrender.com/api/v1',
+  );
 }
