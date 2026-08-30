@@ -6,6 +6,7 @@ import 'package:milliy_metr/core/router/route_constants.dart';
 import 'package:milliy_metr/core/providers/auth_provider.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
 import 'package:milliy_metr/features/authentication/presentation/widgets/auth_language_selector.dart';
+import 'dart:io' show Platform;
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -129,6 +130,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       }
     } catch (e) {
       debugPrint('Google Sign-In caught: $e');
+      if (mounted) {
+        AppSnackBar.showError(context, 'Google orqali kirishda xatolik yuz berdi');
+      }
     }
   }
 
@@ -137,12 +141,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       final isAvailable = await SignInWithApple.isAvailable();
       if (!isAvailable) {
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Apple Sign-In is not available on this device.'),
-            backgroundColor: context.colors.danger,
-          ),
-        );
+        AppSnackBar.showError(context, 'Apple Sign-In is not available on this device.');
         return;
       }
 
@@ -162,6 +161,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         return;
       }
       debugPrint('Apple Sign-In caught: $e');
+      if (mounted) {
+        AppSnackBar.showError(context, 'Apple orqali kirishda xatolik yuz berdi');
+      }
     }
   }
 
@@ -352,64 +354,50 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ),
               ),
 
-              const Spacer(flex: 2),
+              const Spacer(flex: 1),
 
-              // 6. DIVIDER
+              // 6. OR DIVIDER
               Row(
                 children: [
-                  Expanded(child: Divider(color: context.colors.outline)),
+                  Expanded(child: Divider(color: context.colors.outline, thickness: 1)),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Text(
                       context.l10n.or,
                       style: TextStyle(
                         color: context.colors.textMedium,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12,
                       ),
                     ),
                   ),
-                  Expanded(child: Divider(color: context.colors.outline)),
+                  Expanded(child: Divider(color: context.colors.outline, thickness: 1)),
                 ],
               ),
+              const SizedBox(height: 24),
+
+              // 7. SOCIAL LOGIN BUTTONS (Platform specific)
+              if (Platform.isIOS)
+                _SocialButton(
+                  label: context.l10n.continueWithApple,
+                  iconWidget: Icon(Icons.apple, color: context.colors.onPrimary, size: 24),
+                  backgroundColor: Colors.black,
+                  textColor: Colors.white,
+                  borderColor: Colors.black,
+                  onTap: _handleAppleLogin,
+                )
+              else
+                _SocialButton(
+                  label: context.l10n.continueWithGoogle,
+                  iconWidget: SvgPicture.asset(
+                    'assets/icons/google.svg',
+                    width: 24,
+                    height: 24,
+                  ),
+                  onTap: _handleGoogleLogin,
+                ),
 
               const Spacer(flex: 2),
-
-              // 7. SOCIAL BUTTONS
-              _SocialButton(
-                label: context.l10n.continueWithGoogle,
-                iconWidget: SvgPicture.asset(
-                  'assets/svg/google_logo.svg',
-                  height: 24,
-                  width: 24,
-                ),
-                onTap: isLoading ? () {} : _handleGoogleLogin,
-              ),
-              
-              const SizedBox(height: 12),
-              Builder(
-                builder: (context) {
-                  final isDark = Theme.of(context).brightness == Brightness.dark;
-                  final bgColor = isDark ? const Color(0xFF1E222D) : const Color(0xFF000000);
-                  final borderColor = isDark ? const Color(0xFF2E3342) : const Color(0xFF000000);
-                  const fgColor = Colors.white;
-
-                  return _SocialButton(
-                    label: context.l10n.continueWithApple,
-                    backgroundColor: bgColor,
-                    borderColor: borderColor,
-                    textColor: fgColor,
-                    iconWidget: const Icon(
-                      Icons.apple,
-                      size: 28,
-                      color: fgColor,
-                    ),
-                    onTap: isLoading ? () {} : _handleAppleLogin,
-                  );
-                },
-              ),
-
-              const Spacer(flex: 3),
               
               // 8. LOWER SECTION: REGISTER LINK
               Center(
@@ -500,13 +488,13 @@ class _SocialButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             iconWidget,
-            const SizedBox(width: 8),
+            const SizedBox(width: 12),
             Flexible(
               child: Text(
                 label,
                 style: TextStyle(
                   color: textColor ?? context.colors.textHigh,
-                  fontSize: 14,
+                  fontSize: 15,
                   fontWeight: FontWeight.w600,
                 ),
                 overflow: TextOverflow.ellipsis,

@@ -360,7 +360,36 @@ class AppLocalizationsRu extends AppLocalizations {
   String get errorLoadingPhoto => 'Ошибка при загрузке фото или нет разрешения';
 
   @override
-  String get reviewSubmitted => 'Ваш отзыв отправлен';
+  String get returnRequestSubmitted => 'Запрос на возврат отправлен.';
+
+  @override
+  String get pickFromGallery => 'Выбрать из галереи';
+
+  @override
+  String get takePhoto => 'Сделать фото';
+
+  @override
+  String get confirm => 'Подтвердить';
+
+  @override
+  String get confirmRemoveFromCart =>
+      'Вы уверены, что хотите удалить этот товар из корзины?';
+
+  @override
+  String get price => 'Цена';
+
+  @override
+  String get statusOnTheWay => 'Статус: В пути';
+
+  @override
+  String get driverJamshid => 'Водитель: Jamshid K.';
+
+  @override
+  String get estimatedArrival => 'Ориентировочное время прибытия: 18:30';
+
+  @override
+  String get liveTrackingReady =>
+      'Интеграция с картой для отслеживания готова.';
 
   @override
   String get rateProduct => 'Оцените товар';
@@ -890,7 +919,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get refundDescription => 'Введите описание';
 
   @override
-  String get refundSubmitted => 'Заявка на возврат отправлена';
+  String get refundSubmitted => 'Qaytarish so\'rovi yuborildi';
 
   @override
   String get addCard => 'Добавить карту';

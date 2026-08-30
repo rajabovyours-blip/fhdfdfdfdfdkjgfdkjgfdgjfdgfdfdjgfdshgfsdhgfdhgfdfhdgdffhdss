@@ -17,7 +17,14 @@ class CatalogBottomSheets {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
-        final state = ref.watch(catalogNotifierProvider);
+        // MUHIM: ref.watch emas, ref.read. Bu ref chaqiruvchi (tashqi)
+        // widgetdan olingan va showModalBottomSheet'ning builder'i o'sha
+        // widgetning o'z build() metodi emas - shu sababli watch bu yerda
+        // Riverpod tomonidan noto'g'ri ishlatish deb hisoblanadi va
+        // runtime'da xatolik berishi yoki umuman reaktiv ishlamasligi
+        // mumkin. Qiymat faqat ochilish vaqtida bir marta kerak - read
+        // yetarli va xavfsiz.
+        final state = ref.read(catalogNotifierProvider);
         final currentSort = state.maybeWhen(
           loaded: (data) => data.sortOption,
           orElse: () => null,
@@ -29,8 +36,12 @@ class CatalogBottomSheets {
             title: Text(
               label,
               style: TextStyle(
+                // Bu yerda fon "surface", "primary" emas - shuning uchun
+                // onPrimary emas, primary rangdagi matn to'g'ri (onPrimary
+                // faqat primary fon ustida ishlatiladi, aks holda matn
+                // deyarli ko'rinmay qolishi mumkin edi).
                 color: isSelected
-                    ? context.colors.onPrimary
+                    ? context.colors.primary
                     : context.colors.textHigh,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
@@ -99,22 +110,30 @@ class _FilterSheetContent extends ConsumerStatefulWidget {
 }
 
 class _FilterSheetContentState extends ConsumerState<_FilterSheetContent> {
-  double _minPrice = 0;
-  double _maxPrice = 50000000;
-  String _selectedLocation = 'Barchasi';
-  
+  static const double _kMinPriceBound = 0;
+  static const double _kMaxPriceBound = 50000000;
+
+  double _minPrice = _kMinPriceBound;
+  double _maxPrice = _kMaxPriceBound;
+  late String _selectedLocation;
+
   final TextEditingController _minPriceController = TextEditingController();
   final TextEditingController _maxPriceController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    // Avval locale'ga mos "Barchasi" qiymatini standart qilib beramiz -
+    // qattiq yozilgan o'zbekcha matn o'rniga (aks holda rus/ingliz tilida
+    // ilova default holatda hech qaysi region tanlangandek ko'rinmasdi).
+    _selectedLocation = context.l10n.all;
+
     final state = ref.read(catalogNotifierProvider);
     state.maybeWhen(
       loaded: (data) {
-        _minPrice = data.minPrice ?? 0;
-        _maxPrice = data.maxPrice ?? 50000000;
-        _selectedLocation = data.selectedLocation ?? 'Barchasi';
+        _minPrice = data.minPrice ?? _kMinPriceBound;
+        _maxPrice = data.maxPrice ?? _kMaxPriceBound;
+        _selectedLocation = data.selectedLocation ?? _selectedLocation;
       },
       orElse: () {},
     );
@@ -131,13 +150,21 @@ class _FilterSheetContentState extends ConsumerState<_FilterSheetContent> {
 
   void _onMinPriceChanged(String value) {
     final String cleanVal = value.replaceAll(' ', '');
+    if (cleanVal.isEmpty) {
+      // Maydon bo'shatilsa, ichki holat ham eski qiymatda "osilib"
+      // qolmasin - aks holda foydalanuvchi bo'sh maydon ko'radi, lekin
+      // "Ko'rsatish" bosilganda eski min narx qo'llanib ketardi.
+      setState(() => _minPrice = _kMinPriceBound);
+      return;
+    }
     final double? parsed = double.tryParse(cleanVal);
     if (parsed != null) {
       setState(() {
         _minPrice = parsed;
         if (_minPrice > _maxPrice) {
           _maxPrice = _minPrice;
-          _maxPriceController.text = AppFormatters.formatNumber(_maxPrice.round());
+          _maxPriceController.text =
+              AppFormatters.formatNumber(_maxPrice.round());
         }
       });
     }
@@ -145,22 +172,51 @@ class _FilterSheetContentState extends ConsumerState<_FilterSheetContent> {
 
   void _onMaxPriceChanged(String value) {
     final String cleanVal = value.replaceAll(' ', '');
+    if (cleanVal.isEmpty) {
+      setState(() => _maxPrice = _kMaxPriceBound);
+      return;
+    }
     final double? parsed = double.tryParse(cleanVal);
     if (parsed != null) {
       setState(() {
         _maxPrice = parsed;
         if (_maxPrice < _minPrice) {
           _minPrice = _maxPrice;
-          _minPriceController.text = AppFormatters.formatNumber(_minPrice.round());
+          _minPriceController.text =
+              AppFormatters.formatNumber(_minPrice.round());
         }
       });
     }
   }
 
+  InputDecoration _priceFieldDecoration(String label) {
+    // Oldin bu TextField'lar hech qanday context.colors ishlatmasdi -
+    // Flutter'ning default Material rangida chiqib, faylning qolgan
+    // qismidan vizual farq qilardi.
+    return InputDecoration(
+      labelText: label,
+      labelStyle: TextStyle(color: context.colors.textMedium),
+      filled: true,
+      fillColor: context.colors.background,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: context.colors.outline),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: context.colors.outline),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: context.colors.primary, width: 1.5),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final locale = Localizations.localeOf(context).languageCode;
-    
+
     final locations = [
       context.l10n.all,
       ...uzbekistanRegionsData.map((r) => r.getName(locale)),
@@ -217,10 +273,9 @@ class _FilterSheetContentState extends ConsumerState<_FilterSheetContent> {
                             FilteringTextInputFormatter.digitsOnly,
                             ThousandsSeparatorInputFormatter(),
                           ],
-                          decoration: InputDecoration(
-                            labelText: context.l10n.fromPrice,
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                          ),
+                          style: TextStyle(color: context.colors.textHigh),
+                          decoration:
+                              _priceFieldDecoration(context.l10n.fromPrice),
                           onChanged: _onMinPriceChanged,
                         ),
                       ),
@@ -233,10 +288,9 @@ class _FilterSheetContentState extends ConsumerState<_FilterSheetContent> {
                             FilteringTextInputFormatter.digitsOnly,
                             ThousandsSeparatorInputFormatter(),
                           ],
-                          decoration: InputDecoration(
-                            labelText: context.l10n.toPrice,
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                          ),
+                          style: TextStyle(color: context.colors.textHigh),
+                          decoration:
+                              _priceFieldDecoration(context.l10n.toPrice),
                           onChanged: _onMaxPriceChanged,
                         ),
                       ),
@@ -254,17 +308,27 @@ class _FilterSheetContentState extends ConsumerState<_FilterSheetContent> {
                     ),
                     child: Builder(
                       builder: (context) {
-                        const double minVal = 0;
-                        const double maxVal = 50000000;
                         final double currentMin = _minPrice;
-                        final double currentMax = _maxPrice > _minPrice ? _maxPrice : _minPrice + 1;
-                        int divisions = ((maxVal - minVal) / 1000).clamp(1, 10000).toInt();
-                        if (divisions < 1) divisions = 1;
+                        final double currentMax =
+                            _maxPrice > _minPrice ? _maxPrice : _minPrice + 1;
+                        // Eslatma: min/max doim 0..50 000 000 bo'lgani
+                        // uchun bu ifoda amalda doim 10000ga tenglashadi
+                        // (clamp shuni majburlaydi) - "dinamik" hisoblash
+                        // hozircha shart emas, lekin kelajakda min/max
+                        // backenddan dinamik kelsa, shu formula tayyor
+                        // turadi.
+                        final int divisions =
+                            ((_kMaxPriceBound - _kMinPriceBound) / 1000)
+                                .clamp(1, 10000)
+                                .toInt();
 
                         return RangeSlider(
-                          values: RangeValues(currentMin.clamp(minVal, maxVal), currentMax.clamp(minVal, maxVal)),
-                          min: minVal,
-                          max: maxVal,
+                          values: RangeValues(
+                            currentMin.clamp(_kMinPriceBound, _kMaxPriceBound),
+                            currentMax.clamp(_kMinPriceBound, _kMaxPriceBound),
+                          ),
+                          min: _kMinPriceBound,
+                          max: _kMaxPriceBound,
                           divisions: divisions,
                           activeColor: context.colors.primary,
                           inactiveColor: context.colors.outline,
@@ -272,8 +336,10 @@ class _FilterSheetContentState extends ConsumerState<_FilterSheetContent> {
                             setState(() {
                               _minPrice = values.start;
                               _maxPrice = values.end;
-                              _minPriceController.text = AppFormatters.formatNumber(_minPrice.round());
-                              _maxPriceController.text = AppFormatters.formatNumber(_maxPrice.round());
+                              _minPriceController.text =
+                                  AppFormatters.formatNumber(_minPrice.round());
+                              _maxPriceController.text =
+                                  AppFormatters.formatNumber(_maxPrice.round());
                             });
                           },
                         );
@@ -298,13 +364,19 @@ class _FilterSheetContentState extends ConsumerState<_FilterSheetContent> {
                         label: Text(loc),
                         selected: isSelected,
                         onSelected: (selected) {
-                          if (selected) setState(() => _selectedLocation = loc);
+                          if (selected) {
+                            setState(() => _selectedLocation = loc);
+                          }
                         },
                         backgroundColor: context.colors.background,
                         selectedColor: context.colors.primary,
                         labelStyle: TextStyle(
+                          // Fon "primary" bo'lgani uchun matn ham shu fon
+                          // uchun mo'ljallangan "onPrimary" bo'lishi kerak
+                          // (textHigh emas) - xuddi shu xato quyidagi
+                          // "Ko'rsatish natijalarni" tugmasida ham bor edi.
                           color: isSelected
-                              ? context.colors.textHigh
+                              ? context.colors.onPrimary
                               : context.colors.textMedium,
                         ),
                         side: BorderSide(
@@ -368,7 +440,10 @@ class _FilterSheetContentState extends ConsumerState<_FilterSheetContent> {
                       child: Text(
                         context.l10n.showResults,
                         style: TextStyle(
-                          color: context.colors.textHigh,
+                          // Fon "primary", shuning uchun matn "onPrimary"
+                          // bo'lishi kerak - textHigh emas (asl kodda shu
+                          // yerda ham xuddi shu rang nomuvofiqligi bor edi).
+                          color: context.colors.onPrimary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

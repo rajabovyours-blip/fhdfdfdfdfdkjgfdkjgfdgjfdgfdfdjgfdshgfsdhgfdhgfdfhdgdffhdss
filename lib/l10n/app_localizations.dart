@@ -766,11 +766,65 @@ abstract class AppLocalizations {
   /// **'Rasm yuklashda xatolik yuz berdi yoki ruxsat yo\'q'**
   String get errorLoadingPhoto;
 
-  /// No description provided for @reviewSubmitted.
+  /// No description provided for @returnRequestSubmitted.
   ///
   /// In uz, this message translates to:
-  /// **'Sharhingiz yuborildi'**
-  String get reviewSubmitted;
+  /// **'Qaytarish so\'rovi yuborildi.'**
+  String get returnRequestSubmitted;
+
+  /// No description provided for @pickFromGallery.
+  ///
+  /// In uz, this message translates to:
+  /// **'Galereyadan tanlash'**
+  String get pickFromGallery;
+
+  /// No description provided for @takePhoto.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kameradan rasmga olish'**
+  String get takePhoto;
+
+  /// No description provided for @confirm.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tasdiqlash'**
+  String get confirm;
+
+  /// No description provided for @confirmRemoveFromCart.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ushbu mahsulotni savatdan olib tashlamoqchimisiz?'**
+  String get confirmRemoveFromCart;
+
+  /// No description provided for @price.
+  ///
+  /// In uz, this message translates to:
+  /// **'Narx'**
+  String get price;
+
+  /// No description provided for @statusOnTheWay.
+  ///
+  /// In uz, this message translates to:
+  /// **'Holat: Yo\'lda'**
+  String get statusOnTheWay;
+
+  /// No description provided for @driverJamshid.
+  ///
+  /// In uz, this message translates to:
+  /// **'Haydovchi: Jamshid K.'**
+  String get driverJamshid;
+
+  /// No description provided for @estimatedArrival.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tahminiy yetib kelish: 18:30'**
+  String get estimatedArrival;
+
+  /// No description provided for @liveTrackingReady.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xaritada jonli kuzatish uchun tayyor.'**
+  String get liveTrackingReady;
 
   /// No description provided for @rateProduct.
   ///

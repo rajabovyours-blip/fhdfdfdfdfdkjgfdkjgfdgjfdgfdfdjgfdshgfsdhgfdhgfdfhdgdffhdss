@@ -141,7 +141,7 @@ class _PersonalInformationScreenState
                             children: <Widget>[
                               ListTile(
                                   leading: const Icon(Icons.photo_library),
-                                  title: const Text('Galereyadan tanlash'),
+                                  title: Text(context.l10n.pickFromGallery),
                                   onTap: () async {
                                     Navigator.of(context).pop();
                                     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
@@ -149,7 +149,7 @@ class _PersonalInformationScreenState
                                   },),
                               ListTile(
                                 leading: const Icon(Icons.photo_camera),
-                                title: const Text('Kameradan rasmga olish'),
+                                title: Text(context.l10n.takePhoto),
                                 onTap: () async {
                                   Navigator.of(context).pop();
                                   final XFile? image = await _picker.pickImage(source: ImageSource.camera);

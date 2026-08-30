@@ -360,7 +360,35 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorLoadingPhoto => 'Error loading photo or permission denied';
 
   @override
-  String get reviewSubmitted => 'Your review has been submitted';
+  String get returnRequestSubmitted => 'Return request submitted.';
+
+  @override
+  String get pickFromGallery => 'Pick from gallery';
+
+  @override
+  String get takePhoto => 'Take a photo';
+
+  @override
+  String get confirm => 'Confirm';
+
+  @override
+  String get confirmRemoveFromCart =>
+      'Are you sure you want to remove this item from the cart?';
+
+  @override
+  String get price => 'Price';
+
+  @override
+  String get statusOnTheWay => 'Status: On the way';
+
+  @override
+  String get driverJamshid => 'Driver: Jamshid K.';
+
+  @override
+  String get estimatedArrival => 'Estimated arrival: 18:30';
+
+  @override
+  String get liveTrackingReady => 'Live tracking ready for map integration.';
 
   @override
   String get rateProduct => 'Rate this product';
@@ -891,7 +919,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get refundDescription => 'Enter description';
 
   @override
-  String get refundSubmitted => 'Return request submitted';
+  String get refundSubmitted => 'Qaytarish so\'rovi yuborildi';
 
   @override
   String get addCard => 'Add Card';

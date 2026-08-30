@@ -21,11 +21,9 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$UserModel {
   String get id => throw _privateConstructorUsedError;
-  @JsonKey(name: 'full_name')
   String get fullName => throw _privateConstructorUsedError;
   String get phone => throw _privateConstructorUsedError;
   String? get email => throw _privateConstructorUsedError;
-  @JsonKey(name: 'avatar_url')
   String? get avatarUrl => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -41,10 +39,10 @@ abstract class $UserModelCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
-      @JsonKey(name: 'full_name') String fullName,
+      String fullName,
       String phone,
       String? email,
-      @JsonKey(name: 'avatar_url') String? avatarUrl});
+      String? avatarUrl});
 }
 
 /// @nodoc
@@ -101,10 +99,10 @@ abstract class _$$UserModelImplCopyWith<$Res>
   @useResult
   $Res call(
       {String id,
-      @JsonKey(name: 'full_name') String fullName,
+      String fullName,
       String phone,
       String? email,
-      @JsonKey(name: 'avatar_url') String? avatarUrl});
+      String? avatarUrl});
 }
 
 /// @nodoc
@@ -154,10 +152,10 @@ class __$$UserModelImplCopyWithImpl<$Res>
 class _$UserModelImpl extends _UserModel {
   const _$UserModelImpl(
       {required this.id,
-      @JsonKey(name: 'full_name') required this.fullName,
+      required this.fullName,
       required this.phone,
       this.email,
-      @JsonKey(name: 'avatar_url') this.avatarUrl})
+      this.avatarUrl})
       : super._();
 
   factory _$UserModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -166,14 +164,12 @@ class _$UserModelImpl extends _UserModel {
   @override
   final String id;
   @override
-  @JsonKey(name: 'full_name')
   final String fullName;
   @override
   final String phone;
   @override
   final String? email;
   @override
-  @JsonKey(name: 'avatar_url')
   final String? avatarUrl;
 
   @override
@@ -217,10 +213,10 @@ class _$UserModelImpl extends _UserModel {
 abstract class _UserModel extends UserModel {
   const factory _UserModel(
       {required final String id,
-      @JsonKey(name: 'full_name') required final String fullName,
+      required final String fullName,
       required final String phone,
       final String? email,
-      @JsonKey(name: 'avatar_url') final String? avatarUrl}) = _$UserModelImpl;
+      final String? avatarUrl}) = _$UserModelImpl;
   const _UserModel._() : super._();
 
   factory _UserModel.fromJson(Map<String, dynamic> json) =
@@ -229,14 +225,12 @@ abstract class _UserModel extends UserModel {
   @override
   String get id;
   @override
-  @JsonKey(name: 'full_name')
   String get fullName;
   @override
   String get phone;
   @override
   String? get email;
   @override
-  @JsonKey(name: 'avatar_url')
   String? get avatarUrl;
   @override
   @JsonKey(ignore: true)

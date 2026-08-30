@@ -159,8 +159,8 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                               builder: (ctx) => AlertDialog(
                                 backgroundColor: context.colors.surface,
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                                title: Text('Tasdiqlash', style: TextStyle(color: context.colors.textHigh)),
-                                content: Text('Ushbu mahsulotni savatdan olib tashlamoqchimisiz?', style: TextStyle(color: context.colors.textMedium)),
+                                title: Text(context.l10n.confirm, style: TextStyle(color: context.colors.textHigh)),
+                                content: Text(context.l10n.confirmRemoveFromCart, style: TextStyle(color: context.colors.textMedium)),
                                 actions: [
                                   TextButton(
                                     onPressed: () => Navigator.pop(ctx),

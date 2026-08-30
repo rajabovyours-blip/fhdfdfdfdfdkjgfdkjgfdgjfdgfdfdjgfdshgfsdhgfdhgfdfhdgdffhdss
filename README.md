@@ -1,10 +1,10 @@
-# Milliy Metr - Enterprise Multi-Vendor Construction Materials Marketplace
+# Milliy Metr - Enterprise Construction Materials Marketplace
 
 > **Yuqori Sifat**
 
 ## Project Overview
 
-Milliy Metr is a highly scalable, multi-vendor marketplace designed specifically for construction materials. It implements Google-standard Flutter best practices, feature-first Clean Architecture, and Material Design 3.
+Milliy Metr is a highly scalable marketplace designed specifically for construction materials. It acts as an Owner/Admin-controlled unified catalog, implementing Google-standard Flutter best practices, feature-first Clean Architecture, and Material Design 3.
 
 ## Architecture
 

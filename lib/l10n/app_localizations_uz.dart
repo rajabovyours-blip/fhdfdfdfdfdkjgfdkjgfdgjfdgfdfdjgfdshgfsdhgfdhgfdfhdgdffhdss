@@ -365,7 +365,35 @@ class AppLocalizationsUz extends AppLocalizations {
       'Rasm yuklashda xatolik yuz berdi yoki ruxsat yo\'q';
 
   @override
-  String get reviewSubmitted => 'Sharhingiz yuborildi';
+  String get returnRequestSubmitted => 'Qaytarish so\'rovi yuborildi.';
+
+  @override
+  String get pickFromGallery => 'Galereyadan tanlash';
+
+  @override
+  String get takePhoto => 'Kameradan rasmga olish';
+
+  @override
+  String get confirm => 'Tasdiqlash';
+
+  @override
+  String get confirmRemoveFromCart =>
+      'Ushbu mahsulotni savatdan olib tashlamoqchimisiz?';
+
+  @override
+  String get price => 'Narx';
+
+  @override
+  String get statusOnTheWay => 'Holat: Yo\'lda';
+
+  @override
+  String get driverJamshid => 'Haydovchi: Jamshid K.';
+
+  @override
+  String get estimatedArrival => 'Tahminiy yetib kelish: 18:30';
+
+  @override
+  String get liveTrackingReady => 'Xaritada jonli kuzatish uchun tayyor.';
 
   @override
   String get rateProduct => 'Baho bering';

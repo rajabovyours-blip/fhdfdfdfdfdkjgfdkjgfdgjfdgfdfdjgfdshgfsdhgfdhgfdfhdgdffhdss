@@ -69,32 +69,28 @@ class _LocationSelectorState extends State<LocationSelector> {
 
   Future<void> _requestLocation() async {
     setState(() => _isLoading = true);
-    
-    // Block background touches while permission dialog might be open
-    unawaited(showDialog(
-      context: context,
-      barrierColor: Colors.transparent,
-      barrierDismissible: false,
-      builder: (context) => const PopScope(
-        canPop: false,
-        child: SizedBox.expand(),
-      ),
-    ));
 
     try {
       final status = await Permission.location.request();
 
       if (status.isGranted) {
         await _fetchLocation();
-      } else if (status.isPermanentlyDenied) {
+      } else {
         if (mounted) {
+          setState(() {
+            _location = context.l10n.tashkentUzbekistan;
+          });
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(context.l10n.pleaseAllowFromSettings),
-              action: SnackBarAction(
+              content: Text(
+                status.isPermanentlyDenied 
+                  ? context.l10n.pleaseAllowFromSettings 
+                  : 'Joylashuv aniqlanmadi. Manzilni keyinroq o\'zingiz kiritishingiz mumkin.',
+              ),
+              action: status.isPermanentlyDenied ? SnackBarAction(
                 label: context.l10n.settings,
                 onPressed: () => openAppSettings(),
-              ),
+              ) : null,
             ),
           );
         }
@@ -102,11 +98,12 @@ class _LocationSelectorState extends State<LocationSelector> {
     } catch (e) {
       if (mounted) {
         AppSnackBar.showError(context, context.l10n.errorOccurred);
+        setState(() {
+          _location = context.l10n.tashkentUzbekistan;
+        });
       }
     } finally {
       if (mounted) {
-        // Pop the barrier dialog
-        Navigator.of(context, rootNavigator: true).pop();
         setState(() => _isLoading = false);
       }
     }

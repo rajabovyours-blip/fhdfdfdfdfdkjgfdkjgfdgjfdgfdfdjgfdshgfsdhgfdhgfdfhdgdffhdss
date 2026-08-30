@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:milliy_metr/l10n/l10n_extension.dart';
 
 class DeliveryTrackingScreen extends StatelessWidget {
   final String orderId;
@@ -24,10 +25,10 @@ class DeliveryTrackingScreen extends StatelessWidget {
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8),
-                    const Text('Status: On the way'),
-                    const Text('Driver: Jamshid K.'),
-                    const Text('Estimated arrival: 18:30'),
-                    const Text('Live tracking ready for map integration.'),
+                    Text(context.l10n.statusOnTheWay),
+                    Text(context.l10n.driverJamshid),
+                    Text(context.l10n.estimatedArrival),
+                    Text(context.l10n.liveTrackingReady),
                   ],
                 ),
               ),

@@ -20,7 +20,7 @@ class ComparisonScreen extends StatelessWidget {
             const DataRow(
               cells: [
                 DataCell(
-                  Text('Price', style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(context.l10n.price, style: const TextStyle(fontWeight: FontWeight.bold)),
                 ),
                 DataCell(Text('52,000 UZS')),
                 DataCell(Text('48,000 UZS')),
