@@ -1,19 +1,9 @@
-class FakeRedis:
-    def __init__(self):
-        self.data = {}
-    async def ping(self):
-        return True
-    async def get(self, key):
-        return self.data.get(key)
-    async def set(self, key, value, ex=None):
-        self.data[key] = value
-    async def delete(self, key):
-        if key in self.data:
-            del self.data[key]
-    async def aclose(self):
-        pass
+import redis.asyncio as redis
+from app.core.config import settings
 
-redis_client = FakeRedis()
+redis_url = settings.REDIS_URL or f"redis://{settings.REDIS_HOST}:{settings.REDIS_PORT}/0"
+
+redis_client = redis.from_url(redis_url, decode_responses=True)
 
 async def get_redis():
     return redis_client

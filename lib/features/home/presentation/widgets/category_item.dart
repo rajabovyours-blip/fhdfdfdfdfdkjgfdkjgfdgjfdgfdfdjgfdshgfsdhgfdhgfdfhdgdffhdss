@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
+import 'package:milliy_metr/shared/components/brand_image_loader.dart';
 
 class CategoryItem extends StatelessWidget {
   final String title;
@@ -30,11 +31,10 @@ class CategoryItem extends StatelessWidget {
                 border: Border.all(color: context.colors.outline.withValues(alpha: 0.5)),
               ),
               clipBehavior: Clip.hardEdge,
-              child: Image.asset(
-                iconAsset,
+              child: BrandImageLoader(
+                imageUrl: iconAsset,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    Icon(Icons.category, color: context.colors.primary),
+                borderRadius: 0,
               ),
             ),
             const SizedBox(height: 8),

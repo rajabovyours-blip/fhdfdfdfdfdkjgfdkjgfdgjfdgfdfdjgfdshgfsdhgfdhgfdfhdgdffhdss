@@ -5,7 +5,6 @@ import 'package:milliy_metr/features/home/presentation/widgets/category_item.dar
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:milliy_metr/features/categories/presentation/providers/category_notifier.dart';
-import 'package:milliy_metr/features/categories/utils/category_asset_helper.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 
 class CategoryCarousel extends ConsumerWidget {
@@ -31,7 +30,7 @@ class CategoryCarousel extends ConsumerWidget {
             separatorBuilder: (_, __) => const SizedBox(width: 12),
             itemBuilder: (context, index) {
               final cat = displayCategories[index];
-              final String assetPath = CategoryAssetHelper.getAssetPath(cat.id);
+              final String assetPath = cat.iconUrl ?? cat.imageUrl ?? '';
               
               return CategoryItem(
                 title: cat.name.get(Localizations.localeOf(context).languageCode),

@@ -84,28 +84,14 @@ async def request_otp(otp_in: OTPRequest):
     otp_code = otp_service.request_otp(otp_in.phone)
     
     # 2. Prepare message
-    if settings.ESKIZ_TEST_MODE:
-        # Mock OTP behavior: override generated OTP with 111111 for testing
-        otp_code = "111111"
-        if otp_in.phone in otp_service.store:
-            otp_service.store[otp_in.phone].otp = "111111"
-            
-        print(f"\n=======================================================")
-        print(f" *** TEST MODE OTP FOR {otp_in.phone}: {otp_code} ***")
-        print(f"=======================================================\n")
+    message = f"Milliy Metr ilovasiga kirish uchun tasdiqlash kodingiz: {otp_code}. Kodni hech kimga bermang. Milliy Metr xodimlari ham ushbu kodni so‘ramaydi."
+    
+    # 3. Send via Eskiz
+    success = await eskiz_service.send_sms(otp_in.phone, message)
+    if not success:
+        raise HTTPException(status_code=500, detail="SMS sending failed. Check credentials.")
         
-        # Bypass Eskiz SMS sending completely in test mode to avoid errors
-        return APIResponse(message="OTP requested successfully (Test Mode: 111111).")
-    else:
-        # Real production message
-        message = f"Milliy Metr ilovasiga kirish uchun tasdiqlash kodingiz: {otp_code}. Kodni hech kimga bermang. Milliy Metr xodimlari ham ushbu kodni so‘ramaydi."
-        
-        # 4. Send via Eskiz
-        success = await eskiz_service.send_sms(otp_in.phone, message)
-        if not success:
-            raise HTTPException(status_code=500, detail="SMS sending failed. Check credentials.")
-            
-        return APIResponse(message="OTP requested successfully. Please check your SMS.")
+    return APIResponse(message="OTP requested successfully. Please check your SMS.")
 
 @router.post("/verify-otp", response_model=APIResponse[TokenModel])
 async def verify_otp(otp_in: OTPVerify, db: AsyncSession = Depends(get_db)):
@@ -160,9 +146,8 @@ async def social_login(payload: SocialLoginRequest, db: AsyncSession = Depends(g
             )
             
             known_client_ids = [
-                "5408559924-kl0rm498vdr2qo39prt5k6g5v0vjvsqt.apps.googleusercontent.com",
-                "5408559924-iosclientid.apps.googleusercontent.com",
-                "5408559924-androidclientid.apps.googleusercontent.com"
+                "5408559924-kl0rm498vdr2qo39prt5k6g5v0vjvsqt.apps.googleusercontent.com", # Web
+                "5408559924-gme4o899c8aje2gdl55b92a8cp809pbq.apps.googleusercontent.com"  # Android
             ]
             
             if id_info.get('aud') not in known_client_ids and "5408559924-" not in str(id_info.get('aud')):

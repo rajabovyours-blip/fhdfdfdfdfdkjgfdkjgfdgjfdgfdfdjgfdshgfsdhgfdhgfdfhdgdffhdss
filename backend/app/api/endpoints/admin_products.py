@@ -14,17 +14,15 @@ from app.api.deps import get_current_user
 from app.services.excel_importer import ExcelImporter
 from app.schemas.common import APIResponse
 
-router = APIRouter()
+from app.api.dependencies import get_current_admin
 
-def get_admin_user():
-    # Authentication bypassed for admin panel
-    return None
+router = APIRouter()
 
 @router.post("/import/preview", response_model=APIResponse[Dict[str, Any]])
 async def preview_excel_import(
     file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
-    admin: User = Depends(get_admin_user)
+    admin: User = Depends(get_current_admin)
 ):
     if not file.filename.endswith(".xlsx"):
         raise HTTPException(status_code=400, detail="Only .xlsx files are supported")
@@ -42,7 +40,7 @@ async def preview_excel_import(
 async def execute_excel_import(
     rows: List[Dict[str, Any]] = Body(...),
     db: AsyncSession = Depends(get_db),
-    admin: User = Depends(get_admin_user)
+    admin: User = Depends(get_current_admin)
 ):
     if not rows:
         raise HTTPException(status_code=400, detail="No rows provided for import")
@@ -56,7 +54,7 @@ async def execute_excel_import(
 async def bulk_upload_products(
     file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
-    admin: User = Depends(get_admin_user)
+    admin: User = Depends(get_current_admin)
 ):
     if not (file.filename.endswith(".xlsx") or file.filename.endswith(".csv")):
         raise HTTPException(status_code=400, detail="Only .xlsx or .csv files are supported")

@@ -13,5 +13,5 @@ echo "Getting dependencies..."
 flutter pub get
 
 echo "Building Flutter Web application..."
-flutter build web --release --dart-define=API_URL=https://milliy-metr-backend-hdol.onrender.com/api/v1
+flutter build web --release --dart-define=API_URL=https://milliymetr-backend.onrender.com/api/v1
 

@@ -25,22 +25,12 @@ class CategoryModel with _$CategoryModel {
   const CategoryModel._();
 
   CategoryEntity toEntity() {
-    String resolveCategoryImage(String id, String? rawUrl) {
-      if (rawUrl != null && rawUrl.isNotEmpty && !rawUrl.contains('cat-1.webp')) {
-        return rawUrl;
-      }
-      final numStr = id.replaceAll(RegExp(r'\D'), '');
-      final index = int.tryParse(numStr) ?? 1;
-      final clampedIndex = index.clamp(1, 61);
-      return 'assets/images/categories/cat-$clampedIndex.webp';
-    }
-
     return CategoryEntity(
       id: id,
       name: name,
       description: description,
-      iconUrl: resolveCategoryImage(id, iconUrl),
-      imageUrl: resolveCategoryImage(id, imageUrl),
+      iconUrl: iconUrl,
+      imageUrl: imageUrl,
       parentId: parentId,
       productCount: productCount,
       isFeatured: isFeatured,

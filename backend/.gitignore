@@ -4,3 +4,6 @@ __pycache__/
 venv/
 venv_test/
 .pytest_cache/
+*.db
+*.sqlite
+*.sqlite3

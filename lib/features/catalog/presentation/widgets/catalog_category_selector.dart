@@ -15,7 +15,7 @@ class CatalogCategorySelector extends ConsumerWidget {
         loaded: (data) => data.selectedCategory,
         orElse: () => 'Barchasi',
       ),
-    ));
+    ),);
 
     final categoryState = ref.watch(categoryNotifierProvider);
 

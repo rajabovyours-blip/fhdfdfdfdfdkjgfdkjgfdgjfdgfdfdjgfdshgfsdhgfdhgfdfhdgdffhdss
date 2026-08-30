@@ -67,41 +67,62 @@ class HomeScreen extends ConsumerWidget {
                         child: CategoryCarousel(),
                       ),
                       
-                      SliverToBoxAdapter(
-                        child: FlashDealsSection(products: data.featuredProducts),
-                      ),
-
-                      SliverToBoxAdapter(
-                        child: SectionHeader(
-                          title: context.l10n.popularProductsSection,
-                          onViewAll: () {},
-                        ),
-                      ),
-                      
-                      SliverPadding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        sliver: SliverGrid(
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            childAspectRatio: 0.63,
-                            crossAxisSpacing: 12,
-                            mainAxisSpacing: 16,
+                      if (data.featuredProducts.isEmpty)
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 64.0),
+                            child: Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.inventory_2_outlined, size: 64, color: context.colors.textMedium),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    context.l10n.noProductsInStore,
+                                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                      color: context.colors.textMedium,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                          delegate: SliverChildBuilderDelegate(
-                            (context, index) {
-                              final product = data.featuredProducts[index];
-                              return ProductCard(
-                                product: product,
-                                showCartAction: true,
-                                onTap: () => context.push(
-                                  AppRoutes.productDetails.replaceAll(':id', product.id),
-                                ),
-                              );
-                            },
-                            childCount: data.featuredProducts.length,
+                        )
+                      else ...[
+                        SliverToBoxAdapter(
+                          child: FlashDealsSection(products: data.featuredProducts),
+                        ),
+                        SliverToBoxAdapter(
+                          child: SectionHeader(
+                            title: context.l10n.popularProductsSection,
+                            onViewAll: () {},
                           ),
                         ),
-                      ),
+                        SliverPadding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          sliver: SliverGrid(
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: 0.63,
+                              crossAxisSpacing: 12,
+                              mainAxisSpacing: 16,
+                            ),
+                            delegate: SliverChildBuilderDelegate(
+                              (context, index) {
+                                final product = data.featuredProducts[index];
+                                return ProductCard(
+                                  product: product,
+                                  showCartAction: true,
+                                  onTap: () => context.push(
+                                    AppRoutes.productDetails.replaceAll(':id', product.id),
+                                  ),
+                                );
+                              },
+                              childCount: data.featuredProducts.length,
+                            ),
+                          ),
+                        ),
+                      ],
                       
                       // Bottom padding
                       const SliverToBoxAdapter(child: SizedBox(height: 32)),

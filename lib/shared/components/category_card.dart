@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:milliy_metr/features/categories/domain/entities/category_entity.dart';
-import 'package:milliy_metr/features/categories/utils/category_asset_helper.dart';
 import 'package:milliy_metr/shared/components/brand_image_loader.dart';
 
 class CategoryCard extends StatelessWidget {
@@ -14,7 +13,7 @@ class CategoryCard extends StatelessWidget {
     final surfaceColor = isDark ? const Color(0xFF16181F) : Colors.white;
     final borderColor = isDark ? Colors.white.withValues(alpha: 0.06) : const Color(0xFFE5E7EB);
 
-    final assetPath = CategoryAssetHelper.getAssetPath(category.id);
+    final assetPath = category.iconUrl ?? category.imageUrl ?? '';
 
     return Container(
       decoration: BoxDecoration(

@@ -7,11 +7,12 @@ import 'package:milliy_metr/core/providers/auth_provider.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
 import 'package:milliy_metr/features/authentication/presentation/widgets/auth_language_selector.dart';
 import 'dart:io' show Platform;
-import 'package:flutter_svg/flutter_svg.dart';
+
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/services.dart';
 import 'package:milliy_metr/shared/widgets/app_snackbar.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class _PhoneFormatter extends TextInputFormatter {
   @override
@@ -173,6 +174,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       next.maybeWhen(
         error: (message) {
           AppSnackBar.showError(context, message);
+        },
+        authenticated: (_) {
+          final redirect = widget.redirect;
+          if (redirect != null && redirect.isNotEmpty) {
+            context.go(redirect);
+          } else {
+            context.go(AppRoutes.home);
+          }
         },
         orElse: () {},
       );
@@ -389,10 +398,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               else
                 _SocialButton(
                   label: context.l10n.continueWithGoogle,
-                  iconWidget: SvgPicture.asset(
-                    'assets/icons/google.svg',
-                    width: 24,
-                    height: 24,
+                  iconWidget: FaIcon(
+                    FontAwesomeIcons.google,
+                    size: 24,
+                    color: context.colors.textHigh,
                   ),
                   onTap: _handleGoogleLogin,
                 ),

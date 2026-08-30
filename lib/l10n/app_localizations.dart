@@ -766,6 +766,12 @@ abstract class AppLocalizations {
   /// **'Rasm yuklashda xatolik yuz berdi yoki ruxsat yo\'q'**
   String get errorLoadingPhoto;
 
+  /// No description provided for @reviewSubmitted.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sharhingiz yuborildi'**
+  String get reviewSubmitted;
+
   /// No description provided for @returnRequestSubmitted.
   ///
   /// In uz, this message translates to:

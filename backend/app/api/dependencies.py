@@ -2,14 +2,12 @@ from fastapi import Depends, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from sqlalchemy.orm import selectinload
 from app.core.database import get_db
-from app.core.redis import get_redis
 from app.core.exceptions import AppError
 from app.security.jwt import decode_token
-from app.models.users import User, Role
-import redis.asyncio as redis
+from app.models.user import User
 from typing import List, Callable
+import uuid
 
 security = HTTPBearer(auto_error=False)
 
@@ -21,17 +19,13 @@ async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
     db: AsyncSession = Depends(get_db)
 ) -> User:
-    import uuid
     if not credentials:
-        # Authentication bypassed for admin panel
-        dummy_user = User(id=uuid.uuid4(), is_active=True)
-        return dummy_user
+        raise AppError("Authentication required", code="AUTH_REQUIRED", status_code=401)
         
     token = credentials.credentials
     payload = decode_token(token)
     user_id = payload.get("sub")
     
-    import uuid
     if not user_id:
         raise AppError("Invalid token payload", code="TOKEN_INVALID", status_code=401)
         
@@ -44,7 +38,7 @@ async def get_current_user(
         raise AppError("Invalid user ID format", code="TOKEN_INVALID", status_code=401)
         
     result = await db.execute(
-        select(User).options(selectinload(User.role)).filter(User.id == user_uuid)
+        select(User).filter(User.id == user_uuid)
     )
     user = result.scalars().first()
     
@@ -57,13 +51,13 @@ async def get_current_user(
 
 def require_roles(allowed_roles: List[str]) -> Callable:
     async def role_checker(current_user: User = Depends(get_current_user)) -> User:
-        if not current_user.role or current_user.role.name not in allowed_roles:
+        user_role = current_user.role
+        # Handle both string enum value and enum .name
+        role_value = user_role.value if hasattr(user_role, 'value') else str(user_role)
+        if role_value not in allowed_roles:
             raise AppError(f"Requires one of roles: {', '.join(allowed_roles)}", code="FORBIDDEN", status_code=403)
         return current_user
     return role_checker
 
-async def get_current_admin() -> User:
-    import uuid
-    # Authentication bypassed for admin panel
-    dummy_user = User(id=uuid.uuid4(), is_active=True)
-    return dummy_user
+async def get_current_admin(current_user: User = Depends(require_roles(["ADMIN"]))) -> User:
+    return current_user

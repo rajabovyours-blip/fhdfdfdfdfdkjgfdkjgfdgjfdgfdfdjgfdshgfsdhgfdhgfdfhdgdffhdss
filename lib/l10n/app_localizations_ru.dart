@@ -360,6 +360,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get errorLoadingPhoto => 'Ошибка при загрузке фото или нет разрешения';
 
   @override
+  String get reviewSubmitted => 'Отзыв успешно отправлен';
+
+  @override
   String get returnRequestSubmitted => 'Запрос на возврат отправлен.';
 
   @override
@@ -919,7 +922,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get refundDescription => 'Введите описание';
 
   @override
-  String get refundSubmitted => 'Qaytarish so\'rovi yuborildi';
+  String get refundSubmitted => 'Заявка на возврат отправлена';
 
   @override
   String get addCard => 'Добавить карту';

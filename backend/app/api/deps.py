@@ -14,10 +14,10 @@ async def get_current_user(
     token: HTTPAuthorizationCredentials = Depends(security)
 ) -> User:
     if not token:
-        # Mock admin user for admin panel requests without token
-        import uuid
-        from app.models.user import RoleEnum
-        return User(id=uuid.uuid4(), role=RoleEnum.ADMIN, is_active=True)
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication required",
+        )
 
     try:
         payload = jwt.decode(token.credentials, settings.SECRET_KEY, algorithms=["HS256"])

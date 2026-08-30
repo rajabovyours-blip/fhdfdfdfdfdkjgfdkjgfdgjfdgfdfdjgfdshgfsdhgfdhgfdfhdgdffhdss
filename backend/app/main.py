@@ -55,6 +55,9 @@ app.include_router(api_router, prefix=settings.API_V1_STR)
 os.makedirs("uploads/images", exist_ok=True)
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
+from app.core.exceptions import AppError, app_error_handler
+app.add_exception_handler(AppError, app_error_handler)
+
 @app.get("/health")
 async def health_check():
     return {"status": "ok"}

@@ -365,6 +365,9 @@ class AppLocalizationsUz extends AppLocalizations {
       'Rasm yuklashda xatolik yuz berdi yoki ruxsat yo\'q';
 
   @override
+  String get reviewSubmitted => 'Sharhingiz yuborildi';
+
+  @override
   String get returnRequestSubmitted => 'Qaytarish so\'rovi yuborildi.';
 
   @override

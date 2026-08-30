@@ -1,12 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, or_, cast, String, func
+from sqlalchemy.orm import selectinload
 from typing import List, Optional
 from uuid import UUID
 
 from app.db.session import get_db
+from app.api.dependencies import get_current_admin
 from app.models.product import Product
 from app.models.category import Category
+from app.models.user import User
 from app.schemas.product import ProductModel, CategoryModel
 from app.schemas.common import APIResponse
 
@@ -133,7 +136,7 @@ class ProductCreateRequest(PydanticBaseModel):
         return data
 
 @router.post("", response_model=APIResponse[ProductModel])
-async def create_product(payload: ProductCreateRequest, db: AsyncSession = Depends(get_db)):
+async def create_product(payload: ProductCreateRequest, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_admin)):
     import uuid as _uuid
     product = Product(
         id=_uuid.uuid4(),
@@ -154,7 +157,7 @@ async def create_product(payload: ProductCreateRequest, db: AsyncSession = Depen
     return APIResponse(data=ProductModel.model_validate(product))
 
 @router.put("/{id}", response_model=APIResponse[ProductModel])
-async def update_product(id: str, payload: ProductCreateRequest, db: AsyncSession = Depends(get_db)):
+async def update_product(id: str, payload: ProductCreateRequest, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_admin)):
     try:
         product_id = UUID(str(id))
     except ValueError:
@@ -183,7 +186,7 @@ async def update_product(id: str, payload: ProductCreateRequest, db: AsyncSessio
     return APIResponse(data=ProductModel.model_validate(product))
 
 @router.delete("/{id}", response_model=APIResponse[dict])
-async def delete_product(id: str, db: AsyncSession = Depends(get_db)):
+async def delete_product(id: str, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_admin)):
     try:
         product_id = UUID(str(id))
     except ValueError:
@@ -204,7 +207,7 @@ import pandas as pd
 from fastapi import UploadFile, File
 
 @router.post("/bulk-upload", response_model=APIResponse[dict])
-async def bulk_upload_products(file: UploadFile = File(...), db: AsyncSession = Depends(get_db)):
+async def bulk_upload_products(file: UploadFile = File(...), db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_admin)):
     if not (file.filename.endswith(".csv") or file.filename.endswith(".xlsx")):
         raise HTTPException(status_code=400, detail="Invalid file format")
     
@@ -227,6 +230,14 @@ async def bulk_upload_products(file: UploadFile = File(...), db: AsyncSession = 
     categories = result.scalars().all()
     default_cat_id = categories[0].id if categories else _uuid.uuid4()
     
+    # Create a mapping for category names to UUIDs
+    cat_map = {}
+    for c in categories:
+        name_dict = c.name if isinstance(c.name, dict) else {}
+        for lang, val in name_dict.items():
+            if val:
+                cat_map[str(val).lower()] = c.id
+    
     for index, row in df.iterrows():
         try:
             name_uz = str(row.get('name_uz', ''))
@@ -236,12 +247,22 @@ async def bulk_upload_products(file: UploadFile = File(...), db: AsyncSession = 
             
             price = float(row.get('price', 0))
             
+            # Determine Category
+            cat_id_to_use = default_cat_id
+            row_cat_id = str(row.get('category_id', ''))
+            row_cat_name = str(row.get('category_name', '')).lower()
+            
+            if row_cat_id and row_cat_id != 'nan':
+                cat_id_to_use = row_cat_id
+            elif row_cat_name and row_cat_name != 'nan':
+                cat_id_to_use = cat_map.get(row_cat_name, default_cat_id)
+            
             product = Product(
                 id=_uuid.uuid4(),
                 sku=f"SKU-{_uuid.uuid4().hex[:8].upper()}",
                 name={"uz": name_uz, "ru": str(row.get('name_ru', name_uz)), "en": str(row.get('name_en', name_uz))},
                 description={"uz": str(row.get('desc_uz', '')), "ru": str(row.get('desc_ru', '')), "en": str(row.get('desc_en', ''))},
-                category_id=default_cat_id,
+                category_id=cat_id_to_use,
                 price=price,
                 unit=str(row.get('unit', 'pcs')),
                 stock=int(row.get('stock', 100)),

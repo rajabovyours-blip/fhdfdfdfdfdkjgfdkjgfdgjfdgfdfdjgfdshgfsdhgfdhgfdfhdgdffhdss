@@ -360,6 +360,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorLoadingPhoto => 'Error loading photo or permission denied';
 
   @override
+  String get reviewSubmitted => 'Review submitted successfully';
+
+  @override
   String get returnRequestSubmitted => 'Return request submitted.';
 
   @override
@@ -919,7 +922,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get refundDescription => 'Enter description';
 
   @override
-  String get refundSubmitted => 'Qaytarish so\'rovi yuborildi';
+  String get refundSubmitted => 'Return request submitted';
 
   @override
   String get addCard => 'Add Card';

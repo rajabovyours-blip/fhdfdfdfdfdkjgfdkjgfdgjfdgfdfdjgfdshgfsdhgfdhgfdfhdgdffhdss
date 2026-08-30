@@ -18,14 +18,14 @@ class CatalogFilterSortRow extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isLoading = ref.watch(catalogNotifierProvider.select(
       (s) => s.maybeWhen(loading: () => true, orElse: () => false),
-    ));
+    ),);
     // Eslatma: agar notifierda alohida "error" holati bo'lsa, shu yerga
     // shu holat uchun ham alohida tekshiruv qo'shish tavsiya etiladi -
     // hozircha xatolik holati "0 ta mahsulot" bilan bir xil ko'rinmoqda.
     final count = ref.watch(catalogNotifierProvider.select(
       (s) =>
           s.maybeWhen(loaded: (data) => data.products.length, orElse: () => 0),
-    ));
+    ),);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
@@ -78,21 +78,17 @@ class _FilterSortChip extends StatelessWidget {
   final IconData icon;
   final String label;
   final VoidCallback onTap;
-  final bool isActive;
 
   const _FilterSortChip({
     required this.icon,
     required this.label,
     required this.onTap,
-    this.isActive = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    final borderColor =
-        isActive ? context.colors.primary : context.colors.outline;
-    final contentColor =
-        isActive ? context.colors.primary : context.colors.textHigh;
+    final borderColor = context.colors.outline;
+    final contentColor = context.colors.textHigh;
 
     return Material(
       color: context.colors.surface,

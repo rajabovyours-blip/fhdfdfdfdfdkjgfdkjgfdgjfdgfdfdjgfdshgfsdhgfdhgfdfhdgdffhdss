@@ -38,14 +38,14 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
         if (filters != null)
           ...filters.map((k, v) => MapEntry(
                 k.replaceAllMapped(RegExp(r'[A-Z]'),
-                    (m) => '_${m.group(0)!.toLowerCase()}'),
+                    (m) => '_${m.group(0)!.toLowerCase()}',),
                 v,
-              )),
+              ),),
       };
 
       final response = await dio.get(
         '/products',
-        queryParameters: queryParams,
+        queryParameters: Map<String, dynamic>.from(queryParams),
       );
 
       if (response.statusCode == 200) {
@@ -64,8 +64,8 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
     } on DioException catch (e) {
       throw ServerException(DioErrorMapper.extractErrorMessage(e));
     } catch (e, stacktrace) {
-      print('Product parsing error: $e');
-      print(stacktrace);
+      debugPrint('Product parsing error: $e');
+      debugPrint(stacktrace.toString());
       throw ServerException(DioErrorMapper.extractErrorMessage(e));
     }
   }
@@ -81,9 +81,11 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
         throw ServerException('Product not found');
       }
     } on DioException catch (e) {
+      debugPrint('DioException in getProductById: ${e.response?.data}');
       throw ServerException(DioErrorMapper.extractErrorMessage(e));
-    } catch (e) {
-      throw ServerException(DioErrorMapper.extractErrorMessage(e));
+    } catch (e, stack) {
+      debugPrint('Exception in getProductById: $e\n$stack');
+      throw ServerException(e.toString());
     }
   }
 }
