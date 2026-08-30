@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../../main.dart';
 
 class AdminLayout extends StatefulWidget {
   final Widget child;
@@ -75,6 +76,7 @@ class _AdminLayoutState extends State<AdminLayout> {
                 _buildNavItem(context, 'Bannerlar', Icons.image, '/banners', isMobile: isMobile),
                 _buildNavItem(context, 'Mijozlar', Icons.people, '/users', isMobile: isMobile),
                 _buildNavItem(context, 'Bildirishnomalar', Icons.notifications, '/notifications', isMobile: isMobile),
+                _buildNavItem(context, 'Administratorlar', Icons.admin_panel_settings, '/admin_users', isMobile: isMobile),
               ],
             ),
           ),
@@ -158,6 +160,15 @@ class _AdminLayoutState extends State<AdminLayout> {
             DropdownMenuItem(value: Locale('uz'), child: Text('O\'zbek')),
             DropdownMenuItem(value: Locale('ru'), child: Text('Русский')),
           ],
+        ),
+        const SizedBox(width: 16),
+        IconButton(
+          icon: const Icon(Icons.logout, color: Colors.red),
+          tooltip: 'Chiqish',
+          onPressed: () {
+            sharedPrefs.remove('admin_token');
+            context.go('/login');
+          },
         ),
       ],
     );

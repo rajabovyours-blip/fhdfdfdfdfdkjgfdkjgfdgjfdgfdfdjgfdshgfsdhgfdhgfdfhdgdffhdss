@@ -9,13 +9,15 @@ from datetime import datetime
 class RoleEnum(str, enum.Enum):
     USER = "USER"
     ADMIN = "ADMIN"
+    OWNER = "OWNER"
 
 class User(Base):
     __tablename__ = "users"
 
     id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    username = Column(String(255), unique=True, index=True, nullable=True)
     full_name = Column(String(255), nullable=False)
-    phone = Column(String(20), unique=True, index=True, nullable=False)
+    phone = Column(String(20), unique=True, index=True, nullable=True)
     email = Column(String(255), unique=True, index=True, nullable=True)
     hashed_password = Column(String, nullable=False)
     avatar_url = Column(String, nullable=True)

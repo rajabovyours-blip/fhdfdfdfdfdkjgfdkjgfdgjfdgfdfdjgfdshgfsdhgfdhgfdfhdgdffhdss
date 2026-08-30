@@ -60,13 +60,13 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 @router.post("/admin-login", response_model=APIResponse[TokenModel])
 async def admin_login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(User).where(User.email == form_data.username))
+    result = await db.execute(select(User).where(User.username == form_data.username))
     user = result.scalar_one_or_none()
     
     if not user or not verify_password(form_data.password, user.hashed_password):
-        raise HTTPException(status_code=400, detail="Incorrect email or password")
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
         
-    if user.role != RoleEnum.ADMIN:
+    if user.role not in [RoleEnum.ADMIN, RoleEnum.OWNER]:
         raise HTTPException(status_code=403, detail="Not authorized as admin")
         
     access_token = create_access_token(subject=str(user.id))

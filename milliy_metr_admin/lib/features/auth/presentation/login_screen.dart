@@ -11,42 +11,85 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
-  final _emailController = TextEditingController();
+  final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
-  String? _error;
+  String? _errorMessage;
+
+  Future<void> _login() async {
+    if (_usernameController.text.isEmpty || _passwordController.text.isEmpty) {
+      setState(() => _errorMessage = "Iltimos, ma'lumotlarni kiriting (Please enter details)");
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    final success = await ref.read(authStateProvider.notifier).login(
+      _usernameController.text,
+      _passwordController.text,
+    );
+
+    if (mounted) {
+      setState(() => _isLoading = false);
+      if (success) {
+        context.go('/dashboard');
+      } else {
+        setState(() => _errorMessage = "Login yoki parol noto'g'ri (Incorrect credentials)");
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
+      body: Center(
+        child: Container(
+          width: 400,
+          padding: const EdgeInsets.all(32),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Icon(Icons.store, size: 80, color: Color(0xFF0F3A59)),
-              const SizedBox(height: 32),
               Text(
-                'Admin Panel',
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                'Milliy Metr Admin',
+                style: TextStyle(
+                  fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).colorScheme.primary,
                 ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 32),
-              if (_error != null)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+              if (_errorMessage != null)
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  margin: const EdgeInsets.only(bottom: 16),
+                  color: Colors.red.shade50,
+                  child: Text(
+                    _errorMessage!,
+                    style: TextStyle(color: Colors.red.shade700),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               TextField(
-                controller: _emailController,
+                controller: _usernameController,
                 decoration: const InputDecoration(
-                  labelText: 'Email',
-                  prefixIcon: Icon(Icons.email),
+                  labelText: 'Username',
+                  border: OutlineInputBorder(),
                 ),
               ),
               const SizedBox(height: 16),
@@ -54,35 +97,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 controller: _passwordController,
                 obscureText: true,
                 decoration: const InputDecoration(
-                  labelText: 'Password',
-                  prefixIcon: Icon(Icons.lock),
+                  labelText: 'Parol',
+                  border: OutlineInputBorder(),
                 ),
+                onSubmitted: (_) => _login(),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
               ElevatedButton(
-                onPressed: _isLoading ? null : () async {
-                  setState(() {
-                    _isLoading = true;
-                    _error = null;
-                  });
-                  final success = await ref.read(authStateProvider.notifier).login(
-                    _emailController.text,
-                    _passwordController.text,
-                  );
-                  if (success) {
-                    if (context.mounted) context.go('/dashboard');
-                  } else {
-                    if (context.mounted) {
-                      setState(() {
-                        _isLoading = false;
-                        _error = 'Invalid credentials';
-                      });
-                    }
-                  }
-                },
-                child: _isLoading 
-                    ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white))
-                    : const Text('Login'),
+                onPressed: _isLoading ? null : _login,
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Colors.white,
+                ),
+                child: _isLoading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                      )
+                    : const Text('Kirish', style: TextStyle(fontSize: 16)),
               ),
             ],
           ),

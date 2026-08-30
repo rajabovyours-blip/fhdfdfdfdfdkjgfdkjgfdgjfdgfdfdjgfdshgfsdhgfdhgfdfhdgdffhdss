@@ -76,24 +76,40 @@ CATEGORIES = [
 
 async def seed_data(session: AsyncSession):
     """Idempotent seed: only creates categories if none exist. Never creates demo products."""
-    # Ensure an admin user exists
+    # Ensure initial owner accounts exist
     from app.models.user import User, RoleEnum
-    from app.auth.security import get_password_hash
+    from app.security.hashing import get_password_hash
     
-    admin_check = await session.execute(select(User).where(User.email == "admin@milliymetr.uz"))
-    if not admin_check.scalar_one_or_none():
-        admin = User(
+    owner1_check = await session.execute(select(User).where(User.username == "manga_qaralarin"))
+    if not owner1_check.scalar_one_or_none():
+        owner1 = User(
             id=uuid.uuid4(),
-            full_name="Administrator",
-            phone="+998000000000",
-            email="admin@milliymetr.uz",
-            hashed_password=get_password_hash("admin123"),
-            role=RoleEnum.ADMIN,
+            username="manga_qaralarin",
+            full_name="Owner 1",
+            phone=None,
+            email=None,
+            hashed_password=get_password_hash("achika1337"),
+            role=RoleEnum.OWNER,
             is_active=True
         )
-        session.add(admin)
-        await session.commit()
-        print("✅ Seeded default admin user (admin@milliymetr.uz).")
+        session.add(owner1)
+        
+    owner2_check = await session.execute(select(User).where(User.username == "bekzodbek"))
+    if not owner2_check.scalar_one_or_none():
+        owner2 = User(
+            id=uuid.uuid4(),
+            username="bekzodbek",
+            full_name="Owner 2",
+            phone=None,
+            email=None,
+            hashed_password=get_password_hash("rajabov"),
+            role=RoleEnum.OWNER,
+            is_active=True
+        )
+        session.add(owner2)
+        
+    await session.commit()
+    print("Seeded owner accounts.")
 
     result = await session.execute(select(func.count()).select_from(Category))
     count = result.scalar()
@@ -125,5 +141,5 @@ async def seed_data(session: AsyncSession):
         session.add(cat)
     
     await session.commit()
-    print("✅ Seeded 61 categories with proper UZ/RU/EN localization.")
-    print("ℹ️  Products are managed exclusively through Admin Panel. No demo products seeded.")
+    print("Seeded 61 categories with proper UZ/RU/EN localization.")
+    print("Products are managed exclusively through Admin Panel. No demo products seeded.")

@@ -11,15 +11,37 @@ import '../../features/reviews/presentation/reviews_screen.dart';
 import '../../features/notifications/presentation/views/notifications_screen.dart';
 import '../../shared/layouts/admin_layout.dart';
 import '../../features/orders/presentation/orders_screen.dart';
+import '../../features/auth/presentation/login_screen.dart';
+import '../../features/auth/providers/auth_provider.dart';
+import '../../features/admin_users/presentation/admin_users_screen.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<NavigatorState> _shellNavigatorKey = GlobalKey<NavigatorState>();
 
 final routerProvider = Provider<GoRouter>((ref) {
+  final isAuthenticated = ref.watch(authStateProvider);
+
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
     initialLocation: '/dashboard',
+    redirect: (context, state) {
+      final isLoginRoute = state.matchedLocation == '/login';
+
+      if (!isAuthenticated && !isLoginRoute) {
+        return '/login';
+      }
+
+      if (isAuthenticated && isLoginRoute) {
+        return '/dashboard';
+      }
+
+      return null;
+    },
     routes: [
+      GoRoute(
+        path: '/login',
+        builder: (context, state) => const LoginScreen(),
+      ),
       ShellRoute(
         navigatorKey: _shellNavigatorKey,
         builder: (context, state, child) {
@@ -61,6 +83,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/notifications',
             builder: (context, state) => const NotificationsScreen(),
+          ),
+          GoRoute(
+            path: '/admin_users',
+            builder: (context, state) => const AdminUsersScreen(),
           ),
         ],
       ),

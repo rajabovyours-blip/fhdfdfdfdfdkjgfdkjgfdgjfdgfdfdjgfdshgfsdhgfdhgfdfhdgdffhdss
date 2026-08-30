@@ -59,5 +59,8 @@ def require_roles(allowed_roles: List[str]) -> Callable:
         return current_user
     return role_checker
 
-async def get_current_admin(current_user: User = Depends(require_roles(["ADMIN"]))) -> User:
+async def get_current_admin(current_user: User = Depends(require_roles(["ADMIN", "OWNER"]))) -> User:
+    return current_user
+
+async def get_current_owner(current_user: User = Depends(require_roles(["OWNER"]))) -> User:
     return current_user
