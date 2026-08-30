@@ -65,12 +65,10 @@ class _ProductCardState extends ConsumerState<ProductCard> {
       orElse: () => false,
     );
 
-    final bool isInCart = ref.watch(cartNotifierProvider.select(
-      (state) => state.maybeWhen(
-        loaded: (items) => items.any((item) => item.product.id == widget.product.id),
-        orElse: () => false,
-      ),
-    ));
+    final bool isInCart = ref.watch(cartNotifierProvider).maybeWhen(
+      loaded: (items) => items.any((item) => item.product.id == widget.product.id),
+      orElse: () => false,
+    );
 
     return GestureDetector(
       onTap: widget.onTap,

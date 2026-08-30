@@ -4,7 +4,8 @@ from app.api.v1.home import router as home_router
 from app.api.v1.categories import router as categories_router
 from app.api.v1.products import router as products_router
 from app.api.v1.wishlist import router as wishlist_router
-from app.api.v1.cart import cart_router, address_router
+from app.api.v1.cart import cart_router
+from app.api.endpoints.addresses import router as address_router
 from app.api.v1.orders import checkout_router, orders_router
 from app.api.v1.payments import router as payments_router
 from app.api.v1.admin import router as admin_router

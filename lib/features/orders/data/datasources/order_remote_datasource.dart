@@ -15,7 +15,7 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
   @override
   Future<List<dynamic>> getOrders() async {
     try {
-      final response = await dio.get('/orders/my');
+      final response = await dio.get('/orders');
       if (response.statusCode == 200) {
         return response.data['data'] as List<dynamic>;
       } else {

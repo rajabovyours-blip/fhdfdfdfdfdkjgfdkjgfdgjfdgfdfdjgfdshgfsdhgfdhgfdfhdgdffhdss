@@ -1,0 +1,1126 @@
+<USER_REQUEST>
+MILLiy METR — AUTONOMOUS PRODUCTION RELEASE MASTER TASK
+ROLE
+You are the Lead Software Engineer, Flutter Architect, Backend Engineer, QA Engineer, Security Engineer, UI/UX Engineer and Release Engineer responsible for taking this repository from its current state to a genuinely production-ready release.
+Repository:
+https://github.com/rajabovyours-blip/fhdfdfdfdfdkjgfdkjgfdgjfdgfdfdjgfdshgfsdhgfdhgfdfhdgdffhdss
+You have permission to inspect, modify, refactor, test and improve the project.
+
+
+⸻
+
+
+🚨 MOST IMPORTANT RULE
+DO NOT WORK RANDOMLY.
+You MUST work using a strict sequential execution plan.
+You are NOT allowed to jump between phases.
+You are NOT allowed to start Phase 5 while Phase 1–4 are unfinished.
+You are NOT allowed to partially fix ten different things and call the project finished.
+You are NOT allowed to say:
+“Fixed.”
+unless you actually implemented the fix AND verified it.
+You are NOT allowed to say:
+“100% ready”
+without actually running the required verification.
+
+
+⸻
+
+
+YOUR WORKING METHOD
+For EVERY phase:
+PHASE START
+↓
+Inspect
+↓
+Understand
+↓
+Create implementation plan
+↓
+Implement ALL required changes for this phase
+↓
+Run static analysis
+↓
+Run relevant tests
+↓
+Run/build the affected application
+↓
+Manually verify where possible
+↓
+Fix any failures
+↓
+Run verification AGAIN
+↓
+Only when PASS → move to next phase
+If verification fails:
+FAIL
+↓
+Investigate
+↓
+Fix
+↓
+Test again
+↓
+Repeat until PASS
+Do NOT move forward while the current phase is failing.
+
+
+⸻
+
+
+🚨 SECOND MOST IMPORTANT RULE
+NEVER FABRICATE VERIFICATION.
+If you did not run a command, say:
+NOT RUN
+If a test failed, say:
+FAILED
+If you cannot verify something because the required environment/service is unavailable, say:
+BLOCKED — REASON
+Never convert:
+not tested → passed
+partially implemented → fixed
+build not run → release ready
+guessed API contract → verified
+code changed → bug fixed
+
+
+⸻
+
+
+BUSINESS MODEL — ABSOLUTE RULE
+Milliy Metr is NOT a multi-vendor marketplace.
+There are ONLY:
+1. ADMIN
+One central administrator using the Admin Panel.
+2. CUSTOMER
+Customer using the Flutter mobile application.
+3. SYSTEM
+Backend, database, payment and delivery infrastructure.
+THERE ARE NO SELLERS.
+There is:
+no seller application
+no seller account
+no seller dashboard
+no seller registration
+no seller profile
+no seller inventory
+no seller products
+no seller orders
+no seller commission
+no seller payout
+no vendor marketplace logic
+The Admin Panel is responsible for EVERYTHING related to marketplace management.
+Admin must be able to:
+add products
+edit products
+delete products
+manage categories
+manage inventory
+manage prices
+manage discounts
+manage product images
+manage product availability
+manage orders
+manage customers
+manage delivery
+manage payment information
+manage promotions
+manage banners
+manage marketplace content
+Remove/refactor the seller system safely from the entire repository.
+Do not blindly delete files.
+First inspect dependencies, imports, routes, APIs, database relations and CI/CD.
+
+
+⸻
+
+
+PHASE 0 — FULL REPOSITORY DISCOVERY
+Before modifying anything:
+Inspect the entire repository.
+Understand:
+Flutter application
+Admin Panel
+backend
+database
+authentication
+APIs
+state management
+networking
+storage
+localization
+tests
+Android
+iOS
+CI/CD
+Docker
+configuration
+dependencies
+Inspect all important documentation.
+Do NOT assume documentation is correct.
+The actual code is the source of truth.
+At the beginning, report:
+PHASE 0 STARTED
+
+Repository structure:
+...
+
+Main applications:
+...
+
+Frontend architecture:
+...
+
+Backend architecture:
+...
+
+Database:
+...
+
+Authentication:
+...
+
+Admin Panel:
+...
+
+Seller-related components found:
+...
+
+Critical risks found:
+...
+
+Execution plan:
+Phase 1 ...
+Phase 2 ...
+Phase 3 ...
+...
+Then continue working.
+Do not stop after the report.
+
+
+⸻
+
+
+PHASE 1 — REMOVE SELLER ARCHITECTURE
+This phase is dedicated ONLY to eliminating the incorrect seller business model and establishing the correct Admin + Customer architecture.
+Inspect:
+milliy_metr_seller/
+seller routes
+seller APIs
+seller models
+seller services
+seller repositories
+seller authentication
+seller database tables
+seller permissions
+seller dependencies
+seller CI/CD
+seller documentation
+Search entire repository for:
+seller
+Seller
+SELLER
+vendor
+Vendor
+VENDOR
+merchant
+Merchant
+commission
+payout
+seller_id
+sellerId
+vendor_id
+vendorId
+Review every occurrence.
+Remove/refactor obsolete seller logic.
+Make Admin Panel the single management interface.
+EXIT CRITERIA
+Do not leave Phase 1 until:
+seller application removed from production architecture
+seller navigation removed
+seller authentication removed
+seller APIs removed/refactored
+seller dependencies removed
+seller CI/CD removed
+seller business logic removed
+customer app contains no seller UI
+admin owns product management
+admin owns inventory
+admin owns orders
+admin owns pricing
+project still builds
+Run:
+flutter analyze
+flutter test
+and relevant backend tests/builds.
+If anything fails, fix it before Phase 2.
+
+
+⸻
+
+
+PHASE 2 — BACKEND + DATABASE CONTRACT AUDIT
+Now inspect the backend deeply.
+Verify every customer/admin API.
+Especially:
+auth
+OTP
+products
+categories
+catalog
+cart
+addresses
+wishlist
+checkout
+payments
+orders
+profile
+2FA
+admin products
+admin inventory
+admin orders
+For each API verify:
+method
+endpoint
+parameters
+request body
+headers
+authorization
+response
+nullable fields
+status codes
+validation
+error format
+Do not guess contracts.
+Use actual backend implementation.
+Check database relations and constraints.
+Look for:
+duplicate writes
+incorrect foreign keys
+missing constraints
+authorization problems
+incorrect status codes
+invalid validation
+seller remnants
+EXIT CRITERIA
+Frontend and backend contracts are consistent.
+Checkout contract is known.
+Product contract is known.
+Catalog contract is known.
+Orders contract is known.
+Authentication contract is known.
+Admin management contract is known.
+Run backend tests and relevant frontend tests.
+Fix all failures before Phase 3.
+
+
+⸻
+
+
+PHASE 3 — AUTHENTICATION & SECURITY
+This is a security gate.
+Remove ALL production authentication bypasses.
+Search for:
+mockLogin
+fakeLogin
+debugLogin
+testLogin
+bypass
+fake token
+dummy token
+hardcoded JWT
+development authentication
+Correct flow:
+PHONE
+↓
+SEND OTP
+↓
+OTP SCREEN
+↓
+VERIFY OTP
+↓
+ACCESS TOKEN
++
+REFRESH TOKEN
+↓
+AUTHENTICATED SESSION
+Implement/verify:
+OTP expiry
+resend cooldown
+invalid OTP
+brute-force protection
+token storage
+refresh token
+logout
+session expiration
+401 handling
+2FA:
+Enable 2FA
+↓
+Send SMS
+↓
+Enter OTP
+↓
+Server verification
+↓
+Enable 2FA
+No OTP = no activation.
+EXIT CRITERIA
+Authentication is real.
+No production bypass exists.
+Tokens are securely stored.
+2FA requires verification.
+Run auth unit/widget/integration tests.
+Do not proceed if authentication tests fail.
+
+
+⸻
+
+
+PHASE 4 — PRODUCT + CATALOG
+Fix Product Details completely.
+Investigate:
+route IDs
+API endpoint
+parsing
+nullable fields
+images
+gallery
+stock
+pricing
+variants
+reviews
+Then fix Catalog:
+categories
+search
+filters
+sorting
+pagination
+price filters
+empty state
+error state
+loading state
+Do not send invalid empty query parameters.
+Empty results ≠ API error.
+EXIT CRITERIA
+Customer can:
+Home
+→ Product
+→ Product Details
+→ Add to Cart
+and:
+Catalog
+→ Search
+→ Filter
+→ Sort
+→ Product
+works correctly.
+Test multiple products.
+Do not test only one hardcoded product.
+
+
+⸻
+
+
+PHASE 5 — CART + ADDRESS
+Fix cart calculations.
+Display:
+subtotal
+delivery
+tax
+discount
+total
+Verify arithmetic.
+Fix address creation.
+Requirements:
+one tap = one request
+loading state
+debounce/concurrency protection
+successful response parsed correctly
+no duplicate addresses
+no false error after successful creation
+Test rapid repeated taps.
+EXIT CRITERIA
+Cart calculation tests pass.
+Address creation creates exactly one record.
+No duplicate creation occurs.
+Proceed only after verification.
+
+
+⸻
+
+
+PHASE 6 — WISHLIST
+Implement Single Source of Truth.
+Home, Product Details and Wishlist must use the same state.
+Verify:
+Like
+→ Wishlist
+→ Product visible
+→ Restart app
+→ State restored if persistence is intended
+→ Unlike
+→ Removed everywhere
+Handle server failure with rollback.
+EXIT CRITERIA
+Wishlist tests pass.
+State is consistent everywhere.
+No stale local-only state remains.
+
+
+⸻
+
+
+PHASE 7 — CHECKOUT + PAYMENTS + ORDERS
+THIS IS A RELEASE BLOCKER.
+Investigate actual backend contract.
+Fix HTTP 422.
+Verify:
+address_id
+delivery_type
+payment_method
+installment_period_months
+items
+promo code
+validation
+For Uzum Nasiya verify installment rules from backend.
+Implement proper validation error handling.
+Never show raw Dio/HTTP exceptions.
+Then fix Orders:
+authorization
+endpoint
+parsing
+empty state
+retry
+order details
+status mapping
+EXIT CRITERIA
+Customer can successfully:
+Product
+→ Cart
+→ Address
+→ Delivery
+→ Payment
+→ Checkout
+→ Order Created
+→ Order History
+Test:
+successful order
+invalid order
+empty orders
+expired token
+network failure
+server validation error
+Do not proceed until checkout and orders pass.
+
+
+⸻
+
+
+PHASE 8 — PROFILE + AVATAR
+Fix avatar upload.
+Requirements:
+compression
+multipart
+MIME type
+timeout
+error handling
+loading state
+finally cleanup
+Spinner must ALWAYS stop.
+Test:
+normal image
+large image
+camera
+gallery
+network failure
+timeout
+
+
+⸻
+
+
+PHASE 9 — GLOBAL ERROR HANDLING
+No technical exception may reach customers.
+Never expose:
+DioException
+StackTrace
+RequestOptions
+HTTP internals
+database errors
+parser errors
+Implement consistent:
+Exception
+↓
+Repository
+↓
+Failure
+↓
+Localized Message
+↓
+UI
+Handle:
+400
+401
+403
+404
+409
+422
+429
+500
+502
+503
+timeout
+offline
+Technical details may only be logged safely in development.
+
+
+⸻
+
+
+PHASE 10 — LOCALIZATION
+Audit ALL user-facing text.
+Languages:
+Uzbek
+Russian
+English
+Fix every mixed-language issue.
+No hardcoded user-facing strings where localization is expected.
+Correct:
+Sevimilar
+to:
+Sevimlilar
+Test every major screen in all languages.
+
+
+⸻
+
+
+PHASE 11 — UI/UX + RESPONSIVENESS
+Audit the entire customer application and Admin Panel.
+Check:
+Material 3
+spacing
+typography
+SafeArea
+keyboard
+small screens
+large screens
+dark mode
+light mode
+loading
+empty states
+errors
+accessibility
+touch targets
+overflow
+clipping
+text truncation
+image loading
+Fix:
+stuck snackbar
+AppBar truncation
+duplicate products
+broken layouts
+clipped text
+overflow
+Do not redesign business functionality unnecessarily.
+
+
+⸻
+
+
+PHASE 12 — PERFORMANCE
+Inspect:
+unnecessary rebuilds
+image loading
+caching
+API duplication
+provider invalidation
+pagination
+database queries
+memory
+startup
+large assets
+async race conditions
+Optimize only where justified.
+Do not make speculative changes that introduce instability.
+
+
+⸻
+
+
+PHASE 13 — ADMIN PANEL COMPLETE MANAGEMENT
+Now verify the Admin Panel.
+Admin must be able to manage the entire marketplace.
+Products
+Create
+Read
+Update
+Delete
+Archive
+Restore
+Price
+Discount
+Images
+Stock
+Categories
+Attributes
+Variants
+Visibility
+Popular
+Featured
+Categories
+Create
+Edit
+Delete
+Reorder
+Activate/deactivate
+Nested categories
+Inventory
+Update stock
+Availability
+Inventory status
+Orders
+View
+Filter
+Search
+Update status
+Cancel
+Process
+Payment status
+Delivery status
+Customers
+List
+Details
+Orders
+Relevant account information
+Content
+banners
+promotions
+featured products
+Ensure there is NO seller dependency.
+
+
+⸻
+
+
+PHASE 14 — TESTING
+Now create/improve comprehensive tests.
+UNIT
+Test:
+cart
+tax
+discount
+phone normalization
+OTP
+token/session
+product parsing
+catalog filters
+wishlist
+address
+checkout serialization
+error mapping
+WIDGET
+Test:
+login
+OTP
+catalog
+product
+cart
+checkout
+wishlist
+orders
+profile
+INTEGRATION
+Test:
+Login → OTP → Home → Product → Cart → Checkout → Order
+Home → Like → Wishlist → Restart → Wishlist
+Address → Save → Checkout → Verify single address
+Profile → Avatar → Save
+2FA → OTP → Enabled
+Every critical/high bug from the original QA audit must have regression coverage where technically possible.
+
+
+⸻
+
+
+PHASE 15 — RELEASE HARDENING
+Review:
+secrets
+API keys
+tokens
+passwords
+debug logs
+print()
+network logs
+mock data
+test authentication
+temporary bypasses
+Production must not contain sensitive logging.
+Verify:
+.gitignore
+environment configuration
+--dart-define
+secure storage
+Android KeyStore
+iOS Keychain
+
+
+⸻
+
+
+PHASE 16 — ANDROID RELEASE
+Verify:
+applicationId
+package
+versionName
+versionCode
+targetSdk
+compileSdk
+minSdk
+permissions
+signing
+R8
+ProGuard
+release configuration
+icons
+splash
+AAB
+Run:
+flutter clean
+flutter pub get
+dart format --set-exit-if-changed .
+flutter analyze
+flutter test
+flutter build apk --release
+flutter build appbundle --release
+If integration tests are available:
+flutter test integration_test
+Fix every failure.
+
+
+⸻
+
+
+PHASE 17 — iOS RELEASE
+If the environment supports iOS:
+Verify:
+bundle identifier
+signing
+permissions
+Info.plist
+Keychain
+camera
+photos
+location
+release configuration
+Run release build.
+If iOS build cannot be executed because the environment does not support macOS/Xcode, explicitly report:
+BLOCKED — iOS build environment unavailable
+Do NOT claim iOS PASS.
+
+
+⸻
+
+
+PHASE 18 — FINAL REGRESSION
+Re-run the entire critical customer flow.
+FLOW 1
+Launch
+→ Login
+→ OTP
+→ Home
+→ Product
+→ Cart
+→ Checkout
+→ Order
+→ Orders
+FLOW 2
+Catalog
+→ Search
+→ Filter
+→ Product
+FLOW 3
+Like
+→ Wishlist
+→ Restart
+→ Wishlist
+FLOW 4
+Address
+→ Save
+→ Verify no duplicate
+FLOW 5
+Profile
+→ Upload Avatar
+FLOW 6
+Security
+→ 2FA
+→ OTP
+→ Enable
+FLOW 7
+Admin:
+Admin Login
+→ Create Product
+→ Edit Product
+→ Change Price
+→ Change Stock
+→ Customer sees updated product
+→ Customer creates order
+→ Admin sees order
+→ Admin changes status
+→ Customer sees status
+
+
+⸻
+
+
+PHASE 19 — FINAL RELEASE GATE
+Do not declare release readiness until every relevant item is verified.
+FUNCTIONAL
+Real OTP authentication
+Product Details
+Catalog
+Search
+Filters
+Cart
+Address
+Wishlist
+Checkout
+Payment
+Orders
+Profile
+Avatar
+2FA
+Admin product management
+Admin inventory
+Admin orders
+Admin categories
+SECURITY
+No authentication bypass
+No mock login
+No fake tokens
+Secure token storage
+OTP protected
+2FA protected
+No sensitive production logs
+No exposed secrets
+STABILITY
+No raw exceptions
+No infinite loading
+No duplicate address creation
+No duplicate API requests causing corruption
+No crashes
+Proper empty states
+Proper error states
+UI/UX
+No overflow
+No clipping
+No broken localization
+No duplicate products
+No stuck snackbar
+Light mode
+Dark mode
+Uzbek
+Russian
+English
+RELEASE
+flutter analyze PASS
+flutter test PASS
+integration tests PASS where available
+APK release build PASS
+AAB release build PASS
+iOS PASS or explicitly BLOCKED
+No release secrets committed
+
+
+⸻
+
+
+🚨 PHASE DISCIPLINE
+At the beginning of EVERY phase, write:
+==================================================
+PHASE X — START
+==================================================
+
+Objective:
+...
+
+Tasks:
+...
+
+Exit criteria:
+...
+At the end:
+==================================================
+PHASE X — VERIFICATION
+==================================================
+
+Implemented:
+...
+
+Tests executed:
+...
+
+Results:
+...
+
+Failures:
+...
+
+Remaining:
+...
+
+PHASE STATUS:
+PASS / FAIL / BLOCKED
+==================================================
+CRITICAL
+If status is:
+FAIL
+DO NOT start the next phase.
+Fix the current phase first.
+If status is:
+BLOCKED
+explain exactly what is blocking it.
+Do not pretend it passed.
+
+
+⸻
+
+
+🚫 DO NOT DO THIS
+Never:
+jump between unrelated phases
+make random changes
+modify ten features simultaneously
+mark partially completed work as complete
+fabricate tests
+disable failing tests
+hide errors
+replace real APIs with fake responses
+create fake data to make UI look functional
+bypass authentication
+hardcode successful responses
+claim release readiness without release build verification
+delete seller code blindly
+rewrite the entire architecture without necessity
+
+
+⸻
+
+
+IMPORTANT IMPLEMENTATION PRINCIPLE
+Prefer:
+small, verified, production-safe changes
+over:
+large, speculative rewrites.
+However, if a component is fundamentally broken and a refactor is required for correctness, refactor it properly.
+Always preserve working functionality unless there is a clear reason to change it.
+
+
+⸻
+
+
+FINAL REPORT
+At the very end, provide:
+1. EXECUTION SUMMARY
+Number of phases completed.
+2. BUGS FIXED
+Bug	Severity	Root Cause	Fix	Verification
+3. SELLER REMOVAL
+List exactly what seller functionality was removed/refactored.
+4. FILES CHANGED
+List meaningful changed files.
+5. TEST RESULTS
+Actual results only.
+flutter analyze:
+PASS/FAIL
+
+flutter test:
+PASS/FAIL
+
+integration_test:
+PASS/FAIL/BLOCKED
+
+APK:
+PASS/FAIL
+
+AAB:
+PASS/FAIL
+
+iOS:
+PASS/FAIL/BLOCKED
+6. SECURITY RESULT
+List actual findings and fixes.
+7. REMAINING ISSUES
+List everything that remains.
+Do not hide anything.
+8. FINAL VERDICT
+Use exactly one:
+RELEASE READY
+or
+NOT READY FOR RELEASE
+Only use:
+RELEASE READY
+if the required release gate has actually been verified.
+
+
+⸻
+
+
+FINAL COMMAND
+Start with:
+PHASE 0 — FULL REPOSITORY DISCOVERY
+Do not skip phases.
+Do not rush.
+Do not jump ahead.
+Complete one phase fully, verify it, then move to the next.
+Your goal is not to produce a convincing report.
+Your goal is to leave the actual repository in a genuinely working, tested, secure, production-release state.  Before implementing, please address these gaps in the plan:
+
+1. P0-1: You're only fixing how the error is displayed. I need the actual
+   root cause of the 422 too. Log the exact request body sent to the
+   order/payment endpoint and the exact error detail in `e.response?.data`
+   (not just `e.message`), and tell me which field/rule is failing. The
+   checkout must actually complete, not just fail more politely.
+
+2. P0-4: Before renaming minPrice/maxPrice, verify this against real
+   evidence — enable Dio's LogInterceptor (or check existing logs) and
+   show me the actual request + actual response for one failing call.
+   Also check separately: does opening Catalog with NO filter at all fail
+   the same way, and does your fix cover that case too?
+
+3. P0-3: After removing the global loading state, explicitly re-verify
+   whether the save now actually persists (not just that the screen stops
+   flashing). If it still doesn't persist, that's a second, separate bug
+   in the update-profile call itself — find it too.
+
+4. Instead of duplicating error-extraction logic in each *_remote_datasource.dart
+   file, extract one shared helper/interceptor (e.g. a DioException -> 
+   user-facing-message mapper) that every repository uses. This exact bug
+   pattern will very likely also explain the Orders screen error (a later
+   phase) — fix it once, centrally, so it doesn't need re-fixing per screen.
+
+5. Fallback error messages must go through the existing uz/ru/en
+   localization system, not hardcoded strings.
+
+6. Add at least one regression test for the price-filter param serialization
+   and the address-save debounce, since both are easy to unit test.
+
+Please update the plan with confirmed evidence (actual request/response
+logs) for items 1 and 2 before you start writing code.
+
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-08-30T13:50:22+05:00.
+
+The user's current state is as follows:
+Active Document: c:\Users\rajab\OneDrive\Desktop\MilliyMetr\lib\features\profile\presentation\views\security_privacy_screen.dart (LANGUAGE_DART)
+Cursor is on line: 323
+Other open documents:
+- c:\Users\rajab\OneDrive\Desktop\MilliyMetr\lib\features\catalog\presentation\views\product_details_screen.dart (LANGUAGE_DART)
+- c:\Users\rajab\OneDrive\Desktop\MilliyMetr\lib\features\home\presentation\widgets\home_header.dart (LANGUAGE_DART)
+- c:\Users\rajab\OneDrive\Desktop\MilliyMetr\lib\features\profile\presentation\views\payment_methods_screen.dart (LANGUAGE_DART)
+- c:\Users\rajab\OneDrive\Desktop\MilliyMetr\lib\l10n\app_en.arb (LANGUAGE_UNSPECIFIED)
+- c:\Users\rajab\OneDrive\Desktop\MilliyMetr\backend\app\services\admin_service.py (LANGUAGE_PYTHON)
+</ADDITIONAL_METADATA>

@@ -46,7 +46,7 @@ class ProductSummary(BaseModel):
     price: float
     old_price: Optional[float] = None
     rating: float
-    images: List[ProductImageResponse] = []
+    images: List[str] = []
     model_config = {"from_attributes": True}
 
     @model_validator(mode='before')
@@ -57,13 +57,14 @@ class ProductSummary(BaseModel):
         # SQLAlchemy model
         if hasattr(data, "name") and isinstance(data.name, dict):
             name_val = data.name.get(lang, data.name.get("uz", ""))
+            images_val = [img.image_url for img in data.images] if hasattr(data, "images") and data.images else []
             return {
                 "id": data.id,
                 "name": name_val,
                 "price": data.price,
                 "old_price": data.old_price,
                 "rating": data.rating,
-                "images": data.images
+                "images": images_val
             }
         return data
 
@@ -91,13 +92,14 @@ class ProductDetail(ProductSummary):
             
             # Reconstruct the dict that Pydantic will validate
             name_val = data.name.get(lang, data.name.get("uz", "")) if (hasattr(data, "name") and isinstance(data.name, dict)) else ""
+            images_val = [img.image_url for img in data.images] if hasattr(data, "images") and data.images else []
             return {
                 "id": data.id,
                 "name": name_val,
                 "price": data.price,
                 "old_price": data.old_price,
                 "rating": data.rating,
-                "images": data.images,
+                "images": images_val,
                 "description": desc_val,
                 "stock": data.stock,
                 "category_id": data.category_id

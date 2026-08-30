@@ -1,0 +1,475 @@
+4. Har bir holat bo'yicha batafsil tahlil
+
+Ushbu bo'limda 3-bo'limda sanab o'tilgan har bir g'ayritabiiy holat uchun: nima sodir bo'lgani (dalil-skrinshot bilan), ehtimoliy texnik sabab va aniq tavsiya keltirilgan.
+
+4.1. Manzil aniqlash oqimida noto'g'ri xato ekrani chiqishi
+
+  YUQORI      Video vaqti: 0:27 – 0:48
+
+Nima sodir bo'ldi
+
+Foydalanuvchi Bosh sahifada «Delivery Address» → «Determine Location» tugmasini bosganda, avval standart Android joylashuv ruxsatnomasi, so'ng unga ustma-ust Google-ning qo'shimcha «Location Accuracy» dialogi chiqadi — bu o'zi kutilgan tizim xatti-harakati.
+
+Biroq ruxsat berilgandan so'ng, ilova qisqa vaqt bo'sh ekran ko'rsatadi, so'ngra manzilni aniqlash bilan hech qanday aloqasi bo'lmagan «Could not load product» («Mahsulot yuklanmadi») xato matni va «Retry» tugmasi chiqadi. Foydalanuvchi «Retry» yoki orqaga tugmasini bosgach, Bosh sahifada manzil («Tashkent, Uzbekistan») aslida to'g'ri o'rnatilgani ma'lum bo'ladi.
+
+ 
+
+0:40 — manzil ruxsati berilgandan keyingi ekran
+
+Ehtimoliy sabab
+
+Ehtimoliy sabab: manzil aniqlash oqimi tugagach ilova umumiy/qayta ishlatiladigan xato-komponentidan (masalan, mahsulot kartasi uchun mo'ljallangan) foydalanmoqda, yoki bu bosqichda fon rejimida keraksiz mahsulot so'rovi yuborilib, u muvaffaqiyatsiz tugagani foydalanuvchiga ko'rsatilmoqda — holbuki asosiy amal (manzilni saqlash) muvaffaqiyatli bajarilgan.
+
+Tavsiya
+
+Manzil aniqlash oqimi o'ziga xos, kontekstga mos xato holatiga ega bo'lishi kerak (masalan, «Joylashuvni aniqlab bo'lmadi»). Bu bosqichda mahsulotga oid so'rov umuman yuborilmasligi yoki xato holati foydalanuvchiga ko'rsatilmasligi (chunki asosiy amal muvaffaqiyatli) lozim.
+
+
+
+4.2. Login ekranida telefon raqami maydoni klaviatura yopilgach namunaviy matnga vizual qaytishi
+
+  O'RTA      Video vaqti: 1:24–1:33 va 10:18–10:24 (2 marta)
+
+Nima sodir bo'ldi
+
+Foydalanuvchi telefon raqamini («90 843 13 37») to'liq kiritadi va klaviaturani yopadi. Shu zahoti maydon matni vizual ravishda ilovaning namunaviy (placeholder) qiymati «90 123 45 67»ga o'xshab ko'rinadigan yengil kulrang shriftga almashadi — xuddi kiritilgan raqam o'chib ketgandek taassurot qoldiradi.
+
+Bu holat videoning boshqa bir joyida (10:18–10:24, rus tilidagi Login ekranida) ham aynan takrorlanadi — demak, tasodifiy emas, izchil reproduktiv xato.
+
+Amaliy oqibati kichik, chunki «Log In» tugmasi bosilganda tizim haqiqiy kiritilgan raqamni ishlatib, muvaffaqiyatli kirish amalga oshadi (Profilda to'g'ri raqam ko'rinadi). Ammo bu vizual nomuvofiqlik foydalanuvchini chalg'itib, raqamni qayta kiritishga undashi yoki ilovaga ishonchni pasaytirishi mumkin.
+
+ 
+
+1:30 — «90 843 13 37» kiritilgandan keyin maydon «90 123 45 67» namunasiga qaytgan holat
+
+Ehtimoliy sabab
+
+Matn maydonining «qiymat» holati fokusdan chiqqanda to'g'ri render qilinmayotgan yoki placeholder-uslub bilan haqiqiy qiymat uslubi orasida ziddiyat bor bo'lishi ehtimoli katta (masalan, forma holatini boshqarish komponentida focus/blur hodisasi noto'g'ri ishlangan).
+
+Tavsiya
+
+Matn maydonining fokusdan chiqqandagi render holatini tekshirish va tuzatish; kiritilgan qiymat va placeholder matni vizual jihatdan aniq farqlanishini ta'minlash kerak.
+
+
+
+4.3. Toast/Snackbar (vaqtinchalik xabar) larning bir nechta ekran o'tishlari davomida «yopishib» qolishi
+
+  YUQORI      Video vaqti: 2:06–2:12, 2:24–2:30, 3:06–3:09
+
+Nima sodir bo'ldi
+
+Ilova bo'ylab bir necha marta bir xil xatti-harakat kuzatildi: pastki qismda chiqqan qisqa muddatli xabar (toast/snackbar) belgilangan vaqtida (odatda 2–4 soniya) yo'qolmay, foydalanuvchi keyingi, umuman aloqasiz ekranlarga o'tgandan keyin ham ekranda qolib ketadi.
+
+Uch aniq holat qayd etildi: (1) «An error occurred» xabari «Manzil qo'shish» sahifasidan «Manzillar» ro'yxatiga, so'ng Profil sahifasiga qadar (≈7 soniyadan ortiq, uchta turli ekran) ko'chib o'tdi; (2) «Payment method selected» muvaffaqiyat xabari To'lov usullari sahifasidan — Profil, «Mening sharhlarim» (My Reviews) va hatto Bosh sahifaga qadar (jami 15 soniyadan ortiq, to'rtta turli ekran!) ko'chib yurdi; (3) «Passwords do not match» xabari parol o'zgartirish oynasi yopilgandan keyin ham, hatto orasida to'liq qora ekran va yangi «SMS Tasdiqlash» dialogi chiqqandan keyin ham davom etdi.
+
+ 
+
+2:12/2:13 — «An error occurred» xabari «Manzil qo'shish»dan Profil ekraniga ko'chib o'tgan	 
+
+2:30 — «Payment method selected» xabari Bosh sahifada ham ko'rinib turibdi
+
+Ehtimoliy sabab
+
+Bu — snackbar/toast holatini navigatsiya (marshrutlash) hodisalari bilan bog'lamaslikning odatiy natijasi: xabar global darajada (masalan, ilova ildizida) ko'rsatilib, ekran almashganda avtomatik tozalanmayapti yoki taymer navigatsiya paytida to'xtab qolmoqda.
+
+Tavsiya
+
+Toast/snackbar hodisalari ekran (route) darajasida boshqarilishi, ekran almashganda avtomatik yopilishi yoki har bir yangi navigatsiyada eski xabar majburiy tozalanishi kerak.
+
+
+
+4.4. Soxta xato: «An error occurred» chiqadi, lekin amal aslida serverda bajariladi — bitta manzil 6 martadan ortiq dublikat bo'lib saqlanadi
+
+  KRITIK      Video vaqti: 2:06 (xato) → 4:21–4:24 (natija aniqlanadi)
+
+Nima sodir bo'ldi
+
+«Yangi manzil qo'shish» formasi to'ldirilib «Save Address» bosilganda, ilova har safar «An error occurred» xato xabarini ko'rsatadi. Bu xabarga ishonib, tabiiy foydalanuvchi xatti-harakati sifatida amal bir necha bor qayta urinib ko'riladi.
+
+Biroq video davomida keyinroq «Manzillar» ro'yxatiga o'tilganda, aslida bitta va bir xil manzil («hhh», Tashkent City, Chilanzar District, tisasn) KAMIDA OLTI MARTA muvaffaqiyatli saqlangani ma'lum bo'ladi. Demak, ko'rsatilgan xato noto'g'ri (yolg'on-manfiy) bo'lib, server tomonida so'rov aslida muvaffaqiyatli bajarilgan, faqat mijoz (client) tomonida javobni noto'g'ri talqin qilib xato deb belgilagan.
+
+ 
+
+4:24 — bitta «hhh» manzilining kamida 6 ta aynan bir xil nusxasi
+
+Ehtimoliy sabab
+
+Server javobining (masalan, muvaffaqiyatli status kodi, lekin kutilmagan formatdagi tana/JSON) mijoz tomonida noto'g'ri tahlil qilinishi yoki so'rov muvaffaqiyatli bajarilgandan keyin ilova qandaydir keyingi (masalan, ro'yxatni yangilash) so'rovi muvaffaqiyatsiz bo'lgani uchun butun amalni «xato» deb belgilashi ehtimoli yuqori.
+
+Tavsiya
+
+Bu — ma'lumotlar yaxlitligiga bevosita ta'sir qiluvchi jiddiy xato: (1) xato aniqlash mantig'ini serverning haqiqiy javobiga moslashtirish; (2) forma yuborilishidan oldin/keyin dublikatlarni serverda yoki mijozda tekshirish (masalan, bir xil manzil allaqachon mavjudligini aniqlash); (3) foydalanuvchiga noto'g'ri xato ko'rsatilishining oldini olish zarur.
+
+
+
+4.5. To'lov (Checkout) jarayonida server tizimining xom (raw) HTTP 422 xatolik matni foydalanuvchiga to'g'ridan-to'g'ri ko'rsatilishi
+
+  KRITIK      Video vaqti: 4:50 (≈290 soniya)
+
+Nima sodir bo'ldi
+
+«Pay» tugmasi bosilgandan so'ng, ekranda ilova ishlab chiquvchilari uchun mo'ljallangan, tarjima qilinmagan texnik xatolik matni to'liq holda chiqadi: bu matn HTTP 422 status kodi ("Client error — the request contains bad syntax or cannot be fulfilled") haqida tushuntirish beradi, hatto Mozilla Developer Network (MDN) hujjatlariga havola ham o'z ichiga oladi.
+
+Bu — dastur ichidagi tarmoq so'rovlari kutubxonasining (Flutter/Dio) qo'lga olinmagan (unhandled) xatolik obyekti to'g'ridan-to'g'ri interfeys elementiga chiqarib yuborilgani, ya'ni xatoni «tutib», foydalanuvchiga tushunarli, tarjima qilingan xabar ko'rsatish bosqichi butunlay o'tkazib yuborilganini bildiradi.
+
+ 
+
+4:50 — Checkout ekranida to'lov tugmasi bosilgandan keyin chiqqan texnik exception matni
+
+Ehtimoliy sabab
+
+To'lovni yuborish (checkout submit) funksiyasida try/catch (yoki unga teng mexanizm) orqali tarmoq xatosi ushlanmagan, aksincha xato obyektining `toString()` natijasi bevosita interfeys matniga joylashtirilgan.
+
+Tavsiya
+
+Bu topilma eng yuqori ustuvorlikka ega bo'lishi kerak: (1) barcha tarmoq so'rovlari, ayniqsa to'lov kabi tanqidiy amallar, albatta xatolarni ushlab, foydalanuvchiga tushunarli xabar ko'rsatishi shart; (2) texnik tafsilotlar (status kod, kutubxona nomi, hujjat havolalari) hech qachon ishlab chiqarish (production) muhitida oxirgi foydalanuvchiga ko'rsatilmasligi kerak; (3) 422 xatosining tub sababi (so'rov tanasidagi noto'g'ri format) alohida tekshirilishi lozim — bu checkout/to'lov funksiyasi hozircha umuman ishlamasligi mumkinligini ko'rsatadi.
+
+
+
+4.6. «Buyurtmalarim» (My Orders) bo'limi doimiy ravishda tarmoq xatosini ko'rsatishi
+
+  YUQORI      Video vaqti: 1:36, 5:06, 9:09 (kamida 3 marta)
+
+Nima sodir bo'ldi
+
+Video davomida «Buyurtmalarim» bo'limiga uch marta alohida vaqtda kirilgan (turli til va mavzu sozlamalarida — ingliz/o'zbek tilida, yorug'/qorong'u rejimda) va HAR SAFAR bir xil natija: uzoq yuklanish aylanasi, so'ngra Wi-Fi belgisi bilan «Ulanishda xatolik / Tarmoqqa ulanishni tekshirib qayta urinib ko'ring» xabari chiqqan.
+
+Bu xatoning til yoki mavzu sozlamalaridan qat'i nazar barqaror takrorlanishi, uni tasodifiy tarmoq uzilishi emas, balki ushbu funksiyaning tizimli, doimiy nosozligi ekanini ko'rsatadi.
+
+ 
+
+5:06 — «Ulanishda xatolik» ekrani
+
+Ehtimoliy sabab
+
+Buyurtmalar ro'yxatini olib keluvchi backend endpoint ishlamayotgani, noto'g'ri manzilga murojaat qilinayotgani yoki avtorizatsiya (token) muammosi bo'lishi ehtimoli bor.
+
+Tavsiya
+
+Backend loglarini tekshirib, «Buyurtmalarim» endpointining nima uchun muvaffaqiyatsiz javob qaytarayotganini aniqlash zarur — bu asosiy foydalanuvchi funksiyalaridan biri butunlay ishlamayotganini bildiradi.
+
+
+
+4.7. Katalog bo'limida mahsulotlar deyarli har doim yuklanmasligi — keng filtr diapazonlarida ham
+
+  KRITIK      Video vaqti: 1:06, 5:03, 5:21, 5:27, 6:24, 8:03 (6 martadan ortiq)
+
+Nima sodir bo'ldi
+
+Katalog bo'limida filtr qo'llash («Show Results») amali video davomida OLTI MARTADAN ORTIQ sinalgan va deyarli har safar natija bir xil bo'lgan: «0 mahsulot» va «Error loading products.» (yoki o'zbekcha/lokalizatsiya qilingan variantlari) xato xabari.
+
+Bu ayniqsa e'tiborga molik, chunki qo'llanilgan narx filtrlari juda keng edi (masalan, 0 dan 1 970 000 yoki 13 065 000 so'mgacha) — ilovada mavjud ikkita namunaviy mahsulot (1 200 va 55 000 so'm) bu diapazonlarga to'liq mos kelishi kerak edi, biroq baribir natija bo'sh va xatolik bilan qaytgan.
+
+Bu — filtrlash natijasi haqiqatda bo'sh bo'lgani uchun emas, balki so'rovning o'zi (yoki uni qayta ishlash) muvaffaqiyatsiz tugagani uchun sodir bo'layotganini ko'rsatadi.
+
+ 
+
+6:24 — filtr qo'llanilgandan keyin «0 mahsulot / Error loading products.»
+
+Ehtimoliy sabab
+
+Katalog/filtr endpointi so'rov parametrlarini noto'g'ri qabul qilayotgani (masalan, narx formatidagi probel yoki kutilmagan JSON tuzilishi) yoki backend darajasida doimiy xatolik mavjudligi katta ehtimol.
+
+Tavsiya
+
+Bu ilovaning asosiy, markaziy funksiyalaridan biri (mahsulot katalogini ko'rish/filtrlash) amalda ishlamayotganini bildiradi — birinchi navbatda tuzatilishi shart bo'lgan muammo. Filtr so'rovi va server javobini network-log darajasida tekshirish tavsiya etiladi.
+
+
+
+4.8. Bosh sahifaning turli bo'limlarida bitta mahsulotning «savatga qo'shilgan» holati mos kelmasligi
+
+  O'RTA      Video vaqti: 6:36 (≈396 soniya)
+
+Nima sodir bo'ldi
+
+Bosh sahifada bitta va bir xil mahsulot («Qizil g'isht / Red Brick Standard») ikki xil bo'limda ko'rsatilmoqda: «Qaynoq Takliflar»da uning belgisi yashil, savatga allaqachon qo'shilganini bildiruvchi «✓» ko'rinishida, «Ommabop mahsulotlar» bo'limida esa xuddi shu mahsulot hali savatga qo'shilmaganini bildiruvchi oddiy (to'q sariq) savat belgisi bilan chiqmoqda.
+
+ 
+
+6:36 — «Qaynoq Takliflar»da yashil belgi (✓), «Ommabop mahsulotlar»da esa oddiy savat belgisi — bir xil mahsulot uchun
+
+Ehtimoliy sabab
+
+Ehtimol, har bir bo'lim (widget) o'z mahsulot ma'lumotlarini alohida so'rov orqali oladi va ular orasida «savatga qo'shilganlik» holati (state) sinxronlashtirilmagan — ya'ni umumiy, markazlashtirilgan savat holati ishlatilmayapti.
+
+Tavsiya
+
+Mahsulotning savatdagi holati ilova darajasida (global state) markazlashtirilib, barcha bo'limlar shu bitta manbadan foydalanishi kerak — aks holda foydalanuvchi mahsulotni ikki marta qo'shib yuborishi yoki chalkashib qolishi mumkin.
+
+
+
+4.9. Profilni tahrirlash (ism, email, rasm) — o'zgarishlar saqlangandek ko'rinadi, lekin haqiqatda saqlanmaydi
+
+  KRITIK      Video vaqti: 6:48 – 7:48
+
+Nima sodir bo'ldi
+
+Foydalanuvchi «Shaxsiy ma'lumotlar» sahifasida ismni «Bekzodbek (Dev)» dan «Bekzodbek»ga, elektron pochtani «dev@millymetr.uz» dan «dev@milliymetr»ga o'zgartiradi va «Saqlash»ni bosadi. Ekranda ≈8 soniya davomida yuklanish belgisi ko'rinadi (bu o'zi sezilarli darajada sekin), so'ng «Xatolik yuz berdi» xabari chiqadi.
+
+Shu yuklanish jarayonida qiziq bir qo'shimcha nosozlik ham qayd etildi: fon qismida, umuman aloqasi bo'lmagan «Yordam va Qo'llab-quvvatlash» (FAQ) sahifasining matni bir lahza ko'rinib qoladi — bu ekranlar orasidagi render holatining to'g'ri tozalanmayotganini ko'rsatadi.
+
+Foydalanuvchi keyin profil rasmini tizim kamerasi orqali o'zgartiradi; yangi rasm avatarga qo'llangandek vizual ko'rinadi. Biroq Profil sahifasiga qaytib kirilganda — ism yana «Bekzodbek (Dev)»ga, email «dev@millymetr.uz»ga, avatar esa standart bo'sh holatiga QAYTGANI ma'lum bo'ladi. Ya'ni birorta ham tahrir haqiqatda saqlanmagan.
+
+ 
+
+7:12 — ≈8 soniyalik kutishdan keyin «Xatolik yuz berdi»; fonda boshqa ekran matni «ko'chib» ko'rinmoqda	 
+
+7:39 — Profilga qaytilganda barcha o'zgarishlar (ism, email, rasm) asl holatiga qaytgan
+
+Ehtimoliy sabab
+
+Profilni yangilash (update profile) endpointi muvaffaqiyatsiz tugayotgani (avvalgi HTTP 422 holatiga o'xshash sabab bo'lishi mumkin), interfeys esa serverdan tasdiq kelishidan oldin o'zgarishlarni «optimistik» tarzda ko'rsatib, keyin ularni orqaga qaytarish o'rniga shunchaki eski ma'lumotni qayta yuklab yuborayotgani ehtimoli bor.
+
+Tavsiya
+
+Bu — asosiy profil boshqaruvi funksiyasining butunlay ishlamasligini bildiradi. (1) Profilni saqlash endpointidagi xatoni server tomonida tekshirish; (2) 8 soniyalik kutish vaqtini qisqartirish yoki aniq progress ko'rsatish; (3) ekranlar orasidagi eski render holatining «ko'chib qolishi» muammosini bartaraf etish zarur.
+
+
+
+4.10. Ikki bosqichli autentifikatsiya (2FA) holati muvaffaqiyatli yoqilgani xabar qilinadi, lekin keyinroq avtomatik o'chib qoladi
+
+  YUQORI      Video vaqti: 3:18 (yoqiladi) → 7:48 (o'chgan holda topiladi)
+
+Nima sodir bo'ldi
+
+≈3:15–3:18 oralig'ida foydalanuvchi «Ikki bosqichli autentifikatsiya» tumblerini yoqadi, tizim «SMS Tasdiqlash» dialogini ko'rsatadi va «Davom etish» bosilgach yashil «Ikki bosqichli autentifikatsiya yoqildi» muvaffaqiyat xabari chiqadi — tumbler ham yoniq (yashil/to'q sariq) holatga o'tadi.
+
+Biroq video davomida ≈7:48da xuddi shu «Xavfsizlik va Maxfiylik» sahifasiga qaytilganda, tumbler yana O'CHIQ holatda ko'rinadi — go'yo hech qachon yoqilmagandek.
+
+ 
+
+7:48 — 2FA tumbleri yana O'CHIQ holatda, garchi 3:18da yashil «yoqildi» xabari chiqqan bo'lsa ham
+
+Ehtimoliy sabab
+
+Xavfsizlik sozlamalari (2FA, va ehtimol boshqa tumblerlar ham) serverga to'liq saqlanmayapti yoki sahifa qayta yuklanganda mijoz tomonidagi keshlangan/eski holat ko'rsatilmoqda.
+
+Tavsiya
+
+Xavfsizlik bilan bog'liq sozlamalar (2FA, biometrik autentifikatsiya) ayniqsa ishonchli saqlanishi va sahifa har safar ochilganda serverdagi haqiqiy holat bilan tekshirilishi shart — bu foydalanuvchi xavfsizligiga bevosita ta'sir qiluvchi masala.
+
+
+
+4.11. To'liq qora ekran (black screen) qisqa muddatli chaqiruvlari
+
+  O'RTA      Video vaqti: ≈3:04–3:05 va ≈7:15–7:18 (2 marta)
+
+Nima sodir bo'ldi
+
+Video davomida ikki marta butun ekran to'liq qora rangga aylanib, ≈1–1.5 soniya davomida hech qanday interfeys elementisiz qoladi: (1) parol mos kelmasligi xatosi va biometrik autentifikatsiya tumbleri o'zgarishi orasida (≈3:04–3:05); (2) profil rasmini o'zgartirish uchun qurilma kamerasi ochilayotganda (≈7:15–7:18).
+
+Ikkinchi holat (kamera ochilishi) tizim darajasidagi biometrik/kamera ruxsatnomasi yoki qurilma emulyatorining o'zi bilan bog'liq bo'lishi mumkin va shart emaski ilovaning to'g'ridan-to'g'ri xatosi bo'lsin. Biroq birinchi holat (biometrik tumbler bosilganda) aynan ilova ekrani ichida sodir bo'lgani uchun ko'proq e'tiborga loyiq.
+
+ 
+
+3:04 — parolni o'zgartirish/biometrik amalidan so'ng ≈1–1.5 soniyalik to'liq qora ekran
+
+Ehtimoliy sabab
+
+Ehtimol, tizim darajasidagi biometrik tasdiqlash oynasi (Android BiometricPrompt) test qurilmasida/emulyatorda to'g'ri sozlanmagan biometrik uskunalar tufayli bo'sh/qora holatda chizilmoqda, yoki bu ekran o'tish animatsiyasidagi vizual nosozlik.
+
+Tavsiya
+
+Haqiqiy qurilmada (emulyatorsiz) qayta tekshirish tavsiya etiladi. Agar muammo real qurilmalarda ham takrorlansa, bu — foydalanuvchi uchun tushunarsiz, «ilova qotib qoldimi?» degan taassurot qoldiruvchi jiddiy vizual nosozlik.
+
+
+
+4.12. Ikkita bog'liqsiz xabar/dialogning bir vaqtda ustma-ust chiqishi
+
+  O'RTA      Video vaqti: 3:06
+
+Nima sodir bo'ldi
+
+Qora ekrandan qaytilgandan so'ng, ekranda bir vaqtning o'zida ikkita, bir-biriga aloqasi bo'lmagan holat ko'rinadi: pastda eski «Passwords do not match» xato-toasti (parolni o'zgartirish urinishidan qolgan) va uning ustida yangi «SMS Tasdiqlash» (ikki bosqichli autentifikatsiyani yoqish) tasdiqlash dialogi.
+
+ 
+
+3:06 — eski «Passwords do not match» xatosi va yangi «SMS Tasdiqlash» dialogi bir ekranda
+
+Ehtimoliy sabab
+
+Bu ham №3 holatdagi «toast tozalanmaslik» muammosining bir ko'rinishi bo'lib, unga yana bir yangi modal dialogning navbatlash tizimisiz ustma-ust chiqishi qo'shilgan.
+
+Tavsiya
+
+Bir vaqtning o'zida faqat bitta xabar/dialog ko'rsatiladigan navbat tizimi (queue) joriy etilishi, eski xabarlar yangi modal ochilishidan oldin albatta yopilishi kerak.
+
+
+
+4.13. Yordam (FAQ) bo'limidagi matn eskirgan/noto'g'ri: «faqat naqd pul qabul qilinadi» deyilgan, aslida bir nechta to'lov usuli mavjud
+
+  O'RTA      Video vaqti: 4:09, 8:30 (matn) — 2:15, 4:27 (haqiqiy imkoniyat)
+
+Nima sodir bo'ldi
+
+«Yordam va Qo'llab-quvvatlash» bo'limidagi «Qanday to'lov usullari mavjud?» degan FAQ savoliga javob shunday: «Hozirda faqat naqd pul bilan to'lov qabul qilinadi. Boshqa to'lov usullari tez orada qo'shiladi» (bu matn video davomida ham ingliz, ham o'zbek tilida aynan takrorlanadi).
+
+Biroq bu ayni video ichida ikki marta rad etiladi: (1) Profil → To'lov usullari sahifasida Naqd pul, Click va Bank kartasi (Visa/Mastercard) allaqachon tanlash uchun mavjud; (2) Checkout (buyurtma rasmiylashtirish) sahifasida Naqd pul, Click, Payme, Visa, Mastercard va hatto «Uzum Nasiya» muddatli to'lovi (3/6/12 oyga) to'liq ishlaydigan holda taqdim etiladi.
+
+ 
+
+8:30 — FAQ javobi: «Hozirda naqd pul bilan to'lov qabul qilinadi. Boshqa to'lov usullari tez orada qo'shiladi.»	 
+
+8:48 — Profil → To'lov usullari: Naqd pul, Click, Bank kartasi allaqachon mavjud
+
+Ehtimoliy sabab
+
+FAQ matni ilova funksionalligidan orqada qolgan — kontent (matn) mahsulot rivojlanishi bilan birga yangilanmagan klassik holat.
+
+Tavsiya
+
+Yordam bo'limi matnlari ilovaning haqiqiy joriy imkoniyatlariga muvofiqlashtirilishi kerak; bunday statik matnlarni backend/CMS orqali boshqarish kelajakda shunga o'xshash chalkashliklarning oldini oladi.
+
+
+
+4.14. Katalog filtridagi hudud ro'yxati to'liq emas — ilovaning boshqa joyidagi ro'yxatdan qisqaroq
+
+  O'RTA      Video vaqti: 6:03–6:18 / 9:58
+
+Nima sodir bo'ldi
+
+Ilovaning ikki turli joyida hududni tanlash uchun ikki xil, hajmi bo'yicha mos kelmaydigan ro'yxat ishlatilgani kuzatildi. Katalog bo'limidagi Filtr panelida «Region» chiplari atigi 7 ta banddan iborat: Barchasi, Farg'ona, Toshkent, Andijon, Namangan, Samarqand, Buxoro. Bosh sahifadagi yetkazib berish manzilini tanlash oynasida esa O'zbekistonning barcha 13 ta rasmiy viloyati to'liq keltirilgan (shu jumladan Jizzax, Xorazm, Navoiy, Qashqadaryo, Qoraqalpog'iston Respublikasi va Sirdaryo, ular Katalog filtrida umuman yo'q).
+
+Natijada, masalan, Jizzax yoki Sirdaryo viloyatidagi foydalanuvchi yetkazib berish manzilini to'g'ri tanlay oladi, lekin Katalogda mahsulotlarni o'z hududi bo'yicha filtrlay olmaydi — chunki bu viloyat filtr ro'yxatida yo'q. (Bu oyna, ijobiy tomoni sifatida, qorong'u rejimga ham to'g'ri moslashib ochiladi.)
+
+ 
+
+6:06 — Katalog filtridagi «Region» chiplari: bor-yo'g'i 7 ta band (Barchasi + 6 ta viloyat)	 
+
+9:58 — Bosh sahifadagi yetkazib berish manzili tanlovida O'zbekistonning barcha 13 ta viloyati to'liq ro'yxati
+
+Ehtimoliy sabab
+
+Ikkala ro'yxat, ehtimol, turli vaqtda va bir-biridan mustaqil ravishda ishlab chiqilgan hamda keyinchalik bitta umumiy ma'lumotlar manbaiga birlashtirilmagan.
+
+Tavsiya
+
+Katalog filtridagi hudud ro'yxatini ham to'liq, barcha 13 viloyatni o'z ichiga oladigan qilib kengaytirish, ikkala ro'yxat uchun bitta markazlashtirilgan ma'lumotlar manbaidan foydalanish tavsiya etiladi.
+
+
+
+4.15. Xato xabarlarining matni/uslubi ekrandan-ekranga izchil emas
+
+  PAST      Video vaqti: Butun video davomida
+
+Nima sodir bo'ldi
+
+Ilova davomida bir xil ma'noni ("ma'lumot yuklanmadi") anglatuvchi kamida to'rtta har xil matn kuzatildi: «Error loading products.», «Could not load product», «Ulanishda xatolik / Tarmoqqa ulanishni tekshirib qayta urinib ko'ring.» va «Mahsulotlarni yuklashda xatolik yuz berdi.» Bularning ba'zilari ingliz, ba'zilari o'zbek tilida, vizual dizayni ham (ikonka, tugma matni) bir-biridan farq qiladi.
+
+Ehtimoliy sabab
+
+Yagona, qayta ishlatiladigan xato-holat komponenti (error state component) mavjud emasligi yoki ishlatilmayotgani.
+
+Tavsiya
+
+Butun ilova uchun yagona xato-holat dizayn komponenti va standart matn shabloni (masalan, «Yuklashda xatolik yuz berdi. Qayta urinib ko'ring») joriy etilishi tavsiya etiladi — bu ham dizayn izchilligini, ham kodni qo'llab-quvvatlashni osonlashtiradi.
+
+
+
+4.16. Katalog filtridagi «Hudud» chiplari boshqa chip tanlanganda joyi almashib qayta joylanishi
+
+  PAST      Video vaqti: 6:09–6:15
+
+Nima sodir bo'ldi
+
+Filtr panelidagi hudud chiplari (Farg'ona, Toshkent, Andijon, Namangan, Samarqand, Buxoro) foydalanuvchi ulardan birini tanlaganda butunlay qayta tartiblanib, boshqa qatorlarga «sakrab» o'tadi. Bu funksional xato emas, lekin foydalanuvchi e'tiborini chalg'ituvchi, «sakrovchi» interfeys hissi qoldiradi.
+
+Ehtimoliy sabab
+
+Chiplar ro'yxati tartiblanish mezoniga (masalan, tanlanganlar birinchi qatorga chiqarilishi) ega bo'lishi, bu esa flex-wrap joylashuvni har safar o'zgartirib yuborishi mumkin.
+
+Tavsiya
+
+Chiplar tartibini FIXED (o'zgarmas) qilib belgilash, faqat tanlanganlik holatini rang/chegara orqali ko'rsatish tavsiya etiladi.
+
+
+
+4.17. Rus tiliga o'tilganda ayrim matnlar (bo'lim sarlavhasi, kategoriya nomlari) tarjima qilinmay qolishi
+
+  PAST      Video vaqti: 10:30 (≈630 soniya)
+
+Nima sodir bo'ldi
+
+Interfeys rus tiliga o'girilganda aksariyat matnlar (narxlar, tugmalar, «Категории», «Адрес доставки», bo'lim nomlari, hatto mahsulot nomlari — «Красный кирпич (Стандарт)», «Цемент M400») to'g'ri tarjima qilingan. Biroq bir nechta element tarjima qilinmay, o'zbek tilida qolib ketgan: «Qaynoq Takliflar» bo'lim sarlavhasi, shuningdek kategoriya nomlarining o'zi («G'isht va Bloklar», «Sement» — «Категории» sarlavhasi ruscha bo'lsa ham, ro'yxat elementlari o'zbekcha qolgan).
+
+ 
+
+10:30 — deyarli barcha matn ruscha, lekin ba'zi elementlar o'zbekcha qolgan
+
+Ehtimoliy sabab
+
+Ushbu matn qatorlari lokalizatsiya kalitlar (i18n keys) ro'yxatida yo'q yoki qattiq kodlangan (hardcoded) matn sifatida qolib ketgan, yoki kategoriya nomlari kabi ma'lumotlar bazasidan keladigan matnlar umuman tarjima qilinmagan bo'lishi mumkin.
+
+Tavsiya
+
+Barcha statik matnlar va ma'lumotlar bazasidan keladigan nomlar (kategoriya, bo'lim sarlavhalari)ning lokalizatsiya fayllarida mavjudligini tekshirish uchun avtomatik audit (barcha ekranlarni har uchala til bilan skanerlash) o'tkazish tavsiya etiladi.
+
+
+
+Qo'shimcha eslatmalar (funksional xato emas, biroq e'tiborga molik)
+
+Eslatma A — Sevimlilar (Wishlist) holati
+
+Sevimlilar (Wishlist) holati: 0:18da mahsulot kartasidagi yurakcha belgisi bosilgan, biroq bu tizimga hali kirilmagan (mehmon) holatda sodir bo'lgan. Video davomida keyinroq (6:27, 7:54) Sevimlilar bo'limi doimo bo'sh ko'rsatiladi. Bu funksional xato bo'lmasligi ham mumkin (mehmon holatidagi amallar hisobga bog'lanmasligi tabiiy), biroq foydalanuvchi tajribasi nuqtai nazaridan tizimga kirishni so'rash yoki mehmon holatidagi tanlovlarni keyinroq hisobga ko'chirish tavsiya etiladi.
+
+Eslatma B — OTP/SMS tasdiqlash bosqichining ko'rinmasligi
+
+OTP/SMS tasdiqlash bosqichining yo'qligi: Video davomida barcha uchta login urinishida ham (ingliz, o'zbek va rus tilli ekranlarda) telefon raqami kiritilib «Log In» bosilgach, hech qanday SMS-kod tasdiqlash bosqichisiz to'g'ridan-to'g'ri hisobga kirib borilgan. Hisob nomi «Bekzodbek (Dev)» ekanini hisobga olsak, bu — sinov/dasturchi hisobi uchun maxsus OTP'ni chetlab o'tish imkoniyati bo'lishi ehtimoli katta va real foydalanuvchi hisoblari uchun amal qilmasligi mumkin. Shunga qaramay, bu holat tasdiqlanishi tavsiya etiladi.
+
+--------------------------------------------------
+6. Umumiy xulosa va tavsiyalar
+
+Umumiy baho
+
+«Milliy Metr» ilovasi vizual dizayn, navigatsiya tuzilishi va UI komponentlari darajasida yetarlicha pishiq va tushunarli ko'rinadi — ekranlar mantiqiy joylashgan, interaktiv elementlar (slayderlar, klaviaturalar, tumblerlar, filtrlar) silliq ishlaydi. Biroq video davomida aniqlangan topilmalarning katta qismi aynan ilovaning FRONTEND va BACKEND o'rtasidagi aloqa qatlamida (tarmoq so'rovlari, xatolarni qayta ishlash, holatni saqlash/sinxronlash) to'plangan. Bu — hozirgi holatda ilova «demo» yoki «ishlab chiqish (development)» bosqichida ekanidan, ayrim asosiy backend endpointlar hali barqaror ishlamayotgani yoki test muhitida to'liq sozlanmaganidan dalolat berishi mumkin (masalan, «Bekzodbek (Dev)» nomli sinov hisobi ishlatilgani ham shunga ishora qiladi).
+
+Ayni paytda, Katalogni ko'rish/filtrlash, Buyurtmalar tarixini ko'rish, Checkoutda to'lovni yakunlash va Profilni tahrirlash kabi TO'RTTA MARKAZIY funksiya video davomida barqaror ishlagani kuzatilmadi. Bu funksiyalarsiz ilova amalda savdo maqsadida ishlatib bo'lmaydigan holatda, shuning uchun ularni tuzatish eng yuqori ustuvorlikka ega bo'lishi lozim.
+
+Ustuvorlik bo'yicha tavsiyalar
+
+1-ustuvorlik — darhol (KRITIK)
+
+⦁	Checkout/to'lov so'rovidagi HTTP 422 xatosining tub sababini backend jamoasi bilan birga tekshirish va tuzatish; barcha tarmoq xatolarini foydalanuvchiga tarjima qilingan, tushunarli xabar bilan ko'rsatadigan umumiy mexanizm joriy etish (4.5-band).
+
+⦁	Manzil qo'shish (va ehtimol boshqa «create»/«update» amallari)dagi xato aniqlash mantig'ini qayta ko'rib chiqish — muvaffaqiyatli amallar xato deb noto'g'ri belgilanmasligi, shuningdek allaqachon yaratilgan dublikat manzillarni tozalash (4.4-band).
+
+⦁	Profilni tahrirlash (ism, email, rasm) endpointini tuzatish — hozirda bu funksiya butunlay ishlamaydi (4.9-band).
+
+⦁	Katalog bo'limida mahsulotlarni yuklash/filtrlashning nima uchun deyarli doim muvaffaqiyatsiz tugayotganini backend darajasida tekshirish (4.7-band).
+
+2-ustuvorlik — qisqa muddatda (YUQORI)
+
+⦁	Toast/Snackbar xabarlarining ekranlar orasida «yopishib qolish» muammosini bartaraf etish — xabarlarni marshrut (route) darajasida boshqarish (4.3 va 4.12-bandlar).
+
+⦁	«Buyurtmalarim» bo'limidagi doimiy tarmoq xatosini backend jamoasi bilan tekshirish (4.6-band).
+
+⦁	Xavfsizlik sozlamalari (2FA va boshqalar)ning ishonchli saqlanishini ta'minlash (4.10-band).
+
+3-ustuvorlik — o'rta muddatda (O'RTA va PAST)
+
+⦁	Bosh sahifa bo'limlari orasida mahsulot holatini (savatga qo'shilganlik) markazlashtirish (4.8-band).
+
+⦁	Yordam (FAQ) matnlarini joriy funksionallikka moslashtirish (4.13-band).
+
+⦁	Geografik ma'lumotlar (viloyat/tuman) uchun yagona taksonomiya joriy etish va oynalarning mavzuga moslashishini ta'minlash (4.14-band).
+
+⦁	Xato xabarlari uslubini, chip-joylashuvini va lokalizatsiya to'liqligini standartlashtirish (4.15–4.17-bandlar).
+
+Yakuniy so'z
+
+Ushbu hisobotda keltirilgan barcha kuzatishlar video tahlili asosidagi ob'ektiv dalillarga (skrinshotlar, vaqt belgilari, pointer-koordinatalar) tayangan. Ilovaning asosiy foydalanuvchi oqimlari (login, navigatsiya, dizayn tizimi, mavzu va til almashinuvi) yaxshi asosga ega ekanini alohida ta'kidlash lozim — bu keyingi bosqichda backend integratsiyasi va xatolarni qayta ishlash mexanizmlarini mustahkamlash orqali ilovani ishonchli, savdoga tayyor holatga keltirish mumkinligini ko'rsatadi.
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-08-30T14:38:14+05:00.
+
+The user's current state is as follows:
+Active Document: c:\Users\rajab\OneDrive\Desktop\MilliyMetr\lib\features\profile\presentation\views\security_privacy_screen.dart (LANGUAGE_DART)
+Cursor is on line: 323
+Other open documents:
+- c:\Users\rajab\OneDrive\Desktop\MilliyMetr\lib\core\network\interceptors\auth_interceptor.dart (LANGUAGE_DART)
+- c:\Users\rajab\OneDrive\Desktop\MilliyMetr\lib\features\search\presentation\widgets\filter_bottom_sheet.dart (LANGUAGE_DART)
+- c:\Users\rajab\OneDrive\Desktop\MilliyMetr\lib\features\checkout\presentation\widgets\payment_method_selector.dart (LANGUAGE_DART)
+- c:\Users\rajab\OneDrive\Desktop\MilliyMetr\lib\features\checkout\presentation\views\checkout_screen.dart (LANGUAGE_DART)
+- c:\Users\rajab\OneDrive\Desktop\MilliyMetr\lib\features\checkout\presentation\providers\checkout_provider.dart (LANGUAGE_DART)
+</ADDITIONAL_METADATA>
+--------------------------------------------------

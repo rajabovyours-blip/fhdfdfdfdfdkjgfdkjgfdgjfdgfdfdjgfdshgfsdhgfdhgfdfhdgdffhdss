@@ -13,6 +13,9 @@ router = APIRouter()
 async def get_products(
     query: Optional[str] = Query(None),
     category_id: Optional[uuid.UUID] = Query(None),
+    min_price: Optional[float] = Query(None),
+    max_price: Optional[float] = Query(None),
+    location: Optional[str] = Query(None),
     page: int = Query(1, ge=1),
     limit: int = Query(20, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
@@ -20,7 +23,15 @@ async def get_products(
 ):
     service = MarketplaceService(db)
     offset = (page - 1) * limit
-    products = await service.get_products(query, category_id, limit, offset)
+    products = await service.get_products(
+        query=query, 
+        category_id=category_id, 
+        min_price=min_price, 
+        max_price=max_price, 
+        region=location, 
+        limit=limit, 
+        offset=offset
+    )
     
     res = [ProductSummary.model_validate(p, context={'lang': lang}).model_dump(mode='json') for p in products]
     

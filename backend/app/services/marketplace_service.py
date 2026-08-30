@@ -18,13 +18,19 @@ class MarketplaceService:
         )
         return result.scalars().all()
 
-    async def get_products(self, query: str = None, category_id: uuid.UUID = None, limit: int = 20, offset: int = 0):
+    async def get_products(self, query: str = None, category_id: uuid.UUID = None, min_price: float = None, max_price: float = None, region: str = None, limit: int = 20, offset: int = 0):
         stmt = select(Product).filter(Product.status == "approved")
         
         if query:
             stmt = stmt.filter(Product.name.ilike(f"%{query}%"))
         if category_id:
             stmt = stmt.filter(Product.category_id == category_id)
+        if min_price is not None:
+            stmt = stmt.filter(Product.price >= min_price)
+        if max_price is not None:
+            stmt = stmt.filter(Product.price <= max_price)
+        if region:
+            stmt = stmt.filter(Product.location.ilike(f"%{region}%"))
             
         stmt = stmt.limit(limit).offset(offset)
         result = await self.db.execute(stmt)

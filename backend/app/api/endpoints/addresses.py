@@ -24,9 +24,10 @@ class AddressCreate(BaseModel):
 
 class AddressResponse(BaseModel):
     id: UUID
-    title: str
+    label: str
     street: str
-    landmark: Optional[str] = None
+    region: str
+    district: str
     lat: float
     lng: float
     is_default: bool
@@ -43,11 +44,26 @@ async def get_addresses(
     # Map model to response
     data = []
     for a in addresses:
+        street = a.address_line
+        region = ""
+        district = ""
+        if a.address_line and " - " in a.address_line:
+            parts = a.address_line.split(" - ", 1)
+            street = parts[0]
+            landmark = parts[1]
+            if ", " in landmark:
+                r_d = landmark.split(", ", 1)
+                region = r_d[0]
+                district = r_d[1]
+            else:
+                region = landmark
+
         data.append({
             "id": a.id,
-            "title": a.label or "Manzil",
-            "street": a.address_line,
-            "landmark": "",
+            "label": a.label or "Manzil",
+            "street": street,
+            "region": region,
+            "district": district,
             "lat": a.lat or 0.0,
             "lng": a.lng or 0.0,
             "is_default": a.is_default
@@ -80,11 +96,22 @@ async def add_address(
     await db.commit()
     await db.refresh(new_address)
     
+    region = ""
+    district = ""
+    if data.landmark:
+        if ", " in data.landmark:
+            r_d = data.landmark.split(", ", 1)
+            region = r_d[0]
+            district = r_d[1]
+        else:
+            region = data.landmark
+
     res = {
         "id": new_address.id,
-        "title": new_address.label,
-        "street": new_address.address_line,
-        "landmark": data.landmark,
+        "label": new_address.label,
+        "street": data.street,
+        "region": region,
+        "district": district,
         "lat": new_address.lat,
         "lng": new_address.lng,
         "is_default": new_address.is_default
