@@ -13,6 +13,7 @@ import 'package:milliy_metr/features/authentication/domain/usecases/request_otp_
 import 'package:milliy_metr/features/authentication/domain/usecases/verify_otp_usecase.dart';
 import 'package:milliy_metr/features/authentication/domain/usecases/social_login_usecase.dart';
 import 'package:milliy_metr/features/authentication/presentation/providers/auth_state.dart';
+import 'package:milliy_metr/features/authentication/data/models/user_model.dart';
 
 import 'package:milliy_metr/core/events/auth_events.dart';
 import 'dart:async';
@@ -272,20 +273,21 @@ class AuthController extends StateNotifier<AuthState> {
     // Save current state in case of failure
     final currentState = state;
     try {
-      await _dio.put('/users/me', data: {
+      final response = await _dio.put('/users/me', data: {
         'full_name': fullName,
         'fullName': fullName,
         'email': email.isEmpty ? null : email,
         'avatar_url': avatarUrl,
         'avatarUrl': avatarUrl,
       },);
-      // Re-fetch user silently to avoid loading flash
-      final result = await _repository.getCurrentUser();
+      
       if (mounted) {
-        result.fold(
-          (failure) => state = currentState,
-          (user) => state = AuthState.authenticated(user),
-        );
+        try {
+          final user = UserModel.fromJson(response.data['data']);
+          state = AuthState.authenticated(user);
+        } catch (e) {
+          debugPrint('Failed to parse updated user: $e');
+        }
       }
       return null;
     } on DioException catch (e) {

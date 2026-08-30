@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:milliy_metr/core/errors/app_exception.dart';
 import 'package:milliy_metr/core/errors/dio_error_mapper.dart';
 import 'package:milliy_metr/features/products/data/models/product_model.dart';

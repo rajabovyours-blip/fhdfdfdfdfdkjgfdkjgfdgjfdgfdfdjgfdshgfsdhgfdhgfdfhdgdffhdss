@@ -59,12 +59,7 @@ class _AdminSettingsScreenState extends ConsumerState<AdminSettingsScreen> {
             activeThumbColor: context.colors.primary,
             onChanged: (val) {
               setState(() => _maintenanceMode = val);
-              /* ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(l10n.requiresBackendIntegration),
-                  backgroundColor: context.colors.primary,
-                ),
-              ); */
+              /* AppSnackBar.showSuccess(context, l10n.requiresBackendIntegration); */
             },
           ),
         ],

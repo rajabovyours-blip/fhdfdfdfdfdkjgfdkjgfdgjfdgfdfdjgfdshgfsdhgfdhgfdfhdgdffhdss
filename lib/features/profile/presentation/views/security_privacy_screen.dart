@@ -124,29 +124,24 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
                     actions: [
                       TextButton(
                         onPressed: () {
-                          Navigator.pop(ctx);
-                          // Revert if cancelled
-                          setState(() => _twoFactorEnabled = false);
+                          Navigator.pop(ctx, false);
                         },
                         child: Text(l10n.cancel),
                       ),
                       TextButton(
                         onPressed: () async {
-                          Navigator.pop(ctx);
                           await PreferencesManager.setBool('two_factor_enabled', true);
                           if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: const Text('Ikki bosqichli autentifikatsiya yoqildi'), backgroundColor: context.colors.success),
-                            );
+                            AppSnackBar.showSuccess(context, 'Ikki bosqichli autentifikatsiya yoqildi');
+                            Navigator.pop(ctx, true);
                           }
                         },
                         child: Text(l10n.continueBtn),
                       ),
                     ],
                   ),
-                ).then((_) {
-                  // Revert if dialog is dismissed by tapping outside
-                  if (PreferencesManager.getBool('two_factor_enabled') != true) {
+                ).then((value) {
+                  if (value != true) {
                     setState(() => _twoFactorEnabled = false);
                   }
                 });
@@ -540,12 +535,7 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
-              /* ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(l10n.requiresBackendIntegration),
-                  backgroundColor: context.colors.primary,
-                ),
-              ); */
+              /* AppSnackBar.showSuccess(context, l10n.requiresBackendIntegration); */
             },
             child: Text(
               l10n.deleteAccount,

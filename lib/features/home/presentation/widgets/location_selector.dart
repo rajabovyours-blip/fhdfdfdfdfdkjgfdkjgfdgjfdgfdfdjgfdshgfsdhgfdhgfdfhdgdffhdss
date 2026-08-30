@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
+import 'package:milliy_metr/shared/widgets/app_snackbar.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:geolocator/geolocator.dart';
@@ -57,12 +59,7 @@ class _LocationSelectorState extends State<LocationSelector> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.errorOccurred),
-            backgroundColor: context.colors.danger,
-          ),
-        );
+        AppSnackBar.showError(context, context.l10n.errorOccurred);
         setState(() {
           _location = context.l10n.tashkentUzbekistan;
         });
@@ -74,7 +71,7 @@ class _LocationSelectorState extends State<LocationSelector> {
     setState(() => _isLoading = true);
     
     // Block background touches while permission dialog might be open
-    showDialog(
+    unawaited(showDialog(
       context: context,
       barrierColor: Colors.transparent,
       barrierDismissible: false,
@@ -82,7 +79,7 @@ class _LocationSelectorState extends State<LocationSelector> {
         canPop: false,
         child: SizedBox.expand(),
       ),
-    );
+    ));
 
     try {
       final status = await Permission.location.request();
@@ -104,12 +101,7 @@ class _LocationSelectorState extends State<LocationSelector> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.errorOccurred),
-            backgroundColor: context.colors.danger,
-          ),
-        );
+        AppSnackBar.showError(context, context.l10n.errorOccurred);
       }
     } finally {
       if (mounted) {

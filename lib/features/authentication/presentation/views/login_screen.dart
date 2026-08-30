@@ -60,22 +60,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    _phoneFocusNode.addListener(() {
-      setState(() {
-        _isPhoneFocused = _phoneFocusNode.hasFocus;
-      });
-    });
 
     if (widget.redirect != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.authRequiredToContinue),
-            backgroundColor: context.colors.primary,
-            duration: const Duration(seconds: 4),
-          ),
-        );
+        AppSnackBar.showSuccess(context, context.l10n.authRequiredToContinue);
       });
     }
   }
@@ -85,12 +74,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
 
     if (phoneBody.length != 9) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(context.l10n.invalidPhone),
-          backgroundColor: context.colors.danger,
-        ),
-      );
+      AppSnackBar.showError(context, context.l10n.invalidPhone);
       return;
     }
     
@@ -98,12 +82,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final validPrefixes = ['90', '91', '93', '94', '95', '97', '98', '99', '88', '33', '50', '77', '20'];
     final prefix = phoneBody.substring(0, 2);
     if (!validPrefixes.contains(prefix)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(context.l10n.invalidPhone),
-          backgroundColor: context.colors.danger,
-        ),
-      );
+      AppSnackBar.showError(context, context.l10n.invalidPhone);
       return;
     }
     final phone = '+998$phoneBody';
@@ -274,63 +253,67 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 8),
-              Container(
-                height: 56,
-                decoration: BoxDecoration(
-                  color: context.colors.surface,
-                  border: Border.all(
-                    color: _isPhoneFocused ? context.colors.primary : context.colors.outline,
-                    width: _isPhoneFocused ? 1.5 : 1.0,
+              Focus(
+                onFocusChange: (hasFocus) {
+                  setState(() => _isPhoneFocused = hasFocus);
+                },
+                child: Container(
+                  height: 56,
+                  decoration: BoxDecoration(
+                    color: context.colors.surface,
+                    border: Border.all(
+                      color: _isPhoneFocused ? context.colors.primary : context.colors.outline,
+                      width: _isPhoneFocused ? 1.5 : 1.0,
+                    ),
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Text(
-                        '+998',
-                        style: TextStyle(
-                          color: context.colors.textHigh,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      width: 1,
-                      height: 24,
-                      color: context.colors.outline,
-                    ),
-                    Expanded(
-                      child: TextFormField(
-                        key: const Key('login_phone_field'),
-                        controller: _phoneController,
-                        focusNode: _phoneFocusNode,
-                        keyboardType: TextInputType.phone,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'[\d\s]')),
-                          _PhoneFormatter(),
-                        ],
-                        style: TextStyle(
-                          color: context.colors.textHigh,
-                          fontSize: 16,
-                          letterSpacing: 1.2,
-                        ),
-                        decoration: InputDecoration(
-                          hintText: '90 123 45 67',
-                          hintStyle: TextStyle(
-                            color: context.colors.textMedium,
-                            letterSpacing: 1.0,
-                          ),
-                          border: InputBorder.none,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Text(
+                          '+998',
+                          style: TextStyle(
+                            color: context.colors.textHigh,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                      Container(
+                        width: 1,
+                        height: 24,
+                        color: context.colors.outline,
+                      ),
+                      Expanded(
+                        child: TextFormField(
+                          controller: _phoneController,
+                          focusNode: _phoneFocusNode,
+                          keyboardType: TextInputType.phone,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(RegExp(r'[\d\s]')),
+                            _PhoneFormatter(),
+                          ],
+                          style: TextStyle(
+                            color: context.colors.textHigh,
+                            fontSize: 16,
+                            letterSpacing: 1.2,
+                          ),
+                          decoration: InputDecoration(
+                            hintText: '90 123 45 67',
+                            hintStyle: TextStyle(
+                              color: context.colors.textMedium,
+                              letterSpacing: 1.0,
+                            ),
+                            border: InputBorder.none,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: 24),

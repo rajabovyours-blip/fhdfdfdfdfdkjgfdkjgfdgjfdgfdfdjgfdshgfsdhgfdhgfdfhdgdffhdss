@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:milliy_metr/shared/widgets/app_snackbar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:milliy_metr/core/router/route_constants.dart';
@@ -486,12 +487,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                           context.push(AppRoutes.checkout);
                         }
                       : () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(context.l10n.someItemsOutOfStock),
-                              backgroundColor: context.colors.danger,
-                            ),
-                          );
+                          AppSnackBar.showError(context, context.l10n.someItemsOutOfStock);
                         },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: canCheckout

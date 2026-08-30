@@ -232,7 +232,7 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
     final bool isDuplicate = state.addresses.any((a) =>
         a.region == region &&
         a.district == district &&
-        a.street == street);
+        a.street == street,);
 
     if (isDuplicate) {
       state = state.copyWith(
@@ -262,7 +262,7 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
     
     // Check for duplicates
     final bool alreadyExists = state.addresses.any((a) => 
-        a.street == street && a.region == region && a.district == district);
+        a.street == street && a.region == region && a.district == district,);
     
     if (!alreadyExists) {
       localStrs.add(jsonEncode(newAddress.toJson()));

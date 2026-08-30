@@ -27,12 +27,7 @@ class NotificationsScreen extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.done_all, color: context.colors.primary),
             onPressed: () {
-              /* ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(l10n.requiresBackendIntegration),
-                  backgroundColor: context.colors.primary,
-                ),
-              ); */
+              /* AppSnackBar.showSuccess(context, l10n.requiresBackendIntegration); */
             },
           ),
         ],
