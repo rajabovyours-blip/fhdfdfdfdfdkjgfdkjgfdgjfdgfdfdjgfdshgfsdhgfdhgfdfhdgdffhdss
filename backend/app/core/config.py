@@ -40,6 +40,9 @@ class Settings(BaseSettings):
             # If it's something completely invalid (e.g. random base64 string from Render)
             print(f"WARNING: Invalid DATABASE_URL provided. Falling back to SQLite.")
             
+        if self.POSTGRES_SERVER and self.POSTGRES_SERVER != "localhost":
+            return f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_SERVER}/{self.POSTGRES_DB}"
+            
         return fallback
 
     class Config:
