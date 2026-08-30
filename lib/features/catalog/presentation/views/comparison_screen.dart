@@ -17,13 +17,13 @@ class ComparisonScreen extends StatelessWidget {
             DataColumn(label: Text(context.l10n.productB)),
           ],
           rows: [
-            const DataRow(
+            DataRow(
               cells: [
                 DataCell(
                   Text(context.l10n.price, style: const TextStyle(fontWeight: FontWeight.bold)),
                 ),
-                DataCell(Text('52,000 UZS')),
-                DataCell(Text('48,000 UZS')),
+                const DataCell(Text('52,000 UZS')),
+                const DataCell(Text('48,000 UZS')),
               ],
             ),
             DataRow(

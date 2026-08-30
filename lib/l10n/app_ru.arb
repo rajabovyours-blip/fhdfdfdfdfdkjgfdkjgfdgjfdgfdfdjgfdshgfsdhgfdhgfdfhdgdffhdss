@@ -284,6 +284,8 @@
   "refundReason": "Причина возврата",
   "selectReason": "Выберите причину",
   "refundDescription": "Введите описание",
+  "refundSubmitted": "Заявка на возврат отправлена",
+  "reviewSubmitted": "Отзыв успешно отправлен",
   "returnRequestSubmitted": "Запрос на возврат отправлен.",
   "pickFromGallery": "Выбрать из галереи",
   "takePhoto": "Сделать фото",

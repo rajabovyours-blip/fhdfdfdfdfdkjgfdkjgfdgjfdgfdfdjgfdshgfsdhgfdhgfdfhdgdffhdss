@@ -132,6 +132,7 @@
   "verifiedPurchase": "Xarid qilingan",
   "max5Photos": "Maksimum 5 ta rasm yuklash mumkin",
   "errorLoadingPhoto": "Rasm yuklashda xatolik yuz berdi yoki ruxsat yo'q",
+  "reviewSubmitted": "Sharhingiz yuborildi",
   "returnRequestSubmitted": "Qaytarish so'rovi yuborildi.",
   "pickFromGallery": "Galereyadan tanlash",
   "takePhoto": "Kameradan rasmga olish",

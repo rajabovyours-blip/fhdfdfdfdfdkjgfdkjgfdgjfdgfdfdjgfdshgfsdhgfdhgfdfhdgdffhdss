@@ -284,6 +284,8 @@
   "refundReason": "Reason for Return",
   "selectReason": "Select a reason",
   "refundDescription": "Enter description",
+  "refundSubmitted": "Return request submitted",
+  "reviewSubmitted": "Review submitted successfully",
   "returnRequestSubmitted": "Return request submitted.",
   "pickFromGallery": "Pick from gallery",
   "takePhoto": "Take a photo",
