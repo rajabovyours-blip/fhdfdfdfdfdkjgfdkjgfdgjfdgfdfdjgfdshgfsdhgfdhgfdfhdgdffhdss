@@ -10,7 +10,6 @@ import 'package:milliy_metr/features/home/presentation/widgets/location_selector
 import 'package:milliy_metr/features/home/presentation/widgets/promotional_banner.dart';
 import 'package:milliy_metr/features/home/presentation/widgets/category_carousel.dart';
 import 'package:milliy_metr/features/home/presentation/widgets/section_header.dart';
-import 'package:milliy_metr/features/home/presentation/widgets/flash_deals_section.dart';
 import 'package:milliy_metr/shared/components/product_card.dart';
 
 import 'package:milliy_metr/features/home/presentation/widgets/home_skeleton.dart';
@@ -87,9 +86,6 @@ class HomeScreen extends ConsumerWidget {
                           ),
                         )
                       else ...[
-                        SliverToBoxAdapter(
-                          child: FlashDealsSection(products: data.featuredProducts),
-                        ),
                         SliverToBoxAdapter(
                           child: SectionHeader(
                             title: context.l10n.popularProductsSection,

@@ -15,7 +15,7 @@ router = APIRouter()
 async def get_dashboard_analytics(db: AsyncSession = Depends(get_db)):
     try:
         # 1. Total Revenue (DELIVERED or PAID)
-        revenue_query = select(func.sum(Order.total_amount)).where(Order.status.in_(["DELIVERED", "PAID"]))
+        revenue_query = select(func.sum(Order.total)).where(Order.status.in_(["DELIVERED", "PAID"]))
         revenue_result = await db.execute(revenue_query)
         total_revenue = revenue_result.scalar() or 0
         
@@ -32,7 +32,7 @@ async def get_dashboard_analytics(db: AsyncSession = Depends(get_db)):
         active_customers_count = customers_result.scalar() or 0
         
         # 4. Total products count
-        products_query = select(func.count(Product.id)).where(Product.stock > 0)
+        products_query = select(func.count(Product.id))
         products_result = await db.execute(products_query)
         total_products_count = products_result.scalar() or 0
         
@@ -50,21 +50,33 @@ async def get_dashboard_analytics(db: AsyncSession = Depends(get_db)):
             user = user_result.scalar_one_or_none()
             recent_orders.append({
                 "id": str(order.id),
-                "user_name": user.full_name if user and user.full_name else f"{user.first_name} {user.last_name}" if user else "Noma'lum Mijoz",
-                "user_phone": user.phone_number if user else "",
-                "total_amount": order.total_amount,
+                "user_name": user.full_name if user and user.full_name else "Noma'lum Mijoz",
+                "user_phone": user.phone if user else "",
+                "total_amount": float(order.total) if order.total else 0,
                 "status": order.status,
                 "created_at": order.created_at.isoformat() if order.created_at else None
             })
             
         # 7. Monthly sales data
+        current_year = date.today().year
+        year_start = datetime(current_year, 1, 1)
+        
+        orders_this_year_query = select(Order.created_at, Order.total).where(
+            Order.created_at >= year_start,
+            Order.status.in_(["DELIVERED", "PAID"])
+        )
+        orders_this_year_result = await db.execute(orders_this_year_query)
+        
+        monthly_revenue = {i: 0 for i in range(1, 13)}
+        for created_at, amount in orders_this_year_result.all():
+            if created_at:
+                monthly_revenue[created_at.month] += (amount or 0)
+                
+        month_names = ["Yan", "Fev", "Mar", "Apr", "May", "Iyun", "Iyul", "Avg", "Sen", "Okt", "Noy", "Dek"]
+        
         monthly_sales = [
-            {"month": "Yan", "revenue": 12000000},
-            {"month": "Fev", "revenue": 19000000},
-            {"month": "Mar", "revenue": 15000000},
-            {"month": "Apr", "revenue": 22000000},
-            {"month": "May", "revenue": 28000000},
-            {"month": "Iyun", "revenue": total_revenue if total_revenue > 0 else 35000000},
+            {"month": month_names[i-1], "revenue": float(monthly_revenue[i])}
+            for i in range(1, 13)
         ]
 
         return {

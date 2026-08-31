@@ -4,11 +4,12 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:dio/dio.dart';
+import 'package:milliy_metr_admin/shared/utils/responsive_modal.dart';
+import 'package:milliy_metr_admin/shared/widgets/admin_page_header.dart';
 import 'package:milliy_metr_admin/core/utils/image_utils.dart';
 import '../../../core/providers/admin_providers.dart';
 import '../../../core/api/api_client.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:milliy_metr_admin/shared/utils/responsive_modal.dart';
 
 class ProductsScreen extends ConsumerStatefulWidget {
   const ProductsScreen({super.key});
@@ -20,6 +21,13 @@ class ProductsScreen extends ConsumerStatefulWidget {
 class _ProductsScreenState extends ConsumerState<ProductsScreen> {
   String _searchQuery = '';
   String? _selectedCategory;
+  final FocusNode _searchFocusNode = FocusNode();
+
+  @override
+  void dispose() {
+    _searchFocusNode.dispose();
+    super.dispose();
+  }
 
   // Helper to build a hierarchical tree from a flat list for Dropdown indentation
   List<Map<String, dynamic>> _buildCategoryTree(List<dynamic> flatCategories) {
@@ -52,6 +60,18 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
     return result;
   }
 
+  List<DropdownMenuItem<String>> _buildCategoryDropdownItems(List<Map<String, dynamic>> tree) {
+    return tree.map((c) {
+      final int depth = c['depth'] ?? 0;
+      final name = c['name'] is Map ? c['name']['uz'] : c['name'];
+      final prefix = depth > 0 ? '${'  ' * depth}↳ ' : '';
+      return DropdownMenuItem(
+        value: c['id'].toString(),
+        child: Text('$prefix${name ?? ''}'),
+      );
+    }).toList();
+  }
+
   void _showProductDialog(BuildContext context, {Map<String, dynamic>? product}) {
     final isEditing = product != null;
     
@@ -60,6 +80,8 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
     final nameEnController = TextEditingController(text: isEditing ? (product['name'] is Map ? (product['name']['en'] ?? '') : '') : '');
     final descController = TextEditingController(text: isEditing ? (product['description'] is Map ? product['description']['uz'] : product['description']) : '');
     final priceController = TextEditingController(text: isEditing ? product['price'].toString() : '');
+    final brandController = TextEditingController(text: isEditing ? (product['brand'] ?? '') : '');
+    final deliveryPriceController = TextEditingController(text: isEditing ? (product['delivery_price']?.toString() ?? '0') : '0');
     
     String imageUrl = '';
     if (isEditing) {
@@ -74,6 +96,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
     String selectedUnit = isEditing ? (product['unit'] ?? 'dona') : 'dona';
     String? selectedCategoryId = isEditing ? product['category_id']?.toString() : null;
     bool inStock = isEditing ? ((product['stock'] ?? 0) > 0) : true;
+    bool hasDelivery = isEditing ? (product['has_delivery'] ?? true) : true;
     
     Uint8List? localImageBytes;
     bool isLoading = false;
@@ -81,354 +104,359 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
     final flatCategories = ref.read(categoriesProvider).value ?? [];
     final categoriesTree = _buildCategoryTree(flatCategories);
 
-    Widget buildFormBody(StateSetter setDialogState, BuildContext dialogContext) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Flexible(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('product_name'.tr(), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                  const SizedBox(height: 8),
-                  TextField(
-                    controller: nameUzController,
-                    decoration: InputDecoration(
-                      labelText: 'name_uz'.tr(),
-                      prefixIcon: const Icon(Icons.language),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: nameRuController,
-                    decoration: InputDecoration(
-                      labelText: 'name_ru'.tr(),
-                      prefixIcon: const Icon(Icons.language),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: nameEnController,
-                    decoration: InputDecoration(
-                      labelText: 'name_en'.tr(),
-                      prefixIcon: const Icon(Icons.language),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  
-                  Text('category'.tr(), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                  const SizedBox(height: 8),
-                  DropdownButtonFormField<String>(
-                    decoration: InputDecoration(
-                      hintText: 'select_category'.tr(),
-                      prefixIcon: const Icon(Icons.category),
-                      border: const OutlineInputBorder(),
-                    ),
-                    initialValue: selectedCategoryId,
-                    items: categoriesTree.map((c) {
-                      final int depth = c['depth'] ?? 0;
-                      final name = c['name'] is Map ? c['name']['uz'] : c['name'];
-                      final prefix = depth > 0 ? '${'  ' * depth}↳ ' : '';
-                      return DropdownMenuItem(
-                        value: c['id'].toString(),
-                        child: Text('$prefix${name ?? ''}'),
-                      );
-                    }).toList(),
-                    onChanged: (val) {
-                      setDialogState(() {
-                        selectedCategoryId = val;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('price_uzs'.tr(), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                            const SizedBox(height: 8),
-                            TextField(
-                              controller: priceController,
-                              keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(
-                                suffixText: "UZS",
-                                prefixIcon: Icon(Icons.payments),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('unit'.tr(), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                            const SizedBox(height: 8),
-                            DropdownButtonFormField<String>(
-                              initialValue: selectedUnit,
-                              decoration: const InputDecoration(
-                                prefixIcon: Icon(Icons.straighten),
-                              ),
-                              items: const [
-                                DropdownMenuItem(value: 'dona', child: Text('Dona')),
-                                DropdownMenuItem(value: 'qop', child: Text('Qop')),
-                                DropdownMenuItem(value: 'kg', child: Text('Kg')),
-                                DropdownMenuItem(value: 'metr', child: Text('Metr')),
-                                DropdownMenuItem(value: 'm2', child: Text('m²')),
-                                DropdownMenuItem(value: 'litr', child: Text('Litr')),
-                                DropdownMenuItem(value: 'pcs', child: Text('Pcs')),
-                              ],
-                              onChanged: (val) {
-                                setDialogState(() {
-                                  selectedUnit = val ?? 'dona';
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  
-                  Text('image'.tr(), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                  const SizedBox(height: 8),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.grey.shade300),
-                        ),
-                        clipBehavior: Clip.antiAlias,
-                        child: localImageBytes != null
-                            ? Image.memory(localImageBytes!, fit: BoxFit.cover)
-                            : imageUrlController.text.isNotEmpty
-                                ? Image.network(
-                                    ImageUtils.getFullImageUrl(imageUrlController.text),
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      debugPrint("Image load error: $error");
-                                      return const Icon(Icons.broken_image, size: 32, color: Colors.grey);
-                                    },
-                                  )
-                                : const Icon(Icons.image, size: 32, color: Colors.grey),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          onPressed: isLoading
-                              ? null
-                              : () async {
-                                  final result = await FilePicker.pickFiles(type: FileType.image, withData: true);
-                                  if (result != null && result.files.single.bytes != null) {
-                                    setDialogState(() {
-                                      localImageBytes = result.files.single.bytes;
-                                      isLoading = true;
-                                    });
-                                    try {
-                                      final dio = ref.read(dioProvider);
-                                      final formData = FormData.fromMap({
-                                        'file': MultipartFile.fromBytes(
-                                          result.files.single.bytes!,
-                                          filename: result.files.single.name,
-                                        ),
-                                      });
-                                      final response = await dio.post('/upload/image', data: formData);
-                                      if (response.data['data'] != null && response.data['data']['url'] != null) {
-                                        setDialogState(() {
-                                          imageUrlController.text = response.data['data']['url'];
-                                        });
-                                      }
-                                    } catch (e) {
-                                      if (dialogContext.mounted) {
-                                        ScaffoldMessenger.of(dialogContext).showSnackBar(SnackBar(content: Text('Xatolik: $e')));
-                                      }
-                                    } finally {
-                                      setDialogState(() => isLoading = false);
-                                    }
-                                  }
-                                },
-                          icon: isLoading ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.upload_file),
-                          label: Text('upload_image'.tr()),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  
-                  Text('description'.tr(), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                  const SizedBox(height: 8),
-                  TextField(
-                    controller: descController,
-                    maxLines: 3,
-                    decoration: InputDecoration(
-                      hintText: 'description_hint'.tr(),
-                      prefixIcon: const Icon(Icons.description),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  SwitchListTile(
-                    title: Text('in_stock'.tr()),
-                    subtitle: Text(inStock ? 'on_sale'.tr() : 'out_of_stock'.tr()),
-                    value: inStock,
-                    activeThumbColor: const Color(0xFFFF7A00),
-                    onChanged: (val) {
-                      setDialogState(() {
-                        inStock = val;
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
-          
-          // 3. Pinned Bottom Action Bar (Always Visible)
-          Container(
-            padding: EdgeInsets.only(
-              left: 20,
-              right: 20,
-              top: 12,
-              bottom: MediaQuery.of(dialogContext).viewInsets.bottom > 0 ? 12 : 24,
-            ),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
-              border: const Border(top: BorderSide(color: Colors.white12)),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () => Navigator.pop(dialogContext),
-                    child: Text('cancel'.tr()),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  flex: 2,
-                  child: ElevatedButton(
-                    onPressed: isLoading
-                        ? null
-                        : () async {
-                            if (nameUzController.text.isEmpty || priceController.text.isEmpty) {
-                              ScaffoldMessenger.of(dialogContext).showSnackBar(
-                                SnackBar(
-                                  content: Text("enter_name_and_price".tr()),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
-                              return;
-                            }
-                            if (selectedCategoryId == null) {
-                              ScaffoldMessenger.of(dialogContext).showSnackBar(
-                                const SnackBar(
-                                  content: Text("Category is required"),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
-                              return;
-                            }
-
-                            setDialogState(() => isLoading = true);
-
-                            try {
-                              final dio = ref.read(dioProvider);
-                              final payload = {
-                                'name': {
-                                  'uz': nameUzController.text,
-                                  'ru': nameRuController.text.isNotEmpty ? nameRuController.text : nameUzController.text,
-                                  'en': nameEnController.text.isNotEmpty ? nameEnController.text : nameUzController.text,
-                                },
-                                'description': {
-                                  'uz': descController.text.isNotEmpty ? descController.text : '',
-                                  'ru': descController.text.isNotEmpty ? descController.text : '',
-                                  'en': descController.text.isNotEmpty ? descController.text : '',
-                                },
-                                'category_id': selectedCategoryId,
-                                'price': double.tryParse(priceController.text) ?? 0.0,
-                                'unit': selectedUnit,
-                                'stock': inStock ? 100 : 0,
-                                'images': imageUrlController.text.isNotEmpty ? [imageUrlController.text] : [],
-                                'image_url': imageUrlController.text.isNotEmpty ? imageUrlController.text : '',
-                              };
-
-                              if (isEditing) {
-                                await dio.put('/products/${product['id']}', data: payload);
-                              } else {
-                                await dio.post('/products', data: payload);
-                              }
-
-                              if (dialogContext.mounted) {
-                                Navigator.pop(dialogContext);
-                                ref.invalidate(productsProvider);
-                                ScaffoldMessenger.of(dialogContext).showSnackBar(
-                                  SnackBar(
-                                    content: Text(isEditing ? "Mahsulot yangilandi!" : "Mahsulot qo'shildi!"),
-                                    backgroundColor: const Color(0xFF10B981),
-                                  ),
-                                );
-                              }
-                            } catch (e) {
-                              setDialogState(() => isLoading = false);
-                              if (dialogContext.mounted) {
-                                String errorMessage = 'Xatolik: $e';
-                                if (e is DioException && e.response != null) {
-                                  final data = e.response!.data;
-                                  if (data is Map && data.containsKey('detail')) {
-                                    final detail = data['detail'];
-                                    if (detail is List) {
-                                      errorMessage = detail.map((err) => '${err['loc']}: ${err['msg']}').join('\n');
-                                    } else {
-                                      errorMessage = detail.toString();
-                                    }
-                                  } else {
-                                    errorMessage = e.response!.data.toString();
-                                  }
-                                }
-                                ScaffoldMessenger.of(dialogContext).showSnackBar(
-                                  SnackBar(
-                                    content: Text(errorMessage),
-                                    backgroundColor: Colors.red,
-                                    duration: const Duration(seconds: 6),
-                                  ),
-                                );
-                              }
-                            }
-                          },
-                    child: isLoading
-                        ? const SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                          )
-                        : Text('save'.tr()),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      );
-    }
-
     showAdminFormModal(
       context: context,
       title: isEditing ? 'edit_product'.tr() : 'add_product'.tr(),
       icon: isEditing ? Icons.edit : Icons.add_box_rounded,
       builder: (modalContext, setModalState) {
-        return buildFormBody(setModalState, modalContext);
+        // Return only the form fields. The actions are handled in actionsBuilder.
+        return Column(
+          children: [
+            Flexible(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('category'.tr(), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                    const SizedBox(height: 8),
+                    DropdownButtonFormField<String>(
+                      value: selectedCategoryId,
+                      hint: Text('select_category'.tr()),
+                      isExpanded: true,
+                      items: _buildCategoryDropdownItems(categoriesTree),
+                      onChanged: (val) {
+                        setModalState(() {
+                          selectedCategoryId = val;
+                        });
+                      },
+                      validator: (val) {
+                        if (val == null || val.isEmpty) return 'Category is required';
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    
+                    Text('name_uz'.tr(), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: nameUzController,
+                      decoration: const InputDecoration(prefixIcon: Icon(Icons.abc)),
+                    ),
+                    const SizedBox(height: 16),
+                    Text('name_ru'.tr(), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: nameRuController,
+                      decoration: const InputDecoration(prefixIcon: Icon(Icons.abc)),
+                    ),
+                    const SizedBox(height: 16),
+                    Text('name_en'.tr(), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: nameEnController,
+                      decoration: const InputDecoration(prefixIcon: Icon(Icons.abc)),
+                    ),
+                    const SizedBox(height: 20),
+                    
+                    Text('description'.tr(), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: descController,
+                      maxLines: 3,
+                      decoration: const InputDecoration(
+                        hintText: 'Tavsifni kiriting...',
+                        alignLabelWithHint: true,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('price_uzs'.tr(), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                              const SizedBox(height: 8),
+                              TextField(
+                                controller: priceController,
+                                keyboardType: TextInputType.number,
+                                decoration: const InputDecoration(
+                                  suffixText: "UZS",
+                                  prefixIcon: Icon(Icons.payments),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('unit'.tr(), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                              const SizedBox(height: 8),
+                              DropdownButtonFormField<String>(
+                                initialValue: selectedUnit,
+                                decoration: const InputDecoration(
+                                  prefixIcon: Icon(Icons.straighten),
+                                ),
+                                items: const [
+                                  DropdownMenuItem(value: 'dona', child: Text('Dona')),
+                                  DropdownMenuItem(value: 'qop', child: Text('Qop')),
+                                  DropdownMenuItem(value: 'kg', child: Text('Kg')),
+                                  DropdownMenuItem(value: 'metr', child: Text('Metr')),
+                                  DropdownMenuItem(value: 'm2', child: Text('m²')),
+                                  DropdownMenuItem(value: 'litr', child: Text('Litr')),
+                                  DropdownMenuItem(value: 'pcs', child: Text('Pcs')),
+                                ],
+                                onChanged: (val) {
+                                  setModalState(() {
+                                    selectedUnit = val ?? 'dona';
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    
+                    Text('image'.tr(), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                    const SizedBox(height: 8),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.grey.shade300),
+                          ),
+                          clipBehavior: Clip.antiAlias,
+                          child: localImageBytes != null
+                              ? Image.memory(localImageBytes!, fit: BoxFit.cover)
+                              : imageUrlController.text.isNotEmpty
+                                  ? Image.network(
+                                      ImageUtils.getFullImageUrl(imageUrlController.text),
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (context, error, stackTrace) {
+                                        debugPrint("Image load error: $error");
+                                        return const Icon(Icons.broken_image, size: 32, color: Colors.grey);
+                                      },
+                                    )
+                                  : const Icon(Icons.image, size: 32, color: Colors.grey),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: isLoading
+                                ? null
+                                : () async {
+                                    final result = await FilePicker.pickFiles(type: FileType.image, withData: true);
+                                    if (result != null && result.files.single.bytes != null) {
+                                      setModalState(() {
+                                        localImageBytes = result.files.single.bytes;
+                                        isLoading = true;
+                                      });
+                                      try {
+                                        final dio = ref.read(dioProvider);
+                                        final formData = FormData.fromMap({
+                                          'file': MultipartFile.fromBytes(
+                                            result.files.single.bytes!,
+                                            filename: result.files.single.name,
+                                          ),
+                                        });
+                                        final response = await dio.post('/upload/image', data: formData);
+                                        if (response.data['data'] != null && response.data['data']['url'] != null) {
+                                          setModalState(() {
+                                            imageUrlController.text = response.data['data']['url'];
+                                          });
+                                        }
+                                      } catch (e) {
+                                        if (modalContext.mounted) {
+                                          ScaffoldMessenger.of(modalContext).showSnackBar(SnackBar(content: Text('Xatolik: $e')));
+                                        }
+                                      } finally {
+                                        setModalState(() => isLoading = false);
+                                      }
+                                    }
+                                  },
+                            icon: isLoading
+                                ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                                : const Icon(Icons.upload_file),
+                            label: Text('upload_image'.tr()),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    
+                    SwitchListTile(
+                      title: Text('in_stock'.tr(), style: const TextStyle(fontWeight: FontWeight.bold)),
+                      subtitle: Text('stock_available'.tr(), style: const TextStyle(fontSize: 12)),
+                      value: inStock,
+                      onChanged: (val) {
+                        setModalState(() {
+                          inStock = val;
+                        });
+                      },
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                    const SizedBox(height: 16),
+                    const Text('Brend nomi', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: brandController,
+                      decoration: const InputDecoration(prefixIcon: Icon(Icons.branding_watermark)),
+                    ),
+                    const SizedBox(height: 16),
+                    SwitchListTile(
+                      title: const Text('Yetkazib berish mavjud', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                      value: hasDelivery,
+                      onChanged: (val) {
+                        setModalState(() {
+                          hasDelivery = val;
+                        });
+                      },
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                    if (hasDelivery) ...[
+                      const SizedBox(height: 16),
+                      const Text('Yetkazib berish narxi', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: deliveryPriceController,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(prefixIcon: Icon(Icons.local_shipping)),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+      actionsBuilder: (modalContext, setModalState) {
+        return Row(
+          children: [
+            Expanded(
+              child: OutlinedButton(
+                onPressed: () => Navigator.pop(modalContext),
+                child: Text('cancel'.tr()),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              flex: 2,
+              child: ElevatedButton(
+                onPressed: isLoading
+                    ? null
+                    : () async {
+                        if (nameUzController.text.isEmpty || priceController.text.isEmpty) {
+                          ScaffoldMessenger.of(modalContext).showSnackBar(
+                            SnackBar(
+                              content: Text("enter_name_and_price".tr()),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          return;
+                        }
+                        if (selectedCategoryId == null) {
+                          ScaffoldMessenger.of(modalContext).showSnackBar(
+                            const SnackBar(
+                              content: Text("Category is required"),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          return;
+                        }
+
+                        setModalState(() => isLoading = true);
+
+                        try {
+                          final dio = ref.read(dioProvider);
+                          final payload = {
+                            'name': {
+                              'uz': nameUzController.text,
+                              'ru': nameRuController.text.isNotEmpty ? nameRuController.text : nameUzController.text,
+                              'en': nameEnController.text.isNotEmpty ? nameEnController.text : nameUzController.text,
+                            },
+                            'description': {
+                              'uz': descController.text.isNotEmpty ? descController.text : '',
+                              'ru': descController.text.isNotEmpty ? descController.text : '',
+                              'en': descController.text.isNotEmpty ? descController.text : '',
+                            },
+                            'category_id': selectedCategoryId,
+                            'price': double.tryParse(priceController.text) ?? 0.0,
+                            'unit': selectedUnit,
+                            'stock': inStock ? 100 : 0,
+                            'images': imageUrlController.text.isNotEmpty ? [imageUrlController.text] : [],
+                            'image_url': imageUrlController.text.isNotEmpty ? imageUrlController.text : '',
+                            'brand': brandController.text.isNotEmpty ? brandController.text : null,
+                            'has_delivery': hasDelivery,
+                            'delivery_price': hasDelivery ? (double.tryParse(deliveryPriceController.text) ?? 0.0) : 0.0,
+                          };
+
+                          if (isEditing) {
+                            await dio.put('/products/${product['id']}', data: payload);
+                          } else {
+                            await dio.post('/products', data: payload);
+                          }
+
+                          if (modalContext.mounted) {
+                            Navigator.pop(modalContext);
+                            ref.invalidate(productsProvider);
+                            ScaffoldMessenger.of(modalContext).showSnackBar(
+                              SnackBar(
+                                content: Text(isEditing ? "Mahsulot yangilandi!" : "Mahsulot qo'shildi!"),
+                                backgroundColor: const Color(0xFF10B981),
+                              ),
+                            );
+                          }
+                        } catch (e) {
+                          setModalState(() => isLoading = false);
+                          if (modalContext.mounted) {
+                            String errorMessage = 'Xatolik: $e';
+                            if (e is DioException && e.response != null) {
+                              final data = e.response!.data;
+                              if (data is Map && data.containsKey('detail')) {
+                                final detail = data['detail'];
+                                if (detail is List) {
+                                  errorMessage = detail.map((err) => '${err['loc']}: ${err['msg']}').join('\n');
+                                } else {
+                                  errorMessage = detail.toString();
+                                }
+                              } else {
+                                errorMessage = e.response!.data.toString();
+                              }
+                            }
+                            ScaffoldMessenger.of(modalContext).showSnackBar(
+                              SnackBar(
+                                content: Text(errorMessage),
+                                backgroundColor: Colors.red,
+                                duration: const Duration(seconds: 6),
+                              ),
+                            );
+                          }
+                        }
+                      },
+                child: isLoading
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                      )
+                    : Text('save'.tr()),
+              ),
+            ),
+          ],
+        );
       },
     );
   }
@@ -493,6 +521,15 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
     final width = MediaQuery.of(context).size.width;
     final isMobile = width < 640;
 
+    String resolveCategoryName(String? categoryId) {
+      if (categoryId == null) return 'other'.tr();
+      final cat = flatCategories.firstWhere((c) => c['id']?.toString() == categoryId, orElse: () => <String, dynamic>{});
+      if (cat.isEmpty) return 'other'.tr();
+      final name = cat['name'];
+      if (name is Map) return (name['uz'] ?? name['ru'] ?? name['en'] ?? 'other'.tr()).toString();
+      return name?.toString() ?? 'other'.tr();
+    }
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       floatingActionButton: isMobile
@@ -508,63 +545,23 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ─── Header ──────────────────────────────────────────────────
-            isMobile
-                ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'products_catalog'.tr(),
-                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                      const SizedBox(height: 12),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton.icon(
-                          onPressed: () => context.go('/products/import'),
-                          icon: const Icon(Icons.upload_file, size: 18),
-                          label: Text('excel_import'.tr()),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Theme.of(context).colorScheme.surface,
-                            foregroundColor: Theme.of(context).textTheme.bodyLarge?.color,
-                            side: BorderSide(color: Theme.of(context).colorScheme.outline),
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'products_catalog'.tr(),
-                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                      Row(
-                        children: [
-                          ElevatedButton.icon(
-                            onPressed: () => context.go('/products/import'),
-                            icon: const Icon(Icons.upload_file),
-                            label: Text('excel_import'.tr()),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Theme.of(context).colorScheme.surface,
-                              foregroundColor: Theme.of(context).textTheme.bodyLarge?.color,
-                              side: BorderSide(color: Theme.of(context).colorScheme.outline),
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          ElevatedButton.icon(
-                            onPressed: () => _showProductDialog(context),
-                            icon: const Icon(Icons.add),
-                            label: Text('add_product'.tr()),
-                          ),
-                        ],
-                      ),
-                    ],
+            AdminPageHeader(
+              title: 'products_catalog'.tr(),
+              addLabel: 'add_product'.tr(),
+              onAdd: () => _showProductDialog(context),
+              extraActions: [
+                ElevatedButton.icon(
+                  onPressed: () => context.go('/products/import'),
+                  icon: const Icon(Icons.upload_file),
+                  label: Text('excel_import'.tr()),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.surface,
+                    foregroundColor: Theme.of(context).textTheme.bodyLarge?.color,
+                    side: BorderSide(color: Theme.of(context).colorScheme.outline),
                   ),
+                ),
+              ],
+            ),
             const SizedBox(height: 24),
             // ─── Filters ─────────────────────────────────────────────────
             _buildFilters(categoriesTree, isMobile),
@@ -637,7 +634,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const SizedBox(height: 4),
-                              Text('Category: ${product['category_name']?.toString() ?? 'other'.tr()}', style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+                              Text('Category: ${resolveCategoryName(product['category_id']?.toString())}', style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
                               const SizedBox(height: 2),
                               Text('${product['price'] ?? 0} UZS / ${product['unit'] ?? 'dona'}', style: const TextStyle(color: Color(0xFF10B981), fontWeight: FontWeight.bold, fontSize: 12)),
                             ],
@@ -673,6 +670,10 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                     scrollDirection: Axis.horizontal,
                     child: DataTable(
                       headingRowColor: WidgetStateProperty.all(Theme.of(context).colorScheme.surfaceContainerHighest),
+                      headingTextStyle: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                       columns: [
                         DataColumn(label: Text('image'.tr())),
                         DataColumn(label: Text('name'.tr())),
@@ -712,7 +713,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                                 ),
                               ),
                             ),
-                            DataCell(Text(product['category_name']?.toString() ?? 'other'.tr())),
+                            DataCell(Text(resolveCategoryName(product['category_id']?.toString()))),
                             DataCell(
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -847,10 +848,14 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
         Expanded(
           flex: 2,
           child: TextField(
-            decoration: const InputDecoration(
+            focusNode: _searchFocusNode,
+            decoration: InputDecoration(
               hintText: 'Mahsulot nomini qidiring...',
-              prefixIcon: Icon(Icons.search),
-              border: OutlineInputBorder(),
+              prefixIcon: IconButton(
+                icon: const Icon(Icons.search),
+                onPressed: () => _searchFocusNode.requestFocus(),
+              ),
+              border: const OutlineInputBorder(),
             ),
             onChanged: (val) {
               setState(() {

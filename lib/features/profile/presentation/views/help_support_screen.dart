@@ -27,10 +27,12 @@ class HelpSupportScreen extends StatelessWidget {
         children: [
           // FAQ Section
           _buildSectionHeader(context, l10n.faq),
-          _buildFaqTile(context, l10n.faqDelivery, l10n.faqDeliveryAnswer),
-          _buildFaqTile(context, l10n.faqPayment, l10n.faqPaymentAnswer),
-          _buildFaqTile(context, l10n.faqReturn, l10n.faqReturnAnswer),
-          _buildFaqTile(context, l10n.faqWarranty, l10n.faqWarrantyAnswer),
+          _buildFaqTile(context, l10n.faqQ1, l10n.faqA1),
+          _buildFaqTile(context, l10n.faqQ2, l10n.faqA2),
+          _buildFaqTile(context, l10n.faqQ3, l10n.faqA3),
+          _buildFaqTile(context, l10n.faqQ4, l10n.faqA4),
+          _buildFaqTile(context, l10n.faqQ5, l10n.faqA5),
+          _buildFaqTile(context, l10n.faqQ6, l10n.faqA6),
 
           Container(height: 8, color: context.colors.surface),
 

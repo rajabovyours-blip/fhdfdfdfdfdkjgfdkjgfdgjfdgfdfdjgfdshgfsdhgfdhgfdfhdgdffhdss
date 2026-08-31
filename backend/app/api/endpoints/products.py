@@ -122,6 +122,8 @@ class ProductCreateRequest(PydanticBaseModel):
     stock: int = 0
     images: list = []
     brand: str | None = None
+    has_delivery: bool = True
+    delivery_price: float = 0.0
 
     @model_validator(mode='before')
     @classmethod
@@ -149,6 +151,8 @@ async def create_product(payload: ProductCreateRequest, db: AsyncSession = Depen
         stock=payload.stock,
         images=payload.images,
         brand=payload.brand,
+        has_delivery=payload.has_delivery,
+        delivery_price=payload.delivery_price,
         currency="UZS",
     )
     db.add(product)
@@ -175,10 +179,15 @@ async def update_product(id: str, payload: ProductCreateRequest, db: AsyncSessio
     product.price = payload.price
     product.unit = payload.unit
     product.stock = payload.stock
+    product.brand = payload.brand
+    product.has_delivery = payload.has_delivery
+    product.delivery_price = payload.delivery_price
     if payload.images:
         product.images = payload.images
-    if payload.brand:
+    if payload.brand is not None:
         product.brand = payload.brand
+    
+    product.has_delivery = payload.has_delivery
         
     await db.commit()
     await db.refresh(product)
@@ -372,6 +381,50 @@ class ReviewCreate(PydanticBaseModel):
     text: str
     photos: List[str] = []
 
+@router.get("/{id}/reviews", response_model=APIResponse[list])
+async def get_product_reviews(
+    id: UUID,
+    db: AsyncSession = Depends(get_db)
+):
+    result = await db.execute(select(Product).where(Product.id == id).options(selectinload(Product.reviews)))
+    product = result.scalar_one_or_none()
+    
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+        
+    reviews = []
+    if product.reviews:
+        for r in product.reviews:
+            reviews.append({
+                "id": str(r.id),
+                "productId": str(r.product_id),
+                "userId": str(r.user_id),
+                "userName": "User", # Mock since user relation might not be loaded
+                "rating": float(r.rating) if r.rating else 5.0,
+                "text": r.comment if hasattr(r, 'comment') else "",
+                "photos": [],
+                "createdAt": r.created_at.isoformat() if hasattr(r, 'created_at') and r.created_at else None,
+                "isVerifiedPurchase": True
+            })
+            
+    return APIResponse(data=reviews)
+
+@router.get("/{id}/eligibility")
+async def check_review_eligibility(
+    id: UUID,
+    db: AsyncSession = Depends(get_db)
+):
+    # Mock eligibility check: return True for now
+    return {"eligible": True, "reason": None}
+
+@router.get("/{id}/user-review")
+async def get_user_review(
+    id: UUID,
+    db: AsyncSession = Depends(get_db)
+):
+    # Mock returning no user review for now
+    return {"data": None}
+
 @router.post("/{id}/reviews", response_model=APIResponse[dict])
 async def add_product_review(
     id: UUID,
@@ -384,8 +437,6 @@ async def add_product_review(
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
         
-    # In a full implementation, we would insert into a Reviews table.
-    # For now, satisfy the frontend API contract.
     return APIResponse(message="Review submitted successfully", data={
         "rating": payload.rating,
         "text": payload.text

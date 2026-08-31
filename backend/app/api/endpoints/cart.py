@@ -8,7 +8,7 @@ from uuid import UUID
 from app.db.session import get_db
 from app.models.cart import CartItem
 from app.models.user import User
-from app.schemas.cart import CartItemModel, CartItemCreate
+from app.schemas.cart import CartItemModel, CartItemCreate, CartItemUpdate
 from app.schemas.common import APIResponse
 from app.api.deps import get_current_user
 
@@ -93,3 +93,41 @@ async def remove_from_cart(
     await db.commit()
     
     return APIResponse(message="Item removed successfully")
+
+@router.delete("", response_model=APIResponse[dict])
+async def clear_cart(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    await db.execute(
+        CartItem.__table__.delete().where(CartItem.user_id == current_user.id)
+    )
+    await db.commit()
+    return APIResponse(message="Cart cleared successfully")
+
+@router.put("/items/{id}", response_model=APIResponse[CartItemModel])
+async def update_cart_item(
+    id: UUID,
+    item_in: CartItemUpdate,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    result = await db.execute(
+        select(CartItem).options(selectinload(CartItem.product)).where(CartItem.id == id, CartItem.user_id == current_user.id)
+    )
+    item = result.scalar_one_or_none()
+    
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found in cart")
+        
+    item.quantity = item_in.quantity
+    await db.commit()
+    await db.refresh(item)
+    
+    # Refresh drops relationships so let's fetch again
+    result = await db.execute(
+        select(CartItem).options(selectinload(CartItem.product)).where(CartItem.id == id)
+    )
+    item_loaded = result.scalar_one()
+    
+    return APIResponse(data=CartItemModel.model_validate(item_loaded))

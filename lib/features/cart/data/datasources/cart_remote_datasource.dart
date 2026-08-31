@@ -6,6 +6,7 @@ abstract class CartRemoteDataSource {
   Future<void> addToCart(String productId, int quantity);
   Future<void> updateCartItem(String cartItemId, int quantity);
   Future<void> removeFromCart(String cartItemId);
+  Future<void> clearCart();
 }
 
 class CartRemoteDataSourceImpl implements CartRemoteDataSource {
@@ -47,12 +48,19 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
 
   @override
   Future<void> updateCartItem(String cartItemId, int quantity) async {
-    // The backend doesn't have an explicit update endpoint yet, but addToCart handles quantity additions.
-    // If we need a strict set quantity, we'd need a backend endpoint. For now, we'll just skip or add.
-    // Ideally we'd have /cart/items/{id} PUT. Let's just use POST /cart/items if the cart is additive.
-    // Wait, the UI might send an absolute quantity. The backend adds to existing. This is a mismatch.
-    // We'll leave this as a dummy call for now, since UI doesn't use it or it's unhandled.
-    throw ServerException('Update not fully supported by backend');
+    try {
+      final response = await dio.put(
+        '/cart/items/$cartItemId',
+        data: {
+          'quantity': quantity,
+        },
+      );
+      if (response.statusCode != 200) {
+        throw ServerException('Failed to update cart item');
+      }
+    } on DioException catch (e) {
+      throw ServerException(e.message ?? 'Network error');
+    }
   }
 
   @override
@@ -63,6 +71,18 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
       );
       if (response.statusCode != 200) {
         throw ServerException('Failed to remove from cart');
+      }
+    } on DioException catch (e) {
+      throw ServerException(e.message ?? 'Network error');
+    }
+  }
+
+  @override
+  Future<void> clearCart() async {
+    try {
+      final response = await dio.delete('/cart');
+      if (response.statusCode != 200) {
+        throw ServerException('Failed to clear cart');
       }
     } on DioException catch (e) {
       throw ServerException(e.message ?? 'Network error');

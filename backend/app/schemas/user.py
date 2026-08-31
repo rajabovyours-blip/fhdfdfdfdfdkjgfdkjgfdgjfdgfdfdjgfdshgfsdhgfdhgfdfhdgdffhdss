@@ -5,10 +5,10 @@ from uuid import UUID
 
 class UserModel(BaseModel):
     id: UUID
-    full_name: str
-    phone: str
+    full_name: Optional[str] = None
     email: Optional[str] = None
     avatar_url: Optional[str] = None
+    preferred_language: Optional[str] = None
     model_config = ConfigDict(from_attributes=True, populate_by_name=True, alias_generator=to_camel)
 
 class UserCreate(BaseModel):

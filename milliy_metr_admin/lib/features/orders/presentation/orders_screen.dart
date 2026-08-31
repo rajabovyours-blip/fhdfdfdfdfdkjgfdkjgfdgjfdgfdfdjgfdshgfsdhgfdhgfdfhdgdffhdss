@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:milliy_metr_admin/shared/utils/responsive_modal.dart';
+import 'package:milliy_metr_admin/shared/widgets/admin_page_header.dart';
 import '../../../core/providers/admin_providers.dart';
 import '../../../core/api/api_client.dart';
 
@@ -80,7 +80,6 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> with SingleTickerPr
       icon: Icons.list_alt,
       builder: (modalContext, setModalState) {
         return Column(
-          mainAxisSize: MainAxisSize.min,
           children: [
             Flexible(
               child: SingleChildScrollView(
@@ -176,53 +175,41 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> with SingleTickerPr
                 ),
               ),
             ),
-            
-            // Actions
-            Container(
-              padding: EdgeInsets.only(
-                left: 20,
-                right: 20,
-                top: 16,
-                bottom: MediaQuery.of(modalContext).viewInsets.bottom > 0 ? 12 : 24,
-              ),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface,
-                border: const Border(top: BorderSide(color: Colors.white12)),
-              ),
-              child: Wrap(
-                spacing: 12,
-                runSpacing: 12,
-                alignment: WrapAlignment.end,
-                children: [
-                  OutlinedButton(
-                    onPressed: () => Navigator.pop(modalContext),
-                    child: const Text("Yopish"),
-                  ),
-                  if (status == 'PENDING')
-                    ElevatedButton(
-                      onPressed: () => _updateOrderStatus(modalContext, orderId, 'CONFIRMED', setModalState),
-                      child: const Text("Tasdiqlash"),
-                    ),
-                  if (status == 'CONFIRMED')
-                    ElevatedButton(
-                      onPressed: () => _updateOrderStatus(modalContext, orderId, 'SHIPPING', setModalState),
-                      child: const Text("Yetkazish"),
-                    ),
-                  if (status != 'DELIVERED' && status != 'CANCELLED')
-                    ElevatedButton(
-                      onPressed: () => _updateOrderStatus(modalContext, orderId, 'DELIVERED', setModalState),
-                      style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
-                      child: const Text("Yetkazildi"),
-                    ),
-                  if (status != 'CANCELLED' && status != 'DELIVERED')
-                    TextButton(
-                      onPressed: () => _updateOrderStatus(modalContext, orderId, 'CANCELLED', setModalState),
-                      style: TextButton.styleFrom(foregroundColor: Colors.red),
-                      child: const Text("Bekor qilish"),
-                    ),
-                ],
-              ),
+          ],
+        );
+      },
+      actionsBuilder: (modalContext, setModalState) {
+        return Wrap(
+          spacing: 12,
+          runSpacing: 12,
+          alignment: WrapAlignment.end,
+          children: [
+            OutlinedButton(
+              onPressed: () => Navigator.pop(modalContext),
+              child: const Text("Yopish"),
             ),
+            if (status == 'PENDING')
+              ElevatedButton(
+                onPressed: () => _updateOrderStatus(modalContext, orderId, 'CONFIRMED', setModalState),
+                child: const Text("Tasdiqlash"),
+              ),
+            if (status == 'CONFIRMED')
+              ElevatedButton(
+                onPressed: () => _updateOrderStatus(modalContext, orderId, 'SHIPPING', setModalState),
+                child: const Text("Yetkazish"),
+              ),
+            if (status != 'DELIVERED' && status != 'CANCELLED')
+              ElevatedButton(
+                onPressed: () => _updateOrderStatus(modalContext, orderId, 'DELIVERED', setModalState),
+                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
+                child: const Text("Yetkazildi"),
+              ),
+            if (status != 'CANCELLED' && status != 'DELIVERED')
+              TextButton(
+                onPressed: () => _updateOrderStatus(modalContext, orderId, 'CANCELLED', setModalState),
+                style: TextButton.styleFrom(foregroundColor: Colors.red),
+                child: const Text("Bekor qilish"),
+              ),
           ],
         );
       },
@@ -292,14 +279,8 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> with SingleTickerPr
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Text(
-            "Buyurtmalar",
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-          ),
+        AdminPageHeader(
+          title: 'Buyurtmalar',
         ),
         TabBar(
           controller: _tabController,

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shimmer/shimmer.dart';
 
+import 'package:milliy_metr/core/utils/image_utils.dart';
+
 class ProductImage extends StatelessWidget {
   final String? imageUrl;
   final double height;
@@ -38,8 +40,10 @@ class ProductImage extends StatelessWidget {
       );
     }
 
+    final String processedUrl = ImageUtils.getFullImageUrl(imageUrl!);
+
     return CachedNetworkImage(
-      imageUrl: imageUrl!,
+      imageUrl: processedUrl,
       height: height,
       width: width,
       fit: fit,

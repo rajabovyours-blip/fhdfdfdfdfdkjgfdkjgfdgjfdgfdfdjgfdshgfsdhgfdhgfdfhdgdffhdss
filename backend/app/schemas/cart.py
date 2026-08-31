@@ -15,3 +15,6 @@ class CartItemModel(BaseModel):
 class CartItemCreate(BaseModel):
     product_id: UUID
     quantity: int = 1
+
+class CartItemUpdate(BaseModel):
+    quantity: int

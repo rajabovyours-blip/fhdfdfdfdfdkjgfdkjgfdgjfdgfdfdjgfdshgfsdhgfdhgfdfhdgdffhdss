@@ -5,6 +5,7 @@ void showAdminFormModal({
   required String title,
   IconData? icon,
   required Widget Function(BuildContext context, void Function(void Function()) setState) builder,
+  Widget Function(BuildContext context, void Function(void Function()) setState)? actionsBuilder,
 }) {
   final width = MediaQuery.of(context).size.width;
   final isMobile = width < 640;
@@ -71,6 +72,15 @@ void showAdminFormModal({
                   child: builder(sheetContext, setModalState),
                 ),
               ),
+              if (actionsBuilder != null)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface,
+                    border: const Border(top: BorderSide(color: Colors.black12)),
+                  ),
+                  child: actionsBuilder(sheetContext, setModalState),
+                ),
             ],
           ),
         ),
@@ -126,6 +136,16 @@ void showAdminFormModal({
                     child: builder(dialogContext, setModalState),
                   ),
                 ),
+                if (actionsBuilder != null)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surface,
+                      border: const Border(top: BorderSide(color: Colors.black12)),
+                      borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16)),
+                    ),
+                    child: actionsBuilder(dialogContext, setModalState),
+                  ),
               ],
             ),
           ),

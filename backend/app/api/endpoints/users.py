@@ -65,6 +65,8 @@ async def update_me(payload: UserMeUpdate, db: AsyncSession = Depends(get_db), c
         current_user.email = payload.email
     if payload.avatar_url is not None:
         current_user.avatar_url = payload.avatar_url
+    if payload.preferred_language is not None:
+        current_user.preferred_language = payload.preferred_language
         
     await db.commit()
     await db.refresh(current_user)

@@ -366,30 +366,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                       fontWeight: FontWeight.w900,
                                     ),
                                   ),
-                                  const SizedBox(height: 8),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                    decoration: BoxDecoration(
-                                      color: context.colors.success.withValues(alpha: 0.1),
-                                      borderRadius: BorderRadius.circular(6),
-                                      border: Border.all(color: context.colors.success.withValues(alpha: 0.3)),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(Icons.discount, color: context.colors.success, size: 14),
-                                        const SizedBox(width: 4),
-                                        Text(
-                                          context.l10n.bulkDiscount,
-                                          style: TextStyle(
-                                            color: context.colors.success,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+
                                 ],
                               ),
                               const SizedBox(height: 24),
@@ -426,9 +403,9 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            (product.location?.isNotEmpty ?? false)
-                                                ? product.location!
-                                                : context.l10n.tashkent,
+                                            product.hasDelivery 
+                                                ? context.l10n.deliveryAvailable
+                                                : context.l10n.deliveryNotAvailable,
                                             style: TextStyle(
                                               color: context.colors.textHigh,
                                               fontSize: 14,
@@ -688,39 +665,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                               ],
 
                               const SizedBox(height: 24),
-                              // Specifications
-                              Container(
-                                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                decoration: BoxDecoration(
-                                  color: context.colors.surface,
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(color: context.colors.outline),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(16),
-                                      child: Text(
-                                        context.l10n.specificationsLabel,
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: context.colors.textHigh,
-                                        ),
-                                      ),
-                                    ),
-                                    Divider(height: 1, color: context.colors.outline),
-                                    _buildSpecRow(context, context.l10n.warranty, '1 yil'),
-                                    Divider(height: 1, color: context.colors.outline),
-                                    _buildSpecRow(context, context.l10n.manufacturer, product.brand ?? ''),
-                                    Divider(height: 1, color: context.colors.outline),
-                                    _buildSpecRow(context, context.l10n.deliveryLabel, '1-3 kun'),
-                                    const SizedBox(height: 8),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 8),
+
                               // Leave Review Button
                               Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -1104,32 +1049,6 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
     );
   }
 
-  Widget _buildSpecRow(BuildContext context, String key, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            flex: 2,
-            child: Text(
-              key,
-              style: TextStyle(color: context.colors.textMedium, fontSize: 13),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            flex: 3,
-            child: Text(
-              value,
-              style: TextStyle(color: context.colors.textHigh, fontSize: 13, fontWeight: FontWeight.w500),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildBottomBar(BuildContext context, dynamic product) {
     final cartState = ref.watch(cartNotifierProvider);
     int quantityInCart = 0;
@@ -1166,33 +1085,28 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                 ? Container(
                     height: 52,
                     decoration: BoxDecoration(
-                      color: context.colors.primary.withValues(alpha: 0.1),
+                      color: context.colors.primary,
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: context.colors.primary),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         IconButton(
-                          icon: Icon(Icons.remove, color: context.colors.primary),
+                          icon: const Icon(Icons.remove, color: Colors.white),
                           onPressed: () {
-                            if (quantityInCart > 1) {
-                              ref.read(cartNotifierProvider.notifier).addToCart(product.id, -1);
-                            } else {
-                              context.push(AppRoutes.cart);
-                            }
+                            ref.read(cartNotifierProvider.notifier).addToCart(product, -1);
                           },
                         ),
                         Text(
-                          'Savatda: ',
-                          style: TextStyle(
-                            color: context.colors.primary,
+                          'Savatda: $quantityInCart',
+                          style: const TextStyle(
+                            color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: 15,
                           ),
                         ),
                         IconButton(
-                          icon: Icon(Icons.add, color: context.colors.primary),
+                          icon: const Icon(Icons.add, color: Colors.white),
                           onPressed: () {
                             ref.read(cartNotifierProvider.notifier).addToCart(product, 1);
                           },
@@ -1264,8 +1178,8 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                               }
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: context.colors.textHigh,
-                              foregroundColor: context.colors.primary,
+                              backgroundColor: context.colors.primary,
+                              foregroundColor: Colors.white,
                               elevation: 0,
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(

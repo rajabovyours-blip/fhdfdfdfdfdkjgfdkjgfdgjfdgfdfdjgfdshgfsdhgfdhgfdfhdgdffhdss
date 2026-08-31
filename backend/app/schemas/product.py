@@ -27,17 +27,27 @@ class ProductModel(BaseModel):
     specifications: Optional[Dict[str, str]] = None
     certificates: Optional[List[str]] = None
     delivery_information: Optional[str] = None
+    has_delivery: bool = True
+    delivery_price: Optional[float] = 0.0
     location: Optional[str] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
     model_config = ConfigDict(from_attributes=True, populate_by_name=True, alias_generator=to_camel)
 
-class CategoryModel(BaseModel):
-    id: UUID
+class CategoryBase(BaseModel):
     name: Dict[str, str]
-    description: Dict[str, str]
+    description: Optional[Dict[str, str]] = None
     icon_url: Optional[str] = None
     image_url: Optional[str] = None
     parent_id: Optional[UUID] = None
     is_featured: bool = False
+
+class CategoryCreate(CategoryBase):
+    pass
+
+class CategoryUpdate(CategoryBase):
+    name: Optional[Dict[str, str]] = None
+
+class CategoryModel(CategoryBase):
+    id: UUID
     model_config = ConfigDict(from_attributes=True, populate_by_name=True, alias_generator=to_camel)

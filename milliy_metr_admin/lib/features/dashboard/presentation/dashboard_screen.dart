@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../core/providers/admin_providers.dart';
-import 'package:intl/intl.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
@@ -26,7 +26,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Dashboard',
+            'dashboard'.tr(),
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -82,10 +82,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       spacing: 16,
       runSpacing: 16,
       children: [
-        _buildKpiCard(context, 'Jami Tushum', formatCurrency.format(revenue), Icons.attach_money, isMobile),
-        _buildKpiCard(context, 'Bugungi Buyurtmalar', '$orders ta', Icons.shopping_cart_outlined, isMobile),
-        _buildKpiCard(context, 'Faol Mijozlar', '$customers ta', Icons.people_outline, isMobile),
-        _buildKpiCard(context, 'Mahsulotlar', '$products ta', Icons.inventory_2_outlined, isMobile),
+        _buildKpiCard(context, 'total_revenue'.tr(), formatCurrency.format(revenue), Icons.attach_money, isMobile),
+        _buildKpiCard(context, 'todayOrders'.tr(), '$orders ta', Icons.shopping_cart_outlined, isMobile),
+        _buildKpiCard(context, 'activeCustomers'.tr(), '$customers ta', Icons.people_outline, isMobile),
+        _buildKpiCard(context, 'productsLabel'.tr(), '$products ta', Icons.inventory_2_outlined, isMobile),
       ],
     );
   }
@@ -159,7 +159,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Oylik Savdo Grafigi', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+          Text('monthlySalesChart'.tr(), style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 24),
           Expanded(
             child: BarChart(
@@ -221,13 +221,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: Theme.of(context).colorScheme.outline),
         ),
-        child: const Center(
+        child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.pie_chart_outline, size: 48, color: Colors.grey),
-              SizedBox(height: 16),
-              Text("Hozircha buyurtmalar yo'q", style: TextStyle(color: Colors.grey)),
+              const Icon(Icons.pie_chart_outline, size: 48, color: Colors.grey),
+              const SizedBox(height: 16),
+              Text('noOrdersYet'.tr(), style: const TextStyle(color: Colors.grey)),
             ],
           ),
         ),
@@ -316,7 +316,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: Theme.of(context).colorScheme.outline),
         ),
-        child: const Center(child: Text("So'nggi buyurtmalar yo'q")),
+        child: Center(child: Text('noRecentOrders'.tr())),
       );
     }
     
@@ -331,7 +331,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('So\'nggi Buyurtmalar', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+          Text('recent_orders'.tr(), style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,

@@ -794,32 +794,46 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appVersion => 'App Version';
 
   @override
-  String get faqDelivery => 'How long does delivery take?';
+  String get faqQ1 => 'How much does delivery cost?';
 
   @override
-  String get faqDeliveryAnswer =>
-      'Standard delivery takes 2-3 business days. Express delivery is completed within 1 day.';
+  String get faqA1 =>
+      'The delivery cost is calculated based on the product\'s size, weight, and delivery address. The final delivery cost is shown when placing the order.';
 
   @override
-  String get faqPayment => 'What payment methods are available?';
+  String get faqQ2 => 'Can I cancel my order?';
 
   @override
-  String get faqPaymentAnswer =>
-      'Currently, Cash on Delivery, Click, Payme, Visa, Mastercard, and Uzum Nasiya are accepted.';
+  String get faqA2 =>
+      'Yes, an order can be cancelled if it has not yet been handed over for delivery.';
 
   @override
-  String get faqReturn => 'Can I return a product?';
+  String get faqQ3 =>
+      'What should I do if the product is damaged or incorrect?';
 
   @override
-  String get faqReturnAnswer =>
-      'Yes, you can return a product within 14 days. The product must be unused and in its original packaging.';
+  String get faqA3 =>
+      'If the product is damaged or does not match your order, please contact us as soon as possible. After reviewing the situation, we will consider replacement or return options.';
 
   @override
-  String get faqWarranty => 'Is there a warranty?';
+  String get faqQ4 => 'Can prices change?';
 
   @override
-  String get faqWarrantyAnswer =>
-      'All our products are covered by manufacturer warranty.';
+  String get faqA4 =>
+      'Yes, product prices may change depending on manufacturer prices and market conditions. The price at the time the order is confirmed will apply.';
+
+  @override
+  String get faqQ5 => 'Is there a discount for large orders?';
+
+  @override
+  String get faqA5 =>
+      'Special pricing may be available for wholesale and large-volume orders. Contact us for more information.';
+
+  @override
+  String get faqQ6 => 'Where do the products come from?';
+
+  @override
+  String get faqA6 => 'Products are supplied by manufacturers and suppliers.';
 
   @override
   String get clickPayment => 'Pay via Click';
@@ -1230,6 +1244,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deliveryService => 'Delivery Service';
 
   @override
+  String get deliveryAvailable => 'Delivery available';
+
+  @override
+  String get deliveryNotAvailable => 'Delivery not available';
+
+  @override
   String get pickupFromWarehouse => 'Pickup from warehouse';
 
   @override
@@ -1308,4 +1328,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appleSignInError => 'An error occurred during Apple Sign-In';
+
+  @override
+  String get errorUpdatingQuantity => 'Failed to update quantity';
+
+  @override
+  String get deliveryPrice => 'Delivery price';
 }

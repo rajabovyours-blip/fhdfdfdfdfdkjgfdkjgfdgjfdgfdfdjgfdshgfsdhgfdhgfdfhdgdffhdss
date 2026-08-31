@@ -110,7 +110,9 @@ class CatalogNotifier extends StateNotifier<FeatureState<CatalogData>> {
       loaded: (d) => d.selectedCategory,
       orElse: () => null,
     );
-    if (categoryId != null && currentCatId != null && categoryId != currentCatId) {
+    final reqCatId = categoryId ?? 'Barchasi';
+    final stateCatId = currentCatId ?? 'Barchasi';
+    if (reqCatId != stateCatId) {
       return;
     }
 

@@ -70,9 +70,10 @@ class CartRepositoryImpl implements CartRepository {
   @override
   Future<Either<Failure, void>> clearCart() async {
     try {
-      // NOTE: CartRemoteDataSource does not have a clearCart endpoint yet.
-      // Doing nothing or calling a future endpoint.
+      await remoteDataSource.clearCart();
       return const Right(null);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }

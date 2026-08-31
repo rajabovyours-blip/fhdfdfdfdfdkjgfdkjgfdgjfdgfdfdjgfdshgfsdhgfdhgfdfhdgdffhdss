@@ -78,8 +78,8 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(context.l10n.itemRemovedFromCart),
-        backgroundColor: context.colors.surfaceVariant,
+        content: Text(context.l10n.itemRemovedFromCart, style: TextStyle(color: context.colors.onPrimary)),
+        backgroundColor: context.colors.primary,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         duration: const Duration(seconds: 4),
@@ -144,15 +144,18 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                     ...cartItems.map((item) {
                       return CartItemCard(
                         item: item,
-                        onIncrement: () {
+                        onIncrement: () async {
                           final maxQty = item.product.stock > 0 ? item.product.stock : 99;
                           if (item.quantity < maxQty) {
-                            notifier.updateCartItem(item.id, item.quantity + 1);
+                            final success = await notifier.updateCartItem(item.id, item.quantity + 1);
+                            if (!success && context.mounted) {
+                              AppSnackBar.showError(context, context.l10n.errorUpdatingQuantity);
+                            }
                           }
                         },
-                        onDecrement: () {
+                        onDecrement: () async {
                           if (item.quantity <= 1) {
-                            showDialog(
+                            await showDialog(
                               context: context,
                               builder: (ctx) => AlertDialog(
                                 backgroundColor: context.colors.surface,
@@ -165,9 +168,14 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                                     child: Text(context.l10n.cancel, style: TextStyle(color: context.colors.textMedium)),
                                   ),
                                   TextButton(
-                                    onPressed: () {
+                                    onPressed: () async {
                                       Navigator.pop(ctx);
-                                      _removeItemWithUndo(item);
+                                      final success = await notifier.removeFromCart(item.id);
+                                      if (success) {
+                                        _removeItemWithUndo(item);
+                                      } else if (context.mounted) {
+                                        AppSnackBar.showError(context, context.l10n.errorUpdatingQuantity);
+                                      }
                                     },
                                     child: Text(context.l10n.clear, style: TextStyle(color: context.colors.danger)),
                                   ),
@@ -175,7 +183,10 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                               ),
                             );
                           } else {
-                            notifier.updateCartItem(item.id, item.quantity - 1);
+                            final success = await notifier.updateCartItem(item.id, item.quantity - 1);
+                            if (!success && context.mounted) {
+                              AppSnackBar.showError(context, context.l10n.errorUpdatingQuantity);
+                            }
                           }
                         },
                         onRemove: () => _removeItemWithUndo(item),
@@ -296,6 +307,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
             ),
           ),
           const SizedBox(height: 12),
+          const SizedBox(height: 12),
           _SummaryRow(
             label: context.l10n.delivery,
             value: AppFormatters.currency(
@@ -303,25 +315,6 @@ class _CartScreenState extends ConsumerState<CartScreen> {
               Localizations.localeOf(context).languageCode,
             ),
           ),
-          if (notifier.discount > 0) ...[
-            const SizedBox(height: 12),
-            _SummaryRow(
-              label: context.l10n.discount,
-              value:
-                  '-${AppFormatters.currency(notifier.discount, Localizations.localeOf(context).languageCode)}',
-              valueColor: context.colors.success,
-            ),
-          ],
-          if (notifier.tax > 0) ...[
-            const SizedBox(height: 12),
-            _SummaryRow(
-              label: context.l10n.taxFee,
-              value: AppFormatters.currency(
-                notifier.tax,
-                Localizations.localeOf(context).languageCode,
-              ),
-            ),
-          ],
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16),
             child: Divider(color: context.colors.outline, height: 1),
@@ -496,12 +489,9 @@ class _CartScreenState extends ConsumerState<CartScreen> {
 class _SummaryRow extends StatelessWidget {
   final String label;
   final String value;
-  final Color? valueColor;
-
   const _SummaryRow({
     required this.label,
     required this.value,
-    this.valueColor,
   });
 
   @override
@@ -516,7 +506,7 @@ class _SummaryRow extends StatelessWidget {
         Text(
           value,
           style: TextStyle(
-            color: valueColor ?? context.colors.textHigh,
+            color: context.colors.textHigh,
             fontSize: 14,
             fontWeight: FontWeight.w500,
           ),

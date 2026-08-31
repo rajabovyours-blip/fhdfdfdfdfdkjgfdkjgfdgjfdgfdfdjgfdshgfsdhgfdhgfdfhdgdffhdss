@@ -34,6 +34,8 @@ class Product(Base):
     certificates = Column(String, nullable=True)
     delivery_information = Column(String, nullable=True)
     location = Column(String, nullable=True)
+    has_delivery = Column(Boolean, default=True)
+    delivery_price = Column(Numeric(12, 2), default=0.0)
     
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

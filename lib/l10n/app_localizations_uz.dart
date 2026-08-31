@@ -801,32 +801,47 @@ class AppLocalizationsUz extends AppLocalizations {
   String get appVersion => 'Ilova versiyasi';
 
   @override
-  String get faqDelivery => 'Yetkazib berish qancha vaqt oladi?';
+  String get faqQ1 => 'Yetkazib berish narxi qancha?';
 
   @override
-  String get faqDeliveryAnswer =>
-      'Standart yetkazib berish 2-3 ish kunini oladi. Tezkor yetkazib berish esa 1 kun ichida amalga oshiriladi.';
+  String get faqA1 =>
+      'Yetkazib berish narxi mahsulot hajmi, og‘irligi va yetkazib berish manziliga qarab hisoblanadi. Yakuniy narx buyurtma vaqtida ko‘rsatiladi.';
 
   @override
-  String get faqPayment => 'Qanday to\'lov usullari mavjud?';
+  String get faqQ2 => 'Buyurtmani bekor qilish mumkinmi?';
 
   @override
-  String get faqPaymentAnswer =>
-      'Hozirda buyurtmani qabul qilib olganda naqd pul to\'lash, shuningdek Click, Payme, Visa, Mastercard va Uzum Nasiya orqali to\'lovlar qabul qilinadi.';
+  String get faqA2 =>
+      'Ha, buyurtma yetkazib berishga topshirilmagan bo‘lsa, uni bekor qilish mumkin.';
 
   @override
-  String get faqReturn => 'Mahsulotni qaytarish mumkinmi?';
+  String get faqQ3 =>
+      'Mahsulot shikastlangan yoki noto‘g‘ri kelsa nima qilish kerak?';
 
   @override
-  String get faqReturnAnswer =>
-      'Ha, 14 kun ichida mahsulotni qaytarish mumkin. Mahsulot ishlatilmagan va original qadoqda bo\'lishi kerak.';
+  String get faqA3 =>
+      'Mahsulotda nuqson aniqlansa yoki buyurtmaga mos kelmasa, imkon qadar tezroq biz bilan bog‘laning. Holat tekshirilgandan so‘ng almashtirish yoki qaytarish masalasi ko‘rib chiqiladi.';
 
   @override
-  String get faqWarranty => 'Kafolat mavjudmi?';
+  String get faqQ4 => 'Narxlar o‘zgarishi mumkinmi?';
 
   @override
-  String get faqWarrantyAnswer =>
-      'Barcha mahsulotlarimiz ishlab chiqaruvchi kafolati bilan ta\'minlangan.';
+  String get faqA4 =>
+      'Ha, mahsulot narxlari ishlab chiqaruvchi va bozor narxlariga qarab o‘zgarishi mumkin. Buyurtma tasdiqlangan vaqtdagi narx amal qiladi.';
+
+  @override
+  String get faqQ5 => 'Katta hajmda buyurtma bersam chegirma bormi?';
+
+  @override
+  String get faqA5 =>
+      'Ulgurji va katta hajmdagi buyurtmalar uchun maxsus narxlar mavjud bo‘lishi mumkin. Batafsil ma’lumot uchun biz bilan bog‘laning.';
+
+  @override
+  String get faqQ6 => 'Mahsulotlar qayerdan olinadi?';
+
+  @override
+  String get faqA6 =>
+      'Mahsulotlar ishlab chiqaruvchilar va yetkazib beruvchilardan taqdim etiladi.';
 
   @override
   String get clickPayment => 'Click orqali to\'lov';
@@ -1239,6 +1254,12 @@ class AppLocalizationsUz extends AppLocalizations {
   String get deliveryService => 'Yetkazib berish xizmati';
 
   @override
+  String get deliveryAvailable => 'Yetkazib berish xizmati mavjud';
+
+  @override
+  String get deliveryNotAvailable => 'Yetkazib berish xizmati mavjud emas';
+
+  @override
   String get pickupFromWarehouse => 'Ombordan o\'zi olib ketish';
 
   @override
@@ -1319,4 +1340,10 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get appleSignInError => 'Apple orqali kirishda xatolik yuz berdi';
+
+  @override
+  String get errorUpdatingQuantity => 'Miqdorni o\'zgartirib bo\'lmadi';
+
+  @override
+  String get deliveryPrice => 'Yetkazib berish narxi';
 }

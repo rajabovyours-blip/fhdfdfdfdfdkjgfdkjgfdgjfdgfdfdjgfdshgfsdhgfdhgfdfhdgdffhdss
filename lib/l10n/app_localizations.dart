@@ -1618,53 +1618,77 @@ abstract class AppLocalizations {
   /// **'Ilova versiyasi'**
   String get appVersion;
 
-  /// No description provided for @faqDelivery.
+  /// No description provided for @faqQ1.
   ///
   /// In uz, this message translates to:
-  /// **'Yetkazib berish qancha vaqt oladi?'**
-  String get faqDelivery;
+  /// **'Yetkazib berish narxi qancha?'**
+  String get faqQ1;
 
-  /// No description provided for @faqDeliveryAnswer.
+  /// No description provided for @faqA1.
   ///
   /// In uz, this message translates to:
-  /// **'Standart yetkazib berish 2-3 ish kunini oladi. Tezkor yetkazib berish esa 1 kun ichida amalga oshiriladi.'**
-  String get faqDeliveryAnswer;
+  /// **'Yetkazib berish narxi mahsulot hajmi, og‘irligi va yetkazib berish manziliga qarab hisoblanadi. Yakuniy narx buyurtma vaqtida ko‘rsatiladi.'**
+  String get faqA1;
 
-  /// No description provided for @faqPayment.
+  /// No description provided for @faqQ2.
   ///
   /// In uz, this message translates to:
-  /// **'Qanday to\'lov usullari mavjud?'**
-  String get faqPayment;
+  /// **'Buyurtmani bekor qilish mumkinmi?'**
+  String get faqQ2;
 
-  /// No description provided for @faqPaymentAnswer.
+  /// No description provided for @faqA2.
   ///
   /// In uz, this message translates to:
-  /// **'Hozirda buyurtmani qabul qilib olganda naqd pul to\'lash, shuningdek Click, Payme, Visa, Mastercard va Uzum Nasiya orqali to\'lovlar qabul qilinadi.'**
-  String get faqPaymentAnswer;
+  /// **'Ha, buyurtma yetkazib berishga topshirilmagan bo‘lsa, uni bekor qilish mumkin.'**
+  String get faqA2;
 
-  /// No description provided for @faqReturn.
+  /// No description provided for @faqQ3.
   ///
   /// In uz, this message translates to:
-  /// **'Mahsulotni qaytarish mumkinmi?'**
-  String get faqReturn;
+  /// **'Mahsulot shikastlangan yoki noto‘g‘ri kelsa nima qilish kerak?'**
+  String get faqQ3;
 
-  /// No description provided for @faqReturnAnswer.
+  /// No description provided for @faqA3.
   ///
   /// In uz, this message translates to:
-  /// **'Ha, 14 kun ichida mahsulotni qaytarish mumkin. Mahsulot ishlatilmagan va original qadoqda bo\'lishi kerak.'**
-  String get faqReturnAnswer;
+  /// **'Mahsulotda nuqson aniqlansa yoki buyurtmaga mos kelmasa, imkon qadar tezroq biz bilan bog‘laning. Holat tekshirilgandan so‘ng almashtirish yoki qaytarish masalasi ko‘rib chiqiladi.'**
+  String get faqA3;
 
-  /// No description provided for @faqWarranty.
+  /// No description provided for @faqQ4.
   ///
   /// In uz, this message translates to:
-  /// **'Kafolat mavjudmi?'**
-  String get faqWarranty;
+  /// **'Narxlar o‘zgarishi mumkinmi?'**
+  String get faqQ4;
 
-  /// No description provided for @faqWarrantyAnswer.
+  /// No description provided for @faqA4.
   ///
   /// In uz, this message translates to:
-  /// **'Barcha mahsulotlarimiz ishlab chiqaruvchi kafolati bilan ta\'minlangan.'**
-  String get faqWarrantyAnswer;
+  /// **'Ha, mahsulot narxlari ishlab chiqaruvchi va bozor narxlariga qarab o‘zgarishi mumkin. Buyurtma tasdiqlangan vaqtdagi narx amal qiladi.'**
+  String get faqA4;
+
+  /// No description provided for @faqQ5.
+  ///
+  /// In uz, this message translates to:
+  /// **'Katta hajmda buyurtma bersam chegirma bormi?'**
+  String get faqQ5;
+
+  /// No description provided for @faqA5.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ulgurji va katta hajmdagi buyurtmalar uchun maxsus narxlar mavjud bo‘lishi mumkin. Batafsil ma’lumot uchun biz bilan bog‘laning.'**
+  String get faqA5;
+
+  /// No description provided for @faqQ6.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahsulotlar qayerdan olinadi?'**
+  String get faqQ6;
+
+  /// No description provided for @faqA6.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahsulotlar ishlab chiqaruvchilar va yetkazib beruvchilardan taqdim etiladi.'**
+  String get faqA6;
 
   /// No description provided for @clickPayment.
   ///
@@ -2470,6 +2494,18 @@ abstract class AppLocalizations {
   /// **'Yetkazib berish xizmati'**
   String get deliveryService;
 
+  /// No description provided for @deliveryAvailable.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yetkazib berish xizmati mavjud'**
+  String get deliveryAvailable;
+
+  /// No description provided for @deliveryNotAvailable.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yetkazib berish xizmati mavjud emas'**
+  String get deliveryNotAvailable;
+
   /// No description provided for @pickupFromWarehouse.
   ///
   /// In uz, this message translates to:
@@ -2619,6 +2655,18 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Apple orqali kirishda xatolik yuz berdi'**
   String get appleSignInError;
+
+  /// No description provided for @errorUpdatingQuantity.
+  ///
+  /// In uz, this message translates to:
+  /// **'Miqdorni o\'zgartirib bo\'lmadi'**
+  String get errorUpdatingQuantity;
+
+  /// No description provided for @deliveryPrice.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yetkazib berish narxi'**
+  String get deliveryPrice;
 }
 
 class _AppLocalizationsDelegate

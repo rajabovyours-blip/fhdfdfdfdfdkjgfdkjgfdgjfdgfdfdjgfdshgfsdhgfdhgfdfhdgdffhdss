@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:milliy_metr_admin/shared/utils/responsive_modal.dart';
+import 'package:milliy_metr_admin/shared/widgets/admin_page_header.dart';
 import 'package:milliy_metr_admin/core/utils/image_utils.dart';
 import '../../../core/providers/admin_providers.dart';
 import '../../../core/api/api_client.dart';
@@ -34,177 +35,155 @@ class _BannersScreenState extends ConsumerState<BannersScreen> {
       icon: isEditing ? Icons.edit : Icons.add_box_rounded,
       builder: (dialogContext, setDialogState) {
         return Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Flexible(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // 1. Image Field (Required)
-                    Text("banner_image".tr(), style: const TextStyle(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    GestureDetector(
-                      onTap: () async {
-                        final result = await FilePicker.pickFiles(
-                          type: FileType.image,
-                          withData: true,
-                        );
-                        if (result != null && result.files.isNotEmpty) {
-                          setDialogState(() {
-                            selectedImageFile = result.files.first;
-                            localImageBytes = result.files.first.bytes;
-                            existingImageUrl = ''; // Clear existing network image
-                          });
-                        }
-                      },
-                      child: Container(
-                        height: 200,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: Theme.of(context).colorScheme.outline,
-                            style: BorderStyle.solid,
-                          ),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: _buildImagePreview(localImageBytes, existingImageUrl, context),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      "Tasvir ustiga bosib yangi rasm yuklang.",
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
-                    ),
-                    const SizedBox(height: 24),
-                    
-                    // 2. Internal Label
-                    Text("Ichki nom (Faqat admin uchun)", style: const TextStyle(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: titleController,
-                      decoration: InputDecoration(
-                        hintText: 'Masalan: Yangi yil aksiyasi',
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    
-                    // 3. Link (URL)
-                    Text("banner_link".tr(), style: const TextStyle(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: linkController,
-                      decoration: InputDecoration(
-                        hintText: 'Havola manzili (ixtiyoriy)',
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      ),
-                    ),
-                  ],
+            // 1. Image Field (Required)
+            Text("banner_image".tr(), style: const TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            GestureDetector(
+              onTap: () async {
+                final result = await FilePicker.pickFiles(
+                  type: FileType.image,
+                  withData: true,
+                );
+                if (result != null && result.files.isNotEmpty) {
+                  setDialogState(() {
+                    selectedImageFile = result.files.first;
+                    localImageBytes = result.files.first.bytes;
+                    existingImageUrl = ''; // Clear existing network image
+                  });
+                }
+              },
+              child: Container(
+                height: 200,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                    style: BorderStyle.solid,
+                  ),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: _buildImagePreview(localImageBytes, existingImageUrl, context),
                 ),
               ),
             ),
+            const SizedBox(height: 8),
+            Text(
+              "Tasvir ustiga bosib yangi rasm yuklang.",
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
+            ),
+            const SizedBox(height: 24),
             
-            // Actions
-            Container(
-              padding: EdgeInsets.only(
-                left: 20,
-                right: 20,
-                top: 16,
-                bottom: MediaQuery.of(dialogContext).viewInsets.bottom > 0 ? 12 : 24,
+            // 2. Internal Label
+            Text("Ichki nom (Faqat admin uchun)", style: const TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            TextField(
+              controller: titleController,
+              decoration: InputDecoration(
+                hintText: 'Masalan: Yangi yil aksiyasi',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               ),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface,
-                border: const Border(top: BorderSide(color: Colors.white12)),
+            ),
+            const SizedBox(height: 24),
+            
+            // 3. Link (URL)
+            Text("banner_link".tr(), style: const TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            TextField(
+              controller: linkController,
+              decoration: InputDecoration(
+                hintText: 'Havola manzili (ixtiyoriy)',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(dialogContext), 
-                    child: Text('cancel'.tr())
-                  ),
-                  const SizedBox(width: 16),
-                  ElevatedButton.icon(
-                    onPressed: isLoading
-                        ? null
-                        : () async {
-                            if (localImageBytes == null && existingImageUrl.isEmpty) {
-                              ScaffoldMessenger.of(dialogContext).showSnackBar(
-                                const SnackBar(content: Text('Iltimos, banner rasmini yuklang'), backgroundColor: Colors.red)
-                              );
-                              return;
-                            }
-                            
-                            setDialogState(() => isLoading = true);
-                            try {
-                              final dio = ref.read(dioProvider);
-                              String finalImageUrl = existingImageUrl;
-                              
-                              // Upload new image if selected
-                              if (localImageBytes != null && selectedImageFile != null) {
-                                final formData = FormData.fromMap({
-                                  'file': MultipartFile.fromBytes(
-                                    localImageBytes!,
-                                    filename: selectedImageFile!.name,
-                                  ),
-                                });
-                                final uploadResp = await dio.post('/upload/image', data: formData);
-                                if (uploadResp.data['data'] != null && uploadResp.data['data']['url'] != null) {
-                                  finalImageUrl = uploadResp.data['data']['url'];
-                                } else {
-                                  throw Exception("Rasm yuklashda xatolik");
-                                }
-                              }
+            ),
+          ],
+        );
+      },
+            
+      actionsBuilder: (dialogContext, setDialogState) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext), 
+              child: Text('cancel'.tr())
+            ),
+            const SizedBox(width: 16),
+            ElevatedButton.icon(
+              onPressed: isLoading
+                  ? null
+                  : () async {
+                      if (localImageBytes == null && existingImageUrl.isEmpty) {
+                        ScaffoldMessenger.of(dialogContext).showSnackBar(
+                          const SnackBar(content: Text('Iltimos, banner rasmini yuklang'), backgroundColor: Colors.red)
+                        );
+                        return;
+                      }
+                      
+                      setDialogState(() => isLoading = true);
+                      try {
+                        final dio = ref.read(dioProvider);
+                        String finalImageUrl = existingImageUrl;
+                        
+                        // Upload new image if selected
+                        if (localImageBytes != null && selectedImageFile != null) {
+                          final formData = FormData.fromMap({
+                            'file': MultipartFile.fromBytes(
+                              localImageBytes!,
+                              filename: selectedImageFile!.name,
+                            ),
+                          });
+                          final uploadResp = await dio.post('/upload/image', data: formData);
+                          if (uploadResp.data['data'] != null && uploadResp.data['data']['url'] != null) {
+                            finalImageUrl = uploadResp.data['data']['url'];
+                          } else {
+                            throw Exception("Rasm yuklashda xatolik");
+                          }
+                        }
 
-                              final payload = {
-                                'title': titleController.text,
-                                'link_url': linkController.text.isEmpty ? null : linkController.text,
-                                'image_url': finalImageUrl,
-                                'is_active': true, // Auto true, since we removed the toggle
-                                'order_index': 0,
-                              };
+                        final payload = {
+                          'title': titleController.text,
+                          'link_url': linkController.text.isEmpty ? null : linkController.text,
+                          'image_url': finalImageUrl,
+                          'is_active': true, // Auto true, since we removed the toggle
+                          'order_index': 0,
+                        };
 
-                              if (!isEditing) {
-                                await dio.post('/banners', data: payload);
-                              } else {
-                                // Since current backend might not have proper PATCH, standard here seems to be delete then post (as in previous code),
-                                // Wait, usually we just send a PUT/PATCH or if none exists delete+post. I will use delete+post to match previous working logic.
-                                await dio.delete('/banners/${banner['id']}');
-                                await dio.post('/banners', data: payload);
-                              }
-                              
-                              if (dialogContext.mounted) {
-                                Navigator.pop(dialogContext);
-                                ref.invalidate(bannersProvider);
-                                ScaffoldMessenger.of(dialogContext).showSnackBar(
-                                  const SnackBar(content: Text("Banner muvaffaqiyatli saqlandi"), backgroundColor: Colors.green)
-                                );
-                              }
-                            } catch (e) {
-                              setDialogState(() => isLoading = false);
-                              if (dialogContext.mounted) {
-                                ScaffoldMessenger.of(dialogContext).showSnackBar(
-                                  SnackBar(content: Text("Xatolik: $e"), backgroundColor: Colors.red)
-                                );
-                              }
-                            }
-                          },
-                    icon: isLoading 
-                        ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)) 
-                        : const Icon(Icons.save),
-                    label: Text('save'.tr()),
-                  ),
-                ],
-              ),
+                        if (!isEditing) {
+                          await dio.post('/banners', data: payload);
+                        } else {
+                          // Since current backend might not have proper PATCH, standard here seems to be delete then post (as in previous code),
+                          // Wait, usually we just send a PUT/PATCH or if none exists delete+post. I will use delete+post to match previous working logic.
+                          await dio.delete('/banners/${banner['id']}');
+                          await dio.post('/banners', data: payload);
+                        }
+                        
+                        if (dialogContext.mounted) {
+                          Navigator.pop(dialogContext);
+                          ref.invalidate(bannersProvider);
+                          ScaffoldMessenger.of(dialogContext).showSnackBar(
+                            const SnackBar(content: Text("Banner muvaffaqiyatli saqlandi"), backgroundColor: Colors.green)
+                          );
+                        }
+                      } catch (e) {
+                        setDialogState(() => isLoading = false);
+                        if (dialogContext.mounted) {
+                          ScaffoldMessenger.of(dialogContext).showSnackBar(
+                            SnackBar(content: Text("Xatolik: $e"), backgroundColor: Colors.red)
+                          );
+                        }
+                      }
+                    },
+              icon: isLoading 
+                  ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)) 
+                  : const Icon(Icons.save),
+              label: Text('save'.tr()),
             ),
           ],
         );
@@ -290,28 +269,10 @@ class _BannersScreenState extends ConsumerState<BannersScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'banners'.tr(),
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-                if (!isMobile)
-                  ElevatedButton.icon(
-                    onPressed: () => _showBannerDialog(context),
-                    icon: const Icon(Icons.add),
-                    label: Text('add_banner'.tr()),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                    ),
-                  ),
-              ],
-            ),
+          AdminPageHeader(
+            title: 'banners'.tr(),
+            addLabel: 'add_banner'.tr(),
+            onAdd: () => _showBannerDialog(context),
           ),
           Expanded(
             child: bannersAsyncValue.when(

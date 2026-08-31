@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:milliy_metr_admin/shared/utils/responsive_modal.dart';
+import 'package:milliy_metr_admin/shared/widgets/admin_page_header.dart';
 import 'package:milliy_metr_admin/core/api/api_client.dart';
 import 'package:dio/dio.dart';
 import '../providers/admin_users_provider.dart';
@@ -19,6 +20,7 @@ class _AdminUsersScreenState extends ConsumerState<AdminUsersScreen> {
   final _fullNameController = TextEditingController();
   final _passwordController = TextEditingController();
   String _selectedRole = 'ADMIN';
+  final Set<String> _togglingIds = {};
 
   void _showFormDialog({AdminUser? user}) {
     _usernameController.text = user?.username ?? '';
@@ -28,7 +30,7 @@ class _AdminUsersScreenState extends ConsumerState<AdminUsersScreen> {
 
     showAdminFormModal(
       context: context,
-      title: user == null ? 'Yangi Administrator' : 'Administratorni tahrirlash',
+      title: user == null ? 'add_admin'.tr() : 'edit_admin'.tr(),
       icon: Icons.admin_panel_settings,
       builder: (dialogContext, setDialogState) {
         return Form(
@@ -39,21 +41,21 @@ class _AdminUsersScreenState extends ConsumerState<AdminUsersScreen> {
             children: [
               TextFormField(
                 controller: _usernameController,
-                decoration: const InputDecoration(labelText: 'Username (Login)'),
-                readOnly: user != null, // Typically username is not editable after creation
+                decoration: InputDecoration(labelText: 'username_label'.tr()),
+                readOnly: user != null,
                 validator: (v) => v!.isEmpty ? 'Kiritish majburiy' : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _fullNameController,
-                decoration: const InputDecoration(labelText: 'F.I.Sh (Full Name)'),
+                decoration: InputDecoration(labelText: 'full_name_label'.tr()),
                 validator: (v) => v!.isEmpty ? 'Kiritish majburiy' : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _passwordController,
                 decoration: InputDecoration(
-                  labelText: user == null ? 'Parol' : 'Yangi Parol (ixtiyoriy)',
+                  labelText: user == null ? 'password_label'.tr() : 'new_password_label'.tr(),
                 ),
                 obscureText: true,
                 validator: (v) {
@@ -69,79 +71,94 @@ class _AdminUsersScreenState extends ConsumerState<AdminUsersScreen> {
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 value: _selectedRole,
-                decoration: const InputDecoration(labelText: 'Rol'),
+                decoration: InputDecoration(labelText: 'role_label'.tr()),
                 items: const [
                   DropdownMenuItem(value: 'ADMIN', child: Text('ADMIN')),
                   DropdownMenuItem(value: 'OWNER', child: Text('OWNER')),
                 ],
                 onChanged: (v) => setDialogState(() => _selectedRole = v!),
               ),
-              const SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(dialogContext),
-                    child: const Text('Bekor qilish'),
-                  ),
-                  const SizedBox(width: 16),
-                  ElevatedButton(
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        final nav = Navigator.of(dialogContext);
-                        final scaffold = ScaffoldMessenger.of(context);
-                        
-                        try {
-                          if (user == null) {
-                            await ref.read(createAdminProvider)(
-                              _usernameController.text.trim(),
-                              _fullNameController.text.trim(),
-                              _passwordController.text,
-                              _selectedRole,
-                            );
-                            scaffold.showSnackBar(const SnackBar(content: Text('Muvaffaqiyatli qo\'shildi'), backgroundColor: Colors.green));
-                          } else {
-                            await ref.read(editAdminProvider)(
-                              user.id,
-                              _fullNameController.text.trim(),
-                              _passwordController.text.isEmpty ? null : _passwordController.text,
-                              _selectedRole,
-                            );
-                            scaffold.showSnackBar(const SnackBar(content: Text('Muvaffaqiyatli tahrirlandi'), backgroundColor: Colors.green));
-                          }
-                          if (mounted) nav.pop();
-                        } on DioException catch (e) {
-                          final msg = e.response?.data?['detail'] ?? 'Xatolik yuz berdi';
-                          scaffold.showSnackBar(SnackBar(content: Text(msg.toString()), backgroundColor: Colors.red));
-                        } catch (e) {
-                          scaffold.showSnackBar(SnackBar(content: Text(e.toString()), backgroundColor: Colors.red));
-                        }
-                      }
-                    },
-                    child: const Text('Saqlash'),
-                  ),
-                ],
-              ),
             ],
           ),
+        );
+      },
+      actionsBuilder: (dialogContext, setDialogState) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: Text('cancel'.tr()),
+            ),
+            const SizedBox(width: 16),
+            ElevatedButton(
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  final nav = Navigator.of(dialogContext);
+                  final scaffold = ScaffoldMessenger.of(context);
+                  
+                  try {
+                    if (user == null) {
+                      await ref.read(createAdminProvider)(
+                        _usernameController.text.trim(),
+                        _fullNameController.text.trim(),
+                        _passwordController.text,
+                        _selectedRole,
+                      );
+                      scaffold.showSnackBar(const SnackBar(content: Text('Muvaffaqiyatli qo\'shildi'), backgroundColor: Colors.green));
+                    } else {
+                      await ref.read(editAdminProvider)(
+                        user.id,
+                        _fullNameController.text.trim(),
+                        _passwordController.text.isEmpty ? null : _passwordController.text,
+                        _selectedRole,
+                      );
+                      scaffold.showSnackBar(const SnackBar(content: Text('Muvaffaqiyatli tahrirlandi'), backgroundColor: Colors.green));
+                    }
+                    if (mounted) nav.pop();
+                  } on DioException catch (e) {
+                    final msg = e.response?.data?['detail'] ?? 'Xatolik yuz berdi';
+                    scaffold.showSnackBar(SnackBar(content: Text(msg.toString()), backgroundColor: Colors.red));
+                  } catch (e) {
+                    scaffold.showSnackBar(SnackBar(content: Text(e.toString()), backgroundColor: Colors.red));
+                  }
+                }
+              },
+              child: Text('save'.tr()),
+            ),
+          ],
         );
       },
     );
   }
 
   Future<void> _toggleStatus(AdminUser user, bool val) async {
+    if (_togglingIds.contains(user.id)) return;
+    
+    setState(() {
+      _togglingIds.add(user.id);
+    });
+    
     final messenger = ScaffoldMessenger.of(context);
     try {
       await ref.read(toggleAdminStatusProvider)(user.id, val);
     } on DioException catch (e) {
       final detail = e.response?.data?['detail'] ?? 'Xatolik yuz berdi';
-      messenger.showSnackBar(
-        SnackBar(content: Text(detail.toString()), backgroundColor: Colors.red),
-      );
+      if (detail.toString().contains("Cannot deactivate the last active OWNER")) {
+        messenger.showSnackBar(SnackBar(content: Text('cannot_deactivate_last_owner'.tr()), backgroundColor: Colors.red));
+      } else {
+        messenger.showSnackBar(SnackBar(content: Text(detail.toString()), backgroundColor: Colors.red));
+      }
     } catch (e) {
       messenger.showSnackBar(
-        const SnackBar(content: Text('Xatolik yuz berdi'), backgroundColor: Colors.red),
+        SnackBar(content: Text('error_prefix'.tr()), backgroundColor: Colors.red),
       );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _togglingIds.remove(user.id);
+        });
+      }
     }
   }
 
@@ -151,27 +168,7 @@ class _AdminUsersScreenState extends ConsumerState<AdminUsersScreen> {
     final isDesktop = MediaQuery.of(context).size.width >= 1024;
 
     return Scaffold(
-      backgroundColor: Colors.transparent, // Managed by shell
-      appBar: AppBar(
-        title: const Text('Administratorlar (Tizim Boshqaruvi)', style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        actions: [
-          if (isDesktop && asyncUsers.hasValue && asyncUsers.value != null)
-            Padding(
-              padding: const EdgeInsets.only(right: 16.0),
-              child: ElevatedButton.icon(
-                onPressed: () => _showFormDialog(),
-                icon: const Icon(Icons.add),
-                label: const Text('Yangi Administrator'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).primaryColor,
-                  foregroundColor: Colors.white,
-                ),
-              ),
-            ),
-        ],
-      ),
+      backgroundColor: Colors.transparent,
       floatingActionButton: (!isDesktop && asyncUsers.hasValue && asyncUsers.value != null)
           ? FloatingActionButton(
               onPressed: () => _showFormDialog(),
@@ -179,39 +176,50 @@ class _AdminUsersScreenState extends ConsumerState<AdminUsersScreen> {
               child: const Icon(Icons.add, color: Colors.white),
             )
           : null,
-      body: asyncUsers.when(
-        data: (users) {
-          if (isDesktop) {
-            return _buildDesktopTable(users);
-          } else {
-            return _buildMobileList(users);
-          }
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) {
-          if (err is AdminAccessDeniedException) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.lock_outline, size: 64, color: Colors.grey),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Ruxsat etilmagan',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    err.message,
-                    style: const TextStyle(color: Colors.grey),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            );
-          }
-          return Center(child: Text('Xatolik: $err', style: const TextStyle(color: Colors.red)));
-        },
+      body: Column(
+        children: [
+          AdminPageHeader(
+            title: 'administrators'.tr(),
+            addLabel: 'add_admin'.tr(),
+            onAdd: () => _showFormDialog(),
+          ),
+          Expanded(
+            child: asyncUsers.when(
+              data: (users) {
+                if (isDesktop) {
+                  return _buildDesktopTable(users);
+                } else {
+                  return _buildMobileList(users);
+                }
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (err, stack) {
+                if (err is AdminAccessDeniedException) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.lock_outline, size: 64, color: Colors.grey),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Ruxsat etilmagan',
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          err.message,
+                          style: const TextStyle(color: Colors.grey),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  );
+                }
+                return Center(child: Text('Xatolik: $err', style: const TextStyle(color: Colors.red)));
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -226,12 +234,12 @@ class _AdminUsersScreenState extends ConsumerState<AdminUsersScreen> {
           scrollDirection: Axis.horizontal,
           child: DataTable(
             headingRowColor: WidgetStateProperty.resolveWith((states) => Colors.grey.shade100),
-            columns: const [
-              DataColumn(label: Text('Ism Familiya (F.I.Sh)', style: TextStyle(fontWeight: FontWeight.bold))),
-              DataColumn(label: Text('Username', style: TextStyle(fontWeight: FontWeight.bold))),
-              DataColumn(label: Text('Rol', style: TextStyle(fontWeight: FontWeight.bold))),
-              DataColumn(label: Text('Holati', style: TextStyle(fontWeight: FontWeight.bold))),
-              DataColumn(label: Text('Amallar', style: TextStyle(fontWeight: FontWeight.bold))),
+            columns: [
+              DataColumn(label: Text('full_name_label'.tr(), style: const TextStyle(fontWeight: FontWeight.bold))),
+              DataColumn(label: Text('username_label'.tr(), style: const TextStyle(fontWeight: FontWeight.bold))),
+              DataColumn(label: Text('role_label'.tr(), style: const TextStyle(fontWeight: FontWeight.bold))),
+              DataColumn(label: Text('status'.tr(), style: const TextStyle(fontWeight: FontWeight.bold))),
+              DataColumn(label: Text('actions'.tr(), style: const TextStyle(fontWeight: FontWeight.bold))),
             ],
             rows: users.map((user) {
               return DataRow(
@@ -242,8 +250,8 @@ class _AdminUsersScreenState extends ConsumerState<AdminUsersScreen> {
                   DataCell(
                     Switch(
                       value: user.isActive,
-                      onChanged: (val) => _toggleStatus(user, val),
-                      activeColor: Colors.green,
+                      onChanged: _togglingIds.contains(user.id) ? null : (val) => _toggleStatus(user, val),
+                      activeTrackColor: Colors.green,
                     ),
                   ),
                   DataCell(
@@ -305,8 +313,8 @@ class _AdminUsersScreenState extends ConsumerState<AdminUsersScreen> {
                         const Text('Faol: '),
                         Switch(
                           value: user.isActive,
-                          onChanged: (val) => _toggleStatus(user, val),
-                          activeColor: Colors.green,
+                          onChanged: _togglingIds.contains(user.id) ? null : (val) => _toggleStatus(user, val),
+                          activeTrackColor: Colors.green,
                         ),
                       ],
                     ),

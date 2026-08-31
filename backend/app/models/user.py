@@ -25,6 +25,7 @@ class User(Base):
     is_active = Column(Boolean, default=True)
     provider = Column(String, nullable=True)
     provider_id = Column(String, nullable=True)
+    preferred_language = Column(String(10), default='uz')
     
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

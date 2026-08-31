@@ -795,32 +795,46 @@ class AppLocalizationsRu extends AppLocalizations {
   String get appVersion => 'Версия приложения';
 
   @override
-  String get faqDelivery => 'Сколько времени занимает доставка?';
+  String get faqQ1 => 'Сколько стоит доставка?';
 
   @override
-  String get faqDeliveryAnswer =>
-      'Стандартная доставка занимает 2-3 рабочих дня. Экспресс-доставка осуществляется в течение 1 дня.';
+  String get faqA1 =>
+      'Стоимость доставки рассчитывается в зависимости от объёма, веса товара и адреса доставки. Итоговая стоимость отображается при оформлении заказа.';
 
   @override
-  String get faqPayment => 'Какие способы оплаты доступны?';
+  String get faqQ2 => 'Можно ли отменить заказ?';
 
   @override
-  String get faqPaymentAnswer =>
-      'В настоящее время принимаются оплата наличными при доставке, а также Click, Payme, Visa, Mastercard и Uzum Nasiya.';
+  String get faqA2 =>
+      'Да, если заказ ещё не передан на доставку, его можно отменить.';
 
   @override
-  String get faqReturn => 'Можно ли вернуть товар?';
+  String get faqQ3 =>
+      'Что делать, если товар повреждён или доставлен неправильно?';
 
   @override
-  String get faqReturnAnswer =>
-      'Да, товар можно вернуть в течение 14 дней. Товар должен быть неиспользованным и в оригинальной упаковке.';
+  String get faqA3 =>
+      'Если товар повреждён или не соответствует заказу, как можно скорее свяжитесь с нами. После проверки ситуации будет рассмотрен вопрос о замене или возврате товара.';
 
   @override
-  String get faqWarranty => 'Есть ли гарантия?';
+  String get faqQ4 => 'Могут ли цены измениться?';
 
   @override
-  String get faqWarrantyAnswer =>
-      'Все наши товары обеспечены гарантией производителя.';
+  String get faqA4 =>
+      'Да, цены на товары могут изменяться в зависимости от цен производителя и рыночных условий. Действует цена на момент подтверждения заказа.';
+
+  @override
+  String get faqQ5 => 'Есть ли скидка при большом объёме заказа?';
+
+  @override
+  String get faqA5 =>
+      'Для оптовых и крупных заказов могут быть доступны специальные цены. Для получения подробной информации свяжитесь с нами.';
+
+  @override
+  String get faqQ6 => 'Откуда поставляются товары?';
+
+  @override
+  String get faqA6 => 'Товары предоставляются производителями и поставщиками.';
 
   @override
   String get clickPayment => 'Оплата через Click';
@@ -1231,6 +1245,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get deliveryService => 'Служба доставки';
 
   @override
+  String get deliveryAvailable => 'Доставка доступна';
+
+  @override
+  String get deliveryNotAvailable => 'Доставка недоступна';
+
+  @override
   String get pickupFromWarehouse => 'Самовывоз со склада';
 
   @override
@@ -1308,4 +1328,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get appleSignInError => 'Произошла ошибка при входе через Apple';
+
+  @override
+  String get errorUpdatingQuantity => 'Не удалось обновить количество';
+
+  @override
+  String get deliveryPrice => 'Стоимость доставки';
 }

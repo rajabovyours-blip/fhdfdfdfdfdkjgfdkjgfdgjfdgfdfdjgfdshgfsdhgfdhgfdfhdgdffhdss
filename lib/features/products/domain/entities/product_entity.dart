@@ -24,6 +24,8 @@ class ProductEntity extends Equatable {
   final Map<String, String>? specifications;
   final List<String>? certificates;
   final String? deliveryInformation;
+  final bool hasDelivery;
+  final double deliveryPrice;
   final String? location;
   final DateTime? createdAt;
   final DateTime? updatedAt;
@@ -50,6 +52,8 @@ class ProductEntity extends Equatable {
     this.specifications,
     this.certificates,
     this.deliveryInformation,
+    this.hasDelivery = true,
+    this.deliveryPrice = 0.0,
     this.location,
     this.createdAt,
     this.updatedAt,
@@ -88,6 +92,8 @@ class ProductEntity extends Equatable {
           ?.map((e) => e.toString())
           .toList(),
       deliveryInformation: json['deliveryInformation'] as String?,
+      hasDelivery: json['hasDelivery'] as bool? ?? true,
+      deliveryPrice: (json['deliveryPrice'] as num?)?.toDouble() ?? 0.0,
       location: json['location'] as String?,
       createdAt: json['createdAt'] != null
           ? DateTime.tryParse(json['createdAt'])
@@ -122,6 +128,8 @@ class ProductEntity extends Equatable {
       'specifications': specifications,
       'certificates': certificates,
       'deliveryInformation': deliveryInformation,
+      'hasDelivery': hasDelivery,
+      'deliveryPrice': deliveryPrice,
       'location': location,
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
@@ -152,6 +160,8 @@ class ProductEntity extends Equatable {
         specifications,
         certificates,
         deliveryInformation,
+        hasDelivery,
+        deliveryPrice,
         location,
         createdAt,
         updatedAt,

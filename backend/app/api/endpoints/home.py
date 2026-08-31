@@ -5,6 +5,8 @@ from app.db.session import get_db
 from app.schemas.common import APIResponse
 from app.models.category import Category
 from app.models.product import Product
+from app.models.order import Order, OrderItem
+from sqlalchemy import func
 
 router = APIRouter()
 
@@ -42,10 +44,37 @@ async def get_popular_categories(db: AsyncSession = Depends(get_db)):
 
 @router.get("/featured-products", response_model=APIResponse[list])
 async def get_featured_products(db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(Product).order_by(desc(Product.created_at)).limit(10))
-    products = result.scalars().all()
+    # Calculate popular products based on completed orders
+    popular_query = (
+        select(Product)
+        .join(OrderItem, OrderItem.product_id == Product.id)
+        .join(Order, Order.id == OrderItem.order_id)
+        .where(Order.status == 'Completed', Product.stock > 0)
+        .group_by(Product.id)
+        .order_by(desc(func.sum(OrderItem.quantity)))
+        .limit(10)
+    )
+    result = await db.execute(popular_query)
+    popular_products = result.scalars().all()
+    
+    # Fill remaining spots with newest in-stock products
+    remaining_count = 10 - len(popular_products)
+    if remaining_count > 0:
+        popular_ids = [p.id for p in popular_products]
+        fallback_query = (
+            select(Product)
+            .where(Product.stock > 0)
+        )
+        if popular_ids:
+            fallback_query = fallback_query.where(~Product.id.in_(popular_ids))
+            
+        fallback_query = fallback_query.order_by(desc(Product.created_at)).limit(remaining_count)
+        
+        fallback_result = await db.execute(fallback_query)
+        popular_products.extend(fallback_result.scalars().all())
+
     data = []
-    for p in products:
+    for p in popular_products:
         images_list = p.images if isinstance(p.images, list) else []
         formatted_images = [{"image_url": img} for img in images_list]
         

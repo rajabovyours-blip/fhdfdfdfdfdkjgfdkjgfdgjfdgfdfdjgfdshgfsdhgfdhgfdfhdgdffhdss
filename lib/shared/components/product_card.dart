@@ -94,6 +94,7 @@ class _ProductCardState extends ConsumerState<ProductCard> {
                         ? widget.product.images.first
                         : null,
                     borderRadius: 0,
+                    fit: BoxFit.contain,
                   ),
 
                   // Favorite Button

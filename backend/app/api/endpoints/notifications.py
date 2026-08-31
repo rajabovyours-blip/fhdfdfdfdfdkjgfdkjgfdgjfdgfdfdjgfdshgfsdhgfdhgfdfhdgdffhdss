@@ -30,8 +30,8 @@ from typing import Optional
 from app.models.user import RoleEnum
 
 class BroadcastRequest(BaseModel):
-    title: str
-    body: str
+    title: dict[str, str] # e.g. {"uz": "...", "ru": "...", "en": "..."}
+    body: dict[str, str]
     image_url: Optional[str] = None
     target: Optional[str] = "all" # 'all' or user ID
 
@@ -64,10 +64,15 @@ async def broadcast_notification(
 
     notifications = []
     for user in users:
+        lang = getattr(user, 'preferred_language', 'uz') or 'uz'
+        # Fallback logic: Try preferred language, then 'uz', then whatever is available
+        title = payload.title.get(lang) or payload.title.get('uz') or next(iter(payload.title.values()), "")
+        body = payload.body.get(lang) or payload.body.get('uz') or next(iter(payload.body.values()), "")
+        
         notification = Notification(
             user_id=user.id,
-            title=payload.title,
-            body=payload.body,
+            title=title,
+            body=body,
             image_url=payload.image_url,
         )
         notifications.append(notification)

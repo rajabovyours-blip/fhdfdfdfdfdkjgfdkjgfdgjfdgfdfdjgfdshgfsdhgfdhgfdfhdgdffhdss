@@ -127,7 +127,7 @@ class CartNotifier extends StateNotifier<FeatureState<List<CartItemEntity>>> {
     }
   }
 
-  Future<void> updateCartItem(String cartItemId, int quantity) async {
+  Future<bool> updateCartItem(String cartItemId, int quantity) async {
     final isAuthenticated = _ref.read(milliy_metr_auth_provider.authProvider).maybeWhen(
       authenticated: (_) => true,
       orElse: () => false,
@@ -145,19 +145,20 @@ class CartNotifier extends StateNotifier<FeatureState<List<CartItemEntity>>> {
         },
         orElse: () {},
       );
-      return;
+      return true;
     }
 
     final repository = _ref.read(cartRepositoryProvider);
     final result = await repository.updateCartItem(cartItemId, quantity);
     if (result.isLeft()) {
-      state = FeatureState.error(result.fold((l) => l.message, (r) => ''));
+      return false;
     } else {
       await loadCart(silent: true);
+      return true;
     }
   }
 
-  Future<void> removeFromCart(String cartItemId) async {
+  Future<bool> removeFromCart(String cartItemId) async {
     final isAuthenticated = _ref.read(milliy_metr_auth_provider.authProvider).maybeWhen(
       authenticated: (_) => true,
       orElse: () => false,
@@ -172,15 +173,16 @@ class CartNotifier extends StateNotifier<FeatureState<List<CartItemEntity>>> {
         },
         orElse: () {},
       );
-      return;
+      return true;
     }
 
     final repository = _ref.read(cartRepositoryProvider);
     final result = await repository.removeFromCart(cartItemId);
     if (result.isLeft()) {
-      state = FeatureState.error(result.fold((l) => l.message, (r) => ''));
+      return false;
     } else {
       await loadCart(silent: true);
+      return true;
     }
   }
 
@@ -250,23 +252,22 @@ class CartNotifier extends StateNotifier<FeatureState<List<CartItemEntity>>> {
     );
   }
 
-  double get shippingFee => 0.0;
-  double get discount {
+  double get shippingFee {
     return state.maybeWhen(
       loaded: (items) {
-        double d = 0;
+        double maxFee = 0.0;
         for (var e in items.where((i) => i.isSelected)) {
-          if (e.quantity >= 10) {
-            d += (e.product.price * e.quantity) * 0.05;
+          if (e.product.hasDelivery && e.product.deliveryPrice > maxFee) {
+            maxFee = e.product.deliveryPrice;
           }
         }
-        return d;
+        return maxFee;
       },
       orElse: () => 0.0,
     );
   }
-  double get tax => subtotal * 0.01;
-  double get total => subtotal + shippingFee + tax - discount;
+
+  double get total => subtotal + shippingFee;
   int get itemCount => state.maybeWhen(
         loaded: (items) => items.where((e) => e.isSelected).length,
         orElse: () => 0,
