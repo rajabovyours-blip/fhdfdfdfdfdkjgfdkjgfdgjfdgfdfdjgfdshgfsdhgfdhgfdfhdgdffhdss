@@ -8,26 +8,23 @@ from app.models.product import Product
 
 router = APIRouter()
 
+from app.models.extras import Banner
+
 @router.get("/banners", response_model=APIResponse[list])
-async def get_banners():
-    return APIResponse(data=[
-        {
-            "id": "banner-1",
-            "imageUrl": "https://images.unsplash.com/photo-1541888086425-d81bb19240f5",
-            "linkUrl": "/promotions/summer",
-            "title": {"uz": "Qurilish uchun kerakli hamma narsa bir joyda", "ru": "Всё для строительства в одном месте", "en": "Everything for construction in one place"},
-            "subtitle": {"uz": "Eng yaxshi narxlarni toping", "ru": "Найдите лучшие цены", "en": "Find the best prices"},
-            "cta": {"uz": "Mahsulotlarni ko'rish", "ru": "Посмотреть товары", "en": "View products"}
-        },
-        {
-            "id": "banner-2",
-            "imageUrl": "https://images.unsplash.com/photo-1503387762-592deb58ef4e",
-            "linkUrl": "/categories/new",
-            "title": {"uz": "Yangi qurilish materiallari", "ru": "Новые строительные материалы", "en": "New building materials"},
-            "subtitle": {"uz": "Kuzgi chegirmalar", "ru": "Осенние скидки", "en": "Autumn discounts"},
-            "cta": {"uz": "Sotib olish", "ru": "Купить", "en": "Buy now"}
-        }
-    ])
+async def get_banners(db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(Banner).where(Banner.is_active == True).order_by(Banner.order_index))
+    banners = result.scalars().all()
+    data = []
+    for b in banners:
+        data.append({
+            "id": str(b.id),
+            "imageUrl": b.image_url,
+            "linkUrl": b.link_url if b.link_url else "",
+            "title": {"uz": b.title or "", "ru": b.title or "", "en": b.title or ""},
+            "subtitle": {"uz": "", "ru": "", "en": ""},
+            "cta": {"uz": "", "ru": "", "en": ""}
+        })
+    return APIResponse(data=data)
 
 @router.get("/popular-categories", response_model=APIResponse[list])
 async def get_popular_categories(db: AsyncSession = Depends(get_db)):

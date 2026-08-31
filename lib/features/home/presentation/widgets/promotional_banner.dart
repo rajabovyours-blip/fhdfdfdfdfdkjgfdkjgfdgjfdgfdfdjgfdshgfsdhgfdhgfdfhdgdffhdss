@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:milliy_metr/features/home/domain/entities/home_entities.dart';
-import 'package:milliy_metr/l10n/l10n_extension.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PromotionalBanner extends StatefulWidget {
   final List<BannerEntity> banners;
@@ -21,11 +21,23 @@ class _PromotionalBannerState extends State<PromotionalBanner> {
     super.dispose();
   }
 
+  Future<void> _launchUrl(String urlString) async {
+    if (urlString.isEmpty) return;
+    
+    // Auto add https if missing
+    if (!urlString.startsWith('http')) {
+      urlString = 'https://$urlString';
+    }
+    
+    final uri = Uri.tryParse(urlString);
+    if (uri != null && await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (widget.banners.isEmpty) return const SizedBox.shrink();
-
-    final languageCode = Localizations.localeOf(context).languageCode;
 
     return Column(
       children: [
@@ -41,7 +53,9 @@ class _PromotionalBannerState extends State<PromotionalBanner> {
             itemCount: widget.banners.length,
             itemBuilder: (context, index) {
               final banner = widget.banners[index];
-                return Container(
+              return GestureDetector(
+                onTap: () => _launchUrl(banner.linkUrl),
+                child: Container(
                   margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                   clipBehavior: Clip.antiAlias,
                   decoration: BoxDecoration(
@@ -55,91 +69,16 @@ class _PromotionalBannerState extends State<PromotionalBanner> {
                       ),
                     ],
                   ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      flex: 3,
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Flexible(
-                              child: Text(
-                                banner.title.get(languageCode),
-                                style: TextStyle(
-                                  color: context.colors.textHigh,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  height: 1.2,
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Flexible(
-                              child: Text(
-                                banner.subtitle.get(languageCode),
-                                style: TextStyle(
-                                  color: context.colors.textHigh.withValues(alpha: 0.8),
-                                  fontSize: 12,
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8,),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                banner.cta.get(languageCode),
-                                style: TextStyle(
-                                  color: context.colors.primary,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                  child: Image.network(
+                    banner.imageUrl,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    errorBuilder: (_, __, ___) => Icon(
+                      Icons.image,
+                      size: 60,
+                      color: context.colors.textHigh.withValues(alpha: 0.2),
                     ),
-                    Expanded(
-                      flex: 2,
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.horizontal(
-                            right: Radius.circular(20),),
-                        child: Container(
-                          color: context.colors.textHigh.withValues(alpha: 0.1),
-                          child: Stack(
-                            children: [
-                              Positioned.fill(
-                                child: Image.network(
-                                  banner.imageUrl,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (_, __, ___) => Icon(
-                                    Icons.image,
-                                    size: 60,
-                                    color: context.colors.textHigh
-                                        .withValues(alpha: 0.2),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               );
             },

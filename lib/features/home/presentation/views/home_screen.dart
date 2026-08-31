@@ -10,7 +10,6 @@ import 'package:milliy_metr/features/home/presentation/widgets/location_selector
 import 'package:milliy_metr/features/home/presentation/widgets/promotional_banner.dart';
 import 'package:milliy_metr/features/home/presentation/widgets/category_carousel.dart';
 import 'package:milliy_metr/features/home/presentation/widgets/section_header.dart';
-import 'package:milliy_metr/features/home/presentation/widgets/home_action_chips.dart';
 import 'package:milliy_metr/features/home/presentation/widgets/flash_deals_section.dart';
 import 'package:milliy_metr/shared/components/product_card.dart';
 
@@ -37,7 +36,6 @@ class HomeScreen extends ConsumerWidget {
             slivers: [
               const SliverToBoxAdapter(child: HomeHeader()),
               const SliverToBoxAdapter(child: LocationSelector()),
-              const SliverToBoxAdapter(child: HomeActionChips()),
               state.maybeWhen(
                 loading: () => const HomeSkeleton(),
                 error: (e) => HomeErrorState(
