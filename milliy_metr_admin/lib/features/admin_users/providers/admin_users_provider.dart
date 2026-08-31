@@ -29,7 +29,7 @@ class AdminUser {
 
 final adminUsersProvider = FutureProvider<List<AdminUser>>((ref) async {
   final dio = ref.watch(dioProvider);
-  final response = await dio.get('/admin/users/');
+  final response = await dio.get('/admin/users');
   
   if (response.statusCode == 200) {
     final List data = response.data['data'];

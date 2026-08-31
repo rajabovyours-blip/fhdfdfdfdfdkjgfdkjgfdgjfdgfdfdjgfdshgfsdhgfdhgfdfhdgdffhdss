@@ -5,7 +5,7 @@ import '../api/api_client.dart';
 final usersProvider = FutureProvider<List<dynamic>>((ref) async {
   final dio = ref.watch(dioProvider);
   try {
-    final response = await dio.get('/users/');
+    final response = await dio.get('/users');
     final data = response.data;
     if (data is Map && data['data'] != null) {
       return data['data'] as List<dynamic>;
@@ -21,7 +21,7 @@ final usersProvider = FutureProvider<List<dynamic>>((ref) async {
 final productsProvider = FutureProvider<List<dynamic>>((ref) async {
   final dio = ref.watch(dioProvider);
   try {
-    final response = await dio.get('/products/');
+    final response = await dio.get('/products');
     final data = response.data;
     if (data is Map && data['data'] != null) {
       return data['data'] as List<dynamic>;
@@ -37,7 +37,7 @@ final productsProvider = FutureProvider<List<dynamic>>((ref) async {
 final ordersProvider = FutureProvider<List<dynamic>>((ref) async {
   final dio = ref.watch(dioProvider);
   try {
-    final response = await dio.get('/orders/');
+    final response = await dio.get('/orders');
     final data = response.data;
     if (data is Map && data['data'] != null) {
       return data['data'] as List<dynamic>;
@@ -141,7 +141,7 @@ final categoriesProvider = StateNotifierProvider<CategoriesNotifier, List<Map<St
 final bannersProvider = FutureProvider<List<dynamic>>((ref) async {
   final dio = ref.watch(dioProvider);
   try {
-    final response = await dio.get('/banners/');
+    final response = await dio.get('/banners');
     final data = response.data;
     if (data is Map && data['data'] != null) {
       return data['data'] as List<dynamic>;
@@ -157,7 +157,7 @@ final bannersProvider = FutureProvider<List<dynamic>>((ref) async {
 final reviewsProvider = FutureProvider<List<dynamic>>((ref) async {
   final dio = ref.watch(dioProvider);
   try {
-    final response = await dio.get('/reviews/');
+    final response = await dio.get('/reviews');
     final data = response.data;
     if (data is Map && data['data'] != null) {
       return data['data'] as List<dynamic>;
