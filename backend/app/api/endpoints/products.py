@@ -203,81 +203,167 @@ async def delete_product(id: str, db: AsyncSession = Depends(get_db), current_us
     
     return APIResponse(data={"success": True, "message": "Product deleted successfully"})
 
-import pandas as pd
+import openpyxl
+import io
+import uuid as _uuid
+from sqlalchemy import insert
 from fastapi import UploadFile, File
 
 @router.post("/bulk-upload", response_model=APIResponse[dict])
 async def bulk_upload_products(file: UploadFile = File(...), db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_admin)):
-    if not (file.filename.endswith(".csv") or file.filename.endswith(".xlsx")):
-        raise HTTPException(status_code=400, detail="Invalid file format")
+    if not file.filename.endswith(".xlsx"):
+        raise HTTPException(status_code=400, detail="Faqat .xlsx formatidagi fayllar qabul qilinadi (Only .xlsx files are supported)")
     
-    import io
     contents = await file.read()
     
     try:
-        if file.filename.endswith(".csv"):
-            df = pd.read_csv(io.BytesIO(contents))
-        else:
-            df = pd.read_excel(io.BytesIO(contents))
+        # Load workbook in read-only mode for efficiency
+        wb = openpyxl.load_workbook(io.BytesIO(contents), data_only=True, read_only=True)
+        sheet = wb.active
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Error reading file: {str(e)}")
+        raise HTTPException(status_code=400, detail=f"Faylni o'qishda xatolik: {str(e)}")
         
-    import uuid as _uuid
-    imported = 0
-    failed = 0
+    # Read headers (first row)
+    row_iter = sheet.iter_rows(values_only=True)
+    try:
+        headers = next(row_iter)
+    except StopIteration:
+        raise HTTPException(status_code=400, detail="Fayl bo'sh (File is empty)")
+        
+    if not headers:
+        raise HTTPException(status_code=400, detail="Fayl sarlavhalari (header) topilmadi")
+        
+    headers = [str(h).strip() if h else "" for h in headers]
     
+    # Required columns
+    expected_headers = {
+        "Nomi (O'zbekcha)": None,
+        "Nomi (Ruscha)": None,
+        "Nomi (Inglizcha)": None,
+        "Kategoriya": None,
+        "Narxi": None,
+        "O'lchov birligi": None,
+    }
+    
+    # Map column names to their index
+    col_map = {}
+    for idx, h in enumerate(headers):
+        if h in expected_headers:
+            col_map[h] = idx
+        elif h == "Tavsif":
+            col_map["Tavsif"] = idx
+            
+    # Check for missing required headers
+    missing_headers = [h for h in expected_headers if h not in col_map]
+    if missing_headers:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Quyidagi ustunlar yetishmayapti: {', '.join(missing_headers)}"
+        )
+        
+    # Pre-fetch categories
     result = await db.execute(select(Category))
     categories = result.scalars().all()
-    default_cat_id = categories[0].id if categories else _uuid.uuid4()
     
-    # Create a mapping for category names to UUIDs
+    # Map category names (lowercase) to Category IDs
     cat_map = {}
     for c in categories:
         name_dict = c.name if isinstance(c.name, dict) else {}
         for lang, val in name_dict.items():
             if val:
-                cat_map[str(val).lower()] = c.id
+                cat_map[str(val).strip().lower()] = c.id
+                
+    valid_units = {"dona", "kg", "metr", "kv.m", "litr", "komplekt", "m3", "tonna", "rulon", "qop"}
+
+    valid_rows = []
+    failed_rows = []
     
-    for index, row in df.iterrows():
+    # Process rows (1-indexed for Excel reporting, headers were row 1)
+    current_row_idx = 1
+    
+    for row in row_iter:
+        current_row_idx += 1
+        
+        # Skip completely empty rows
+        if not any(row):
+            continue
+            
+        def get_val(col_name):
+            if col_name not in col_map:
+                return ""
+            v = row[col_map[col_name]]
+            return str(v).strip() if v is not None else ""
+            
+        name_uz = get_val("Nomi (O'zbekcha)")
+        name_ru = get_val("Nomi (Ruscha)")
+        name_en = get_val("Nomi (Inglizcha)")
+        cat_name = get_val("Kategoriya")
+        price_str = get_val("Narxi")
+        unit_str = get_val("O'lchov birligi")
+        desc_str = get_val("Tavsif")
+        
+        # Validation
+        if not name_uz:
+            failed_rows.append({"row": current_row_idx, "reason": "Nomi (O'zbekcha) bo'sh bo'lishi mumkin emas"})
+            continue
+        if not name_ru:
+            failed_rows.append({"row": current_row_idx, "reason": "Nomi (Ruscha) bo'sh bo'lishi mumkin emas"})
+            continue
+        if not name_en:
+            failed_rows.append({"row": current_row_idx, "reason": "Nomi (Inglizcha) bo'sh bo'lishi mumkin emas"})
+            continue
+            
+        if not cat_name:
+            failed_rows.append({"row": current_row_idx, "reason": "Kategoriya kiritilmagan"})
+            continue
+            
+        cat_id = cat_map.get(cat_name.lower())
+        if not cat_id:
+            failed_rows.append({"row": current_row_idx, "reason": f"'{cat_name}' nomli kategoriya topilmadi"})
+            continue
+            
         try:
-            name_uz = str(row.get('name_uz', ''))
-            if not name_uz or name_uz == 'nan':
-                failed += 1
-                continue
+            price = float(price_str)
+            if price < 0:
+                raise ValueError
+        except ValueError:
+            failed_rows.append({"row": current_row_idx, "reason": "Narx to'g'ri raqam bo'lishi (masbiy) kerak"})
+            continue
             
-            price = float(row.get('price', 0))
-            
-            # Determine Category
-            cat_id_to_use = default_cat_id
-            row_cat_id = str(row.get('category_id', ''))
-            row_cat_name = str(row.get('category_name', '')).lower()
-            
-            if row_cat_id and row_cat_id != 'nan':
-                cat_id_to_use = row_cat_id
-            elif row_cat_name and row_cat_name != 'nan':
-                cat_id_to_use = cat_map.get(row_cat_name, default_cat_id)
-            
-            product = Product(
-                id=_uuid.uuid4(),
-                sku=f"SKU-{_uuid.uuid4().hex[:8].upper()}",
-                name={"uz": name_uz, "ru": str(row.get('name_ru', name_uz)), "en": str(row.get('name_en', name_uz))},
-                description={"uz": str(row.get('desc_uz', '')), "ru": str(row.get('desc_ru', '')), "en": str(row.get('desc_en', ''))},
-                category_id=cat_id_to_use,
-                price=price,
-                unit=str(row.get('unit', 'pcs')),
-                stock=int(row.get('stock', 100)),
-                images=[],
-                brand=None,
-                currency="UZS",
-            )
-            db.add(product)
-            imported += 1
-        except Exception as e:
-            failed += 1
-            
-    await db.commit()
-    
-    return APIResponse(data={"imported": imported, "failed": failed}, message="Bulk upload complete")
+        if not unit_str or unit_str.lower() not in valid_units:
+            # Optionally default to 'dona' or fail
+            failed_rows.append({"row": current_row_idx, "reason": f"O'lchov birligi yaroqsiz ('{unit_str}'). Ruxsat etilganlar: {', '.join(valid_units)}"})
+            continue
+
+        product_id = _uuid.uuid4()
+        sku = f"SKU-{product_id.hex[:8].upper()}"
+        
+        valid_rows.append({
+            "id": product_id,
+            "sku": sku,
+            "name": {"uz": name_uz, "ru": name_ru, "en": name_en},
+            "description": {"uz": desc_str, "ru": desc_str, "en": desc_str} if desc_str else {},
+            "category_id": cat_id,
+            "price": price,
+            "unit": unit_str.lower(),
+            "stock": 100, # Default stock
+            "images": [],
+            "currency": "UZS",
+        })
+        
+    # Bulk insert valid rows
+    if valid_rows:
+        await db.execute(insert(Product).values(valid_rows))
+        await db.commit()
+        
+    return APIResponse(
+        message="Ommaviy yuklash yakunlandi",
+        data={
+            "total_rows": len(valid_rows) + len(failed_rows),
+            "success_count": len(valid_rows),
+            "failed_rows": failed_rows
+        }
+    )
 
 from pydantic import BaseModel as PydanticBaseModel
 

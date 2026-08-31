@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:milliy_metr_admin/shared/utils/responsive_modal.dart';
 import '../../../core/providers/admin_providers.dart';
 import '../../../core/api/api_client.dart';
 
@@ -11,104 +12,280 @@ class UsersScreen extends ConsumerStatefulWidget {
 }
 
 class _UsersScreenState extends ConsumerState<UsersScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   void _showUserDialog(BuildContext context, Map<String, dynamic> user) {
     final nameController = TextEditingController(text: user['fullName'] ?? '');
     final phoneController = TextEditingController(text: user['phoneNumber'] ?? '');
     bool isActive = user['isActive'] ?? true;
     bool isLoading = false;
+    
+    final registrationDate = user['createdAt'] != null ? user['createdAt'].toString().split('T')[0] : 'Yaqinda';
+    final ordersCount = (user['ordersCount'] ?? 0).toString();
+    final authProvider = user['authProvider'] ?? 'Noma\'lum';
 
-    showDialog(
+    showAdminFormModal(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          title: const Text("Mijoz ma'lumotlarini tahrirlash"),
-          content: SizedBox(
-            width: 400,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: nameController,
-                  decoration: const InputDecoration(labelText: "F.I.Sh."),
+      title: "Mijoz tafsilotlari",
+      icon: Icons.person,
+      builder: (dialogContext, setDialogState) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Flexible(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Read-only stats block
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text("Ro'yxatdan o'tgan sana", style: TextStyle(color: Colors.grey, fontSize: 12)),
+                                const SizedBox(height: 4),
+                                Text(registrationDate, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text("Buyurtmalar soni", style: TextStyle(color: Colors.grey, fontSize: 12)),
+                                const SizedBox(height: 4),
+                                Text(ordersCount, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text("Tizimga kirish", style: TextStyle(color: Colors.grey, fontSize: 12)),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    Icon(authProvider == 'Apple ID' ? Icons.apple : Icons.phone_android, size: 14, color: Colors.grey.shade700),
+                                    const SizedBox(width: 4),
+                                    Text(authProvider, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    
+                    // Editable fields
+                    const Text("F.I.Sh.", style: TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: nameController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    const Text("Telefon raqami", style: TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: phoneController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    
+                    // Status toggle
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: isActive ? Colors.green.shade200 : Colors.red.shade200),
+                        borderRadius: BorderRadius.circular(8),
+                        color: isActive ? Colors.green.withValues(alpha: 0.05) : Colors.red.withValues(alpha: 0.05),
+                      ),
+                      child: SwitchListTile(
+                        title: Text(
+                          isActive ? "Mijoz Faol" : "Mijoz Bloklangan",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: isActive ? Colors.green.shade700 : Colors.red.shade700
+                          )
+                        ),
+                        subtitle: Text(
+                          isActive 
+                            ? "Mijoz tizimdan to'liq foydalana oladi" 
+                            : "Mijoz tizimga kira olmaydi va buyurtma bera olmaydi",
+                          style: const TextStyle(fontSize: 12)
+                        ),
+                        value: isActive,
+                        activeColor: Colors.green,
+                        inactiveThumbColor: Colors.red,
+                        inactiveTrackColor: Colors.red.shade200,
+                        onChanged: (val) {
+                          setDialogState(() => isActive = val);
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: phoneController,
-                  decoration: const InputDecoration(labelText: "Telefon raqami"),
-                ),
-                const SizedBox(height: 16),
-                SwitchListTile(
-                  title: const Text("Faollik holati (Bloklash)"),
-                  value: isActive,
-                  activeThumbColor: const Color(0xFF10B981),
-                  onChanged: (val) {
-                    setDialogState(() => isActive = val);
-                  },
-                ),
-              ],
+              ),
             ),
-          ),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: const Text("Bekor qilish")),
-            ElevatedButton.icon(
-              onPressed: isLoading
-                  ? null
-                  : () async {
-                      setDialogState(() => isLoading = true);
-                      try {
-                        final dio = ref.read(dioProvider);
-                        await dio.put('/users/${user['id']}', data: {
-                          'full_name': nameController.text,
-                          'phone_number': phoneController.text,
-                          'is_active': isActive,
-                        });
-                        
-                        if (context.mounted) {
-                          Navigator.pop(context);
-                          ref.invalidate(usersProvider);
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Mijoz yangilandi"), backgroundColor: Colors.green));
-                        }
-                      } catch (e) {
-                        setDialogState(() => isLoading = false);
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Xatolik: $e"), backgroundColor: Colors.red));
-                        }
-                      }
-                    },
-              icon: isLoading ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)) : const Icon(Icons.save),
-              label: Text(isLoading ? 'Saqlanmoqda...' : 'Saqlash'),
+            
+            // Actions
+            Container(
+              padding: EdgeInsets.only(
+                left: 20,
+                right: 20,
+                top: 16,
+                bottom: MediaQuery.of(dialogContext).viewInsets.bottom > 0 ? 12 : 24,
+              ),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                border: const Border(top: BorderSide(color: Colors.white12)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(dialogContext), 
+                    child: const Text("Yopish")
+                  ),
+                  const SizedBox(width: 16),
+                  ElevatedButton.icon(
+                    onPressed: isLoading
+                        ? null
+                        : () async {
+                            setDialogState(() => isLoading = true);
+                            try {
+                              final dio = ref.read(dioProvider);
+                              await dio.put('/users/${user['id']}', data: {
+                                'full_name': nameController.text,
+                                'phone_number': phoneController.text,
+                                'is_active': isActive,
+                              });
+                              
+                              if (dialogContext.mounted) {
+                                Navigator.pop(dialogContext);
+                                ref.invalidate(usersProvider);
+                                ScaffoldMessenger.of(dialogContext).showSnackBar(
+                                  const SnackBar(content: Text("Mijoz ma'lumotlari yangilandi"), backgroundColor: Colors.green)
+                                );
+                              }
+                            } catch (e) {
+                              setDialogState(() => isLoading = false);
+                              if (dialogContext.mounted) {
+                                ScaffoldMessenger.of(dialogContext).showSnackBar(
+                                  SnackBar(content: Text("Xatolik: $e"), backgroundColor: Colors.red)
+                                );
+                              }
+                            }
+                          },
+                    icon: isLoading 
+                        ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)) 
+                        : const Icon(Icons.save),
+                    label: Text(isLoading ? 'Saqlanmoqda...' : 'Saqlash'),
+                  ),
+                ],
+              ),
             ),
           ],
-        ),
-      ),
+        );
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    // Modify usersProvider to include ?role=USER by invalidating and overriding or changing the provider.
-    // For now, our usersProvider already fetches /users/ which filters roles if passed, but currently provider doesn't pass it.
-    // We can rely on the fact that /users/ returns all, and we just show them, or better yet, fetch /users?role=USER directly.
-    // Given we can't easily change the provider arg without Riverpod family, let's just use the provider and filter locally, 
-    // or modify admin_providers.dart. Actually, in admin_providers.dart usersProvider does a GET /users/ which we modified in backend to accept ?role=USER.
-    // Let's just fetch it as is and if they are all users, good.
     final usersAsyncValue = ref.watch(usersProvider);
+    final width = MediaQuery.of(context).size.width;
+    final isMobile = width < 640;
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Mijozlar Bazasi",
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Mijozlar",
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              const SizedBox(height: 16),
+              // Search Bar
+              Container(
+                constraints: const BoxConstraints(maxWidth: 400),
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: "Ism yoki telefon raqami orqali qidirish...",
+                    prefixIcon: const Icon(Icons.search),
+                    suffixIcon: _searchQuery.isNotEmpty 
+                        ? IconButton(
+                            icon: const Icon(Icons.clear),
+                            onPressed: () {
+                              _searchController.clear();
+                              setState(() => _searchQuery = '');
+                            },
+                          )
+                        : null,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    filled: true,
+                    fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  ),
+                  onChanged: (val) {
+                    setState(() {
+                      _searchQuery = val.toLowerCase();
+                    });
+                  },
                 ),
+              ),
+            ],
           ),
-          const SizedBox(height: 24),
-          usersAsyncValue.when(
+        ),
+        
+        Expanded(
+          child: usersAsyncValue.when(
             data: (usersRaw) {
-              final users = usersRaw.where((u) => u['role'] == 'USER').toList();
+              // Filter to customers only, then apply search query
+              var users = usersRaw.where((u) => u['role'] == 'USER').toList();
+              
+              if (_searchQuery.isNotEmpty) {
+                users = users.where((u) {
+                  final name = (u['fullName'] ?? '').toString().toLowerCase();
+                  final phone = (u['phoneNumber'] ?? '').toString().toLowerCase();
+                  return name.contains(_searchQuery) || phone.contains(_searchQuery);
+                }).toList();
+              }
               
               if (users.isEmpty) {
                 return Center(
@@ -119,86 +296,175 @@ class _UsersScreenState extends ConsumerState<UsersScreen> {
                       children: [
                         const Icon(Icons.people_outline, size: 64, color: Colors.grey),
                         const SizedBox(height: 16),
-                        Text("Mijozlar topilmadi", style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.grey)),
+                        Text(
+                          _searchQuery.isNotEmpty ? "Qidiruv bo'yicha mijoz topilmadi" : "Mijozlar mavjud emas", 
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.grey)
+                        ),
                       ],
                     ),
                   ),
                 );
               }
 
-              return Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Theme.of(context).colorScheme.outline),
-                ),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: DataTable(
-                    columns: const [
-                      DataColumn(label: Text("Ism Familiya")),
-                      DataColumn(label: Text("Telefon")),
-                      DataColumn(label: Text("Email")),
-                      DataColumn(label: Text("Ro'yxatdan o'tgan turi")),
-                      DataColumn(label: Text("Sana")),
-                      DataColumn(label: Text("Buyurtmalar")),
-                      DataColumn(label: Text("Holat")),
-                      DataColumn(label: Text("Amallar")),
-                    ],
-                    rows: users.map((user) {
-                      return DataRow(
-                        cells: [
-                          DataCell(Text(user['fullName'] ?? 'Noma\'lum')),
-                          DataCell(Text(user['phoneNumber'] ?? '+998 ** *** ** **')),
-                          DataCell(Text(user['email'] ?? '-')),
-                          DataCell(
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(user['authProvider'] == 'Apple ID' ? Icons.apple : Icons.phone_android, size: 16, color: Colors.grey),
-                                const SizedBox(width: 8),
-                                Text(user['authProvider'] ?? 'Telefon'),
-                              ],
-                            ),
-                          ),
-                          DataCell(Text(user['createdAt'] != null ? user['createdAt'].toString().split('T')[0] : 'Yaqinda')),
-                          DataCell(Text((user['ordersCount'] ?? 0).toString())),
-                          DataCell(
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: (user['isActive'] == true ? const Color(0xFF10B981) : Colors.red).withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(20),
+              if (isMobile) {
+                return ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: users.length,
+                  itemBuilder: (context, index) {
+                    final user = users[index];
+                    final name = user['fullName'] ?? 'Noma\'lum';
+                    final phone = user['phoneNumber'] ?? 'Raqam kiritilmagan';
+                    final date = user['createdAt'] != null ? user['createdAt'].toString().split('T')[0] : 'Yaqinda';
+                    final ordersCount = (user['ordersCount'] ?? 0).toString();
+                    final isActive = user['isActive'] == true;
+
+                    return Card(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      elevation: 1,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(12),
+                        onTap: () => _showUserDialog(context, user),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      name,
+                                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  _buildStatusBadge(isActive),
+                                ],
                               ),
-                              child: Text(
-                                user['isActive'] == true ? 'Faol' : 'Bloklangan',
-                                style: TextStyle(
-                                  color: user['isActive'] == true ? const Color(0xFF10B981) : Colors.red,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
-                                ),
+                              const SizedBox(height: 12),
+                              Row(
+                                children: [
+                                  const Icon(Icons.phone_outlined, size: 16, color: Colors.grey),
+                                  const SizedBox(width: 8),
+                                  Text(phone),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  const Icon(Icons.shopping_bag_outlined, size: 16, color: Colors.grey),
+                                  const SizedBox(width: 8),
+                                  Text("$ordersCount ta buyurtma", style: const TextStyle(color: Colors.grey)),
+                                  const Spacer(),
+                                  Text(date, style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              }
+
+              return SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Theme.of(context).colorScheme.outline),
+                  ),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: DataTable(
+                      headingRowColor: WidgetStateProperty.all(Theme.of(context).colorScheme.surfaceContainerHighest),
+                      columns: const [
+                        DataColumn(label: Text("F.I.Sh.", style: TextStyle(fontWeight: FontWeight.bold))),
+                        DataColumn(label: Text("Telefon", style: TextStyle(fontWeight: FontWeight.bold))),
+                        DataColumn(label: Text("Email", style: TextStyle(fontWeight: FontWeight.bold))),
+                        DataColumn(label: Text("Kirish turi", style: TextStyle(fontWeight: FontWeight.bold))),
+                        DataColumn(label: Text("Sana", style: TextStyle(fontWeight: FontWeight.bold))),
+                        DataColumn(label: Text("Buyurtmalar", style: TextStyle(fontWeight: FontWeight.bold))),
+                        DataColumn(label: Text("Holat", style: TextStyle(fontWeight: FontWeight.bold))),
+                        DataColumn(label: Text("Amallar", style: TextStyle(fontWeight: FontWeight.bold))),
+                      ],
+                      rows: users.map((user) {
+                        final authProvider = user['authProvider'] ?? 'Telefon';
+                        return DataRow(
+                          cells: [
+                            DataCell(Text(user['fullName'] ?? 'Noma\'lum', style: const TextStyle(fontWeight: FontWeight.w500))),
+                            DataCell(Text(user['phoneNumber'] ?? '-')),
+                            DataCell(Text(user['email'] ?? '-')),
+                            DataCell(
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(authProvider == 'Apple ID' ? Icons.apple : Icons.phone_android, size: 16, color: Colors.grey),
+                                  const SizedBox(width: 8),
+                                  Text(authProvider, style: const TextStyle(color: Colors.grey)),
+                                ],
                               ),
                             ),
-                          ),
-                          DataCell(
-                            IconButton(
-                              icon: const Icon(Icons.edit, color: Colors.blue),
-                              onPressed: () => _showUserDialog(context, user),
+                            DataCell(Text(user['createdAt'] != null ? user['createdAt'].toString().split('T')[0] : 'Yaqinda')),
+                            DataCell(Text((user['ordersCount'] ?? 0).toString())),
+                            DataCell(_buildStatusBadge(user['isActive'] == true)),
+                            DataCell(
+                              IconButton(
+                                icon: const Icon(Icons.remove_red_eye, color: Colors.blue),
+                                tooltip: 'Tafsilotlar va tahrirlash',
+                                onPressed: () => _showUserDialog(context, user),
+                              ),
                             ),
-                          ),
-                        ],
-                      );
-                    }).toList(),
+                          ],
+                        );
+                      }).toList(),
+                    ),
                   ),
                 ),
               );
             },
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, stack) => Center(child: Text('Xatolik: $error')),
+            loading: () => const Center(child: CircularProgressIndicator(color: Color(0xFFFF7A00))),
+            error: (error, stack) => Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.error_outline, color: Colors.red, size: 48),
+                  const SizedBox(height: 16),
+                  Text('Xatolik: $error'),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () => ref.invalidate(usersProvider),
+                    child: const Text("Qayta urinish"),
+                  )
+                ],
+              ),
+            ),
           ),
-        ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatusBadge(bool isActive) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      decoration: BoxDecoration(
+        color: (isActive ? const Color(0xFF10B981) : Colors.red).withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        isActive ? 'Faol' : 'Bloklangan',
+        style: TextStyle(
+          color: isActive ? const Color(0xFF10B981) : Colors.red,
+          fontWeight: FontWeight.bold,
+          fontSize: 12,
+        ),
       ),
     );
   }

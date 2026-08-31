@@ -37,10 +37,12 @@ async def get_users(role: Optional[str] = None, db: AsyncSession = Depends(get_d
         orders_count = count_res.scalar() or 0
         u_dict = UserModel.model_validate(u).model_dump(by_alias=True)
         u_dict["ordersCount"] = orders_count
-        # Also determine provider from google_id/apple_id/phone
-        if getattr(u, 'google_id', None):
+        u_dict["role"] = u.role.value if hasattr(u.role, 'value') else str(u.role)
+        
+        provider = getattr(u, 'provider', None)
+        if provider == 'google':
             u_dict["authProvider"] = "Google orqali"
-        elif getattr(u, 'apple_id', None):
+        elif provider == 'apple':
             u_dict["authProvider"] = "Apple ID"
         else:
             u_dict["authProvider"] = "SMS orqali"

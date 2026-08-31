@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.orm import joinedload
 from typing import List
 from uuid import UUID
 import uuid
@@ -83,7 +84,20 @@ async def get_orders(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    result = await db.execute(select(Order).where(Order.user_id == current_user.id).order_by(Order.created_at.desc()))
+    from app.models.user import RoleEnum
+    if current_user.role in [RoleEnum.ADMIN, RoleEnum.OWNER]:
+        result = await db.execute(
+            select(Order)
+            .options(joinedload(Order.user), joinedload(Order.items).joinedload(OrderItem.product))
+            .order_by(Order.created_at.desc())
+        )
+    else:
+        result = await db.execute(
+            select(Order)
+            .options(joinedload(Order.user), joinedload(Order.items).joinedload(OrderItem.product))
+            .where(Order.user_id == current_user.id)
+            .order_by(Order.created_at.desc())
+        )
     orders = result.scalars().all()
     return APIResponse(data=[OrderModel.model_validate(o) for o in orders])
 
@@ -94,7 +108,9 @@ async def get_order(
     current_user: User = Depends(get_current_user)
 ):
     result = await db.execute(
-        select(Order).where(Order.id == id, Order.user_id == current_user.id)
+        select(Order)
+        .options(joinedload(Order.user), joinedload(Order.items).joinedload(OrderItem.product))
+        .where(Order.id == id, Order.user_id == current_user.id)
     )
     order = result.scalar_one_or_none()
     

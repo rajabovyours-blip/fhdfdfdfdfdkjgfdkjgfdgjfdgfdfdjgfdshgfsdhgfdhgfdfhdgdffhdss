@@ -1,9 +1,16 @@
 from pydantic.alias_generators import to_camel
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional, List
 from uuid import UUID
 from datetime import datetime
 from .cart import CartItemModel
+
+class OrderUserModel(BaseModel):
+    id: UUID
+    full_name: str
+    phone_number: Optional[str] = Field(default=None, validation_alias="phone")
+    email: Optional[str] = None
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True, alias_generator=to_camel)
 
 class OrderModel(BaseModel):
     id: UUID
@@ -24,4 +31,5 @@ class OrderModel(BaseModel):
     customer_notes: Optional[str] = None
     created_at: datetime
     items: List[CartItemModel] = []
+    user: Optional[OrderUserModel] = None
     model_config = ConfigDict(from_attributes=True, populate_by_name=True, alias_generator=to_camel)
