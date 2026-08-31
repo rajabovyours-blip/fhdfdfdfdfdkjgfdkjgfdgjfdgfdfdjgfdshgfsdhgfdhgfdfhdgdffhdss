@@ -4,7 +4,6 @@ import 'package:milliy_metr/features/home/domain/entities/home_entities.dart';
 import 'package:milliy_metr/features/products/domain/entities/product_entity.dart';
 import 'package:milliy_metr/features/categories/domain/entities/category_entity.dart';
 import 'package:milliy_metr/features/home/presentation/providers/home_providers.dart';
-import 'package:milliy_metr/core/localization/localized_string.dart';
 
 class HomeData {
   final List<BannerEntity> banners;

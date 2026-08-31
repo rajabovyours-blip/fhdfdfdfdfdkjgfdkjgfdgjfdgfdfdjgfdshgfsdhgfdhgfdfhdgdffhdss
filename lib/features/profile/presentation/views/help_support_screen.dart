@@ -43,48 +43,59 @@ class HelpSupportScreen extends StatelessWidget {
                 buildSocialTile(
                   context: context,
                   iconWidget: Container(
-                    width: 36,
-                    height: 36,
+                    width: 46,
+                    height: 46,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF229ED9),
-                      borderRadius: BorderRadius.circular(10),
+                      color: const Color(0xFF229ED9).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(14),
                     ),
-                    padding: const EdgeInsets.all(8),
-                    child: SvgPicture.asset('assets/svg/telegram.svg', colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn)),
+                    padding: const EdgeInsets.all(12),
+                    child: SvgPicture.asset('assets/svg/telegram.svg', colorFilter: const ColorFilter.mode(Color(0xFF229ED9), BlendMode.srcIn)),
                   ),
                   title: l10n.contactViaTelegram,
-                  subtitle: '@milliy_metr',
                   onTap: () => _launchUrl('https://t.me/milliy_metr', external: true),
                 ),
                 buildSocialTile(
                   context: context,
                   iconWidget: Container(
-                    width: 36,
-                    height: 36,
+                    width: 46,
+                    height: 46,
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF833AB4), Color(0xFFFD1D1D), Color(0xFFFCB045)],
+                      gradient: LinearGradient(
+                        colors: [
+                          const Color(0xFF833AB4).withValues(alpha: 0.1),
+                          const Color(0xFFFD1D1D).withValues(alpha: 0.1),
+                          const Color(0xFFFCB045).withValues(alpha: 0.1),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(14),
                     ),
-                    padding: const EdgeInsets.all(8),
-                    child: SvgPicture.asset('assets/svg/instagram.svg'),
+                    padding: const EdgeInsets.all(12),
+                    child: ShaderMask(
+                      shaderCallback: (bounds) => const LinearGradient(
+                        colors: [Color(0xFF833AB4), Color(0xFFFD1D1D), Color(0xFFFCB045)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ).createShader(bounds),
+                      child: SvgPicture.asset('assets/svg/instagram.svg', colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn)),
+                    ),
                   ),
                   title: l10n.ourInstagramPage,
-                  subtitle: '@milliy_metr',
                   onTap: () => _launchUrl('https://instagram.com/milliy_metr', external: true),
                 ),
                 buildSocialTile(
                   context: context,
                   iconWidget: Container(
-                    width: 36,
-                    height: 36,
+                    width: 46,
+                    height: 46,
                     decoration: BoxDecoration(
-                      color: Colors.orange,
-                      borderRadius: BorderRadius.circular(10),
+                      color: context.colors.primary.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(14),
                     ),
-                    padding: const EdgeInsets.all(8),
-                    child: const Icon(Icons.phone_in_talk_rounded, color: Colors.white, size: 20),
+                    padding: const EdgeInsets.all(12),
+                    child: Icon(Icons.phone_in_talk_rounded, color: context.colors.primary, size: 22),
                   ),
                   title: l10n.customerSupport,
                   subtitle: '+998 50 072 33 33',
@@ -205,35 +216,75 @@ class HelpSupportScreen extends StatelessWidget {
     required BuildContext context,
     required Widget iconWidget,
     required String title,
-    required String subtitle,
+    String? subtitle,
     required VoidCallback onTap,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF16181F) : Colors.white,
-        borderRadius: BorderRadius.circular(14),
+        color: context.colors.surface,
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? Colors.white.withValues(alpha: 0.06) : const Color(0xFFE5E7EB),
+          color: context.colors.outlineVariant,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0 : 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        leading: iconWidget,
-        title: Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-        ),
-        subtitle: Text(
-          subtitle,
-          style: TextStyle(
-            color: isDark ? Colors.white54 : Colors.black54,
-            fontSize: 12,
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(16),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            child: Row(
+              children: [
+                iconWidget,
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          color: context.colors.textHigh,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
+                          letterSpacing: 0.2,
+                        ),
+                      ),
+                      if (subtitle != null) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          subtitle,
+                          style: TextStyle(
+                            color: context.colors.textMedium,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.chevron_right_rounded,
+                  color: context.colors.textDisabled,
+                  size: 22,
+                ),
+              ],
+            ),
           ),
         ),
-        trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
-        onTap: onTap,
       ),
     );
   }
