@@ -21,18 +21,23 @@ from sqlalchemy import text
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Initialize database tables
-    async with engine.begin() as conn:
-        # Idempotently add missing columns for production upgrades
-        # Catch errors if it's sqlite and column exists, or postgres and it exists
-        try:
+    
+    # Idempotently add missing columns for production upgrades
+    # Separate blocks are used so that if a column already exists,
+    # the transaction abort doesn't crash the entire startup process.
+    try:
+        async with engine.begin() as conn:
             await conn.execute(text('ALTER TABLE users ADD COLUMN username VARCHAR UNIQUE'))
-        except Exception:
-            pass
-        try:
+    except Exception:
+        pass
+
+    try:
+        async with engine.begin() as conn:
             await conn.execute(text("ALTER TABLE users ADD COLUMN role VARCHAR DEFAULT 'USER'"))
-        except Exception:
-            pass
-            
+    except Exception:
+        pass
+        
+    async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     
     # Seed data
