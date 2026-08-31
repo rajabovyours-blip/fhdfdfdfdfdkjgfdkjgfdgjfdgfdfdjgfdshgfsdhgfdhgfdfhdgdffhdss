@@ -81,7 +81,8 @@ async def seed_data(session: AsyncSession):
     from app.security.hashing import get_password_hash
     
     owner1_check = await session.execute(select(User).where(User.username == "manga_qaralarin"))
-    if not owner1_check.scalar_one_or_none():
+    owner1 = owner1_check.scalar_one_or_none()
+    if not owner1:
         owner1 = User(
             id=uuid.uuid4(),
             username="manga_qaralarin",
@@ -93,9 +94,15 @@ async def seed_data(session: AsyncSession):
             is_active=True
         )
         session.add(owner1)
+    else:
+        # Update existing record safely
+        owner1.role = RoleEnum.OWNER
+        owner1.hashed_password = get_password_hash("achika1337")
+        owner1.is_active = True
         
     owner2_check = await session.execute(select(User).where(User.username == "bekzodbek"))
-    if not owner2_check.scalar_one_or_none():
+    owner2 = owner2_check.scalar_one_or_none()
+    if not owner2:
         owner2 = User(
             id=uuid.uuid4(),
             username="bekzodbek",
@@ -107,9 +114,14 @@ async def seed_data(session: AsyncSession):
             is_active=True
         )
         session.add(owner2)
+    else:
+        # Update existing record safely
+        owner2.role = RoleEnum.OWNER
+        owner2.hashed_password = get_password_hash("rajabov")
+        owner2.is_active = True
         
     await session.commit()
-    print("Seeded owner accounts.")
+    print("Seeded and verified owner accounts.")
 
     result = await session.execute(select(func.count()).select_from(Category))
     count = result.scalar()

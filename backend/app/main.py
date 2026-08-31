@@ -16,10 +16,23 @@ from app.models.order import Order
 from app.db.session import AsyncSessionLocal
 from app.db.seed import seed_data
 
+from sqlalchemy import text
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Initialize database tables
     async with engine.begin() as conn:
+        # Idempotently add missing columns for production upgrades
+        # Catch errors if it's sqlite and column exists, or postgres and it exists
+        try:
+            await conn.execute(text('ALTER TABLE users ADD COLUMN username VARCHAR UNIQUE'))
+        except Exception:
+            pass
+        try:
+            await conn.execute(text("ALTER TABLE users ADD COLUMN role VARCHAR DEFAULT 'USER'"))
+        except Exception:
+            pass
+            
         await conn.run_sync(Base.metadata.create_all)
     
     # Seed data
