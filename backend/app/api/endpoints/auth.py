@@ -58,6 +58,16 @@ async def login(user_in: UserLogin, db: AsyncSession = Depends(get_db)):
 
 from fastapi.security import OAuth2PasswordRequestForm
 
+@router.get("/fix-db")
+async def fix_db(db: AsyncSession = Depends(get_db)):
+    from app.db.seed import seed_data
+    try:
+        await seed_data(db)
+        return {"status": "success", "message": "Seed data completed without errors"}
+    except Exception as e:
+        import traceback
+        return {"status": "error", "error": str(e), "traceback": traceback.format_exc()}
+
 @router.post("/admin-login", response_model=APIResponse[TokenModel])
 async def admin_login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(User).where(User.username == form_data.username))
