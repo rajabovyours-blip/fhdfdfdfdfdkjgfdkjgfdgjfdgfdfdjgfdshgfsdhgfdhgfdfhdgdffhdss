@@ -18,10 +18,24 @@ branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
 
+from sqlalchemy.engine.reflection import Inspector
+
 def upgrade() -> None:
-    op.add_column('users', sa.Column('provider', sa.String(length=50), nullable=True))
-    op.add_column('users', sa.Column('provider_id', sa.String(length=255), nullable=True))
+    conn = op.get_bind()
+    inspector = Inspector.from_engine(conn)
+    users_columns = [col['name'] for col in inspector.get_columns('users')]
+
+    if 'provider' not in users_columns:
+        op.add_column('users', sa.Column('provider', sa.String(length=50), nullable=True))
+    if 'provider_id' not in users_columns:
+        op.add_column('users', sa.Column('provider_id', sa.String(length=255), nullable=True))
 
 def downgrade() -> None:
-    op.drop_column('users', 'provider_id')
-    op.drop_column('users', 'provider')
+    conn = op.get_bind()
+    inspector = Inspector.from_engine(conn)
+    users_columns = [col['name'] for col in inspector.get_columns('users')]
+
+    if 'provider_id' in users_columns:
+        op.drop_column('users', 'provider_id')
+    if 'provider' in users_columns:
+        op.drop_column('users', 'provider')
