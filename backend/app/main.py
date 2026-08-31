@@ -37,6 +37,12 @@ async def lifespan(app: FastAPI):
     except Exception:
         pass
         
+    try:
+        async with engine.begin() as conn:
+            await conn.execute(text("ALTER TABLE users ALTER COLUMN role TYPE VARCHAR USING role::text"))
+    except Exception:
+        pass
+        
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     

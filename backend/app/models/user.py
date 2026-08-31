@@ -21,7 +21,7 @@ class User(Base):
     email = Column(String(255), unique=True, index=True, nullable=True)
     hashed_password = Column(String, nullable=False)
     avatar_url = Column(String, nullable=True)
-    role = Column(Enum(RoleEnum), default=RoleEnum.USER, nullable=False)
+    role = Column(Enum(RoleEnum, native_enum=False, length=50), default=RoleEnum.USER, nullable=False)
     is_active = Column(Boolean, default=True)
     provider = Column(String, nullable=True)
     provider_id = Column(String, nullable=True)
