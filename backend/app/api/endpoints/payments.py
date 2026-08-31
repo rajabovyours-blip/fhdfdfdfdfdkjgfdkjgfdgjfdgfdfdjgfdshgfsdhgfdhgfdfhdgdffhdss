@@ -13,7 +13,6 @@ router = APIRouter()
 @router.get("/payment-methods", response_model=APIResponse[list])
 async def get_payment_methods():
     return APIResponse(data=[
-        {"id": "cash", "name": {"en": "Cash on Delivery", "ru": "Наличными при получении", "uz": "Yetkazib berilganda naqd pul"}},
         {"id": "click", "name": {"en": "Click", "ru": "Click", "uz": "Click"}},
         {"id": "payme", "name": {"en": "Payme", "ru": "Payme", "uz": "Payme"}}
     ])

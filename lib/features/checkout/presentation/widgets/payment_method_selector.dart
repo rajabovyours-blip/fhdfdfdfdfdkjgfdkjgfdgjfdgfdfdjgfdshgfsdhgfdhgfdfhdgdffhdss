@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
-import 'package:milliy_metr/features/checkout/presentation/widgets/add_card_bottom_sheet.dart';
 
 class PaymentMethodItem {
   final String id;
@@ -45,22 +44,6 @@ class PaymentMethodSelector extends StatelessWidget {
         name: 'Click',
         iconAsset: 'assets/svg/payment_click.svg',
       ),
-      PaymentMethodItem(
-        id: 'Visa',
-        name: 'Visa',
-        iconAsset: 'assets/svg/payment_visa.svg',
-      ),
-      PaymentMethodItem(
-        id: 'Mastercard',
-        name: 'Mastercard',
-        iconAsset: 'assets/svg/payment_mastercard.svg',
-      ),
-      PaymentMethodItem(
-        id: 'Cash on Delivery',
-        name: l10n.cashOnDelivery,
-        description: l10n.cashOnDeliveryDesc,
-        iconAsset: 'assets/svg/payment_cash.svg',
-      ),
     ];
 
     return Column(
@@ -73,43 +56,6 @@ class PaymentMethodSelector extends StatelessWidget {
               method: method,
               isSelected: selectedMethodId == method.id,
               onTap: () => onMethodSelected(method.id),
-            ),
-          ),
-        ),
-        const SizedBox(height: 8),
-        InkWell(
-          onTap: () {
-            showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              backgroundColor: Colors.transparent,
-              builder: (ctx) => const AddCardBottomSheet(),
-            );
-          },
-          borderRadius: BorderRadius.circular(16),
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: context.colors.surfaceVariant,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: context.colors.outline.withValues(alpha: 0.5),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.add_circle_outline, color: context.colors.primary),
-                const SizedBox(width: 8),
-                Text(
-                  l10n.addCard,
-                  style: TextStyle(
-                    color: context.colors.primary,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                  ),
-                ),
-              ],
             ),
           ),
         ),

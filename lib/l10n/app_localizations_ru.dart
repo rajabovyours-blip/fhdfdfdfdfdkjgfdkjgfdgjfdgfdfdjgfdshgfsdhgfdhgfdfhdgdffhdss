@@ -523,9 +523,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get paymentMethod => 'Способ оплаты';
 
   @override
-  String get cashOnDelivery => 'Оплата при получении';
-
-  @override
   String get couponCode => 'Промокод';
 
   @override
@@ -826,19 +823,10 @@ class AppLocalizationsRu extends AppLocalizations {
       'Все наши товары обеспечены гарантией производителя.';
 
   @override
-  String get cashOnDeliveryDesc => 'Оплата при получении заказа';
-
-  @override
   String get clickPayment => 'Оплата через Click';
 
   @override
   String get clickPaymentDesc => 'Оплата через приложение Click';
-
-  @override
-  String get bankCard => 'Банковская карта';
-
-  @override
-  String get bankCardDesc => 'Оплата картой Visa или Mastercard';
 
   @override
   String get paymentMethodSelected => 'Способ оплаты выбран';
@@ -925,21 +913,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get refundSubmitted => 'Заявка на возврат отправлена';
 
   @override
-  String get addCard => 'Добавить карту';
-
-  @override
-  String get cardNumber => 'Номер карты';
-
-  @override
-  String get expiryDate => 'Срок действия';
-
-  @override
-  String get cvv => 'CVV';
-
-  @override
-  String get cardholderName => 'Имя владельца карты';
-
-  @override
   String payAmount(Object amount) {
     return 'Оплатить $amount';
   }
@@ -958,18 +931,6 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get payme => 'Payme';
-
-  @override
-  String get visa => 'Visa';
-
-  @override
-  String get mastercard => 'Mastercard';
-
-  @override
-  String get uzcard => 'Uzcard';
-
-  @override
-  String get humo => 'Humo';
 
   @override
   String get analyticsAndReports => 'Аналитика и отчеты';

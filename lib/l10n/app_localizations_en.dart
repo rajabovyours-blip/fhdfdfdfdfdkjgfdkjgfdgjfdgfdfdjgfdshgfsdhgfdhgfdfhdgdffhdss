@@ -522,9 +522,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paymentMethod => 'Payment Method';
 
   @override
-  String get cashOnDelivery => 'Cash on Delivery';
-
-  @override
   String get couponCode => 'Promo Code';
 
   @override
@@ -825,19 +822,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'All our products are covered by manufacturer warranty.';
 
   @override
-  String get cashOnDeliveryDesc => 'Pay when you receive your order';
-
-  @override
   String get clickPayment => 'Pay via Click';
 
   @override
   String get clickPaymentDesc => 'Pay through the Click app';
-
-  @override
-  String get bankCard => 'Bank Card';
-
-  @override
-  String get bankCardDesc => 'Pay with Visa or Mastercard';
 
   @override
   String get paymentMethodSelected => 'Payment method selected';
@@ -925,21 +913,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get refundSubmitted => 'Return request submitted';
 
   @override
-  String get addCard => 'Add Card';
-
-  @override
-  String get cardNumber => 'Card Number';
-
-  @override
-  String get expiryDate => 'Expiry Date';
-
-  @override
-  String get cvv => 'CVV';
-
-  @override
-  String get cardholderName => 'Cardholder Name';
-
-  @override
   String payAmount(Object amount) {
     return 'Pay $amount';
   }
@@ -958,18 +931,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get payme => 'Payme';
-
-  @override
-  String get visa => 'Visa';
-
-  @override
-  String get mastercard => 'Mastercard';
-
-  @override
-  String get uzcard => 'Uzcard';
-
-  @override
-  String get humo => 'Humo';
 
   @override
   String get analyticsAndReports => 'Analytics & Reports';

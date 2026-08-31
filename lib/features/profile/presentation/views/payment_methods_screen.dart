@@ -12,7 +12,7 @@ class PaymentMethodsScreen extends StatefulWidget {
 }
 
 class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
-  String _selectedMethod = 'cash';
+  String _selectedMethod = 'click';
 
   @override
   void initState() {
@@ -23,7 +23,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
   Future<void> _loadPaymentMethod() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      _selectedMethod = prefs.getString('selected_payment_method') ?? 'cash';
+      _selectedMethod = prefs.getString('selected_payment_method') ?? 'click';
     });
   }
 
@@ -75,14 +75,6 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
         children: [
           _buildPaymentCard(
             context,
-            id: 'cash',
-            iconWidget: SvgPicture.asset('assets/svg/payment_cash.svg'),
-            title: l10n.cashOnDelivery,
-            subtitle: l10n.cashOnDeliveryDesc,
-          ),
-          const SizedBox(height: 12),
-          _buildPaymentCard(
-            context,
             id: 'click',
             iconWidget: SvgPicture.asset('assets/svg/payment_click.svg'),
             title: l10n.clickPayment,
@@ -91,17 +83,10 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
           const SizedBox(height: 12),
           _buildPaymentCard(
             context,
-            id: 'card',
-            iconWidget: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SvgPicture.asset('assets/svg/payment_visa.svg', width: 24, height: 24),
-                const SizedBox(width: 4),
-                SvgPicture.asset('assets/svg/payment_mastercard.svg', width: 24, height: 24),
-              ],
-            ),
-            title: l10n.bankCard,
-            subtitle: l10n.bankCardDesc,
+            id: 'payme',
+            iconWidget: SvgPicture.asset('assets/svg/payment_payme.svg'),
+            title: 'Payme',
+            subtitle: 'Payme orqali to\'lash', // Or use l10n
           ),
         ],
       ),

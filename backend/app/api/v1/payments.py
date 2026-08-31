@@ -11,8 +11,8 @@ router = APIRouter()
 async def get_payment_methods(current_user: User = Depends(get_current_user)):
     # Mocking payment methods
     methods = [
-        {"id": 1, "name": "Credit Card", "type": "card"},
-        {"id": 2, "name": "Cash on Delivery", "type": "cash"}
+        {"id": 1, "name": "Click", "type": "click"},
+        {"id": 2, "name": "Payme", "type": "payme"}
     ]
     return {"data": methods}
 

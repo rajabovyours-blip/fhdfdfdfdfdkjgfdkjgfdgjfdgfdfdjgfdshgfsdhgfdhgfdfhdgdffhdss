@@ -1084,12 +1084,6 @@ abstract class AppLocalizations {
   /// **'To\'lov usuli'**
   String get paymentMethod;
 
-  /// No description provided for @cashOnDelivery.
-  ///
-  /// In uz, this message translates to:
-  /// **'Naqd pul bilan to\'lash'**
-  String get cashOnDelivery;
-
   /// No description provided for @couponCode.
   ///
   /// In uz, this message translates to:
@@ -1672,12 +1666,6 @@ abstract class AppLocalizations {
   /// **'Barcha mahsulotlarimiz ishlab chiqaruvchi kafolati bilan ta\'minlangan.'**
   String get faqWarrantyAnswer;
 
-  /// No description provided for @cashOnDeliveryDesc.
-  ///
-  /// In uz, this message translates to:
-  /// **'Buyurtmani qabul qilganingizda to\'lang'**
-  String get cashOnDeliveryDesc;
-
   /// No description provided for @clickPayment.
   ///
   /// In uz, this message translates to:
@@ -1689,18 +1677,6 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Click ilovasi orqali to\'lang'**
   String get clickPaymentDesc;
-
-  /// No description provided for @bankCard.
-  ///
-  /// In uz, this message translates to:
-  /// **'Bank kartasi'**
-  String get bankCard;
-
-  /// No description provided for @bankCardDesc.
-  ///
-  /// In uz, this message translates to:
-  /// **'Visa yoki Mastercard orqali to\'lang'**
-  String get bankCardDesc;
 
   /// No description provided for @paymentMethodSelected.
   ///
@@ -1870,36 +1846,6 @@ abstract class AppLocalizations {
   /// **'Qaytarish so\'rovi yuborildi'**
   String get refundSubmitted;
 
-  /// No description provided for @addCard.
-  ///
-  /// In uz, this message translates to:
-  /// **'Karta qo\'shish'**
-  String get addCard;
-
-  /// No description provided for @cardNumber.
-  ///
-  /// In uz, this message translates to:
-  /// **'Karta raqami'**
-  String get cardNumber;
-
-  /// No description provided for @expiryDate.
-  ///
-  /// In uz, this message translates to:
-  /// **'Amal qilish muddati'**
-  String get expiryDate;
-
-  /// No description provided for @cvv.
-  ///
-  /// In uz, this message translates to:
-  /// **'CVV'**
-  String get cvv;
-
-  /// No description provided for @cardholderName.
-  ///
-  /// In uz, this message translates to:
-  /// **'Karta egasining ismi'**
-  String get cardholderName;
-
   /// No description provided for @payAmount.
   ///
   /// In uz, this message translates to:
@@ -1935,30 +1881,6 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Payme'**
   String get payme;
-
-  /// No description provided for @visa.
-  ///
-  /// In uz, this message translates to:
-  /// **'Visa'**
-  String get visa;
-
-  /// No description provided for @mastercard.
-  ///
-  /// In uz, this message translates to:
-  /// **'Mastercard'**
-  String get mastercard;
-
-  /// No description provided for @uzcard.
-  ///
-  /// In uz, this message translates to:
-  /// **'Uzcard'**
-  String get uzcard;
-
-  /// No description provided for @humo.
-  ///
-  /// In uz, this message translates to:
-  /// **'Humo'**
-  String get humo;
 
   /// No description provided for @analyticsAndReports.
   ///

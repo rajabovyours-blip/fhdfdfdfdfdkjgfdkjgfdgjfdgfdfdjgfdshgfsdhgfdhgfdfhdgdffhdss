@@ -528,9 +528,6 @@ class AppLocalizationsUz extends AppLocalizations {
   String get paymentMethod => 'To\'lov usuli';
 
   @override
-  String get cashOnDelivery => 'Naqd pul bilan to\'lash';
-
-  @override
   String get couponCode => 'Promokod';
 
   @override
@@ -832,19 +829,10 @@ class AppLocalizationsUz extends AppLocalizations {
       'Barcha mahsulotlarimiz ishlab chiqaruvchi kafolati bilan ta\'minlangan.';
 
   @override
-  String get cashOnDeliveryDesc => 'Buyurtmani qabul qilganingizda to\'lang';
-
-  @override
   String get clickPayment => 'Click orqali to\'lov';
 
   @override
   String get clickPaymentDesc => 'Click ilovasi orqali to\'lang';
-
-  @override
-  String get bankCard => 'Bank kartasi';
-
-  @override
-  String get bankCardDesc => 'Visa yoki Mastercard orqali to\'lang';
 
   @override
   String get paymentMethodSelected => 'To\'lov usuli tanlandi';
@@ -933,21 +921,6 @@ class AppLocalizationsUz extends AppLocalizations {
   String get refundSubmitted => 'Qaytarish so\'rovi yuborildi';
 
   @override
-  String get addCard => 'Karta qo\'shish';
-
-  @override
-  String get cardNumber => 'Karta raqami';
-
-  @override
-  String get expiryDate => 'Amal qilish muddati';
-
-  @override
-  String get cvv => 'CVV';
-
-  @override
-  String get cardholderName => 'Karta egasining ismi';
-
-  @override
   String payAmount(Object amount) {
     return '$amount to\'lash';
   }
@@ -966,18 +939,6 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get payme => 'Payme';
-
-  @override
-  String get visa => 'Visa';
-
-  @override
-  String get mastercard => 'Mastercard';
-
-  @override
-  String get uzcard => 'Uzcard';
-
-  @override
-  String get humo => 'Humo';
 
   @override
   String get analyticsAndReports => 'Tahlil va hisobotlar';
