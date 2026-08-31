@@ -43,7 +43,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
     bool inStock = isEditing ? ((product['stock'] ?? 0) > 0) : true;
     bool isLoading = false;
 
-    final categories = ref.read(categoriesProvider);
+    final categories = ref.read(categoriesProvider).value ?? [];
     final screenWidth = MediaQuery.of(context).size.width;
     final isMobileDialog = screenWidth < 600;
 
@@ -302,7 +302,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                                   'ru': descController.text.isNotEmpty ? descController.text : '',
                                   'en': descController.text.isNotEmpty ? descController.text : '',
                                 },
-                                'category_id': selectedCategoryId ?? categories.first['id'],
+                                'category_id': selectedCategoryId ?? (categories.isNotEmpty ? categories.first['id'] : null),
                                 'price': double.tryParse(priceController.text) ?? 0,
                                 'unit': selectedUnit,
                                 'stock': inStock ? 100 : 0,
@@ -477,7 +477,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
   @override
   Widget build(BuildContext context) {
     final productsAsyncValue = ref.watch(productsProvider);
-    final categories = ref.watch(categoriesProvider);
+    final categories = ref.watch(categoriesProvider).value ?? [];
     final isMobile = MediaQuery.of(context).size.width < 600;
 
     return SingleChildScrollView(
@@ -727,7 +727,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
     );
   }
 
-  Widget _buildFilters(List<Map<String, dynamic>> categories, bool isMobile) {
+  Widget _buildFilters(List<dynamic> categories, bool isMobile) {
     if (isMobile) {
       return Column(
         children: [
