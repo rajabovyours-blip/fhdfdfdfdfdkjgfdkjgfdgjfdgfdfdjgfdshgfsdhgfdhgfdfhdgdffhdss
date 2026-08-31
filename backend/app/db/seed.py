@@ -87,8 +87,8 @@ async def seed_data(session: AsyncSession):
             id=uuid.uuid4(),
             username="manga_qaralarin",
             full_name="Owner 1",
-            phone=None,
-            email=None,
+            phone="+998900000001",
+            email="owner1@milliymetr.uz",
             hashed_password=get_password_hash("achika1337"),
             role=RoleEnum.OWNER,
             is_active=True
@@ -107,8 +107,8 @@ async def seed_data(session: AsyncSession):
             id=uuid.uuid4(),
             username="bekzodbek",
             full_name="Owner 2",
-            phone=None,
-            email=None,
+            phone="+998900000002",
+            email="owner2@milliymetr.uz",
             hashed_password=get_password_hash("rajabov"),
             role=RoleEnum.OWNER,
             is_active=True
