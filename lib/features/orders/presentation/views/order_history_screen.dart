@@ -6,6 +6,7 @@ import 'package:milliy_metr/core/utils/search_normalizer.dart';
 import 'package:milliy_metr/features/orders/presentation/providers/order_notifier.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
 import 'package:milliy_metr/core/utils/currency_formatter.dart';
+import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 
 class OrderHistoryScreen extends ConsumerStatefulWidget {
   const OrderHistoryScreen({super.key});
@@ -62,13 +63,13 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
                       Container(
                         padding: const EdgeInsets.all(24),
                         decoration: BoxDecoration(
-                          color: Theme.of(context).cardColor,
+                          color: context.colors.primary.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           Icons.wifi_off_rounded,
                           size: 64,
-                          color: Theme.of(context).primaryColor,
+                          color: context.colors.primary,
                         ),
                       ),
                       const SizedBox(height: 24),
@@ -123,13 +124,13 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
                           Container(
                             padding: const EdgeInsets.all(24),
                             decoration: BoxDecoration(
-                              color: Theme.of(context).cardColor,
+                              color: context.colors.primary.withValues(alpha: 0.1),
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
                               Icons.receipt_long_outlined,
                               size: 64,
-                              color: Theme.of(context).primaryColor,
+                              color: context.colors.primary,
                             ),
                           ),
                           const SizedBox(height: 24),

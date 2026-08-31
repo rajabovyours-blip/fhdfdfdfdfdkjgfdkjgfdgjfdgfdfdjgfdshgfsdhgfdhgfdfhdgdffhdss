@@ -8,6 +8,7 @@ import 'package:milliy_metr/l10n/l10n_extension.dart';
 import 'package:milliy_metr/shared/widgets/app_snackbar.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:dio/dio.dart';
+import 'package:milliy_metr/core/utils/image_utils.dart';
 
 class PersonalInformationScreen extends ConsumerStatefulWidget {
   const PersonalInformationScreen({super.key});
@@ -170,7 +171,7 @@ class _PersonalInformationScreenState
                         backgroundImage: _localAvatarPath != null
                             ? FileImage(File(_localAvatarPath!))
                             : (_avatarUrl != null && _avatarUrl!.isNotEmpty
-                                ? NetworkImage(_avatarUrl!) as ImageProvider
+                                ? NetworkImage(ImageUtils.getFullImageUrl(_avatarUrl!)) as ImageProvider
                                 : null),
                         child: _localAvatarPath == null && (_avatarUrl == null || _avatarUrl!.isEmpty)
                             ? Text(

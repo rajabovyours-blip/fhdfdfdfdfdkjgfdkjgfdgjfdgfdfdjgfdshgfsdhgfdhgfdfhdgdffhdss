@@ -2685,6 +2685,18 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Iltimos, viloyat va tumanni tanlang'**
   String get pleaseSelectRegionDistrict;
+
+  /// No description provided for @googleSignInError.
+  ///
+  /// In uz, this message translates to:
+  /// **'Google orqali kirishda xatolik yuz berdi'**
+  String get googleSignInError;
+
+  /// No description provided for @appleSignInError.
+  ///
+  /// In uz, this message translates to:
+  /// **'Apple orqali kirishda xatolik yuz berdi'**
+  String get appleSignInError;
 }
 
 class _AppLocalizationsDelegate

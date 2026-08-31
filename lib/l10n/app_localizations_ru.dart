@@ -1341,4 +1341,10 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get pleaseSelectRegionDistrict =>
       'Пожалуйста, выберите область и район';
+
+  @override
+  String get googleSignInError => 'Произошла ошибка при входе через Google';
+
+  @override
+  String get appleSignInError => 'Произошла ошибка при входе через Apple';
 }

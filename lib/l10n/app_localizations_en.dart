@@ -1341,4 +1341,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get pleaseSelectRegionDistrict =>
       'Please select a region and district';
+
+  @override
+  String get googleSignInError => 'An error occurred during Google Sign-In';
+
+  @override
+  String get appleSignInError => 'An error occurred during Apple Sign-In';
 }

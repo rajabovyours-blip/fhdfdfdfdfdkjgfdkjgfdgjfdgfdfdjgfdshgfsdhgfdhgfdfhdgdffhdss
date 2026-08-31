@@ -1352,4 +1352,10 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String get pleaseSelectRegionDistrict =>
       'Iltimos, viloyat va tumanni tanlang';
+
+  @override
+  String get googleSignInError => 'Google orqali kirishda xatolik yuz berdi';
+
+  @override
+  String get appleSignInError => 'Apple orqali kirishda xatolik yuz berdi';
 }

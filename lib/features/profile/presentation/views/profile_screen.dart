@@ -9,6 +9,7 @@ import 'package:milliy_metr/features/profile/presentation/widgets/profile_menu_i
 import 'package:milliy_metr/shared/widgets/app_button.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
+import 'package:milliy_metr/core/utils/image_utils.dart';
 import 'package:milliy_metr/core/providers/main_navigation_provider.dart';
 import 'package:milliy_metr/features/wishlist/presentation/providers/wishlist_notifier.dart';
 
@@ -161,7 +162,7 @@ class ProfileScreen extends ConsumerWidget {
             radius: 40,
             backgroundColor: context.colors.primary.withValues(alpha: 0.1),
             backgroundImage:
-                user.avatarUrl != null ? NetworkImage(user.avatarUrl!) : null,
+                user.avatarUrl != null ? NetworkImage(ImageUtils.getFullImageUrl(user.avatarUrl!)) : null,
             child: user.avatarUrl == null
                 ? Text(
                     _getInitials(user.fullName),

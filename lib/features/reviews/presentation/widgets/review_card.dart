@@ -6,6 +6,7 @@ import 'package:milliy_metr/core/utils/app_formatters.dart';
 import 'package:milliy_metr/features/reviews/domain/entities/review_entity.dart';
 import 'package:milliy_metr/features/reviews/presentation/widgets/custom_star_rating.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
+import 'package:milliy_metr/core/utils/image_utils.dart';
 
 class ReviewCard extends StatelessWidget {
   final ReviewEntity review;
@@ -30,7 +31,7 @@ class ReviewCard extends StatelessWidget {
                 radius: 16,
                 backgroundColor: context.colors.outline,
                 backgroundImage: review.userAvatar != null
-                    ? NetworkImage(review.userAvatar!)
+                    ? NetworkImage(ImageUtils.getFullImageUrl(review.userAvatar!))
                     : null,
                 child: review.userAvatar == null
                     ? Text(
@@ -158,8 +159,8 @@ class ReviewCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(color: context.colors.outline),
                         image: DecorationImage(
-                          image: photo.startsWith('http')
-                              ? NetworkImage(photo) as ImageProvider
+                          image: photo.startsWith('http') || photo.startsWith('/') || photo.startsWith('uploads/')
+                              ? NetworkImage(ImageUtils.getFullImageUrl(photo)) as ImageProvider
                               : FileImage(File(photo)),
                           fit: BoxFit.cover,
                         ),
