@@ -44,7 +44,7 @@ class _BannersScreenState extends ConsumerState<BannersScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // 1. Image Field (Required)
-                    Text("banner_image".tr(fallback: "Banner tasviri"), style: const TextStyle(fontWeight: FontWeight.bold)),
+                    Text("banner_image".tr(), style: const TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
                     GestureDetector(
                       onTap: () async {
