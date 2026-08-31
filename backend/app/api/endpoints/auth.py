@@ -64,7 +64,7 @@ async def admin_login(form_data: OAuth2PasswordRequestForm = Depends(), db: Asyn
     user = result.scalar_one_or_none()
     
     if not user or not verify_password(form_data.password, user.hashed_password):
-        raise HTTPException(status_code=400, detail="Incorrect username or password")
+        raise HTTPException(status_code=400, detail="Incorrect username or password (debug 2)")
         
     if user.role not in [RoleEnum.ADMIN, RoleEnum.OWNER]:
         raise HTTPException(status_code=403, detail="Not authorized as admin")
