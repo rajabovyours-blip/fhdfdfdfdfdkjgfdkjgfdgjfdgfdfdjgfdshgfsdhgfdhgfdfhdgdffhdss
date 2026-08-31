@@ -27,7 +27,13 @@ async def lifespan(app: FastAPI):
     # the transaction abort doesn't crash the entire startup process.
     try:
         async with engine.begin() as conn:
-            await conn.execute(text('ALTER TABLE users ADD COLUMN username VARCHAR UNIQUE'))
+            await conn.execute(text('ALTER TABLE users ADD COLUMN username VARCHAR(255)'))
+    except Exception:
+        pass
+        
+    try:
+        async with engine.begin() as conn:
+            await conn.execute(text('ALTER TABLE users ADD CONSTRAINT users_username_key UNIQUE (username)'))
     except Exception:
         pass
 
