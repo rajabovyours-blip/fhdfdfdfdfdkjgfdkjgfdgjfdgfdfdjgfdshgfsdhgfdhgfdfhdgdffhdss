@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
-import 'package:milliy_metr/l10n/l10n_extension.dart';
 
 class PaymentMethodItem {
   final String id;
@@ -31,8 +30,6 @@ class PaymentMethodSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
-
     final methods = [
       PaymentMethodItem(
         id: 'Payme',
