@@ -41,8 +41,11 @@ async def lifespan(app: FastAPI):
         await conn.run_sync(Base.metadata.create_all)
     
     # Seed data
-    async with AsyncSessionLocal() as session:
-        await seed_data(session)
+    try:
+        async with AsyncSessionLocal() as session:
+            await seed_data(session)
+    except Exception as e:
+        print(f"Error seeding data: {e}")
         
     yield
 
