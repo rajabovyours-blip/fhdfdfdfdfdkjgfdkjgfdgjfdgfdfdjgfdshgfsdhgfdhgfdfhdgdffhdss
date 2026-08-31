@@ -18,13 +18,27 @@ branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
 
+from sqlalchemy.engine.reflection import Inspector
+
 def upgrade() -> None:
     """Upgrade schema."""
-    op.drop_constraint('products_seller_id_fkey', 'products', type_='foreignkey')
-    op.drop_column('products', 'seller_id')
+    conn = op.get_bind()
+    inspector = Inspector.from_engine(conn)
+    products_columns = [col['name'] for col in inspector.get_columns('products')]
+
+    if 'seller_id' in products_columns:
+        fks = [fk['name'] for fk in inspector.get_foreign_keys('products')]
+        if 'products_seller_id_fkey' in fks:
+            op.drop_constraint('products_seller_id_fkey', 'products', type_='foreignkey')
+        op.drop_column('products', 'seller_id')
 
 
 def downgrade() -> None:
     """Downgrade schema."""
-    op.add_column('products', sa.Column('seller_id', sa.UUID(), autoincrement=False, nullable=True))
-    op.create_foreign_key('products_seller_id_fkey', 'products', 'users', ['seller_id'], ['id'])
+    conn = op.get_bind()
+    inspector = Inspector.from_engine(conn)
+    products_columns = [col['name'] for col in inspector.get_columns('products')]
+
+    if 'seller_id' not in products_columns:
+        op.add_column('products', sa.Column('seller_id', sa.UUID(), autoincrement=False, nullable=True))
+        op.create_foreign_key('products_seller_id_fkey', 'products', 'users', ['seller_id'], ['id'])
