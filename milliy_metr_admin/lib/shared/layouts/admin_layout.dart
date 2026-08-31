@@ -69,14 +69,14 @@ class _AdminLayoutState extends State<AdminLayout> {
               physics: const ClampingScrollPhysics(),
               padding: const EdgeInsets.symmetric(horizontal: 12),
               children: [
-                _buildNavItem(context, 'Dashboard', Icons.dashboard, '/dashboard', isMobile: isMobile),
-                _buildNavItem(context, 'Kategoriyalar', Icons.category, '/categories', isMobile: isMobile),
-                _buildNavItem(context, 'Mahsulotlar', Icons.inventory, '/products', isMobile: isMobile),
-                _buildNavItem(context, 'Buyurtmalar', Icons.list_alt, '/orders', isMobile: isMobile),
-                _buildNavItem(context, 'Bannerlar', Icons.image, '/banners', isMobile: isMobile),
-                _buildNavItem(context, 'Mijozlar', Icons.people, '/users', isMobile: isMobile),
-                _buildNavItem(context, 'Bildirishnomalar', Icons.notifications, '/notifications', isMobile: isMobile),
-                _buildNavItem(context, 'Administratorlar', Icons.admin_panel_settings, '/admin_users', isMobile: isMobile),
+                _buildNavItem(context, 'dashboard'.tr(), Icons.dashboard, '/dashboard', isMobile: isMobile),
+                _buildNavItem(context, 'categories'.tr(), Icons.category, '/categories', isMobile: isMobile),
+                _buildNavItem(context, 'products'.tr(), Icons.inventory, '/products', isMobile: isMobile),
+                _buildNavItem(context, 'orders'.tr(), Icons.list_alt, '/orders', isMobile: isMobile),
+                _buildNavItem(context, 'banners'.tr(), Icons.image, '/banners', isMobile: isMobile),
+                _buildNavItem(context, 'customers'.tr(), Icons.people, '/users', isMobile: isMobile),
+                _buildNavItem(context, 'notifications'.tr(), Icons.notifications, '/notifications', isMobile: isMobile),
+                _buildNavItem(context, 'administrators'.tr(), Icons.admin_panel_settings, '/admin_users', isMobile: isMobile),
               ],
             ),
           ),
@@ -134,7 +134,7 @@ class _AdminLayoutState extends State<AdminLayout> {
             children: [
               const Icon(Icons.circle, size: 12, color: Colors.green),
               const SizedBox(width: 8),
-              Text('API: Online', style: Theme.of(context).textTheme.bodyMedium),
+              Text('api_online'.tr(), style: Theme.of(context).textTheme.bodyMedium),
             ],
           ),
           _buildTopActions(context),
@@ -164,7 +164,7 @@ class _AdminLayoutState extends State<AdminLayout> {
         const SizedBox(width: 16),
         IconButton(
           icon: const Icon(Icons.logout, color: Colors.red),
-          tooltip: 'Chiqish',
+          tooltip: 'logout'.tr(),
           onPressed: () {
             sharedPrefs.remove('admin_token');
             context.go('/login');

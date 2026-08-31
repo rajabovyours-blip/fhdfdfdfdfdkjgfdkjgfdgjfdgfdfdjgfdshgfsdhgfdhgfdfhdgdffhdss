@@ -5,6 +5,8 @@ import 'package:dio/dio.dart';
 import 'package:milliy_metr_admin/core/utils/image_utils.dart';
 import '../../../core/providers/admin_providers.dart';
 import '../../../core/api/api_client.dart';
+import 'package:easy_localization/easy_localization.dart';
+
 class CategoriesScreen extends ConsumerStatefulWidget {
   const CategoriesScreen({super.key});
 
@@ -41,7 +43,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: Text(isEditing ? 'Kategoriyani tahrirlash' : "Yangi kategoriya qo'shish"),
+              child: Text(isEditing ? 'edit_category'.tr() : 'add_category'.tr()),
             ),
           ],
         ),
@@ -54,22 +56,22 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                 if (!isEditing)
                   TextField(
                     controller: idController,
-                    decoration: const InputDecoration(labelText: 'Kategoriya ID (masalan, cat-62)'),
+                    decoration: InputDecoration(labelText: 'category_id_hint'.tr()),
                   ),
                 const SizedBox(height: 16),
                 TextField(
                   controller: nameUzController,
-                  decoration: const InputDecoration(labelText: "Nomi (O'zbekcha)"),
+                  decoration: InputDecoration(labelText: 'name_uz'.tr()),
                 ),
                 const SizedBox(height: 16),
                 TextField(
                   controller: nameRuController,
-                  decoration: const InputDecoration(labelText: 'Nomi (Ruscha)'),
+                  decoration: InputDecoration(labelText: 'name_ru'.tr()),
                 ),
                 const SizedBox(height: 16),
                 TextField(
                   controller: nameEnController,
-                  decoration: const InputDecoration(labelText: 'Nomi (Inglizcha)'),
+                  decoration: InputDecoration(labelText: 'name_en'.tr()),
                 ),
                 const SizedBox(height: 16),
                 Row(
@@ -77,7 +79,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                     Expanded(
                       child: TextField(
                         controller: imageController,
-                        decoration: const InputDecoration(labelText: "Rasm URL yoki asset yo'li"),
+                        decoration: InputDecoration(labelText: 'image_url_or_asset'.tr()),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -95,7 +97,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                             });
                             final response = await dio.post('/upload/image', data: formData);
                             if (response.data['data'] != null && response.data['data']['url'] != null) {
-                              imageController.text = response.data['data']['url'];
+                              imageController.text = ImageUtils.getFullImageUrl(response.data['data']['url']);
                             }
                           } catch (e) {
                             if (context.mounted) {
@@ -105,7 +107,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                         }
                       },
                       icon: const Icon(Icons.upload_file),
-                      label: const Text('Yuklash'),
+                      label: Text('upload_image'.tr()),
                     ),
                   ],
                 ),
@@ -116,7 +118,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Bekor qilish'),
+            child: Text('cancel'.tr()),
           ),
           ElevatedButton(
             onPressed: () {
@@ -134,7 +136,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
               }
               Navigator.pop(context);
             },
-            child: const Text('Saqlash'),
+            child: Text('save'.tr()),
           ),
         ],
       ),
@@ -158,7 +160,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Kategoriyalar',
+                      'categories'.tr(),
                       style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -169,7 +171,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                       child: ElevatedButton.icon(
                         onPressed: () => _showCategoryDialog(context, ref),
                         icon: const Icon(Icons.add, size: 18),
-                        label: const Text("Kategoriya qo'shish"),
+                        label: Text('add_category'.tr()),
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size(double.infinity, 48),
                         ),
@@ -181,7 +183,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Kategoriyalar',
+                      'categories'.tr(),
                       style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -189,7 +191,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                     ElevatedButton.icon(
                       onPressed: () => _showCategoryDialog(context, ref),
                       icon: const Icon(Icons.add),
-                      label: const Text("Kategoriya qo'shish"),
+                      label: Text('add_category'.tr()),
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(200, 48),
                       ),
@@ -210,13 +212,13 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
               physics: const ClampingScrollPhysics(),
               scrollDirection: Axis.horizontal,
               child: DataTable(
-                columns: const [
-                  DataColumn(label: Text('Rasm')),
-                  DataColumn(label: Text('ID')),
-                  DataColumn(label: Text('Nomi (UZ)')),
-                  DataColumn(label: Text('Nomi (RU)')),
-                  DataColumn(label: Text('Nomi (EN)')),
-                  DataColumn(label: Text('Amallar')),
+                columns: [
+                  DataColumn(label: Text('image'.tr())),
+                  const DataColumn(label: Text('ID')),
+                  DataColumn(label: Text('name_uz'.tr())),
+                  DataColumn(label: Text('name_ru'.tr())),
+                  DataColumn(label: Text('name_en'.tr())),
+                  DataColumn(label: Text('actions'.tr())),
                 ],
                 rows: categories.map((category) {
                   final rawUrl = category['image_url']?.toString();

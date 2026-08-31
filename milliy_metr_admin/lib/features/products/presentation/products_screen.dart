@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:milliy_metr_admin/core/utils/image_utils.dart';
 import '../../../core/providers/admin_providers.dart';
 import '../../../core/api/api_client.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ProductsScreen extends ConsumerStatefulWidget {
   const ProductsScreen({super.key});
@@ -56,38 +57,38 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Mahsulot nomi', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                  Text('product_name'.tr(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
                   const SizedBox(height: 8),
                   TextField(
                     controller: nameUzController,
-                    decoration: const InputDecoration(
-                      labelText: "Nomi (O'zbekcha)",
-                      prefixIcon: Icon(Icons.language),
+                    decoration: InputDecoration(
+                      labelText: 'name_uz'.tr(),
+                      prefixIcon: const Icon(Icons.language),
                     ),
                   ),
                   const SizedBox(height: 12),
                   TextField(
                     controller: nameRuController,
-                    decoration: const InputDecoration(
-                      labelText: 'Nomi (Ruscha)',
-                      prefixIcon: Icon(Icons.language),
+                    decoration: InputDecoration(
+                      labelText: 'name_ru'.tr(),
+                      prefixIcon: const Icon(Icons.language),
                     ),
                   ),
                   const SizedBox(height: 12),
                   TextField(
                     controller: nameEnController,
-                    decoration: const InputDecoration(
-                      labelText: 'Nomi (Inglizcha)',
-                      prefixIcon: Icon(Icons.language),
+                    decoration: InputDecoration(
+                      labelText: 'name_en'.tr(),
+                      prefixIcon: const Icon(Icons.language),
                     ),
                   ),
                   const SizedBox(height: 20),
-                  const Text('Kategoriya', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                  Text('category'.tr(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
                   const SizedBox(height: 8),
                   DropdownButtonFormField<String>(
-                    decoration: const InputDecoration(
-                      hintText: 'Kategoriya tanlang',
-                      prefixIcon: Icon(Icons.category),
+                    decoration: InputDecoration(
+                      hintText: 'select_category'.tr(),
+                      prefixIcon: const Icon(Icons.category),
                     ),
                     initialValue: selectedCategoryId,
                     items: categories.map((c) {
@@ -109,14 +110,14 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('Narxi (UZS)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                            Text('price_uzs'.tr(), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
                             const SizedBox(height: 8),
                             TextField(
                               controller: priceController,
                               keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(
-                                hintText: '45000',
-                                prefixIcon: Icon(Icons.attach_money),
+                              decoration: InputDecoration(
+                                prefixText: 'UZS ',
+                                prefixIcon: const Icon(Icons.attach_money),
                               ),
                             ),
                           ],
@@ -127,7 +128,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text("O'lchov birligi", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                            Text('unit'.tr(), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
                             const SizedBox(height: 8),
                             DropdownButtonFormField<String>(
                               initialValue: selectedUnit,
@@ -154,7 +155,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  const Text('Rasm', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                  Text('image'.tr(), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
                   const SizedBox(height: 8),
                   InkWell(
                     onTap: () async {
@@ -172,7 +173,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                           final response = await dio.post('/upload/image', data: formData);
                           if (response.data['data'] != null && response.data['data']['url'] != null) {
                             setDialogState(() {
-                              imageUrlController.text = response.data['data']['url'];
+                              imageUrlController.text = ImageUtils.getFullImageUrl(response.data['data']['url']);
                             });
                           }
                         } catch (e) {
@@ -191,16 +192,16 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                         color: Theme.of(context).colorScheme.surfaceContainerHighest,
                         borderRadius: BorderRadius.circular(12),
                         image: imageUrlController.text.isNotEmpty
-                            ? DecorationImage(image: NetworkImage(imageUrlController.text), fit: BoxFit.cover)
+                            ? DecorationImage(image: NetworkImage(ImageUtils.getFullImageUrl(imageUrlController.text)), fit: BoxFit.cover)
                             : null,
                       ),
                       child: imageUrlController.text.isEmpty
-                          ? const Column(
+                          ? Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.add_a_photo, size: 32, color: Colors.grey),
-                                SizedBox(height: 8),
-                                Text("Rasm yuklash", style: TextStyle(color: Colors.grey)),
+                                const Icon(Icons.add_a_photo, size: 32, color: Colors.grey),
+                                const SizedBox(height: 8),
+                                Text('upload_image'.tr(), style: const TextStyle(color: Colors.grey)),
                               ],
                             )
                           : Stack(
@@ -223,20 +224,20 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  const Text('Tavsif', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                  Text('description'.tr(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
                   const SizedBox(height: 8),
                   TextField(
                     controller: descController,
                     maxLines: 3,
-                    decoration: const InputDecoration(
-                      hintText: 'Mahsulot haqida...',
-                      prefixIcon: Icon(Icons.description),
+                    decoration: InputDecoration(
+                      hintText: 'description_hint'.tr(),
+                      prefixIcon: const Icon(Icons.description),
                     ),
                   ),
                   const SizedBox(height: 16),
                   SwitchListTile(
-                    title: const Text('Omborda mavjud'),
-                    subtitle: Text(inStock ? 'Sotuvda' : 'Tugagan'),
+                    title: Text('in_stock'.tr()),
+                    subtitle: Text(inStock ? 'on_sale'.tr() : 'out_of_stock'.tr()),
                     value: inStock,
                     activeThumbColor: const Color(0xFFFF7A00),
                     onChanged: (val) {
@@ -267,7 +268,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () => Navigator.pop(dialogContext),
-                    child: const Text("Bekor qilish"),
+                    child: Text('cancel'.tr()),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -279,8 +280,8 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                         : () async {
                             if (nameUzController.text.isEmpty || priceController.text.isEmpty) {
                               ScaffoldMessenger.of(dialogContext).showSnackBar(
-                                const SnackBar(
-                                  content: Text("Nomi va narxini kiriting"),
+                                SnackBar(
+                                  content: Text("enter_name_and_price".tr()),
                                   backgroundColor: Colors.red,
                                 ),
                               );
@@ -312,7 +313,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                               if (isEditing) {
                                 await dio.put('/products/${product['id']}', data: payload);
                               } else {
-                                await dio.post('/products/', data: payload);
+                                await dio.post('/products', data: payload);
                               }
 
                               if (dialogContext.mounted) {
@@ -343,7 +344,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                             height: 16,
                             child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                           )
-                        : const Text('Saqlash'),
+                        : Text('save'.tr()),
                   ),
                 ),
               ],
@@ -395,7 +396,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          isEditing ? "Mahsulotni tahrirlash" : "Yangi mahsulot qo'shish",
+                          isEditing ? 'edit_product'.tr() : 'add_product'.tr(),
                           style: Theme.of(sheetContext).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -430,7 +431,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                   child: Icon(isEditing ? Icons.edit : Icons.add_box_rounded, color: const Color(0xFFFF7A00)),
                 ),
                 const SizedBox(width: 12),
-                Text(isEditing ? "Mahsulotni tahrirlash" : "Yangi mahsulot qo'shish"),
+                Text(isEditing ? 'edit_product'.tr() : 'add_product'.tr()),
               ],
             ),
             content: SizedBox(
@@ -448,11 +449,11 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text("Mahsulotni o'chirish"),
-        content: const Text("Rostdan ham ushbu mahsulotni o'chirmoqchimisiz?"),
+        title: Text('delete_product'.tr()),
+        content: Text('delete_product_confirm'.tr()),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text("Yo'q")),
-          ElevatedButton(onPressed: () => Navigator.pop(ctx, true), style: ElevatedButton.styleFrom(backgroundColor: Colors.red), child: const Text("Ha, o'chirish")),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text('no'.tr())),
+          ElevatedButton(onPressed: () => Navigator.pop(ctx, true), style: ElevatedButton.styleFrom(backgroundColor: Colors.red), child: Text('yes_delete'.tr())),
         ],
       ),
     );
@@ -464,11 +465,11 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
         ref.invalidate(productsProvider);
         if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Mahsulot o'chirildi"), backgroundColor: Colors.green),
+          SnackBar(content: Text('product_deleted'.tr()), backgroundColor: Colors.green),
         );
       } catch (e) {
         if (!context.mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Xatolik: $e"), backgroundColor: Colors.red));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${'error_prefix'.tr()}: $e"), backgroundColor: Colors.red));
       }
     }
   }
@@ -491,7 +492,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Mahsulotlar Katalogi',
+                      'products_catalog'.tr(),
                       style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -504,7 +505,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                         ElevatedButton.icon(
                           onPressed: () => context.go('/products/import'),
                           icon: const Icon(Icons.upload_file, size: 18),
-                          label: const Text('Excel Import'),
+                          label: Text('excel_import'.tr()),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Theme.of(context).colorScheme.surface,
                             foregroundColor: Theme.of(context).textTheme.bodyLarge?.color,
@@ -514,7 +515,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                         ElevatedButton.icon(
                           onPressed: () => _showProductDialog(context),
                           icon: const Icon(Icons.add, size: 18),
-                          label: const Text("Mahsulot qo'shish"),
+                          label: Text('add_product'.tr()),
                         ),
                       ],
                     ),
@@ -524,7 +525,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Mahsulotlar Katalogi',
+                      'products_catalog'.tr(),
                       style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -534,7 +535,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                         ElevatedButton.icon(
                           onPressed: () => context.go('/products/import'),
                           icon: const Icon(Icons.upload_file),
-                          label: const Text('Excel Import'),
+                          label: Text('excel_import'.tr()),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Theme.of(context).colorScheme.surface,
                             foregroundColor: Theme.of(context).textTheme.bodyLarge?.color,
@@ -545,7 +546,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                         ElevatedButton.icon(
                           onPressed: () => _showProductDialog(context),
                           icon: const Icon(Icons.add),
-                          label: const Text("Mahsulot qo'shish"),
+                          label: Text('add_product'.tr()),
                         ),
                       ],
                     ),
@@ -581,7 +582,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                       children: [
                         Icon(Icons.inventory_2_outlined, size: 64, color: Colors.grey.shade400),
                         const SizedBox(height: 16),
-                        Text('Mahsulotlar topilmadi', style: Theme.of(context).textTheme.titleLarge),
+                        Text('products_not_found'.tr(), style: Theme.of(context).textTheme.titleLarge),
                       ],
                     ),
                   ),
@@ -599,21 +600,21 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: DataTable(
-                    columns: const [
-                      DataColumn(label: Text('Rasm')),
-                      DataColumn(label: Text('Nomi')),
-                      DataColumn(label: Text('Kategoriya')),
-                      DataColumn(label: Text('Narxi (UZS)')),
-                      DataColumn(label: Text('Status')),
-                      DataColumn(label: Text('Amallar')),
+                    columns: [
+                      DataColumn(label: Text('image'.tr())),
+                      DataColumn(label: Text('name'.tr())),
+                      DataColumn(label: Text('category'.tr())),
+                      DataColumn(label: Text('price_uzs'.tr())),
+                      DataColumn(label: Text('status'.tr())),
+                      DataColumn(label: Text('actions'.tr())),
                     ],
                     rows: filteredProducts.map((product) {
                       final nameRaw = product['name'];
                       String displayName;
                       if (nameRaw is Map) {
-                        displayName = nameRaw['uz'] ?? nameRaw['en'] ?? 'Noma\'lum';
+                        displayName = nameRaw['uz'] ?? nameRaw['en'] ?? 'unknown'.tr();
                       } else {
-                        displayName = (nameRaw ?? 'Noma\'lum').toString();
+                        displayName = (nameRaw ?? 'unknown'.tr()).toString();
                       }
 
                       final images = product['images'];
@@ -656,7 +657,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                               ),
                             ),
                           ),
-                          DataCell(Text(product['category_name']?.toString() ?? 'Boshqa')),
+                          DataCell(Text(product['category_name']?.toString() ?? 'other'.tr())),
                           DataCell(Text('${product['price'] ?? 0} UZS')),
                           DataCell(
                             Container(
@@ -665,9 +666,9 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                                 color: const Color(0xFF10B981).withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(20),
                               ),
-                              child: const Text(
-                                'Faol',
-                                style: TextStyle(
+                              child: Text(
+                                'active'.tr(),
+                                style: const TextStyle(
                                   color: Color(0xFF10B981),
                                   fontWeight: FontWeight.bold,
                                   fontSize: 12,
@@ -710,11 +711,11 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                   children: [
                     const Icon(Icons.error_outline, size: 48, color: Colors.red),
                     const SizedBox(height: 16),
-                    Text('Xatolik: $error'),
+                    Text('${'error_prefix'.tr()}: $error'),
                     const SizedBox(height: 12),
                     ElevatedButton(
                       onPressed: () => ref.invalidate(productsProvider),
-                      child: const Text('Qayta urinish'),
+                      child: Text('retry'.tr()),
                     ),
                   ],
                 ),
@@ -743,13 +744,13 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
           ),
           const SizedBox(height: 12),
           DropdownButtonFormField<String>(
-            decoration: const InputDecoration(
-              hintText: 'Barcha kategoriyalar',
+            decoration: InputDecoration(
+              hintText: 'all_categories'.tr(),
             ),
             initialValue: _selectedCategory,
             isExpanded: true,
             items: [
-              const DropdownMenuItem(value: '', child: Text('Barcha kategoriyalar')),
+              DropdownMenuItem(value: '', child: Text('all_categories'.tr())),
               ...categories.map((c) => DropdownMenuItem(
                     value: c['id'].toString(),
                     child: Text(c['name'] ?? ''),
@@ -772,7 +773,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                 });
               },
               icon: const Icon(Icons.clear),
-              label: const Text('Filtrlarni tozalash'),
+              label: Text('clear_filters'.tr()),
             ),
           )
         ],

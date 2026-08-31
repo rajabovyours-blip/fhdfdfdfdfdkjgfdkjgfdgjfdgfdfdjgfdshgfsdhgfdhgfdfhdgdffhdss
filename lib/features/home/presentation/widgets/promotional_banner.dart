@@ -67,7 +67,7 @@ class _PromotionalBannerState extends State<PromotionalBanner> {
                           children: [
                             Flexible(
                               child: Text(
-                                banner.id == 'banner_1' ? context.l10n.promoBannerTitle : banner.title.get(languageCode),
+                                banner.title.get(languageCode),
                                 style: TextStyle(
                                   color: context.colors.textHigh,
                                   fontSize: 16,
@@ -81,7 +81,7 @@ class _PromotionalBannerState extends State<PromotionalBanner> {
                             const SizedBox(height: 8),
                             Flexible(
                               child: Text(
-                                banner.id == 'banner_1' ? context.l10n.promoBannerSubtitle : banner.subtitle.get(languageCode),
+                                banner.subtitle.get(languageCode),
                                 style: TextStyle(
                                   color: context.colors.textHigh.withValues(alpha: 0.8),
                                   fontSize: 12,
@@ -99,7 +99,7 @@ class _PromotionalBannerState extends State<PromotionalBanner> {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
-                                banner.id == 'banner_1' ? context.l10n.promoBannerButton : banner.cta.get(languageCode),
+                                banner.cta.get(languageCode),
                                 style: TextStyle(
                                   color: context.colors.primary,
                                   fontSize: 12,

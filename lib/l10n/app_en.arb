@@ -431,5 +431,7 @@
   "noAddressesSaved": "You don't have any saved addresses yet",
   "pleaseSelectRegionDistrict": "Please select a region and district",
   "promoBannerTitle": "All you need for construction",
-  "promoBannerSubtitle": "Best price guarantee"
+  "promoBannerSubtitle": "Best price guarantee",
+  "googleSignInError": "An error occurred during Google Sign-In",
+  "appleSignInError": "An error occurred during Apple Sign-In"
 }

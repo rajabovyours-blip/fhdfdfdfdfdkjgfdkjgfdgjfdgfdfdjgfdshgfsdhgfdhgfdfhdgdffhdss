@@ -67,6 +67,7 @@ app = FastAPI(
     description="Backend API for the Milliy Metr Marketplace",
     version="1.0.0",
     lifespan=lifespan,
+    redirect_slashes=False,
 )
 
 # CORS Configuration

@@ -56,17 +56,8 @@ async def login(user_in: UserLogin, db: AsyncSession = Depends(get_db)):
     )
     return APIResponse(data=token, message="Login successful")
 
-from fastapi.security import OAuth2PasswordRequestForm
 
-@router.get("/fix-db")
-async def fix_db(db: AsyncSession = Depends(get_db)):
-    from app.db.seed import seed_data
-    try:
-        await seed_data(db)
-        return {"status": "success", "message": "Seed data completed without errors"}
-    except Exception as e:
-        import traceback
-        return {"status": "error", "error": str(e), "traceback": traceback.format_exc()}
+from fastapi.security import OAuth2PasswordRequestForm
 
 @router.post("/admin-login", response_model=APIResponse[TokenModel])
 async def admin_login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db)):
@@ -74,7 +65,7 @@ async def admin_login(form_data: OAuth2PasswordRequestForm = Depends(), db: Asyn
     user = result.scalar_one_or_none()
     
     if not user or not verify_password(form_data.password, user.hashed_password):
-        raise HTTPException(status_code=400, detail="Incorrect username or password (debug 2)")
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
         
     if user.role not in [RoleEnum.ADMIN, RoleEnum.OWNER]:
         raise HTTPException(status_code=403, detail="Not authorized as admin")
@@ -156,11 +147,11 @@ async def social_login(payload: SocialLoginRequest, db: AsyncSession = Depends(g
             )
             
             known_client_ids = [
-                "5408559924-kl0rm498vdr2qo39prt5k6g5v0vjvsqt.apps.googleusercontent.com", # Web
-                "5408559924-gme4o899c8aje2gdl55b92a8cp809pbq.apps.googleusercontent.com"  # Android
+                "433156009799-tia3qrtgo44tq5eaj9n7b03r4t7q6f5j.apps.googleusercontent.com", # Web
+                "433156009799-op4rsucja7jo5ud06lid29dofalg0121.apps.googleusercontent.com", # Android
             ]
             
-            if id_info.get('aud') not in known_client_ids and "5408559924-" not in str(id_info.get('aud')):
+            if id_info.get('aud') not in known_client_ids and "433156009799-" not in str(id_info.get('aud')):
                 raise ValueError(f"Unrecognized client ID: {id_info.get('aud')}")
 
             email = id_info.get('email')

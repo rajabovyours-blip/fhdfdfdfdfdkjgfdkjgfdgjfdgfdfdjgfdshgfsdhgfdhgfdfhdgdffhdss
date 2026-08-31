@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:milliy_metr_admin/core/utils/image_utils.dart';
 import '../../../core/providers/admin_providers.dart';
 import '../../../core/api/api_client.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class BannersScreen extends ConsumerStatefulWidget {
   const BannersScreen({super.key});
@@ -20,12 +21,13 @@ class _BannersScreenState extends ConsumerState<BannersScreen> {
     final imageController = TextEditingController(text: banner?['image_url'] ?? '');
     bool isActive = banner?['is_active'] ?? true;
     bool isLoading = false;
+    final isEditing = banner != null;
 
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: Text(banner == null ? "Yangi banner qo'shish" : "Bannerni tahrirlash"),
+          title: Text(isEditing ? 'edit_banner'.tr() : 'add_banner'.tr()),
           content: SizedBox(
             width: 500,
             child: SingleChildScrollView(
@@ -33,12 +35,12 @@ class _BannersScreenState extends ConsumerState<BannersScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TextField(
-                    decoration: const InputDecoration(labelText: "Sarlavha (Title)"),
+                    decoration: InputDecoration(labelText: 'banner_title'.tr()),
                     controller: titleController,
                   ),
                   const SizedBox(height: 16),
                   TextField(
-                    decoration: const InputDecoration(labelText: "Havola (Link URL)"),
+                    decoration: InputDecoration(labelText: 'banner_link'.tr()),
                     controller: linkController,
                   ),
                   const SizedBox(height: 16),
@@ -46,7 +48,7 @@ class _BannersScreenState extends ConsumerState<BannersScreen> {
                     children: [
                       Expanded(
                         child: TextField(
-                          decoration: const InputDecoration(labelText: "Rasm URL"),
+                          decoration: InputDecoration(labelText: 'banner_image_url'.tr()),
                           controller: imageController,
                         ),
                       ),
@@ -65,7 +67,7 @@ class _BannersScreenState extends ConsumerState<BannersScreen> {
                               });
                               final response = await dio.post('/upload/image', data: formData);
                               if (response.data['data'] != null && response.data['data']['url'] != null) {
-                                imageController.text = response.data['data']['url'];
+                              imageController.text = ImageUtils.getFullImageUrl(response.data['data']['url']);
                               }
                             } catch (e) {
                               if (context.mounted) {
@@ -75,14 +77,14 @@ class _BannersScreenState extends ConsumerState<BannersScreen> {
                           }
                         },
                         icon: const Icon(Icons.upload_file),
-                        label: const Text('Yuklash'),
+                        label: Text('upload_image'.tr()),
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
                   Row(
                     children: [
-                      const Text("Faollik holati"),
+                      Text('activity_status'.tr()),
                       const Spacer(),
                       Switch(
                         value: isActive, 
@@ -97,20 +99,20 @@ class _BannersScreenState extends ConsumerState<BannersScreen> {
             ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: const Text("Bekor qilish")),
+            TextButton(onPressed: () => Navigator.pop(context), child: Text('cancel'.tr())),
             ElevatedButton.icon(
               onPressed: isLoading
                   ? null
                   : () async {
                       if (imageController.text.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Rasm kiritilishi shart"), backgroundColor: Colors.red));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('banner_image_required'.tr()), backgroundColor: Colors.red));
                         return;
                       }
                       setDialogState(() => isLoading = true);
                       try {
                         final dio = ref.read(dioProvider);
                         if (banner == null) {
-                          await dio.post('/banners/', data: {
+                          await dio.post('/banners', data: {
                             'title': titleController.text,
                             'link_url': linkController.text,
                             'image_url': imageController.text,
@@ -118,10 +120,8 @@ class _BannersScreenState extends ConsumerState<BannersScreen> {
                             'order_index': 0,
                           });
                         } else {
-                          // update isn't implemented in backend yet, but we could recreate or add PUT endpoint. 
-                          // For now, let's assume we recreate it by deleting and inserting
                           await dio.delete('/banners/${banner['id']}');
-                          await dio.post('/banners/', data: {
+                          await dio.post('/banners', data: {
                             'title': titleController.text,
                             'link_url': linkController.text,
                             'image_url': imageController.text,
@@ -132,7 +132,7 @@ class _BannersScreenState extends ConsumerState<BannersScreen> {
                         if (context.mounted) {
                           Navigator.pop(context);
                           ref.invalidate(bannersProvider);
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Banner saqlandi"), backgroundColor: Colors.green));
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Banner saqlandi"), backgroundColor: Colors.green));
                         }
                       } catch (e) {
                         setDialogState(() => isLoading = false);
@@ -142,7 +142,7 @@ class _BannersScreenState extends ConsumerState<BannersScreen> {
                       }
                     },
               icon: isLoading ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)) : const Icon(Icons.save),
-              label: Text(isLoading ? 'Saqlanmoqda...' : 'Saqlash'),
+              label: Text(isLoading ? 'loading'.tr() : 'save'.tr()),
             ),
           ],
         ),
@@ -154,11 +154,11 @@ class _BannersScreenState extends ConsumerState<BannersScreen> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text("Bannerni o'chirish"),
-        content: const Text("Rostdan ham o'chirmoqchimisiz?"),
+        title: Text('delete_banner'.tr()),
+        content: Text('delete_banner_confirm'.tr()),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text("Yo'q")),
-          ElevatedButton(onPressed: () => Navigator.pop(ctx, true), style: ElevatedButton.styleFrom(backgroundColor: Colors.red), child: const Text("Ha, o'chirish")),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text('no'.tr())),
+          ElevatedButton(onPressed: () => Navigator.pop(ctx, true), style: ElevatedButton.styleFrom(backgroundColor: Colors.red), child: Text('yes_delete'.tr())),
         ],
       ),
     );
@@ -192,7 +192,7 @@ class _BannersScreenState extends ConsumerState<BannersScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Bannerlar",
+                'banners'.tr(),
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -200,7 +200,7 @@ class _BannersScreenState extends ConsumerState<BannersScreen> {
               ElevatedButton.icon(
                 onPressed: () => _showBannerDialog(context),
                 icon: const Icon(Icons.add),
-                label: const Text("Banner qo'shish"),
+                label: Text('add_banner'.tr()),
               ),
             ],
           ),
@@ -216,12 +216,12 @@ class _BannersScreenState extends ConsumerState<BannersScreen> {
                       children: [
                         const Icon(Icons.view_carousel_outlined, size: 64, color: Colors.grey),
                         const SizedBox(height: 16),
-                        Text("Bannerlar mavjud emas", style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.grey)),
+                        Text('no_banners'.tr(), style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.grey)),
                         const SizedBox(height: 24),
                         ElevatedButton.icon(
                           onPressed: () => _showBannerDialog(context),
                           icon: const Icon(Icons.add),
-                          label: const Text("+ Yangi banner qo'shish"),
+                          label: Text('add_banner'.tr()),
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                           ),
@@ -243,12 +243,12 @@ class _BannersScreenState extends ConsumerState<BannersScreen> {
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: DataTable(
-                    columns: const [
-                      DataColumn(label: Text("Rasm")),
-                      DataColumn(label: Text("Sarlavha")),
-                      DataColumn(label: Text("Havola (Link)")),
-                      DataColumn(label: Text("Holat")),
-                      DataColumn(label: Text("Amallar")),
+                    columns: [
+                      DataColumn(label: Text('image'.tr())),
+                      DataColumn(label: Text('banner_title'.tr())),
+                      DataColumn(label: Text('banner_link_label'.tr())),
+                      DataColumn(label: Text('status'.tr())),
+                      DataColumn(label: Text('actions'.tr())),
                     ],
                     rows: banners.map((banner) {
                       return DataRow(
@@ -279,7 +279,7 @@ class _BannersScreenState extends ConsumerState<BannersScreen> {
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Text(
-                                banner['is_active'] == true ? 'Faol' : 'Nofaol',
+                                banner['is_active'] == true ? 'active'.tr() : 'inactive'.tr(),
                                 style: TextStyle(
                                   color: banner['is_active'] == true ? const Color(0xFF10B981) : Colors.grey,
                                   fontWeight: FontWeight.bold,

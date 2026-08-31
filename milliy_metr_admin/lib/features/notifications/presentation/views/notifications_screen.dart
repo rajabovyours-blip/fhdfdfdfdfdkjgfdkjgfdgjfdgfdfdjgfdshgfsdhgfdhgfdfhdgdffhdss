@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:dio/dio.dart';
 import 'package:milliy_metr_admin/core/api/api_client.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class NotificationsScreen extends ConsumerStatefulWidget {
   const NotificationsScreen({super.key});
@@ -37,7 +38,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Xatolik: $e')));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${'error_prefix'.tr()}: $e')));
         }
       }
     }
@@ -46,7 +47,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
   Future<void> _sendBroadcast() async {
     if (_titleController.text.trim().isEmpty || _bodyController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Sarlavha va matn kiritilishi shart!')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('title_body_required'.tr())));
       return;
     }
 
@@ -81,7 +82,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Xatolik: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${'error_prefix'.tr()}: $e')));
       }
     } finally {
       if (mounted) {
@@ -95,7 +96,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: const Text('Bildirishnomalar Yuborish'),
+        title: Text('send_notifications'.tr()),
         elevation: 0,
         backgroundColor: Colors.transparent,
       ),
@@ -107,22 +108,22 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Yangi Bildirishnoma (Push Notification)',
+                'new_notification'.tr(),
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
-              const Text(
-                'Bu yerdan barcha foydalanuvchilarga push bildirishnomalari yuborishingiz mumkin.',
-                style: TextStyle(color: Colors.grey),
+              Text(
+                'notification_desc'.tr(),
+                style: const TextStyle(color: Colors.grey),
               ),
               const SizedBox(height: 32),
 
               TextField(
                 controller: _titleController,
-                decoration: const InputDecoration(
-                  labelText: 'Sarlavha (Title)',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.title),
+                decoration: InputDecoration(
+                  labelText: 'notification_title'.tr(),
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.title),
                 ),
               ),
               const SizedBox(height: 16),
@@ -130,10 +131,10 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
               TextField(
                 controller: _bodyController,
                 maxLines: 4,
-                decoration: const InputDecoration(
-                  labelText: 'Matn (Body)',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.message),
+                decoration: InputDecoration(
+                  labelText: 'notification_body'.tr(),
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.message),
                 ),
               ),
               const SizedBox(height: 16),
@@ -143,10 +144,10 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                   Expanded(
                     child: TextField(
                       controller: _imageController,
-                      decoration: const InputDecoration(
-                        labelText: 'Rasm URL (Ixtiyoriy)',
-                        border: OutlineInputBorder(),
-                        prefixIcon: Icon(Icons.image),
+                      decoration: InputDecoration(
+                        labelText: 'notification_image'.tr(),
+                        border: const OutlineInputBorder(),
+                        prefixIcon: const Icon(Icons.image),
                       ),
                     ),
                   ),
@@ -154,7 +155,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                   ElevatedButton.icon(
                     onPressed: _pickImage,
                     icon: const Icon(Icons.upload_file),
-                    label: const Text('Yuklash'),
+                    label: Text('upload_image'.tr()),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                     ),
@@ -163,13 +164,13 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
               ),
               const SizedBox(height: 24),
               
-              const Text('Kimgar yuboriladi?', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text('notification_target'.tr(), style: const TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'all', label: Text('Barchaga')),
-                  ButtonSegment(value: 'users', label: Text('Foydalanuvchilarga')),
-                  ButtonSegment(value: 'admins', label: Text('Adminlarga')),
+                segments: [
+                  ButtonSegment(value: 'all', label: Text('target_all'.tr())),
+                  ButtonSegment(value: 'users', label: Text('target_users'.tr())),
+                  ButtonSegment(value: 'admins', label: Text('target_admins'.tr())),
                 ],
                 selected: {_target},
                 onSelectionChanged: (Set<String> newSelection) {
@@ -186,7 +187,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                 child: ElevatedButton.icon(
                   onPressed: _isLoading ? null : _sendBroadcast,
                   icon: _isLoading ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)) : const Icon(Icons.send),
-                  label: Text(_isLoading ? 'Yuborilmoqda...' : 'Bildirishnomani Yuborish', style: const TextStyle(fontSize: 16)),
+                  label: Text(_isLoading ? 'sending'.tr() : 'send_notification'.tr(), style: const TextStyle(fontSize: 16)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFFF7A00),
                     foregroundColor: Colors.white,

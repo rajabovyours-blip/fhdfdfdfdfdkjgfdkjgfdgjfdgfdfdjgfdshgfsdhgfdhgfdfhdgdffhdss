@@ -244,7 +244,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
               height: 44,
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () => context.go('/home'),
+                onPressed: () => context.go(AppRoutes.catalog),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: context.colors.primary,
                   foregroundColor: context.colors.onPrimary,

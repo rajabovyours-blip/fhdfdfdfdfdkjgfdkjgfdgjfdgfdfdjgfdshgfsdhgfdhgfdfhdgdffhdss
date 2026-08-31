@@ -41,7 +41,7 @@ async def broadcast_notification(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    if current_user.role != RoleEnum.ADMIN:
+    if current_user.role not in [RoleEnum.ADMIN, RoleEnum.OWNER]:
         raise HTTPException(status_code=403, detail="Not authorized")
         
     from app.models.extras import Notification

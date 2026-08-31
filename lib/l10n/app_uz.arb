@@ -451,5 +451,7 @@
   "passwordChangeError": "Xatolik yuz berdi yoxud parol noto'g'ri",
   "biometricError": "Biometrik xatolik",
   "noAddressesSaved": "Sizda hozircha manzillar yo'q",
-  "pleaseSelectRegionDistrict": "Iltimos, viloyat va tumanni tanlang"
+  "pleaseSelectRegionDistrict": "Iltimos, viloyat va tumanni tanlang",
+  "googleSignInError": "Google orqali kirishda xatolik yuz berdi",
+  "appleSignInError": "Apple orqali kirishda xatolik yuz berdi"
 }
