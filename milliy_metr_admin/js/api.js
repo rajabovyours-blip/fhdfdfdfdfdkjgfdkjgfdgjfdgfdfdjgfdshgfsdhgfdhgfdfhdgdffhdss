@@ -11,16 +11,23 @@ const api = {
       ...options.headers,
     };
 
-    // If it's not FormData (like image uploads) or application/x-www-form-urlencoded (login), default to JSON
-    if (!(options.body instanceof FormData) && options.body && typeof options.body === 'object') {
-      if (!headers['Content-Type']) {
-        headers['Content-Type'] = 'application/json';
-      }
-      options.body = JSON.stringify(options.body);
+    // Handle body serialization based on type
+    if (options.body instanceof FormData) {
+      // Let browser set Content-Type with boundary for multipart
     } else if (options.isUrlEncoded) {
+      headers['Content-Type'] = 'application/x-www-form-urlencoded';
+    } else if (options.body && typeof options.body === 'object') {
+      headers['Content-Type'] = 'application/json';
+      options.body = JSON.stringify(options.body);
+    } else if (options.body && typeof options.body === 'string' && !headers['Content-Type']) {
+      // String body without explicit content-type: assume form-urlencoded if it looks like it
+      if (options.body.includes('=')) {
         headers['Content-Type'] = 'application/x-www-form-urlencoded';
-        delete options.isUrlEncoded;
+      }
     }
+
+    // Clean up custom flags
+    delete options.isUrlEncoded;
 
     // Add Auth token if available
     const token = localStorage.getItem('mm_admin_access_token');

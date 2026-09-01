@@ -71,6 +71,7 @@ async def create_admin(
         id=uuid.uuid4(),
         username=payload.username,
         full_name=payload.full_name,
+        phone=f"+99800{str(uuid.uuid4().int)[:7]}", # Dummy phone for DB constraint
         hashed_password=get_password_hash(payload.password),
         role=payload.role,
         is_active=True
