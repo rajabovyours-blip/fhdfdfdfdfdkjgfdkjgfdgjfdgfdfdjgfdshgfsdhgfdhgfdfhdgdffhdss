@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bannerlar - Milliy Metr Admin</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+  
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div id="app">
+    <div class="d-flex justify-content-between align-items-center mb-24" style="margin-bottom: 24px;">
+      <h2 style="margin: 0;">Bannerlar</h2>
+      <button class="btn btn-primary" id="btn-add-banner">
+        <span class="material-symbols-rounded">add</span>
+        Yangi Qo'shish
+      </button>
+    </div>
+
+    <div class="card">
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th width="120">Rasm</th>
+              <th>Sarlavha</th>
+              <th>Havola</th>
+              <th>Tartib</th>
+              <th>Holat</th>
+              <th width="120" class="text-center">Amallar</th>
+            </tr>
+          </thead>
+          <tbody id="banner-list">
+            <tr>
+              <td colspan="6" class="text-center">Yuklanmoqda...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Banner Form -->
+  <div class="modal-overlay" id="banner-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-title" style="margin: 0;">Banner Qo'shish</h3>
+        <button class="modal-close" id="btn-close-modal"><span class="material-symbols-rounded">close</span></button>
+      </div>
+      <div class="modal-body">
+        <form id="banner-form">
+          <input type="hidden" id="banner-id">
+          
+          <div class="form-group">
+            <label class="form-label">Sarlavha (Ixtiyoriy)</label>
+            <input type="text" class="form-control" id="banner-title">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Havola (Link) (Ixtiyoriy)</label>
+            <input type="text" class="form-control" id="banner-link">
+          </div>
+          
+          <div class="d-flex gap-16">
+            <div class="form-group w-100">
+              <label class="form-label">Tartib raqami</label>
+              <input type="number" class="form-control" id="banner-order" value="0">
+            </div>
+            
+            <div class="form-group w-100" style="display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 12px;">
+              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" id="banner-active" checked style="width: 18px; height: 18px;">
+                <span class="form-label" style="margin:0;">Faol</span>
+              </label>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Rasm yuklash <span style="color:red">*</span></label>
+            <div class="d-flex gap-16 align-items-center">
+              <img id="banner-img-preview" src="" style="width: 120px; height: 60px; object-fit: cover; border-radius: 8px; background: var(--color-surface-variant); display: none;">
+              <input type="file" id="banner-img-upload" class="form-control" accept="image/*" style="padding-top: 10px;">
+            </div>
+            <input type="hidden" id="banner-image-url">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="btn-cancel-modal">Bekor qilish</button>
+        <button class="btn btn-primary" id="btn-save-banner">Saqlash</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/banners.js"></script>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buyurtmalar - Milliy Metr Admin</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+  
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .order-details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 768px) {
+      .order-details-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .info-block {
+      background: var(--color-surface-variant);
+      padding: 16px;
+      border-radius: 12px;
+    }
+    .info-label {
+      font-size: 12px;
+      color: var(--text-medium);
+      margin-bottom: 4px;
+    }
+    .info-value {
+      font-weight: 600;
+    }
+    .order-items-list {
+      border: 1px solid var(--color-divider);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .order-item {
+      display: flex;
+      gap: 16px;
+      padding: 12px;
+      border-bottom: 1px solid var(--color-divider);
+    }
+    .order-item:last-child {
+      border-bottom: none;
+    }
+    .order-item img {
+      width: 60px;
+      height: 60px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: #eee;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="app">
+    <div class="d-flex justify-content-between align-items-center mb-24" style="margin-bottom: 24px;">
+      <h2 style="margin: 0;">Buyurtmalar</h2>
+    </div>
+
+    <div class="card mb-24" style="margin-bottom: 24px;">
+      <div class="d-flex gap-16 align-items-center flex-wrap">
+        <div class="form-group mb-0" style="margin:0; flex: 1; min-width: 250px;">
+          <input type="text" class="form-control" id="search-input" placeholder="Buyurtma ID bo'yicha qidirish...">
+        </div>
+        <div class="form-group mb-0" style="margin:0; width: 200px;">
+          <select class="form-control" id="status-filter">
+            <option value="">Barcha holatlar</option>
+            <option value="pending">Kutilmoqda</option>
+            <option value="confirmed">Tasdiqlangan</option>
+            <option value="shipped">Yetkazilmoqda</option>
+            <option value="delivered">Yetkazib berilgan</option>
+            <option value="cancelled">Bekor qilingan</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Mijoz</th>
+              <th>Sana</th>
+              <th>Manzil</th>
+              <th>To'lov turi</th>
+              <th>Summa</th>
+              <th>Holat</th>
+              <th width="80" class="text-center">Tafsilotlar</th>
+            </tr>
+          </thead>
+          <tbody id="orders-list">
+            <tr>
+              <td colspan="8" class="text-center">Yuklanmoqda...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Order Details -->
+  <div class="modal-overlay" id="order-modal">
+    <div class="modal-content" style="max-width: 800px;">
+      <div class="modal-header">
+        <h3 style="margin: 0;">Buyurtma Tafsilotlari</h3>
+        <button class="modal-close" id="btn-close-modal"><span class="material-symbols-rounded">close</span></button>
+      </div>
+      <div class="modal-body">
+        
+        <div class="order-details-grid">
+          <!-- Customer Info -->
+          <div class="info-block">
+            <h4 style="margin-top:0; margin-bottom: 12px; font-size: 16px;">Mijoz Ma'lumotlari</h4>
+            <div class="info-label">Mijoz</div>
+            <div class="info-value" id="order-customer" style="margin-bottom: 12px;">-</div>
+            
+            <div class="info-label">Telefon</div>
+            <div class="info-value" id="order-phone" style="margin-bottom: 12px;">-</div>
+            
+            <div class="info-label">Sana</div>
+            <div class="info-value" id="order-date">-</div>
+          </div>
+          
+          <!-- Delivery & Payment Info -->
+          <div class="info-block">
+            <h4 style="margin-top:0; margin-bottom: 12px; font-size: 16px;">Yetkazib Berish & To'lov</h4>
+            <div class="info-label">Manzil</div>
+            <div class="info-value" id="order-address" style="margin-bottom: 12px;">-</div>
+            
+            <div class="info-label">To'lov turi</div>
+            <div class="info-value" id="order-payment" style="margin-bottom: 12px;">-</div>
+            
+            <div class="info-label">To'lov holati</div>
+            <div class="info-value" id="order-payment-status">-</div>
+          </div>
+        </div>
+        
+        <h4 style="margin-bottom: 12px; font-size: 16px;">Mahsulotlar</h4>
+        <div class="order-items-list" id="order-items">
+          <!-- Filled by JS -->
+        </div>
+        
+        <div class="d-flex justify-content-between align-items-center mt-16" style="padding: 16px; background: var(--color-surface-variant); border-radius: 8px;">
+          <span style="font-size: 16px; font-weight: 600;">Jami Summa:</span>
+          <span style="font-size: 20px; font-weight: 700; color: var(--color-primary);" id="order-total">-</span>
+        </div>
+        
+      </div>
+      <div class="modal-footer" style="justify-content: space-between;">
+        
+        <div class="d-flex gap-16 align-items-center">
+          <span style="font-weight: 500;">Holatni o'zgartirish:</span>
+          <select class="form-control" id="edit-order-status" style="width: 200px;">
+            <option value="pending">Kutilmoqda (Pending)</option>
+            <option value="confirmed">Tasdiqlangan (Confirmed)</option>
+            <option value="shipped">Yetkazilmoqda (Shipped)</option>
+            <option value="delivered">Yetkazib berilgan (Delivered)</option>
+            <option value="cancelled">Bekor qilingan (Cancelled)</option>
+          </select>
+          <button class="btn btn-primary btn-sm" id="btn-save-status">Yangilash</button>
+        </div>
+        
+        <div class="d-flex gap-12">
+          <button class="btn btn-danger btn-sm" id="btn-cancel-order">Buyurtmani Bekor Qilish</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/orders.js"></script>
+</body>
+</html>

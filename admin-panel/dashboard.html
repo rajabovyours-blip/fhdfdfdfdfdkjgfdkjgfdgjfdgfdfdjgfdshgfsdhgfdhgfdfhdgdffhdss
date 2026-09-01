@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Boshqaruv Paneli - Milliy Metr Admin</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+  
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: var(--space-24);
+      margin-bottom: var(--space-32);
+    }
+    
+    .kpi-card {
+      display: flex;
+      align-items: center;
+      gap: var(--space-16);
+    }
+    
+    .kpi-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-m);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--color-primary-container);
+      color: var(--color-primary);
+    }
+    
+    .kpi-icon .material-symbols-rounded {
+      font-size: 28px;
+    }
+    
+    .kpi-info h3 {
+      font-size: 24px;
+      margin: 0;
+    }
+    
+    .kpi-info p {
+      margin: 0;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="app">
+    <div id="loading-overlay" class="loading-overlay">
+      <div class="spinner primary"></div>
+    </div>
+    
+    <div class="kpi-grid">
+      <div class="card kpi-card">
+        <div class="kpi-icon"><span class="material-symbols-rounded">inventory_2</span></div>
+        <div class="kpi-info">
+          <p>Jami Mahsulotlar</p>
+          <h3 id="kpi-products">-</h3>
+        </div>
+      </div>
+      <div class="card kpi-card">
+        <div class="kpi-icon"><span class="material-symbols-rounded">group</span></div>
+        <div class="kpi-info">
+          <p>Jami Mijozlar</p>
+          <h3 id="kpi-users">-</h3>
+        </div>
+      </div>
+      <div class="card kpi-card">
+        <div class="kpi-icon"><span class="material-symbols-rounded">shopping_cart</span></div>
+        <div class="kpi-info">
+          <p>Jami Buyurtmalar</p>
+          <h3 id="kpi-orders">-</h3>
+        </div>
+      </div>
+      <div class="card kpi-card">
+        <div class="kpi-icon"><span class="material-symbols-rounded">payments</span></div>
+        <div class="kpi-info">
+          <p>Jami Daromad</p>
+          <h3 id="kpi-revenue">-</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom: var(--space-16);">So'nggi Buyurtmalar</h3>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Mijoz</th>
+              <th>Summa</th>
+              <th>Sana</th>
+              <th>Holat</th>
+            </tr>
+          </thead>
+          <tbody id="recent-orders-list">
+            <!-- Rendered by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

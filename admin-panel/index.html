@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tizimga kirish - Milliy Metr Admin</title>
+  
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/style.css">
+  
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background-color: var(--color-surface-variant);
+    }
+    .login-card {
+      width: 100%;
+      max-width: 400px;
+      padding: var(--space-40) var(--space-32);
+    }
+    .login-logo {
+      text-align: center;
+      margin-bottom: var(--space-32);
+      color: var(--color-primary);
+    }
+    .login-logo .material-symbols-rounded {
+      font-size: 48px;
+    }
+    #error-msg {
+      color: var(--color-danger);
+      background-color: rgba(222, 55, 48, 0.1);
+      padding: var(--space-12);
+      border-radius: var(--radius-s);
+      margin-bottom: var(--space-16);
+      font-size: 13px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card login-card">
+    <div class="login-logo">
+      <span class="material-symbols-rounded">architecture</span>
+      <h2>Milliy Metr</h2>
+      <p>Boshqaruv paneli</p>
+    </div>
+    
+    <div id="error-msg"></div>
+    
+    <form id="login-form">
+      <div class="form-group">
+        <label class="form-label" for="username">Foydalanuvchi nomi</label>
+        <input type="text" id="username" class="form-control" required placeholder="admin">
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label" for="password">Parol</label>
+        <input type="password" id="password" class="form-control" required placeholder="••••••••">
+      </div>
+      
+      <button type="submit" class="btn btn-primary w-100 mt-16" id="submit-btn">
+        <span>Kirish</span>
+      </button>
+    </form>
+  </div>
+
+  <!-- JS -->
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    // Ensure guest
+    auth.requireGuest();
+    
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const u = document.getElementById('username').value;
+      const p = document.getElementById('password').value;
+      const btn = document.getElementById('submit-btn');
+      const err = document.getElementById('error-msg');
+      
+      // Loading state
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>';
+      err.style.display = 'none';
+      
+      try {
+        await auth.login(u, p);
+        window.location.href = 'dashboard.html';
+      } catch (error) {
+        err.textContent = error.message;
+        err.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span>Kirish</span>';
+      }
+    });
+  </script>
+</body>
+</html>

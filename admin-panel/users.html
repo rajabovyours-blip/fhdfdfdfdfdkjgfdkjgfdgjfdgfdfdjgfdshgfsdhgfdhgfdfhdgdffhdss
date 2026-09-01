@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mijozlar - Milliy Metr Admin</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+  
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div id="app">
+    <div class="d-flex justify-content-between align-items-center mb-24" style="margin-bottom: 24px;">
+      <h2 style="margin: 0;">Mijozlar</h2>
+    </div>
+
+    <div class="card mb-24" style="margin-bottom: 24px;">
+      <div class="d-flex gap-16 align-items-center">
+        <div class="form-group mb-0" style="margin:0; width: 100%; max-width: 400px;">
+          <input type="text" class="form-control" id="search-input" placeholder="Ism yoki raqam bo'yicha qidirish...">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>F.I.Sh.</th>
+              <th>Telefon</th>
+              <th>Ro'yxatdan o'tgan</th>
+              <th>Buyurtmalar</th>
+              <th>Kirish turi</th>
+              <th>Holat</th>
+              <th width="80" class="text-center">Tafsilotlar</th>
+            </tr>
+          </thead>
+          <tbody id="users-list">
+            <tr>
+              <td colspan="7" class="text-center">Yuklanmoqda...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: User Details & Edit -->
+  <div class="modal-overlay" id="user-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 style="margin: 0;">Mijoz tafsilotlari</h3>
+        <button class="modal-close" id="btn-close-modal"><span class="material-symbols-rounded">close</span></button>
+      </div>
+      <div class="modal-body">
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; background: var(--color-surface-variant); padding: 16px; border-radius: 12px; margin-bottom: 24px;">
+          <div>
+            <div style="font-size: 12px; color: var(--text-medium);">Sana</div>
+            <div style="font-weight: 600;" id="user-date">-</div>
+          </div>
+          <div>
+            <div style="font-size: 12px; color: var(--text-medium);">Buyurtmalar</div>
+            <div style="font-weight: 600;" id="user-orders-count">-</div>
+          </div>
+          <div>
+            <div style="font-size: 12px; color: var(--text-medium);">Kirish usuli</div>
+            <div style="font-weight: 600;" id="user-auth-method">-</div>
+          </div>
+        </div>
+        
+        <form id="user-form">
+          <input type="hidden" id="user-id">
+          
+          <div class="form-group">
+            <label class="form-label">F.I.Sh.</label>
+            <input type="text" class="form-control" id="user-fullname" required>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Telefon raqami</label>
+            <input type="text" class="form-control" id="user-phone">
+          </div>
+          
+          <div class="form-group">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" id="user-active" style="width: 18px; height: 18px;">
+              <span class="form-label" style="margin:0;">Faol</span>
+            </label>
+            <p style="font-size: 12px; color: var(--text-medium); margin-top: 4px;">Agar bloklansa mijoz tizimga kira olmaydi.</p>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="btn-cancel-modal">Yopish</button>
+        <button class="btn btn-primary" id="btn-save-user">Saqlash</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/users.js"></script>
+</body>
+</html>
