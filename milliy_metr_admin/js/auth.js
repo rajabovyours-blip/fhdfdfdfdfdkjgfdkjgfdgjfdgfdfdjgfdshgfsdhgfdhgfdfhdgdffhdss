@@ -14,9 +14,10 @@ const auth = {
       const res = await api.post('/auth/admin-login', payload.toString(), { isUrlEncoded: true });
       
       // Save tokens
-      localStorage.setItem('mm_admin_access_token', res.access_token);
-      if (res.refresh_token) {
-        localStorage.setItem('mm_admin_refresh_token', res.refresh_token);
+      const tokenData = res.data || res;
+      localStorage.setItem('mm_admin_access_token', tokenData.access_token);
+      if (tokenData.refresh_token) {
+        localStorage.setItem('mm_admin_refresh_token', tokenData.refresh_token);
       }
       
       // Verify role
