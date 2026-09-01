@@ -26,7 +26,7 @@ class ProductImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (imageUrl == null || imageUrl!.isEmpty || imageUrl == 'NEEDS_IMAGE') {
-      return _buildNeedsImageFallback(context);
+      return _buildErrorFallback(context);
     }
 
     if (imageUrl!.startsWith('assets/')) {
@@ -36,7 +36,7 @@ class ProductImage extends StatelessWidget {
         width: width,
         fit: fit,
         cacheWidth: _cacheSize,
-        errorBuilder: (context, error, stackTrace) => _buildNeedsImageFallback(context),
+        errorBuilder: (context, error, stackTrace) => _buildErrorFallback(context),
       );
     }
 
