@@ -56,6 +56,7 @@ class UserMeUpdate(PydanticBaseModel):
     full_name: Optional[str] = None
     email: Optional[str] = None
     avatar_url: Optional[str] = None
+    preferred_language: Optional[str] = None
 
 @router.put("/me", response_model=APIResponse[UserModel])
 async def update_me(payload: UserMeUpdate, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
