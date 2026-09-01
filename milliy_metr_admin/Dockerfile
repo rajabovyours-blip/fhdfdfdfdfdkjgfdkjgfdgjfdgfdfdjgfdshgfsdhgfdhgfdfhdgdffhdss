@@ -1,14 +1,14 @@
-# Build stage
-FROM ghcr.io/cirruslabs/flutter:3.19.0 AS build
-
-WORKDIR /app
-COPY . .
-RUN flutter pub get
-RUN flutter build web --release
-
-# Serve stage
+# Use official Nginx image as a base
 FROM nginx:alpine
-COPY --from=build /app/build/web /usr/share/nginx/html
+
+# Copy custom Nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copy static assets to the default nginx directory
+COPY . /usr/share/nginx/html
+
+# Expose port 80
 EXPOSE 80
+
+# Start Nginx
 CMD ["nginx", "-g", "daemon off;"]
