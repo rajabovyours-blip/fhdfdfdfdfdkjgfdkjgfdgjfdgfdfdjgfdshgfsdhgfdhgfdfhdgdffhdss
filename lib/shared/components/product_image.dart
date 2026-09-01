@@ -47,15 +47,13 @@ class ProductImage extends StatelessWidget {
       height: height,
       width: width,
       fit: fit,
-      memCacheWidth: _cacheSize,
-      memCacheHeight: _cacheSize,
-      errorWidget: (context, url, error) => _buildNeedsImageFallback(context),
+      placeholder: (context, url) => _buildLoadingPlaceholder(context),
+      errorWidget: (context, url, error) => _buildErrorFallback(context),
     );
   }
 
-  Widget _buildNeedsImageFallback(BuildContext context) {
+  Widget _buildLoadingPlaceholder(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-
     final baseColor = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E8E8);
     final highlightColor = isDark ? const Color(0xFF2C2C2C) : const Color(0xFFF5F5F5);
     final logoColor = isDark ? Colors.white.withValues(alpha: 0.12) : Colors.black.withValues(alpha: 0.08);
@@ -77,6 +75,21 @@ class ProductImage extends StatelessWidget {
             fit: BoxFit.contain,
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildErrorFallback(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final baseColor = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E8E8);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: baseColor,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: const Center(
+        child: Icon(Icons.image_not_supported_outlined, color: Colors.grey, size: 32),
       ),
     );
   }

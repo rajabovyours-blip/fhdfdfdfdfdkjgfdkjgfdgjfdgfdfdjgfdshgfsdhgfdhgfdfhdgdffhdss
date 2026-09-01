@@ -72,17 +72,29 @@ class BrandImageLoader extends StatelessWidget {
       );
     }
 
+    Widget buildErrorPlaceholder() {
+      return Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: baseColor,
+          borderRadius: BorderRadius.circular(borderRadius),
+        ),
+        child: const Center(
+          child: Icon(Icons.image_not_supported_outlined, color: Colors.grey, size: 24),
+        ),
+      );
+    }
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(borderRadius),
       child: CachedNetworkImage(
         imageUrl: processedUrl,
         width: width,
         height: height,
-        memCacheWidth: 250,
-        memCacheHeight: 250,
         fit: fit,
         placeholder: (_, __) => buildShimmerPlaceholder(),
-        errorWidget: (_, __, ___) => buildShimmerPlaceholder(),
+        errorWidget: (_, __, ___) => buildErrorPlaceholder(),
       ),
     );
   }
