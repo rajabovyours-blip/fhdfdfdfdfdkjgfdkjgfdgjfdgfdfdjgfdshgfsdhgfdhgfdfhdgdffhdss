@@ -6,6 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'package:milliy_metr/core/router/route_constants.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
 import 'package:milliy_metr/features/search/presentation/widgets/filter_bottom_sheet.dart';
+import 'package:milliy_metr/core/providers/auth_provider.dart';
+import 'package:milliy_metr/shared/components/brand_image_loader.dart';
 
 class HomeHeader extends ConsumerWidget {
   const HomeHeader({super.key});
@@ -13,6 +15,11 @@ class HomeHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(locationProvider);
+    final authState = ref.watch(authProvider);
+    final user = authState.maybeWhen(
+      authenticated: (user) => user,
+      orElse: () => null,
+    );
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
@@ -63,11 +70,20 @@ class HomeHeader extends ConsumerWidget {
                         shape: BoxShape.circle,
                         border: Border.all(color: context.colors.outline),
                       ),
-                      child: Icon(
-                        Icons.person,
-                        size: 20,
-                        color: context.colors.textDisabled,
-                      ),
+                      clipBehavior: Clip.hardEdge,
+                      child: (user != null && user.avatarUrl != null && user.avatarUrl!.isNotEmpty)
+                          ? BrandImageLoader(
+                              imageUrl: user.avatarUrl,
+                              fit: BoxFit.cover,
+                              borderRadius: 0,
+                              width: 40,
+                              height: 40,
+                            )
+                          : Icon(
+                              Icons.person,
+                              size: 20,
+                              color: context.colors.textDisabled,
+                            ),
                     ),
                   ),
                 ],

@@ -285,6 +285,7 @@ class AuthController extends StateNotifier<AuthState> {
         try {
           final user = UserModel.fromJson(response.data['data']).toEntity();
           state = AuthState.authenticated(user);
+          await _repository.cacheUser(user);
         } catch (e) {
           debugPrint('Failed to parse updated user: $e');
         }

@@ -172,6 +172,13 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<void> cacheUser(UserEntity user) async {
+    await localDataSource.saveUserData(
+      const dart_convert.JsonEncoder().convert(user.toJson()),
+    );
+  }
+
+  @override
   Future<void> saveDemoSession(UserEntity user) async {
     final token = milliy_metr_token_model.TokenModel(
       accessToken: 'demo_token_${user.id}',

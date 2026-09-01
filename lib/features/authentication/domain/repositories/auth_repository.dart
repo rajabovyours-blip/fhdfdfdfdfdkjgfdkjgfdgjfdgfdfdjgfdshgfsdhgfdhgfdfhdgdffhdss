@@ -21,5 +21,6 @@ abstract class AuthRepository {
   Future<Either<Failure, UserEntity>> getCurrentUser();
   Future<Either<Failure, void>> logout();
   Future<Either<Failure, UserEntity?>> getCachedUser();
+  Future<void> cacheUser(UserEntity user);
   Future<void> saveDemoSession(UserEntity user);
 }
