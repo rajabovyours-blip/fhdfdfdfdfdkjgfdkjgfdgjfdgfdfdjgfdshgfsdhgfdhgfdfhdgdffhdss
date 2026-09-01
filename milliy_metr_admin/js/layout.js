@@ -3,6 +3,8 @@ const layout = {
     const appContainer = document.getElementById('app');
     if (!appContainer) return;
     
+    appContainer.classList.add('app-container');
+    
     const user = auth.getUserInfo();
     const userName = user ? (user.full_name || user.fullName || user.username || 'Admin') : 'Admin';
     const currentPage = window.location.pathname.split('/').pop() || 'dashboard.html';
