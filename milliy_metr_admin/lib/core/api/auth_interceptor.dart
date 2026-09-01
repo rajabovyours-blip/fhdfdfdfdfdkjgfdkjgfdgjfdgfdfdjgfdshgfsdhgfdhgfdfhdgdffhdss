@@ -1,12 +1,13 @@
 import 'package:dio/dio.dart';
-import '../../../main.dart'; // To access sharedPrefs
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthInterceptor extends Interceptor {
   AuthInterceptor();
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
-    final token = sharedPrefs.getString('admin_token');
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('admin_token');
     if (token != null && token.isNotEmpty) {
       options.headers['Authorization'] = 'Bearer $token';
     }

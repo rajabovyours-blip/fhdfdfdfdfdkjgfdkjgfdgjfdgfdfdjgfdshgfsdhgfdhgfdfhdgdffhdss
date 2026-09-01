@@ -88,7 +88,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
               labelText: 'parent_category'.tr(),
               border: const OutlineInputBorder(),
             ),
-            initialValue: selectedParentId,
+            value: selectedParentId,
             items: [
               DropdownMenuItem<String>(
                 value: null,

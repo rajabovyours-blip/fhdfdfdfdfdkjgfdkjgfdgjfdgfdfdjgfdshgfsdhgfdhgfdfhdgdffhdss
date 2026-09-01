@@ -82,7 +82,7 @@ async def get_products(
     elif sort_by == 'rating':
         query = query.order_by(Product.rating.desc())
     elif sort_by == 'popular':
-        query = query.order_by(Product.sold_count.desc())
+        query = query.order_by(Product.review_count.desc())
         
     query = query.offset((page - 1) * limit).limit(limit)
         

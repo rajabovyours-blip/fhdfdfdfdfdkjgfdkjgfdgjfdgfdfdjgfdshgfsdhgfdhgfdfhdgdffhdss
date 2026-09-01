@@ -198,7 +198,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                               Text('unit'.tr(), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
                               const SizedBox(height: 8),
                               DropdownButtonFormField<String>(
-                                initialValue: selectedUnit,
+                                value: selectedUnit,
                                 decoration: const InputDecoration(
                                   prefixIcon: Icon(Icons.straighten),
                                 ),
@@ -805,7 +805,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
               hintText: 'all_categories'.tr(),
               border: const OutlineInputBorder(),
             ),
-            initialValue: _selectedCategory,
+            value: _selectedCategory,
             isExpanded: true,
             items: [
               DropdownMenuItem(value: '', child: Text('all_categories'.tr())),
@@ -872,7 +872,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
               hintText: 'Barcha kategoriyalar',
               border: OutlineInputBorder(),
             ),
-            initialValue: _selectedCategory,
+            value: _selectedCategory,
             items: [
               const DropdownMenuItem(value: '', child: Text('Barcha kategoriyalar')),
               ...categories.map((c) {
