@@ -80,7 +80,7 @@ class AppTheme {
       scaffoldBackgroundColor: const Color(0xFFF9FAFB),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          minimumSize: const Size(double.infinity, 48),
+          minimumSize: const Size(0, 48),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           elevation: 0,
           backgroundColor: const Color(0xFFFF7A00),
@@ -122,7 +122,7 @@ class AppTheme {
       scaffoldBackgroundColor: const Color(0xFF0E1015),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          minimumSize: const Size(double.infinity, 48),
+          minimumSize: const Size(0, 48),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           elevation: 0,
           backgroundColor: const Color(0xFFFF7A00),
