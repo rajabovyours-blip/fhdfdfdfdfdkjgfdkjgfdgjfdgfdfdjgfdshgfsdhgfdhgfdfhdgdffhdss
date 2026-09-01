@@ -97,8 +97,9 @@ from app.core.config import settings
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
 # Mount static files directory
-os.makedirs("uploads/images", exist_ok=True)
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+BASE_UPLOAD_DIR = os.getenv("UPLOAD_DIR", "/app/uploads")
+os.makedirs(os.path.join(BASE_UPLOAD_DIR, "images"), exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=BASE_UPLOAD_DIR), name="uploads")
 
 from app.core.exceptions import AppError, app_error_handler
 app.add_exception_handler(AppError, app_error_handler)
