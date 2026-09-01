@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:milliy_metr/features/home/domain/entities/home_entities.dart';
+import 'package:milliy_metr/core/utils/image_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PromotionalBanner extends StatefulWidget {
@@ -30,8 +31,12 @@ class _PromotionalBannerState extends State<PromotionalBanner> {
     }
     
     final uri = Uri.tryParse(urlString);
-    if (uri != null && await canLaunchUrl(uri)) {
-      await launchUrl(uri);
+    if (uri == null) return;
+    
+    try {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      debugPrint('Could not launch $urlString: $e');
     }
   }
 
@@ -70,7 +75,7 @@ class _PromotionalBannerState extends State<PromotionalBanner> {
                     ],
                   ),
                   child: Image.network(
-                    banner.imageUrl,
+                    ImageUtils.getFullImageUrl(banner.imageUrl),
                     fit: BoxFit.cover,
                     width: double.infinity,
                     errorBuilder: (_, __, ___) => Icon(
