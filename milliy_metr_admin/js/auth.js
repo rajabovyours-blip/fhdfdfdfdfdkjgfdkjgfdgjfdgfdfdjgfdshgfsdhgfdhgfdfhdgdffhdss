@@ -20,14 +20,9 @@ const auth = {
         localStorage.setItem('mm_admin_refresh_token', tokenData.refresh_token);
       }
       
-      // Verify role
       const user = await this.getCurrentUser();
       
-      if (!user.role || (user.role.toLowerCase() !== 'admin' && user.role.toLowerCase() !== 'owner')) {
-        this.logout();
-        throw new Error('Sizda administrator huquqlari mavjud emas.');
-      }
-      
+      // Backend already verified admin role during /admin-login
       // Store user info
       localStorage.setItem('mm_admin_user', JSON.stringify(user));
       
