@@ -25,7 +25,7 @@ class _ImportExcelScreenState extends ConsumerState<ImportExcelScreen> {
     var excel = Excel.createExcel();
     Sheet sheetObject = excel['Sheet1'];
     excel.setDefaultSheet('Sheet1');
-    
+
     // Headers
     List<String> headers = [
       "Nomi (O'zbekcha)",
@@ -37,7 +37,7 @@ class _ImportExcelScreenState extends ConsumerState<ImportExcelScreen> {
       "Tavsif"
     ];
     sheetObject.appendRow(headers.map((h) => TextCellValue(h)).toList());
-    
+
     // Example Row
     List<String> exampleRow = [
       "Sement M400",
@@ -49,7 +49,7 @@ class _ImportExcelScreenState extends ConsumerState<ImportExcelScreen> {
       "Yuqori sifatli sement"
     ];
     sheetObject.appendRow(exampleRow.map((h) => TextCellValue(h)).toList());
-    
+
     var fileBytes = excel.save();
     if (fileBytes != null) {
       if (kIsWeb) {
@@ -213,8 +213,10 @@ class _ImportExcelScreenState extends ConsumerState<ImportExcelScreen> {
           ),
         ),
         const SizedBox(height: 32),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        Wrap(
+          alignment: WrapAlignment.center,
+          spacing: 16,
+          runSpacing: 16,
           children: [
             OutlinedButton.icon(
               onPressed: _downloadTemplate,
@@ -225,7 +227,6 @@ class _ImportExcelScreenState extends ConsumerState<ImportExcelScreen> {
                 textStyle: const TextStyle(fontSize: 16),
               ),
             ),
-            const SizedBox(width: 16),
             ElevatedButton.icon(
               onPressed: _pickAndUploadFile,
               icon: const Icon(Icons.upload_file),
