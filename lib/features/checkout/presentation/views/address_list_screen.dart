@@ -39,7 +39,7 @@ class _AddressListScreenState extends ConsumerState<AddressListScreen> {
                             size: 64, color: context.colors.textMedium,),
                         const SizedBox(height: 16),
                         Text(
-                          "Sizda hozircha manzillar yo'q",
+                          context.l10n.noAddressesSaved,
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
@@ -50,7 +50,7 @@ class _AddressListScreenState extends ConsumerState<AddressListScreen> {
                         ElevatedButton.icon(
                           onPressed: () => context.push('/add-address'),
                           icon: const Icon(Icons.add),
-                          label: const Text("Yangi manzil qo'shish"),
+                          label: Text(context.l10n.addNewAddress),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFFF7A00),
                             foregroundColor: Colors.white,

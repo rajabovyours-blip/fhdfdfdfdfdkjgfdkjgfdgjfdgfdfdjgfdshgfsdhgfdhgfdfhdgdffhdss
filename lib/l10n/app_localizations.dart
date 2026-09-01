@@ -703,7 +703,7 @@ abstract class AppLocalizations {
   /// No description provided for @noReviewsYet.
   ///
   /// In uz, this message translates to:
-  /// **'Bu mahsulot hali sharhlanmagan.'**
+  /// **'Siz hali sharh qoldirmadingiz'**
   String get noReviewsYet;
 
   /// No description provided for @beFirstToReview.
@@ -2667,6 +2667,24 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Yetkazib berish narxi'**
   String get deliveryPrice;
+
+  /// No description provided for @addNewAddress.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi manzil qo\'shish'**
+  String get addNewAddress;
+
+  /// No description provided for @inCartWithCount.
+  ///
+  /// In uz, this message translates to:
+  /// **'Savatda: {count}'**
+  String inCartWithCount(int count);
+
+  /// No description provided for @shopNow.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xarid qilish'**
+  String get shopNow;
 }
 
 class _AppLocalizationsDelegate

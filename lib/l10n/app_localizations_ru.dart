@@ -325,7 +325,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get viewAllReviews => 'Смотреть все отзывы';
 
   @override
-  String get noReviewsYet => 'У этого товара пока нет отзывов.';
+  String get noReviewsYet => 'Вы ещё не написали отзывов';
 
   @override
   String get beFirstToReview => 'Станьте первым покупателем, оставившим отзыв.';
@@ -1317,7 +1317,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get biometricError => 'Биометрическая ошибка';
 
   @override
-  String get noAddressesSaved => 'У вас пока нет сохраненных адресов';
+  String get noAddressesSaved => 'У вас пока нет адресов';
 
   @override
   String get pleaseSelectRegionDistrict =>
@@ -1334,4 +1334,15 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get deliveryPrice => 'Стоимость доставки';
+
+  @override
+  String get addNewAddress => 'Добавить новый адрес';
+
+  @override
+  String inCartWithCount(int count) {
+    return 'В корзине: $count';
+  }
+
+  @override
+  String get shopNow => 'Перейти к покупкам';
 }

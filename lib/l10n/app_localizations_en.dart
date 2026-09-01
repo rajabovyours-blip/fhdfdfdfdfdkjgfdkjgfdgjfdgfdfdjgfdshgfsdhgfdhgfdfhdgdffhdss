@@ -325,7 +325,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get viewAllReviews => 'View All Reviews';
 
   @override
-  String get noReviewsYet => 'No reviews yet for this product.';
+  String get noReviewsYet => 'You haven\'t written any reviews yet';
 
   @override
   String get beFirstToReview => 'Be the first customer to review this product.';
@@ -1317,7 +1317,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get biometricError => 'Biometric error';
 
   @override
-  String get noAddressesSaved => 'You don\'t have any saved addresses yet';
+  String get noAddressesSaved => 'You don\'t have any addresses yet';
 
   @override
   String get pleaseSelectRegionDistrict =>
@@ -1334,4 +1334,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deliveryPrice => 'Delivery price';
+
+  @override
+  String get addNewAddress => 'Add new address';
+
+  @override
+  String inCartWithCount(int count) {
+    return 'In Cart: $count';
+  }
+
+  @override
+  String get shopNow => 'Shop now';
 }

@@ -1098,7 +1098,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                           },
                         ),
                         Text(
-                          'Savatda: $quantityInCart',
+                          context.l10n.inCartWithCount(quantityInCart),
                           style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,

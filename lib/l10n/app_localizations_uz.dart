@@ -327,7 +327,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get viewAllReviews => 'Barcha sharhlarni ko\'rish';
 
   @override
-  String get noReviewsYet => 'Bu mahsulot hali sharhlanmagan.';
+  String get noReviewsYet => 'Siz hali sharh qoldirmadingiz';
 
   @override
   String get beFirstToReview =>
@@ -1346,4 +1346,15 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get deliveryPrice => 'Yetkazib berish narxi';
+
+  @override
+  String get addNewAddress => 'Yangi manzil qo\'shish';
+
+  @override
+  String inCartWithCount(int count) {
+    return 'Savatda: $count';
+  }
+
+  @override
+  String get shopNow => 'Xarid qilish';
 }

@@ -54,7 +54,7 @@ class MyReviewsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Siz hali sharh qoldirmadingiz',
+                    l10n.noReviewsWrittenDesc,
                     style: TextStyle(
                       color: context.colors.textMedium,
                       fontSize: 14,
@@ -73,9 +73,9 @@ class MyReviewsScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text(
-                        'Xarid qilish',
-                        style: TextStyle(
+                      child: Text(
+                        l10n.shopNow,
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),

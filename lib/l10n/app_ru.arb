@@ -422,10 +422,21 @@
   "passwordChangedSuccessfully": "Пароль успешно изменен",
   "passwordChangeError": "Произошла ошибка или пароль неверен",
   "biometricError": "Биометрическая ошибка",
-  "noAddressesSaved": "У вас пока нет сохраненных адресов",
+  "noAddressesSaved": "У вас пока нет адресов",
   "pleaseSelectRegionDistrict": "Пожалуйста, выберите область и район",
   "googleSignInError": "Произошла ошибка при входе через Google",
   "appleSignInError": "Произошла ошибка при входе через Apple",
   "errorUpdatingQuantity": "Не удалось обновить количество",
-  "deliveryPrice": "Стоимость доставки"
+  "deliveryPrice": "Стоимость доставки",
+  "addNewAddress": "Добавить новый адрес",
+  "inCartWithCount": "В корзине: {count}",
+  "@inCartWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noReviewsYet": "Вы ещё не написали отзывов",
+  "shopNow": "Перейти к покупкам"
 }

@@ -448,5 +448,16 @@
   "googleSignInError": "Google orqali kirishda xatolik yuz berdi",
   "appleSignInError": "Apple orqali kirishda xatolik yuz berdi",
   "errorUpdatingQuantity": "Miqdorni o'zgartirib bo'lmadi",
-  "deliveryPrice": "Yetkazib berish narxi"
+  "deliveryPrice": "Yetkazib berish narxi",
+  "addNewAddress": "Yangi manzil qo'shish",
+  "inCartWithCount": "Savatda: {count}",
+  "@inCartWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noReviewsYet": "Siz hali sharh qoldirmadingiz",
+  "shopNow": "Xarid qilish"
 }

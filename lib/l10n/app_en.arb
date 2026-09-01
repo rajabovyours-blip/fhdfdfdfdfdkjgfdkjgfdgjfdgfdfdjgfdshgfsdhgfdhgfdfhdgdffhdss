@@ -420,12 +420,23 @@
   "passwordChangedSuccessfully": "Password changed successfully",
   "passwordChangeError": "An error occurred or password is incorrect",
   "biometricError": "Biometric error",
-  "noAddressesSaved": "You don't have any saved addresses yet",
+  "noAddressesSaved": "You don't have any addresses yet",
   "pleaseSelectRegionDistrict": "Please select a region and district",
   "promoBannerTitle": "All you need for construction",
   "promoBannerSubtitle": "Best price guarantee",
   "googleSignInError": "An error occurred during Google Sign-In",
   "appleSignInError": "An error occurred during Apple Sign-In",
   "errorUpdatingQuantity": "Failed to update quantity",
-  "deliveryPrice": "Delivery price"
+  "deliveryPrice": "Delivery price",
+  "addNewAddress": "Add new address",
+  "inCartWithCount": "In Cart: {count}",
+  "@inCartWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noReviewsYet": "You haven't written any reviews yet",
+  "shopNow": "Shop now"
 }
