@@ -61,14 +61,15 @@ class MyReviewsScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 32),
-                  SizedBox(
+                  Container(
                     height: 48,
-                    width: 200,
+                    constraints: const BoxConstraints(minWidth: 200),
                     child: ElevatedButton(
                       onPressed: () => context.go('/home'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: context.colors.primary,
                         foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
