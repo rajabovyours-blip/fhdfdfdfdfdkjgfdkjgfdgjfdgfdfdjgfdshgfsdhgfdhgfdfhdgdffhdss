@@ -13,7 +13,7 @@ const layout = {
       <aside class="app-sidebar" id="sidebar">
         <div class="app-sidebar-header">
           <div class="app-sidebar-logo">
-            <span class="material-symbols-rounded">architecture</span>
+            <img src="assets/images/logo.png" alt="Milliy Metr" style="height: 32px; width: auto; object-fit: contain;">
             Milliy Metr
           </div>
         </div>
