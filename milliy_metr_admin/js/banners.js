@@ -14,9 +14,15 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('banner-img-upload').addEventListener('change', async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    // Compress image before uploading
+    const compressedFile = await ImageCompressor.compress(file, {
+      maxWidth: 1024,
+      maxHeight: 576, // 16:9 approx max for banners
+      quality: 0.8
+    });
     
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('file', compressedFile);
     
     try {
       const res = await api.post('/upload/image', formData);

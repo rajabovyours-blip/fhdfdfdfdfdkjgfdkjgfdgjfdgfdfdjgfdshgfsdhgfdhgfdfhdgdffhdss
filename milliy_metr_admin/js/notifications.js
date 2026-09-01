@@ -12,9 +12,15 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('notif-img-upload').addEventListener('change', async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    // Compress image before uploading
+    const compressedFile = await ImageCompressor.compress(file, {
+      maxWidth: 800,
+      maxHeight: 600,
+      quality: 0.8
+    });
     
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('file', compressedFile);
     
     try {
       const res = await api.post('/upload/image', formData);
