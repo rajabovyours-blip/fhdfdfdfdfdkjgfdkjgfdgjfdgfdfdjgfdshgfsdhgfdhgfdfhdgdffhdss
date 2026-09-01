@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, field_validator
 from typing import List, Optional
 from uuid import UUID
+from pydantic.alias_generators import to_camel
 import uuid
 
 from app.db.session import get_db
@@ -32,12 +33,15 @@ class BannerResponse(BaseModel):
     id: UUID
     title: Optional[str] = None
     image_url: str
-    link_url: Optional[str] = None
+    link_url: str = ""
     is_active: bool
     order_index: int
     
-    class Config:
-        from_attributes = True
+    @field_validator("link_url", mode="before")
+    def empty_string_for_none(cls, v):
+        return v if v is not None else ""
+    
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True, alias_generator=to_camel)
 
 @router.get("", response_model=APIResponse[List[BannerResponse]])
 async def get_banners(active_only: bool = False, db: AsyncSession = Depends(get_db)):
