@@ -573,37 +573,38 @@ textarea.form-control {
     width: 100% !important;
   }
   
-  /* Convert tables to cards */
-  .table thead {
-    display: none;
-  }
-  
-  .table, .table tbody, .table tr, .table td {
-    display: block;
+  /* Make all table wrappers responsive */
+  .table-responsive {
     width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
   
-  .table tr {
-    margin-bottom: var(--space-16);
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-divider);
-    border-radius: var(--radius-m);
-    padding: var(--space-12);
+  .table {
+    min-width: 800px;
   }
   
-  .table td {
-    border-bottom: none;
-    padding: var(--space-4) 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  /* Make header sections wrap on mobile */
+  .mb-24.d-flex.justify-content-between {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: var(--space-16);
   }
   
-  .table td::before {
-    content: attr(data-label);
-    font-weight: 500;
-    color: var(--text-medium);
-    margin-right: var(--space-16);
+  .mb-24.d-flex.justify-content-between .d-flex {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  
+  /* Filter sections wrap */
+  .card > .d-flex.align-items-center {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  
+  .card > .d-flex.align-items-center > * {
+    width: 100% !important;
+    min-width: 0 !important;
   }
   
   .modal-content {
