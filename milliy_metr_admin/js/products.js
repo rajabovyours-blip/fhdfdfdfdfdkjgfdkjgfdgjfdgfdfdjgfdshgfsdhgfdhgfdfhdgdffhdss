@@ -327,6 +327,8 @@ async function deleteProduct(id) {
   }
 }
 
+let importPreviewData = []; // store preview rows for confirm step
+
 async function uploadExcel() {
   const fileInput = document.getElementById('excel-file');
   if (!fileInput.files[0]) {
@@ -339,22 +341,106 @@ async function uploadExcel() {
   
   const btn = document.getElementById('btn-upload-excel');
   btn.disabled = true;
-  btn.textContent = 'Yuklanmoqda...';
+  btn.innerHTML = '<span class="material-symbols-rounded">hourglass_top</span> Tekshirilmoqda...';
   
   try {
-    // Usually POST /admin/products/import/preview then confirm. 
-    // This is a simplified direct trigger for the preview endpoint.
-    const res = await api.post('/admin/products/import/preview', formData, {
-      headers: {} // let fetch set content-type for multipart
-    });
+    const res = await api.post('/admin/products/import/preview', formData);
+    const data = res.data || res;
     
-    // We would normally show a preview table here. For now just show a success message.
-    layout.showToast(`Import tayyor: ${res.data?.length || 0} ta qator.`);
-    document.getElementById('import-modal').classList.remove('active');
+    importPreviewData = data.rows || [];
+    const stats = data.stats || {};
+    
+    // Show stats
+    const statsEl = document.getElementById('import-stats');
+    statsEl.innerHTML = `
+      <span class="badge badge-neutral" style="padding: 8px 12px; height: auto;">Jami: ${stats.total || 0}</span>
+      <span class="badge badge-success" style="padding: 8px 12px; height: auto;">Tayyor: ${stats.valid || 0}</span>
+      ${stats.duplicates ? `<span class="badge badge-warning" style="padding: 8px 12px; height: auto;">Dublikat: ${stats.duplicates}</span>` : ''}
+      ${stats.invalid ? `<span class="badge badge-danger" style="padding: 8px 12px; height: auto;">Xatolik: ${stats.invalid}</span>` : ''}
+      ${stats.needs_review ? `<span class="badge badge-warning" style="padding: 8px 12px; height: auto;">Tekshirish: ${stats.needs_review}</span>` : ''}
+    `;
+    
+    // Render preview table
+    const tbody = document.getElementById('import-preview-body');
+    tbody.innerHTML = importPreviewData.map(row => {
+      let statusBadge = 'badge-neutral';
+      let statusText = row.status;
+      if (row.status === 'Valid') { statusBadge = 'badge-success'; statusText = 'Tayyor'; }
+      else if (row.status === 'Error') { statusBadge = 'badge-danger'; statusText = 'Xato'; }
+      else if (row.status === 'Duplicate') { statusBadge = 'badge-warning'; statusText = 'Dublikat'; }
+      else if (row.status === 'Needs Review') { statusBadge = 'badge-warning'; statusText = 'Tekshirish'; }
+      
+      const price = parseFloat(row.price || 0).toLocaleString('ru-RU');
+      
+      return `<tr>
+        <td>${row.row_index}</td>
+        <td style="font-weight: 500;">${row.name || '-'}</td>
+        <td>${price}</td>
+        <td>${row.stock || 0}</td>
+        <td>${row.detected_category || '-'}</td>
+        <td>
+          <span class="badge ${statusBadge}">${statusText}</span>
+          ${row.errors && row.errors.length ? `<div style="font-size: 11px; color: var(--color-danger); margin-top: 4px;">${row.errors.join(', ')}</div>` : ''}
+        </td>
+      </tr>`;
+    }).join('');
+    
+    // Toggle steps
+    document.getElementById('import-step-upload').style.display = 'none';
+    document.getElementById('import-step-preview').style.display = 'block';
+    btn.style.display = 'none';
+    
+    // Show confirm button only if there are valid rows
+    const validRows = importPreviewData.filter(r => r.status === 'Valid' || r.status === 'Needs Review');
+    if (validRows.length > 0) {
+      const confirmBtn = document.getElementById('btn-confirm-import');
+      confirmBtn.style.display = 'inline-flex';
+      confirmBtn.onclick = confirmImport;
+    }
+    
+    layout.showToast(`${importPreviewData.length} ta qator topildi`);
   } catch (err) {
     layout.showToast(err.message, 'error');
   } finally {
     btn.disabled = false;
-    btn.textContent = 'Yuklash va Ko\'rish';
+    btn.innerHTML = '<span class="material-symbols-rounded">upload_file</span> Yuklash va Ko\'rish';
   }
+}
+
+async function confirmImport() {
+  const validRows = importPreviewData.filter(r => r.status !== 'Error');
+  
+  if (validRows.length === 0) {
+    layout.showToast('Import qiladigan qator topilmadi', 'error');
+    return;
+  }
+  
+  const btn = document.getElementById('btn-confirm-import');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="material-symbols-rounded">hourglass_top</span> Import qilinmoqda...';
+  
+  try {
+    const res = await api.post('/admin/products/import', validRows);
+    const result = res.data || res;
+    
+    layout.showToast(`${result.imported || 0} ta mahsulot import qilindi!`);
+    closeImportModal();
+    loadProducts();
+  } catch (err) {
+    layout.showToast(err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<span class="material-symbols-rounded">check_circle</span> Import qilish';
+  }
+}
+
+function closeImportModal() {
+  document.getElementById('import-modal').classList.remove('active');
+  // Reset modal state
+  document.getElementById('import-step-upload').style.display = 'block';
+  document.getElementById('import-step-preview').style.display = 'none';
+  document.getElementById('btn-upload-excel').style.display = 'inline-flex';
+  document.getElementById('btn-confirm-import').style.display = 'none';
+  document.getElementById('excel-file').value = '';
+  importPreviewData = [];
 }

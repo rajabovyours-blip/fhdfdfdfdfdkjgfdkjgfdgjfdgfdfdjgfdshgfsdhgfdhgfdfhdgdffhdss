@@ -237,18 +237,52 @@
   
   <!-- Excel Import Modal -->
   <div class="modal-overlay" id="import-modal">
-    <div class="modal-content">
+    <div class="modal-content" style="max-width: 900px;">
       <div class="modal-header">
         <h3 style="margin: 0;">Excel orqali import</h3>
-        <button class="modal-close" onclick="document.getElementById('import-modal').classList.remove('active')"><span class="material-symbols-rounded">close</span></button>
+        <button class="modal-close" onclick="closeImportModal()"><span class="material-symbols-rounded">close</span></button>
       </div>
-      <div class="modal-body text-center">
-        <p style="margin-bottom: 24px;">.xlsx faylni yuklang. Fayl ichida Name, Category_ID, Price ustunlari bo'lishi shart.</p>
-        <input type="file" id="excel-file" accept=".xlsx, .xls" class="form-control">
+      <div class="modal-body">
+        <!-- Step 1: File Upload -->
+        <div id="import-step-upload">
+          <p style="margin-bottom: 16px; color: var(--text-medium);">
+            <strong>.xlsx</strong> faylni yuklang. Faylda quyidagi ustunlar bo'lishi shart:
+            <strong>name</strong>, <strong>price</strong>.
+            Ixtiyoriy: description, category, stock, sku, brand, unit, image_url.
+          </p>
+          <input type="file" id="excel-file" accept=".xlsx" class="form-control" style="padding-top: 10px;">
+        </div>
+
+        <!-- Step 2: Preview Results (initially hidden) -->
+        <div id="import-step-preview" style="display: none;">
+          <div id="import-stats" style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px;"></div>
+          <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+            <table class="table" id="import-preview-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Nomi</th>
+                  <th>Narx</th>
+                  <th>Qoldiq</th>
+                  <th>Kategoriya</th>
+                  <th>Holat</th>
+                </tr>
+              </thead>
+              <tbody id="import-preview-body"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-outline" onclick="document.getElementById('import-modal').classList.remove('active')">Yopish</button>
-        <button class="btn btn-primary" id="btn-upload-excel">Yuklash va Ko'rish</button>
+        <button class="btn btn-outline" onclick="closeImportModal()">Yopish</button>
+        <button class="btn btn-primary" id="btn-upload-excel">
+          <span class="material-symbols-rounded">upload_file</span>
+          Yuklash va Ko'rish
+        </button>
+        <button class="btn btn-primary" id="btn-confirm-import" style="display: none;">
+          <span class="material-symbols-rounded">check_circle</span>
+          Import qilish
+        </button>
       </div>
     </div>
   </div>

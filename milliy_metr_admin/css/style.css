@@ -601,19 +601,16 @@ textarea.form-control {
   /* --- Page Title + Action Buttons (e.g. "Mahsulotlar" + "Yangi Qo'shish") --- */
   .app-content > .d-flex.justify-content-between {
     flex-direction: column !important;
-    align-items: stretch !important;
+    align-items: flex-start !important;
     gap: var(--space-12);
   }
   .app-content > .d-flex.justify-content-between h2 {
     font-size: 20px;
   }
-  .app-content > .d-flex.justify-content-between .d-flex {
+  .app-content > .d-flex.justify-content-between > .d-flex {
+    display: flex;
     flex-wrap: wrap;
     gap: var(--space-8);
-  }
-  .app-content > .d-flex.justify-content-between .btn {
-    flex: 1;
-    min-width: 0;
   }
 
   /* --- Filter / Search Bars --- */
