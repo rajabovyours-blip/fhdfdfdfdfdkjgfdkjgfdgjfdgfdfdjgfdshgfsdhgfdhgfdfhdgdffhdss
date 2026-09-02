@@ -196,6 +196,7 @@ async def update_product(id: str, payload: ProductCreateRequest, db: AsyncSessio
 
 @router.delete("/{id}", response_model=APIResponse[dict])
 async def delete_product(id: str, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_admin)):
+    from sqlalchemy.exc import IntegrityError
     try:
         product_id = UUID(str(id))
     except ValueError:
@@ -207,8 +208,12 @@ async def delete_product(id: str, db: AsyncSession = Depends(get_db), current_us
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
         
-    await db.delete(product)
-    await db.commit()
+    try:
+        await db.delete(product)
+        await db.commit()
+    except IntegrityError as e:
+        await db.rollback()
+        raise HTTPException(status_code=400, detail="Bu mahsulot buyurtmalar yoki savatchalarda mavjud bo'lganligi sababli o'chirib bo'lmaydi. Iltimos, o'rniga zaxirani (stock) 0 qilib qo'ying.")
     
     return APIResponse(data={"success": True, "message": "Product deleted successfully"})
 

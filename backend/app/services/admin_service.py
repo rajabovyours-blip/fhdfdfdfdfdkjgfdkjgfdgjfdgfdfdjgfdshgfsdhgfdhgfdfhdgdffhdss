@@ -71,10 +71,19 @@ class AdminService:
         return product
 
     async def delete_product(self, product_id: uuid.UUID):
+        from sqlalchemy.exc import IntegrityError
         result = await self.db.execute(select(Product).filter(Product.id == product_id))
         product = result.scalars().first()
         if not product:
             raise AppError("Product not found", code="NOT_FOUND", status_code=404)
 
-        await self.db.delete(product)
-        await self.db.commit()
+        try:
+            await self.db.delete(product)
+            await self.db.commit()
+        except IntegrityError:
+            await self.db.rollback()
+            raise AppError(
+                "Bu mahsulot buyurtmalar yoki savatchalarda mavjud bo'lganligi sababli o'chirib bo'lmaydi. Iltimos, o'rniga zaxirani (stock) 0 qilib qo'ying.", 
+                code="FOREIGN_KEY_VIOLATION", 
+                status_code=400
+            )
