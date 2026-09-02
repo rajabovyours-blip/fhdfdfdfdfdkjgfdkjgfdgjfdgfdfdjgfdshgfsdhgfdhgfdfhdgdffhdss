@@ -87,5 +87,17 @@ const api = {
 
   delete(endpoint, options = {}) {
     return this.request(endpoint, { ...options, method: 'DELETE' });
+  },
+
+  // Helper to safely format image URLs
+  getImageUrl(url) {
+    if (!url) return '';
+    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
+      return url;
+    }
+    let base = CONFIG.API_BASE_URL.replace('/api/v1', '');
+    if (base.endsWith('/')) base = base.slice(0, -1);
+    if (!url.startsWith('/')) url = '/' + url;
+    return base + url;
   }
 };

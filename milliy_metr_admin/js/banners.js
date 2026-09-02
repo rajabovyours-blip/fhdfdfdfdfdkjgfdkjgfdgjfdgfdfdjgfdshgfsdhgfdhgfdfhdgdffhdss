@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (res.data && res.data.url) {
         document.getElementById('banner-image-url').value = res.data.url;
         const preview = document.getElementById('banner-img-preview');
-        preview.src = CONFIG.API_BASE_URL.replace('/api/v1', '') + res.data.url;
+        preview.src = api.getImageUrl(res.data.url);
         preview.style.display = 'block';
         layout.showToast('Rasm yuklandi');
       }
@@ -59,7 +59,7 @@ function renderBannerTable() {
   }
   
   tbody.innerHTML = allBanners.map(b => {
-    const imgSrc = b.image_url ? (CONFIG.API_BASE_URL.replace('/api/v1', '') + b.image_url) : '';
+    const imgSrc = b.image_url ? api.getImageUrl(b.image_url) : '';
     const statusHtml = b.is_active 
       ? '<span class="badge badge-success">Faol</span>' 
       : '<span class="badge badge-neutral">Nofaol</span>';
@@ -107,7 +107,7 @@ function openModal(id = null) {
       
       if (b.image_url) {
         document.getElementById('banner-image-url').value = b.image_url;
-        preview.src = CONFIG.API_BASE_URL.replace('/api/v1', '') + b.image_url;
+        preview.src = api.getImageUrl(b.image_url);
         preview.style.display = 'block';
       }
     }

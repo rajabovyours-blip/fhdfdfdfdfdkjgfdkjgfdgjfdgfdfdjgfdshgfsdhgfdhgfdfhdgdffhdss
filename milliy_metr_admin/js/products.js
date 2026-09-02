@@ -120,7 +120,7 @@ function renderTable(products) {
       if (c) catName = typeof c.name === 'object' ? c.name.uz : c.name;
     }
     
-    const imgSrc = (p.images && p.images.length > 0) ? (CONFIG.API_BASE_URL.replace('/api/v1', '') + p.images[0]) : '';
+    const imgSrc = (p.images && p.images.length > 0) ? api.getImageUrl(p.images[0]) : '';
     const imgHtml = imgSrc 
       ? `<img src="${imgSrc}" style="width: 48px; height: 48px; border-radius: 4px; object-fit: cover;">` 
       : `<div style="width: 48px; height: 48px; background: #eee; border-radius: 4px;"></div>`;
@@ -242,7 +242,7 @@ function closeModal() {
 function renderImages() {
   const container = document.getElementById('prod-image-list');
   container.innerHTML = productImages.map((url, index) => {
-    const fullUrl = CONFIG.API_BASE_URL.replace('/api/v1', '') + url;
+    const fullUrl = api.getImageUrl(url);
     return `
       <div class="product-img-item">
         <img src="${fullUrl}">

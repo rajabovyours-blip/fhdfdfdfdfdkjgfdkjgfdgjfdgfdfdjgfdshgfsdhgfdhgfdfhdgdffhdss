@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (res.data && res.data.url) {
         document.getElementById('cat-image-url').value = res.data.url;
         const preview = document.getElementById('cat-img-preview');
-        preview.src = CONFIG.API_BASE_URL.replace('/api/v1', '') + res.data.url;
+        preview.src = api.getImageUrl(res.data.url);
         preview.style.display = 'block';
         layout.showToast('Rasm yuklandi');
       }
@@ -85,7 +85,7 @@ function renderCategoryTable() {
         }
     }
     
-    const imgSrc = cat.image_url ? (CONFIG.API_BASE_URL.replace('/api/v1', '') + cat.image_url) : '';
+    const imgSrc = cat.image_url ? api.getImageUrl(cat.image_url) : '';
     const imgHtml = imgSrc 
       ? `<img src="${imgSrc}" style="width: 40px; height: 40px; border-radius: 4px; object-fit: cover;">` 
       : `<div style="width: 40px; height: 40px; background: #eee; border-radius: 4px; display: flex; align-items:center; justify-content:center;"><span class="material-symbols-rounded" style="color:#aaa;">category</span></div>`;
@@ -158,7 +158,7 @@ function openModal(id = null) {
       
       if (cat.image_url) {
         document.getElementById('cat-image-url').value = cat.image_url;
-        preview.src = CONFIG.API_BASE_URL.replace('/api/v1', '') + cat.image_url;
+        preview.src = api.getImageUrl(cat.image_url);
         preview.style.display = 'block';
       }
     }
