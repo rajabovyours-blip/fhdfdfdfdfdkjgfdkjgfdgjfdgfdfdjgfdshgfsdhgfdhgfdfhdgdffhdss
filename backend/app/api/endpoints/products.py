@@ -110,7 +110,7 @@ async def get_product(id: str, db: AsyncSession = Depends(get_db)):
     return APIResponse(data=ProductModel.model_validate(product))
 
 from pydantic.alias_generators import to_camel
-from pydantic import BaseModel as PydanticBaseModel, ConfigDict, model_validator
+from pydantic import BaseModel as PydanticBaseModel, ConfigDict, model_validator, Field
 from typing import Union, Any, Dict
 
 class ProductCreateRequest(PydanticBaseModel):
