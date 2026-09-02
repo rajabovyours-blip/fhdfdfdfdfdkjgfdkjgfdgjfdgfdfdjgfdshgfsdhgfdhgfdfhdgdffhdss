@@ -85,7 +85,7 @@ async def request_otp(otp_in: OTPRequest):
     otp_code = otp_service.request_otp(otp_in.phone)
     
     # 2. Prepare message
-    message = f"Milliy Metr ilovasiga kirish uchun tasdiqlash kodingiz: {otp_code}. Kodni hech kimga bermang. Milliy Metr xodimlari ham ushbu kodni so‘ramaydi."
+    message = f"akkauntingizni tasdiqlash uchun bir martalik tasdiqlash kodi yuborildi.\nTasdiqlash kodi: {otp_code}"
     
     # 3. Send via DevSMS
     success = await devsms_service.send_sms(otp_in.phone, message)
