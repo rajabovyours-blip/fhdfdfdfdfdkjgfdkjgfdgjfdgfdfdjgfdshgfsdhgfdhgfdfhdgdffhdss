@@ -21,6 +21,9 @@ class Settings(BaseSettings):
     ESKIZ_EMAIL: str = ""
     ESKIZ_PASSWORD: str = ""
     ESKIZ_TEST_MODE: bool = False
+    
+    # DevSMS 
+    DEVSMS_TOKEN: str = ""
 
     DATABASE_URL: str | None = None
 

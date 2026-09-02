@@ -10,7 +10,7 @@ from app.auth.security import get_password_hash, verify_password, create_access_
 from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
 from app.services.otp import otp_service
-from app.services.eskiz import eskiz_service
+from app.services.devsms import devsms_service
 from app.core.config import settings
 import uuid
 
@@ -87,8 +87,8 @@ async def request_otp(otp_in: OTPRequest):
     # 2. Prepare message
     message = f"Milliy Metr ilovasiga kirish uchun tasdiqlash kodingiz: {otp_code}. Kodni hech kimga bermang. Milliy Metr xodimlari ham ushbu kodni so‘ramaydi."
     
-    # 3. Send via Eskiz
-    success = await eskiz_service.send_sms(otp_in.phone, message)
+    # 3. Send via DevSMS
+    success = await devsms_service.send_sms(otp_in.phone, message)
     if not success:
         raise HTTPException(status_code=500, detail="SMS sending failed. Check credentials.")
         
