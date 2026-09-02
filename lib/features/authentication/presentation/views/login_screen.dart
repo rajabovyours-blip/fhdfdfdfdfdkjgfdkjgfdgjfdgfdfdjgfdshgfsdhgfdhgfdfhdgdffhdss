@@ -6,7 +6,7 @@ import 'package:milliy_metr/core/router/route_constants.dart';
 import 'package:milliy_metr/core/providers/auth_provider.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
 import 'package:milliy_metr/features/authentication/presentation/widgets/auth_language_selector.dart';
-import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart';
 
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -386,7 +386,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               const SizedBox(height: 24),
 
               // 7. SOCIAL LOGIN BUTTONS (Platform specific)
-              if (Platform.isIOS)
+              if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS)
                 _SocialButton(
                   label: context.l10n.continueWithApple,
                   iconWidget: Icon(Icons.apple, color: context.colors.onPrimary, size: 24),
