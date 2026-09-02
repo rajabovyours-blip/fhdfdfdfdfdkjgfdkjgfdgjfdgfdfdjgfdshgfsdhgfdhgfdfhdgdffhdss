@@ -1,4 +1,5 @@
 from pydantic import BaseModel, ConfigDict
+from pydantic.alias_generators import to_camel
 from typing import Optional, List, Dict
 from uuid import UUID
 from datetime import datetime
@@ -31,7 +32,11 @@ class ProductModel(BaseModel):
     location: Optional[str] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
-    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+    model_config = ConfigDict(
+        from_attributes=True,
+        populate_by_name=True,
+        alias_generator=to_camel,
+    )
 
 class CategoryBase(BaseModel):
     name: Dict[str, str]
@@ -49,4 +54,8 @@ class CategoryUpdate(CategoryBase):
 
 class CategoryModel(CategoryBase):
     id: UUID
-    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+    model_config = ConfigDict(
+        from_attributes=True,
+        populate_by_name=True,
+        alias_generator=to_camel,
+    )

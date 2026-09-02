@@ -4,10 +4,10 @@ class ImageUtils {
     if (rawUrl.startsWith('assets/')) return rawUrl;
     if (rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) return rawUrl;
     if (rawUrl.startsWith('/uploads/')) {
-      return 'https://milliy-metr-backend-hdol.onrender.com$rawUrl';
+      return 'https://milliymetr-backend.onrender.com$rawUrl';
     }
     if (rawUrl.startsWith('uploads/')) {
-      return 'https://milliy-metr-backend-hdol.onrender.com/$rawUrl';
+      return 'https://milliymetr-backend.onrender.com/$rawUrl';
     }
     return rawUrl;
   }
