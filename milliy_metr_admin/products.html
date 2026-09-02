@@ -245,11 +245,17 @@
       <div class="modal-body">
         <!-- Step 1: File Upload -->
         <div id="import-step-upload">
-          <p style="margin-bottom: 16px; color: var(--text-medium);">
-            <strong>.xlsx</strong> faylni yuklang. Faylda quyidagi ustunlar bo'lishi shart:
-            <strong>name</strong>, <strong>price</strong>.
-            Ixtiyoriy: description, category, stock, sku, brand, unit, image_url.
-          </p>
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 16px; flex-wrap: wrap;">
+            <p style="margin: 0; color: var(--text-medium); flex: 1; min-width: 250px;">
+              <strong>.xlsx</strong> faylni yuklang. Faylda quyidagi ustunlar bo'lishi shart:
+              <strong>name</strong>, <strong>price</strong>.<br>
+              <span style="font-size: 13px;">Ixtiyoriy: description, category, stock, sku, brand, unit, image_url.</span>
+            </p>
+            <a href="assets/mahsulotlar_andozasi.xlsx" download class="btn btn-outline" style="white-space: nowrap;">
+              <span class="material-symbols-rounded">download</span>
+              Andozani yuklab olish
+            </a>
+          </div>
           <input type="file" id="excel-file" accept=".xlsx" class="form-control" style="padding-top: 10px;">
         </div>
 
