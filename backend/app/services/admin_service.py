@@ -43,9 +43,9 @@ class AdminService:
             old_price=data.old_price,
             stock=data.stock,
             stock_status="in_stock" if data.stock > 0 else "out_of_stock",
-            sku=f"SKU-{uuid.uuid4().hex[:8].upper()}",
             currency="UZS",
             unit="pcs",
+            has_delivery=data.has_delivery,
         )
         self.db.add(new_product)
         await self.db.commit()
@@ -65,6 +65,7 @@ class AdminService:
         product.stock = data.stock
         product.category_id = data.category_id
         product.stock_status = "in_stock" if data.stock > 0 else "out_of_stock"
+        product.has_delivery = data.has_delivery
 
         await self.db.commit()
         await self.db.refresh(product)

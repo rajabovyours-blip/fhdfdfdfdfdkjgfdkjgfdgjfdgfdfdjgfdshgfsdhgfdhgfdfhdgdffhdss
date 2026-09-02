@@ -126,7 +126,7 @@ function renderTable(products) {
       : `<div style="width: 48px; height: 48px; background: #eee; border-radius: 4px;"></div>`;
       
     const price = parseInt(p.price).toLocaleString('ru-RU') + ' so\'m';
-    const stock = p.stock_quantity;
+    const stock = p.stock !== undefined ? p.stock : (p.stock_quantity || 0);
     
     let stockHtml = `<span style="color: var(--color-success); font-weight: 500;">${stock}</span>`;
     if (stock <= 5) stockHtml = `<span style="color: var(--color-danger); font-weight: 500;">${stock}</span>`;
@@ -216,7 +216,8 @@ async function openModal(id = null) {
       document.getElementById('prod-price').value = p.price || '';
       document.getElementById('prod-discount-price').value = p.discount_price || '';
       document.getElementById('prod-unit').value = p.unit || 'dona';
-      document.getElementById('prod-stock').value = p.stock_quantity || 0;
+      document.getElementById('prod-stock').value = p.stock !== undefined ? p.stock : (p.stock_quantity || 0);
+      document.getElementById('prod-has-delivery').checked = p.has_delivery !== undefined ? p.has_delivery : true;
       document.getElementById('prod-brand').value = p.brand || '';
       
       productImages = p.images || [];
@@ -281,7 +282,8 @@ async function saveProduct() {
     price: parseFloat(document.getElementById('prod-price').value) || 0,
     category_id: document.getElementById('prod-category').value,
     unit: document.getElementById('prod-unit').value,
-    stock_quantity: parseInt(document.getElementById('prod-stock').value) || 0,
+    stock: parseInt(document.getElementById('prod-stock').value) || 0,
+    has_delivery: document.getElementById('prod-has-delivery').checked,
     images: productImages
   };
   

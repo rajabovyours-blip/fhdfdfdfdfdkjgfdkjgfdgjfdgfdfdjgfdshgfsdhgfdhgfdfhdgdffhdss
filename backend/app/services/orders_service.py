@@ -1,5 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy import update
 from sqlalchemy.orm import selectinload
 from app.models.cart import Cart, CartItem
 from app.models.product import Product
@@ -142,10 +143,16 @@ class OrdersService:
             await self.db.flush()
 
             for item in cart.items:
-                # Deduct stock
-                item.product.stock -= item.quantity
-                if item.product.stock < 0:
-                    raise AppError(f"Insufficient stock for {item.product.name}", code="OUT_OF_STOCK")
+                # Deduct stock atomically
+                stmt = (
+                    update(Product)
+                    .where(Product.id == item.product_id)
+                    .where(Product.stock >= item.quantity)
+                    .values(stock=Product.stock - item.quantity)
+                )
+                res = await self.db.execute(stmt)
+                if res.rowcount == 0:
+                    raise AppError(f"Insufficient stock for {item.product.name.get('uz', item.product.name.get('en', 'mahsulot'))}", code="OUT_OF_STOCK")
                     
                 order_item = OrderItem(
                     order_id=order.id,

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.orm import joinedload
 from typing import List
 from uuid import UUID
@@ -33,11 +33,15 @@ async def create_order(
         
         if not product:
             raise HTTPException(status_code=404, detail=f"Product {item.product_id} not found")
-        if product.stock < item.quantity:
-            raise HTTPException(status_code=400, detail=f"Insufficient stock for {product.name.get('en', 'product')}")
-            
-        # Deduct stock
-        product.stock -= item.quantity
+        stmt = (
+            update(Product)
+            .where(Product.id == item.product_id)
+            .where(Product.stock >= item.quantity)
+            .values(stock=Product.stock - item.quantity)
+        )
+        res = await db.execute(stmt)
+        if res.rowcount == 0:
+            raise HTTPException(status_code=400, detail=f"Insufficient stock for {product.name.get('uz', product.name.get('en', 'product'))}")
         
         price = float(product.price)
         subtotal += price * item.quantity

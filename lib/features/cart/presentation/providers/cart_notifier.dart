@@ -109,7 +109,7 @@ class CartNotifier extends StateNotifier<FeatureState<List<CartItemEntity>>> {
         isSavedForLater: false,
         isWholesale: false,
         minimumOrderQuantity: 1,
-        maximumQuantity: 99,
+        maximumQuantity: product.stock,
         warehouseName: 'Asosiy ombor',
       ),);
     }

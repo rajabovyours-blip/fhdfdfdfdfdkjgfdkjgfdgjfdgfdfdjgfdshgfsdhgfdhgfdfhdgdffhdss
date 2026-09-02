@@ -119,7 +119,7 @@ class ProductCreateRequest(PydanticBaseModel):
     category_id: UUID
     price: float
     unit: str = "pcs"
-    stock: int = 0
+    stock: int = Field(default=0, alias="stock_quantity")
     images: list = []
     brand: str | None = None
     has_delivery: bool = True

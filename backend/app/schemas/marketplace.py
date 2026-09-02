@@ -120,8 +120,9 @@ class ProductCreate(BaseModel):
     description_en: Optional[str] = None
     price: float
     old_price: Optional[float] = None
-    stock: int
+    stock: int = Field(default=0, alias="stock_quantity")
     category_id: UUID4
+    has_delivery: bool = True
 
 class ReviewResponse(BaseModel):
     id: UUID4

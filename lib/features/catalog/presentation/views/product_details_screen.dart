@@ -1106,8 +1106,8 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                           ),
                         ),
                         IconButton(
-                          icon: const Icon(Icons.add, color: Colors.white),
-                          onPressed: () {
+                          icon: Icon(Icons.add, color: quantityInCart >= (product.stock ?? 0) ? Colors.white54 : Colors.white),
+                          onPressed: quantityInCart >= (product.stock ?? 0) ? null : () {
                             ref.read(cartNotifierProvider.notifier).addToCart(product, 1);
                           },
                         ),
