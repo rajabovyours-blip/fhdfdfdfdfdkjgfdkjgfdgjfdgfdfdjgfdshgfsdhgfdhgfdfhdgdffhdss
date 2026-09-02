@@ -140,12 +140,18 @@ class ProductCreateRequest(PydanticBaseModel):
     description: Union[Dict[str, str], str]
     category_id: UUID
     price: float
+    discount_price: float | None = None
     unit: str = "pcs"
     stock: int = Field(default=0, alias="stock_quantity")
     images: list = []
     brand: str | None = None
     has_delivery: bool = True
     delivery_price: float = 0.0
+
+    model_config = ConfigDict(
+        populate_by_name=True,
+        alias_generator=to_camel,
+    )
 
     @model_validator(mode='before')
     @classmethod
@@ -169,6 +175,7 @@ async def create_product(payload: ProductCreateRequest, db: AsyncSession = Depen
         description=payload.description,
         category_id=payload.category_id,
         price=payload.price,
+        discount=payload.discount_price,
         unit=payload.unit,
         stock=payload.stock,
         images=payload.images,
@@ -199,6 +206,7 @@ async def update_product(id: str, payload: ProductCreateRequest, db: AsyncSessio
     product.description = payload.description
     product.category_id = payload.category_id
     product.price = payload.price
+    product.discount = payload.discount_price
     product.unit = payload.unit
     product.stock = payload.stock
     product.brand = payload.brand
