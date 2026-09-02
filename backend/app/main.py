@@ -103,3 +103,7 @@ app.add_exception_handler(AppError, app_error_handler)
 async def health_check():
     return {"status": "ok"}
 
+@app.get("/")
+@app.head("/")
+async def root():
+    return {"message": "Milliy Metr API is running"}
