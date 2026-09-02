@@ -53,10 +53,14 @@ async def update_category(id: UUID, category_in: CategoryUpdate, db: AsyncSessio
 
 @router.delete("/{id}", response_model=APIResponse[dict])
 async def delete_category(id: UUID, db: AsyncSession = Depends(get_db), admin: User = Depends(get_current_admin)):
-    result = await db.execute(select(Category).where(Category.id == id))
+    from sqlalchemy.orm import selectinload
+    result = await db.execute(select(Category).where(Category.id == id).options(selectinload(Category.products)))
     category = result.scalar_one_or_none()
     if not category:
         raise HTTPException(status_code=404, detail="Category not found")
+        
+    if category.products:
+        raise HTTPException(status_code=400, detail="Ushbu kategoriyada mahsulotlar mavjud. Avval mahsulotlarni o'chiring yoki boshqa kategoriyaga o'tkazing.")
     
     await db.delete(category)
     await db.commit()

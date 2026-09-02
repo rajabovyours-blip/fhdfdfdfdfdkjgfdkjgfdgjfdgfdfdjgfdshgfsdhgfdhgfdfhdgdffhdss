@@ -6,7 +6,8 @@ import shutil
 router = APIRouter()
 
 # Ensure uploads directory exists. Use absolute path for Render persistent disk
-UPLOAD_DIR = os.getenv("UPLOAD_DIR", "/app/uploads/images")
+BASE_UPLOAD_DIR = os.getenv("UPLOAD_DIR", "/app/uploads")
+UPLOAD_DIR = os.path.join(BASE_UPLOAD_DIR, "images")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 @router.post("/image")
