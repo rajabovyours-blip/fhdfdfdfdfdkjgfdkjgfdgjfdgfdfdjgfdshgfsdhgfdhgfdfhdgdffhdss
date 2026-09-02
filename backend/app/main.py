@@ -62,11 +62,6 @@ async def lifespan(app: FastAPI):
     try:
         async with AsyncSessionLocal() as session:
             await seed_data(session)
-            
-            # Temporary cleanup for unwanted categories
-            from sqlalchemy import text
-            await session.execute(text("DELETE FROM categories WHERE name_en IN ('Bricks and Blocks', 'Cement')"))
-            await session.commit()
     except Exception as e:
         print(f"Error seeding/cleaning data: {e}")
         
