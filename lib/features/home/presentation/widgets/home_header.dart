@@ -126,7 +126,7 @@ class HomeHeader extends ConsumerWidget {
                   IconButton(
                     icon: Icon(Icons.tune, color: context.colors.textDisabled),
                     onPressed: () {
-                      FilterBottomSheet.show(context);
+                      FilterBottomSheet.show(context, ref);
                     },
                   ),
                 ],

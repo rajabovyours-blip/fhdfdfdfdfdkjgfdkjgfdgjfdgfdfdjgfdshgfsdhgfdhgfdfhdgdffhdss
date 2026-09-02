@@ -121,7 +121,7 @@
   "specifications": "Xususiyatlari",
   "reviews": "Sharhlar",
   "viewAllReviews": "Barcha sharhlarni ko'rish",
-  "noReviewsYet": "Bu mahsulot hali sharhlanmagan.",
+  "noReviewsYet": "Siz hali sharh qoldirmadingiz",
   "beFirstToReview": "Mahsulotni xarid qilgan birinchi mijoz bo'ling.",
   "reviewsCountLabel": "{count} ta sharh",
   "buyToReview": "Sharh qoldirish uchun ushbu mahsulotni xarid qiling.",
@@ -458,6 +458,24 @@
       }
     }
   },
-  "noReviewsYet": "Siz hali sharh qoldirmadingiz",
-  "shopNow": "Xarid qilish"
+  "shopNow": "Xarid qilish",
+  "filterSpecialOffers": "Maxsus takliflar",
+  "filterHasDiscount": "Chegirma mavjud",
+  "filterSmallWholesale": "Kichik miqdorda sotib olish mumkin",
+  "filterCertified": "Sertifikatlangan",
+  "filterHasDelivery": "Yetkazib berish mavjud",
+  "filterUnitLabel": "O'lchov birligi",
+  "filterRatingLabel": "Reyting",
+  "priceFrom": "dan",
+  "priceTo": "gacha",
+  "unitDona": "dona",
+  "unitKg": "kg",
+  "unitMetr": "metr",
+  "unitKvm": "kv.m",
+  "unitLitr": "litr",
+  "unitKomplekt": "komplekt",
+  "unitM3": "m3",
+  "unitTonna": "tonna",
+  "unitRulon": "rulon",
+  "unitQop": "qop"
 }

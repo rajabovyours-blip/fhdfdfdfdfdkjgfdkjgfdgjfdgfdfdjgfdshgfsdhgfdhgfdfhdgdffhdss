@@ -100,7 +100,7 @@
   "specifications": "Specifications",
   "reviews": "Reviews",
   "viewAllReviews": "View All Reviews",
-  "noReviewsYet": "No reviews yet for this product.",
+  "noReviewsYet": "You haven't written any reviews yet",
   "beFirstToReview": "Be the first customer to review this product.",
   "reviewsCountLabel": "{count} reviews",
   "buyToReview": "Purchase this product to leave a review.",
@@ -437,6 +437,24 @@
       }
     }
   },
-  "noReviewsYet": "You haven't written any reviews yet",
-  "shopNow": "Shop now"
+  "shopNow": "Shop now",
+  "filterSpecialOffers": "Special offers",
+  "filterHasDiscount": "Has discount",
+  "filterSmallWholesale": "Small wholesale available",
+  "filterCertified": "Certified",
+  "filterHasDelivery": "Delivery available",
+  "filterUnitLabel": "Unit",
+  "filterRatingLabel": "Rating",
+  "priceFrom": "from",
+  "priceTo": "to",
+  "unitDona": "pcs",
+  "unitKg": "kg",
+  "unitMetr": "meter",
+  "unitKvm": "sq.m",
+  "unitLitr": "liter",
+  "unitKomplekt": "set",
+  "unitM3": "m3",
+  "unitTonna": "ton",
+  "unitRulon": "roll",
+  "unitQop": "bag"
 }

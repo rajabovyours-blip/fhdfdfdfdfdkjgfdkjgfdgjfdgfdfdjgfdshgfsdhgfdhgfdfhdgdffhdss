@@ -1345,4 +1345,61 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get shopNow => 'Shop now';
+
+  @override
+  String get filterSpecialOffers => 'Special offers';
+
+  @override
+  String get filterHasDiscount => 'Has discount';
+
+  @override
+  String get filterSmallWholesale => 'Small wholesale available';
+
+  @override
+  String get filterCertified => 'Certified';
+
+  @override
+  String get filterHasDelivery => 'Delivery available';
+
+  @override
+  String get filterUnitLabel => 'Unit';
+
+  @override
+  String get filterRatingLabel => 'Rating';
+
+  @override
+  String get priceFrom => 'from';
+
+  @override
+  String get priceTo => 'to';
+
+  @override
+  String get unitDona => 'pcs';
+
+  @override
+  String get unitKg => 'kg';
+
+  @override
+  String get unitMetr => 'meter';
+
+  @override
+  String get unitKvm => 'sq.m';
+
+  @override
+  String get unitLitr => 'liter';
+
+  @override
+  String get unitKomplekt => 'set';
+
+  @override
+  String get unitM3 => 'm3';
+
+  @override
+  String get unitTonna => 'ton';
+
+  @override
+  String get unitRulon => 'roll';
+
+  @override
+  String get unitQop => 'bag';
 }

@@ -223,45 +223,48 @@ class _ProductFilterSheetState extends State<ProductFilterSheet> {
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
-        SliderTheme(
-          data: SliderTheme.of(context).copyWith(
-            valueIndicatorTextStyle: TextStyle(
-              color: context.colors.onPrimary,
-              fontWeight: FontWeight.bold,
-            ),
-            valueIndicatorColor: context.colors.primary,
-          ),
-          child: RangeSlider(
-            values: RangeValues(_currentFilters.minPrice ?? 0, _currentFilters.maxPrice ?? 50000000),
-            min: 0,
-            max: 50000000,
-            divisions: 100,
-            activeColor: context.colors.primary,
-            inactiveColor: context.colors.outline,
-            labels: RangeLabels(
-              '${((_currentFilters.minPrice ?? 0) / 1000).round()} k',
-              '${((_currentFilters.maxPrice ?? 50000000) / 1000).round()} k',
-            ),
-            onChanged: (values) {
-              setState(() {
-                _currentFilters = _currentFilters.copyWith(
-                  minPrice: values.start,
-                  maxPrice: values.end,
-                );
-              });
-            },
-          ),
-        ),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              '${(_currentFilters.minPrice ?? 0).round()} ${context.l10n.currency}',
-              style: TextStyle(color: context.colors.textMedium),
+            Expanded(
+              child: TextFormField(
+                initialValue: _currentFilters.minPrice?.round().toString() ?? '',
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: context.l10n.priceFrom,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: context.colors.outline),
+                  ),
+                  suffixText: context.l10n.currency,
+                ),
+                onChanged: (val) {
+                  final parsed = double.tryParse(val);
+                  setState(() {
+                    _currentFilters = _currentFilters.copyWith(minPrice: parsed);
+                  });
+                },
+              ),
             ),
-            Text(
-              '${(_currentFilters.maxPrice ?? 50000000).round()} ${context.l10n.currency}',
-              style: TextStyle(color: context.colors.textMedium),
+            const SizedBox(width: 16),
+            Expanded(
+              child: TextFormField(
+                initialValue: _currentFilters.maxPrice?.round().toString() ?? '',
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: context.l10n.priceTo,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: context.colors.outline),
+                  ),
+                  suffixText: context.l10n.currency,
+                ),
+                onChanged: (val) {
+                  final parsed = double.tryParse(val);
+                  setState(() {
+                    _currentFilters = _currentFilters.copyWith(maxPrice: parsed);
+                  });
+                },
+              ),
             ),
           ],
         ),
@@ -274,7 +277,7 @@ class _ProductFilterSheetState extends State<ProductFilterSheet> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Maxsus takliflar",
+          context.l10n.filterSpecialOffers,
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
@@ -285,25 +288,25 @@ class _ProductFilterSheetState extends State<ProductFilterSheet> {
           contentPadding: EdgeInsets.zero,
         ),
         SwitchListTile(
-          title: Text("Chegirma mavjud"),
+          title: Text(context.l10n.filterHasDiscount),
           value: _currentFilters.hasDiscount ?? false,
           onChanged: (val) => setState(() => _currentFilters = _currentFilters.copyWith(hasDiscount: val ? true : null)),
           contentPadding: EdgeInsets.zero,
         ),
         SwitchListTile(
-          title: Text("Kichik miqdorda sotib olish mumkin"),
+          title: Text(context.l10n.filterSmallWholesale),
           value: (_currentFilters.maxMoq != null && _currentFilters.maxMoq == 1),
           onChanged: (val) => setState(() => _currentFilters = _currentFilters.copyWith(maxMoq: val ? 1 : null)),
           contentPadding: EdgeInsets.zero,
         ),
         SwitchListTile(
-          title: Text("Sertifikatlangan"),
+          title: Text(context.l10n.filterCertified),
           value: _currentFilters.hasCertificate ?? false,
           onChanged: (val) => setState(() => _currentFilters = _currentFilters.copyWith(hasCertificate: val ? true : null)),
           contentPadding: EdgeInsets.zero,
         ),
         SwitchListTile(
-          title: Text("Yetkazib berish mavjud"),
+          title: Text(context.l10n.filterHasDelivery),
           value: _currentFilters.hasDelivery ?? false,
           onChanged: (val) => setState(() => _currentFilters = _currentFilters.copyWith(hasDelivery: val ? true : null)),
           contentPadding: EdgeInsets.zero,
@@ -313,12 +316,25 @@ class _ProductFilterSheetState extends State<ProductFilterSheet> {
   }
 
   Widget _buildUnitSection() {
+    final unitMap = {
+      'dona': context.l10n.unitDona,
+      'kg': context.l10n.unitKg,
+      'metr': context.l10n.unitMetr,
+      'kv.m': context.l10n.unitKvm,
+      'litr': context.l10n.unitLitr,
+      'komplekt': context.l10n.unitKomplekt,
+      'm3': context.l10n.unitM3,
+      'tonna': context.l10n.unitTonna,
+      'rulon': context.l10n.unitRulon,
+      'qop': context.l10n.unitQop,
+    };
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          "O'lchov birligi",
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        Text(
+          context.l10n.filterUnitLabel,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
         Wrap(
@@ -327,7 +343,7 @@ class _ProductFilterSheetState extends State<ProductFilterSheet> {
           children: _units.map((u) {
             final isSelected = _currentFilters.unit == u;
             return ChoiceChip(
-              label: Text(u),
+              label: Text(unitMap[u] ?? u),
               selected: isSelected,
               onSelected: (selected) {
                 setState(() {
@@ -345,9 +361,9 @@ class _ProductFilterSheetState extends State<ProductFilterSheet> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          "Reyting",
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        Text(
+          context.l10n.filterRatingLabel,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
         Wrap(

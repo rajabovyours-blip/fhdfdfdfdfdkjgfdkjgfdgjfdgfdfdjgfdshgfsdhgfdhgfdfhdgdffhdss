@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:milliy_metr/features/search/domain/entities/search_filter_state.dart';
 import 'package:milliy_metr/features/search/presentation/providers/search_notifier.dart';
 import 'package:milliy_metr/shared/components/product_filter_sheet.dart';
 

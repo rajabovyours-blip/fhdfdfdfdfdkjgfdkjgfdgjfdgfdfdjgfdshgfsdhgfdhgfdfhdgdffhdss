@@ -30,7 +30,7 @@ class SearchScreen extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.filter_list),
             onPressed: () {
-              FilterBottomSheet.show(context);
+              FilterBottomSheet.show(context, ref);
             },
           ),
         ],

@@ -5,6 +5,7 @@ import 'package:milliy_metr/l10n/l10n_extension.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:milliy_metr/features/categories/presentation/providers/category_notifier.dart';
 import 'package:milliy_metr/shared/components/category_card.dart';
+import 'package:milliy_metr/features/categories/domain/entities/category_entity.dart';
 class CategoriesScreen extends ConsumerWidget {
   final CategoryEntity? parentCategory;
   

@@ -1357,4 +1357,61 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get shopNow => 'Xarid qilish';
+
+  @override
+  String get filterSpecialOffers => 'Maxsus takliflar';
+
+  @override
+  String get filterHasDiscount => 'Chegirma mavjud';
+
+  @override
+  String get filterSmallWholesale => 'Kichik miqdorda sotib olish mumkin';
+
+  @override
+  String get filterCertified => 'Sertifikatlangan';
+
+  @override
+  String get filterHasDelivery => 'Yetkazib berish mavjud';
+
+  @override
+  String get filterUnitLabel => 'O\'lchov birligi';
+
+  @override
+  String get filterRatingLabel => 'Reyting';
+
+  @override
+  String get priceFrom => 'dan';
+
+  @override
+  String get priceTo => 'gacha';
+
+  @override
+  String get unitDona => 'dona';
+
+  @override
+  String get unitKg => 'kg';
+
+  @override
+  String get unitMetr => 'metr';
+
+  @override
+  String get unitKvm => 'kv.m';
+
+  @override
+  String get unitLitr => 'litr';
+
+  @override
+  String get unitKomplekt => 'komplekt';
+
+  @override
+  String get unitM3 => 'm3';
+
+  @override
+  String get unitTonna => 'tonna';
+
+  @override
+  String get unitRulon => 'rulon';
+
+  @override
+  String get unitQop => 'qop';
 }

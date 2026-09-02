@@ -2685,6 +2685,120 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Xarid qilish'**
   String get shopNow;
+
+  /// No description provided for @filterSpecialOffers.
+  ///
+  /// In uz, this message translates to:
+  /// **'Maxsus takliflar'**
+  String get filterSpecialOffers;
+
+  /// No description provided for @filterHasDiscount.
+  ///
+  /// In uz, this message translates to:
+  /// **'Chegirma mavjud'**
+  String get filterHasDiscount;
+
+  /// No description provided for @filterSmallWholesale.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kichik miqdorda sotib olish mumkin'**
+  String get filterSmallWholesale;
+
+  /// No description provided for @filterCertified.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sertifikatlangan'**
+  String get filterCertified;
+
+  /// No description provided for @filterHasDelivery.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yetkazib berish mavjud'**
+  String get filterHasDelivery;
+
+  /// No description provided for @filterUnitLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'O\'lchov birligi'**
+  String get filterUnitLabel;
+
+  /// No description provided for @filterRatingLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Reyting'**
+  String get filterRatingLabel;
+
+  /// No description provided for @priceFrom.
+  ///
+  /// In uz, this message translates to:
+  /// **'dan'**
+  String get priceFrom;
+
+  /// No description provided for @priceTo.
+  ///
+  /// In uz, this message translates to:
+  /// **'gacha'**
+  String get priceTo;
+
+  /// No description provided for @unitDona.
+  ///
+  /// In uz, this message translates to:
+  /// **'dona'**
+  String get unitDona;
+
+  /// No description provided for @unitKg.
+  ///
+  /// In uz, this message translates to:
+  /// **'kg'**
+  String get unitKg;
+
+  /// No description provided for @unitMetr.
+  ///
+  /// In uz, this message translates to:
+  /// **'metr'**
+  String get unitMetr;
+
+  /// No description provided for @unitKvm.
+  ///
+  /// In uz, this message translates to:
+  /// **'kv.m'**
+  String get unitKvm;
+
+  /// No description provided for @unitLitr.
+  ///
+  /// In uz, this message translates to:
+  /// **'litr'**
+  String get unitLitr;
+
+  /// No description provided for @unitKomplekt.
+  ///
+  /// In uz, this message translates to:
+  /// **'komplekt'**
+  String get unitKomplekt;
+
+  /// No description provided for @unitM3.
+  ///
+  /// In uz, this message translates to:
+  /// **'m3'**
+  String get unitM3;
+
+  /// No description provided for @unitTonna.
+  ///
+  /// In uz, this message translates to:
+  /// **'tonna'**
+  String get unitTonna;
+
+  /// No description provided for @unitRulon.
+  ///
+  /// In uz, this message translates to:
+  /// **'rulon'**
+  String get unitRulon;
+
+  /// No description provided for @unitQop.
+  ///
+  /// In uz, this message translates to:
+  /// **'qop'**
+  String get unitQop;
 }
 
 class _AppLocalizationsDelegate

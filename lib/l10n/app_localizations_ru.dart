@@ -1345,4 +1345,61 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get shopNow => 'Перейти к покупкам';
+
+  @override
+  String get filterSpecialOffers => 'Специальные предложения';
+
+  @override
+  String get filterHasDiscount => 'Со скидкой';
+
+  @override
+  String get filterSmallWholesale => 'Возможен мелкий опт';
+
+  @override
+  String get filterCertified => 'Сертифицирован';
+
+  @override
+  String get filterHasDelivery => 'Есть доставка';
+
+  @override
+  String get filterUnitLabel => 'Единица измерения';
+
+  @override
+  String get filterRatingLabel => 'Рейтинг';
+
+  @override
+  String get priceFrom => 'от';
+
+  @override
+  String get priceTo => 'до';
+
+  @override
+  String get unitDona => 'шт';
+
+  @override
+  String get unitKg => 'кг';
+
+  @override
+  String get unitMetr => 'метр';
+
+  @override
+  String get unitKvm => 'кв.м';
+
+  @override
+  String get unitLitr => 'литр';
+
+  @override
+  String get unitKomplekt => 'комплект';
+
+  @override
+  String get unitM3 => 'м3';
+
+  @override
+  String get unitTonna => 'тонна';
+
+  @override
+  String get unitRulon => 'рулон';
+
+  @override
+  String get unitQop => 'мешок';
 }

@@ -100,7 +100,7 @@
   "specifications": "Характеристики",
   "reviews": "Отзывы",
   "viewAllReviews": "Смотреть все отзывы",
-  "noReviewsYet": "У этого товара пока нет отзывов.",
+  "noReviewsYet": "Вы ещё не написали отзывов",
   "beFirstToReview": "Станьте первым покупателем, оставившим отзыв.",
   "reviewsCountLabel": "{count} отзывов",
   "buyToReview": "Купите этот товар, чтобы оставить отзыв.",
@@ -437,6 +437,24 @@
       }
     }
   },
-  "noReviewsYet": "Вы ещё не написали отзывов",
-  "shopNow": "Перейти к покупкам"
+  "shopNow": "Перейти к покупкам",
+  "filterSpecialOffers": "Специальные предложения",
+  "filterHasDiscount": "Со скидкой",
+  "filterSmallWholesale": "Возможен мелкий опт",
+  "filterCertified": "Сертифицирован",
+  "filterHasDelivery": "Есть доставка",
+  "filterUnitLabel": "Единица измерения",
+  "filterRatingLabel": "Рейтинг",
+  "priceFrom": "от",
+  "priceTo": "до",
+  "unitDona": "шт",
+  "unitKg": "кг",
+  "unitMetr": "метр",
+  "unitKvm": "кв.м",
+  "unitLitr": "литр",
+  "unitKomplekt": "комплект",
+  "unitM3": "м3",
+  "unitTonna": "тонна",
+  "unitRulon": "рулон",
+  "unitQop": "мешок"
 }
