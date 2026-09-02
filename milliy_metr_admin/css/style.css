@@ -536,18 +536,32 @@ textarea.form-control {
 /* Form Layouts */
 .form-row {
   display: flex;
+  gap: var(--space-16);
 }
 .form-col {
   flex: 1;
 }
 
-/* Responsive */
+/* ===== SIDEBAR OVERLAY BACKDROP ===== */
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 99;
+}
+.sidebar-backdrop.active {
+  display: block;
+}
+
+/* ===== RESPONSIVE: TABLET (≤1023px) ===== */
 @media (max-width: 1023px) {
   .app-sidebar {
     position: fixed;
     top: 0; bottom: 0; left: 0;
     z-index: 100;
     transform: translateX(-100%);
+    transition: transform var(--ease-medium);
   }
   
   .app-sidebar.open {
@@ -559,60 +573,208 @@ textarea.form-control {
   }
 }
 
+/* ===== RESPONSIVE: MOBILE (≤767px) ===== */
 @media (max-width: 767px) {
+
+  /* --- Global Content --- */
   .app-content {
+    padding: var(--space-12);
+  }
+
+  /* --- App Header --- */
+  .app-header {
+    height: 56px;
+    padding: 0 var(--space-12);
+  }
+  .app-header h2 {
+    font-size: 16px;
+  }
+  .app-header .btn-sm {
+    height: 34px;
+    padding: 0 var(--space-8);
+    font-size: 12px;
+  }
+  .app-header .btn-sm .material-symbols-rounded {
+    font-size: 16px;
+  }
+
+  /* --- Page Title + Action Buttons (e.g. "Mahsulotlar" + "Yangi Qo'shish") --- */
+  #app > .d-flex.justify-content-between {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: var(--space-12);
+  }
+  #app > .d-flex.justify-content-between h2 {
+    font-size: 20px;
+  }
+  #app > .d-flex.justify-content-between .d-flex {
+    flex-wrap: wrap;
+    gap: var(--space-8);
+  }
+  #app > .d-flex.justify-content-between .btn {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* --- Filter / Search Bars --- */
+  .card > .d-flex.gap-16 {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: var(--space-12) !important;
+  }
+  .card > .d-flex.gap-16 > * {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  /* --- Cards --- */
+  .card {
     padding: var(--space-16);
   }
-  
-  /* Form stacking */
-  .form-row {
-    flex-direction: column !important;
-  }
-  .form-col, .form-row > .w-100 {
-    flex: unset !important;
-    width: 100% !important;
-  }
-  
-  /* Make all table wrappers responsive */
+
+  /* --- Tables → horizontal scroll --- */
   .table-responsive {
     width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    margin: 0 calc(-1 * var(--space-16));
+    padding: 0 var(--space-16);
   }
-  
   .table {
-    min-width: 800px;
+    min-width: 600px;
   }
-  
-  /* Make header sections wrap on mobile */
-  .mb-24.d-flex.justify-content-between {
+
+  /* --- Forms: stack all rows --- */
+  .form-row {
     flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: var(--space-16);
+    gap: 0 !important;
   }
-  
-  .mb-24.d-flex.justify-content-between .d-flex {
-    width: 100%;
-    flex-wrap: wrap;
-  }
-  
-  /* Filter sections wrap */
-  .card > .d-flex.align-items-center {
-    flex-direction: column !important;
-    align-items: stretch !important;
-  }
-  
-  .card > .d-flex.align-items-center > * {
+  .form-col,
+  .form-row > .w-100,
+  .form-row > .form-group {
+    flex: unset !important;
     width: 100% !important;
-    min-width: 0 !important;
   }
-  
+
+  /* --- Modals: full screen on mobile --- */
   .modal-content {
-    width: 100%;
-    max-width: 100%;
+    width: 100% !important;
+    max-width: 100% !important;
     height: 100%;
     max-height: 100%;
     border-radius: 0;
     transform: translateY(100%);
+  }
+  .modal-overlay.active .modal-content {
+    transform: translateY(0);
+  }
+  .modal-header {
+    padding: var(--space-16);
+  }
+  .modal-header h3 {
+    font-size: 16px;
+  }
+  .modal-body {
+    padding: var(--space-16);
+  }
+  .modal-footer {
+    padding: var(--space-12) var(--space-16);
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+  .modal-footer .btn {
+    width: 100%;
+  }
+  /* Order modal footer: status change row stacking */
+  .modal-footer .d-flex.gap-16 {
+    flex-direction: column !important;
+    width: 100%;
+    gap: var(--space-8) !important;
+  }
+  .modal-footer .d-flex.gap-16 span[style*="font-weight"] {
+    display: none;
+  }
+  .modal-footer .d-flex.gap-16 .form-control {
+    width: 100% !important;
+  }
+  .modal-footer .d-flex.gap-12 {
+    width: 100%;
+  }
+  .modal-footer .d-flex.gap-12 .btn {
+    width: 100%;
+  }
+
+  /* --- Users modal: 3-col info grid → 1 column --- */
+  .modal-body > div[style*="grid-template-columns: 1fr 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* --- Order details: 2-col grid → 1 column --- */
+  .order-details-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* --- Dashboard KPI Cards --- */
+  .kpi-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: var(--space-12) !important;
+  }
+  .kpi-card {
+    padding: var(--space-12) !important;
+    gap: var(--space-8) !important;
+  }
+  .kpi-icon {
+    width: 40px !important;
+    height: 40px !important;
+  }
+  .kpi-icon .material-symbols-rounded {
+    font-size: 20px !important;
+  }
+  .kpi-info h3 {
+    font-size: 18px !important;
+  }
+  .kpi-info p {
+    font-size: 12px !important;
+  }
+
+  /* --- Buttons: readable on small screens --- */
+  .btn {
+    height: 44px;
+    padding: 0 var(--space-16);
+    font-size: 13px;
+  }
+  .btn-sm {
+    height: 36px;
+    padding: 0 var(--space-12);
+  }
+
+  /* --- Pagination --- */
+  .pagination {
+    flex-wrap: wrap;
+  }
+
+  /* --- Login page: full width card --- */
+  .login-card {
+    padding: var(--space-24) var(--space-16) !important;
+    margin: var(--space-16);
+  }
+
+  /* --- Typography --- */
+  h2 { font-size: 20px; }
+  h3 { font-size: 17px; }
+}
+
+/* ===== RESPONSIVE: VERY SMALL (≤374px) ===== */
+@media (max-width: 374px) {
+  .kpi-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .app-header h2 {
+    font-size: 14px;
+  }
+  .btn {
+    font-size: 12px;
+    height: 40px;
   }
 }

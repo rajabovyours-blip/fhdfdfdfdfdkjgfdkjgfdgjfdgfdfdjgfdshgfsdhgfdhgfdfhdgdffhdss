@@ -91,14 +91,32 @@ const layout = {
     });
 
     const sidebar = document.getElementById('sidebar');
+    
+    // Create backdrop for mobile sidebar
+    let backdrop = document.getElementById('sidebar-backdrop');
+    if (!backdrop) {
+      backdrop = document.createElement('div');
+      backdrop.id = 'sidebar-backdrop';
+      backdrop.className = 'sidebar-backdrop';
+      document.body.appendChild(backdrop);
+    }
+    
     document.getElementById('menu-toggle')?.addEventListener('click', () => {
       sidebar.classList.toggle('open');
+      backdrop.classList.toggle('active');
     });
 
-    // Close sidebar when clicking outside on mobile
+    // Close sidebar when clicking backdrop
+    backdrop.addEventListener('click', () => {
+      sidebar.classList.remove('open');
+      backdrop.classList.remove('active');
+    });
+
+    // Close sidebar when clicking main content on mobile
     document.querySelector('.app-main')?.addEventListener('click', (e) => {
       if (window.innerWidth <= 1023 && sidebar.classList.contains('open')) {
         sidebar.classList.remove('open');
+        backdrop.classList.remove('active');
       }
     });
   },
