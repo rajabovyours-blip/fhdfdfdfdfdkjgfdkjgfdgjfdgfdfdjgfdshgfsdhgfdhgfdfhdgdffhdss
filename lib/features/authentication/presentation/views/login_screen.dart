@@ -117,6 +117,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Future<void> _handleGoogleLogin() async {
     try {
       final googleSignIn = GoogleSignIn(
+        clientId: kIsWeb ? '433156009799-tia3qrtgo44tq5eaj9n7b03r4t7q6f5j.apps.googleusercontent.com' : null,
         serverClientId: '433156009799-tia3qrtgo44tq5eaj9n7b03r4t7q6f5j.apps.googleusercontent.com',
       );
       final account = await googleSignIn.signIn();
