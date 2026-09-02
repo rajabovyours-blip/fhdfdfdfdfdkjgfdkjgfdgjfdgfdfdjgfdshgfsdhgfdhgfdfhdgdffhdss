@@ -31,7 +31,7 @@ class Product(Base):
     discount = Column(Numeric(5, 2), nullable=True)
     
     specifications = Column(JSON, nullable=True)
-    certificates = Column(String, nullable=True)
+    certificates = Column(JSON, nullable=True)
     delivery_information = Column(String, nullable=True)
     location = Column(String, nullable=True)
     has_delivery = Column(Boolean, default=True)

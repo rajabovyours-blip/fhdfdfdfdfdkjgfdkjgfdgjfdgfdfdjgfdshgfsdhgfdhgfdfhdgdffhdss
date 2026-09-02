@@ -20,8 +20,12 @@ async def get_products(
     category_id: Optional[UUID] = None, 
     min_price: Optional[float] = None,
     max_price: Optional[float] = None,
-    region_id: Optional[str] = None,
-    district_id: Optional[str] = None,
+    brand: Optional[str] = None,
+    unit: Optional[str] = None,
+    min_rating: Optional[float] = None,
+    max_moq: Optional[int] = None,
+    has_certificate: Optional[bool] = None,
+    has_delivery: Optional[bool] = None,
     in_stock_only: Optional[bool] = None,
     has_discount: Optional[bool] = None,
     sort_by: Optional[str] = None,
@@ -40,6 +44,24 @@ async def get_products(
         
     if max_price is not None:
         query = query.where(Product.price <= max_price)
+        
+    if brand:
+        query = query.where(func.lower(Product.brand) == brand.lower())
+        
+    if unit:
+        query = query.where(Product.unit == unit)
+        
+    if min_rating is not None:
+        query = query.where(Product.rating >= min_rating)
+        
+    if max_moq is not None:
+        query = query.where(Product.moq <= max_moq)
+        
+    if has_certificate:
+        query = query.where(Product.certificates.isnot(None))
+        
+    if has_delivery is not None:
+        query = query.where(Product.has_delivery == has_delivery)
         
     if in_stock_only:
         query = query.where(Product.stock > 0)

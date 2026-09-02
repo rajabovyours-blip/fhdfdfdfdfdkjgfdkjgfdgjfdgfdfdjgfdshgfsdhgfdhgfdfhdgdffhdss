@@ -62,12 +62,13 @@ function renderCategoryTable() {
   }
   
   // Build hierarchy (simple approach: sort by parent_id to show children under parents if possible, or build tree)
-  const topLevel = allCategories.filter(c => !c.parent_id);
+  const topLevel = allCategories.filter(c => !(c.parentId || c.parent_id));
   const childrenMap = {};
   allCategories.forEach(c => {
-    if (c.parent_id) {
-      if (!childrenMap[c.parent_id]) childrenMap[c.parent_id] = [];
-      childrenMap[c.parent_id].push(c);
+    const pId = c.parentId || c.parent_id;
+    if (pId) {
+      if (!childrenMap[pId]) childrenMap[pId] = [];
+      childrenMap[pId].push(c);
     }
   });
   
@@ -78,14 +79,16 @@ function renderCategoryTable() {
     if (typeof cat.name === 'object' && cat.name.uz) nameUz = cat.name.uz;
     
     let parentName = '-';
-    if (cat.parent_id) {
-        const parent = allCategories.find(p => p.id === cat.parent_id);
+    const catParentId = cat.parentId || cat.parent_id;
+    if (catParentId) {
+        const parent = allCategories.find(p => p.id === catParentId);
         if (parent) {
             parentName = typeof parent.name === 'object' ? parent.name.uz : parent.name;
         }
     }
     
-    const imgSrc = cat.image_url ? api.getImageUrl(cat.image_url) : '';
+    const imgUrl = cat.imageUrl || cat.image_url;
+    const imgSrc = imgUrl ? api.getImageUrl(imgUrl) : '';
     const imgHtml = imgSrc 
       ? `<img src="${imgSrc}" style="width: 40px; height: 40px; border-radius: 4px; object-fit: cover;">` 
       : `<div style="width: 40px; height: 40px; background: #eee; border-radius: 4px; display: flex; align-items:center; justify-content:center;"><span class="material-symbols-rounded" style="color:#aaa;">category</span></div>`;
@@ -154,11 +157,12 @@ function openModal(id = null) {
       }
       
       updateParentDropdown(cat.id);
-      document.getElementById('cat-parent').value = cat.parent_id || '';
+      document.getElementById('cat-parent').value = cat.parentId || cat.parent_id || '';
       
-      if (cat.image_url) {
-        document.getElementById('cat-image-url').value = cat.image_url;
-        preview.src = api.getImageUrl(cat.image_url);
+      const editImgUrl = cat.imageUrl || cat.image_url;
+      if (editImgUrl) {
+        document.getElementById('cat-image-url').value = editImgUrl;
+        preview.src = api.getImageUrl(editImgUrl);
         preview.style.display = 'block';
       }
     }
@@ -189,8 +193,11 @@ async function saveCategory() {
       en: document.getElementById('cat-name-en').value || nameUz
     },
     parent_id: document.getElementById('cat-parent').value || null,
+    parentId: document.getElementById('cat-parent').value || null,
     image_url: document.getElementById('cat-image-url').value || null,
-    is_featured: false
+    imageUrl: document.getElementById('cat-image-url').value || null,
+    is_featured: false,
+    isFeatured: false
   };
   
   const btn = document.getElementById('btn-save-category');

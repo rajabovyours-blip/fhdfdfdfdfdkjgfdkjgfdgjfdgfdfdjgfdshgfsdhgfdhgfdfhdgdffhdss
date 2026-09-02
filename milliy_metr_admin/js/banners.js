@@ -59,19 +59,23 @@ function renderBannerTable() {
   }
   
   tbody.innerHTML = allBanners.map(b => {
-    const imgSrc = b.image_url ? api.getImageUrl(b.image_url) : '';
-    const statusHtml = b.is_active 
+    const imgUrl = b.imageUrl || b.image_url;
+    const imgSrc = imgUrl ? api.getImageUrl(imgUrl) : '';
+    const isActive = b.isActive !== undefined ? b.isActive : b.is_active;
+    const statusHtml = isActive 
       ? '<span class="badge badge-success">Faol</span>' 
       : '<span class="badge badge-neutral">Nofaol</span>';
       
-    return `
+    const linkUrl = b.linkUrl || b.link_url || '-';
+    const orderIndex = b.orderIndex !== undefined ? b.orderIndex : b.order_index;
+      
       <tr>
         <td>
           <img src="${imgSrc}" style="width: 100px; height: 50px; border-radius: 4px; object-fit: cover; background: #eee;">
         </td>
         <td>${b.title || '-'}</td>
-        <td>${b.link_url || '-'}</td>
-        <td>${b.order_index}</td>
+        <td>${linkUrl}</td>
+        <td>${orderIndex}</td>
         <td>${statusHtml}</td>
         <td class="text-center">
           <button class="btn btn-sm btn-outline" style="padding: 0 8px;" onclick="openModal('${b.id}')"><span class="material-symbols-rounded" style="font-size: 18px;">edit</span></button>
@@ -101,13 +105,14 @@ function openModal(id = null) {
     if (b) {
       document.getElementById('banner-id').value = b.id;
       document.getElementById('banner-title').value = b.title || '';
-      document.getElementById('banner-link').value = b.link_url || '';
-      document.getElementById('banner-order').value = b.order_index || 0;
-      document.getElementById('banner-active').checked = b.is_active;
+      document.getElementById('banner-link').value = b.linkUrl || b.link_url || '';
+      document.getElementById('banner-order').value = b.orderIndex !== undefined ? b.orderIndex : (b.order_index || 0);
+      document.getElementById('banner-active').checked = b.isActive !== undefined ? b.isActive : b.is_active;
       
-      if (b.image_url) {
-        document.getElementById('banner-image-url').value = b.image_url;
-        preview.src = api.getImageUrl(b.image_url);
+      const bImgUrl = b.imageUrl || b.image_url;
+      if (bImgUrl) {
+        document.getElementById('banner-image-url').value = bImgUrl;
+        preview.src = api.getImageUrl(bImgUrl);
         preview.style.display = 'block';
       }
     }
@@ -134,9 +139,13 @@ async function saveBanner() {
   const payload = {
     title: document.getElementById('banner-title').value || null,
     link_url: document.getElementById('banner-link').value || null,
+    linkUrl: document.getElementById('banner-link').value || null,
     image_url: imgUrl,
+    imageUrl: imgUrl,
     order_index: parseInt(document.getElementById('banner-order').value) || 0,
-    is_active: document.getElementById('banner-active').checked
+    orderIndex: parseInt(document.getElementById('banner-order').value) || 0,
+    is_active: document.getElementById('banner-active').checked,
+    isActive: document.getElementById('banner-active').checked
   };
   
   const btn = document.getElementById('btn-save-banner');

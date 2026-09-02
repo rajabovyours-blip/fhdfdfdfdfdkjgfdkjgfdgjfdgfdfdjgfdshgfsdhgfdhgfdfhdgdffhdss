@@ -9,18 +9,37 @@ enum SortOption {
   priceHighToLow
 }
 
+extension SortOptionExt on SortOption {
+  String? get apiValue {
+    switch (this) {
+      case SortOption.relevance:
+        return null;
+      case SortOption.newest:
+        return 'newest';
+      case SortOption.popularity:
+        return 'popular';
+      case SortOption.rating:
+        return 'rating';
+      case SortOption.priceLowToHigh:
+        return 'price_asc';
+      case SortOption.priceHighToLow:
+        return 'price_desc';
+    }
+  }
+}
+
 class SearchFilterState extends Equatable {
   final String? categoryId;
   final String? brand;
   final double? minPrice;
   final double? maxPrice;
-  final String? region;
-  final String? district;
+  final String? unit;
   final bool? inStock;
   final double? minRating;
+  final int? maxMoq;
+  final bool? hasCertificate;
+  final bool? hasDelivery;
   final bool? hasDiscount;
-  final bool? isWholesale;
-  final bool? isRetail;
   final SortOption sortOption;
 
   const SearchFilterState({
@@ -28,13 +47,13 @@ class SearchFilterState extends Equatable {
     this.brand,
     this.minPrice,
     this.maxPrice,
-    this.region,
-    this.district,
+    this.unit,
     this.inStock,
     this.minRating,
+    this.maxMoq,
+    this.hasCertificate,
+    this.hasDelivery,
     this.hasDiscount,
-    this.isWholesale,
-    this.isRetail,
     this.sortOption = SortOption.relevance,
   });
 
@@ -43,13 +62,13 @@ class SearchFilterState extends Equatable {
     String? brand,
     double? minPrice,
     double? maxPrice,
-    String? region,
-    String? district,
+    String? unit,
     bool? inStock,
     double? minRating,
+    int? maxMoq,
+    bool? hasCertificate,
+    bool? hasDelivery,
     bool? hasDiscount,
-    bool? isWholesale,
-    bool? isRetail,
     SortOption? sortOption,
   }) {
     return SearchFilterState(
@@ -57,13 +76,13 @@ class SearchFilterState extends Equatable {
       brand: brand ?? this.brand,
       minPrice: minPrice ?? this.minPrice,
       maxPrice: maxPrice ?? this.maxPrice,
-      region: region ?? this.region,
-      district: district ?? this.district,
+      unit: unit ?? this.unit,
       inStock: inStock ?? this.inStock,
       minRating: minRating ?? this.minRating,
+      maxMoq: maxMoq ?? this.maxMoq,
+      hasCertificate: hasCertificate ?? this.hasCertificate,
+      hasDelivery: hasDelivery ?? this.hasDelivery,
       hasDiscount: hasDiscount ?? this.hasDiscount,
-      isWholesale: isWholesale ?? this.isWholesale,
-      isRetail: isRetail ?? this.isRetail,
       sortOption: sortOption ?? this.sortOption,
     );
   }
@@ -74,14 +93,14 @@ class SearchFilterState extends Equatable {
       if (brand != null) 'brand': brand,
       if (minPrice != null) 'min_price': minPrice,
       if (maxPrice != null) 'max_price': maxPrice,
-      if (region != null) 'region': region,
-      if (district != null) 'district': district,
-      if (inStock != null) 'in_stock': inStock,
+      if (unit != null) 'unit': unit,
+      if (inStock != null && inStock!) 'in_stock_only': true,
       if (minRating != null) 'min_rating': minRating,
-      if (hasDiscount != null) 'has_discount': hasDiscount,
-      if (isWholesale != null) 'is_wholesale': isWholesale,
-      if (isRetail != null) 'is_retail': isRetail,
-      'sort': sortOption.name,
+      if (maxMoq != null) 'max_moq': maxMoq,
+      if (hasCertificate != null && hasCertificate!) 'has_certificate': true,
+      if (hasDelivery != null && hasDelivery!) 'has_delivery': true,
+      if (hasDiscount != null && hasDiscount!) 'has_discount': true,
+      if (sortOption.apiValue != null) 'sort_by': sortOption.apiValue,
     };
   }
 
@@ -91,13 +110,13 @@ class SearchFilterState extends Equatable {
         brand,
         minPrice,
         maxPrice,
-        region,
-        district,
+        unit,
         inStock,
         minRating,
+        maxMoq,
+        hasCertificate,
+        hasDelivery,
         hasDiscount,
-        isWholesale,
-        isRetail,
         sortOption,
       ];
 }

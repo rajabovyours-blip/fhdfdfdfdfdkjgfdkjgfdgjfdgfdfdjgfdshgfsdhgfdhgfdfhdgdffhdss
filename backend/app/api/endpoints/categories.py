@@ -15,9 +15,26 @@ router = APIRouter()
 
 @router.get("", response_model=APIResponse[List[CategoryModel]])
 async def get_categories(db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(Category))
-    categories = result.scalars().all()
-    return APIResponse(data=[CategoryModel.model_validate(c) for c in categories])
+    from sqlalchemy import select, func
+    from app.models.product import Product
+
+    # Subquery to count products per category
+    count_stmt = (
+        select(func.count(Product.id))
+        .where(Product.category_id == Category.id)
+        .scalar_subquery()
+    )
+    
+    result = await db.execute(
+        select(Category, count_stmt.label("product_count"))
+    )
+    
+    response_data = []
+    for category, p_count in result.all():
+        category.product_count = p_count or 0
+        response_data.append(CategoryModel.model_validate(category))
+        
+    return APIResponse(data=response_data)
 
 @router.post("", response_model=APIResponse[CategoryModel])
 async def create_category(category_in: CategoryCreate, db: AsyncSession = Depends(get_db), admin: User = Depends(get_current_admin)):

@@ -45,6 +45,7 @@ class CategoryBase(BaseModel):
     image_url: Optional[str] = None
     parent_id: Optional[UUID] = None
     is_featured: bool = False
+    product_count: int = 0
 
 class CategoryCreate(CategoryBase):
     pass

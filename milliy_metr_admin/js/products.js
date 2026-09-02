@@ -115,18 +115,19 @@ function renderTable(products) {
     let nameUz = typeof p.name === 'object' ? p.name.uz : p.name;
     
     let catName = 'Noma\'lum';
-    if (p.category_id) {
-      const c = categories.find(x => x.id === p.category_id);
+    const catId = p.categoryId || p.category_id;
+    if (catId) {
+      const c = categories.find(x => x.id === catId);
       if (c) catName = typeof c.name === 'object' ? c.name.uz : c.name;
     }
     
-    const imgSrc = (p.images && p.images.length > 0) ? api.getImageUrl(p.images[0]) : '';
+    const imgSrc = (p.images && p.images.length > 0) ? api.getImageUrl(p.images[0]) : (p.imageUrl ? api.getImageUrl(p.imageUrl) : '');
     const imgHtml = imgSrc 
       ? `<img src="${imgSrc}" style="width: 48px; height: 48px; border-radius: 4px; object-fit: cover;">` 
       : `<div style="width: 48px; height: 48px; background: #eee; border-radius: 4px;"></div>`;
       
-    const price = parseInt(p.price).toLocaleString('ru-RU') + ' so\'m';
-    const stock = p.stock !== undefined ? p.stock : (p.stock_quantity || 0);
+    const price = parseInt(p.price || 0).toLocaleString('ru-RU') + ' so\'m';
+    const stock = p.stock !== undefined ? p.stock : (p.stockQuantity !== undefined ? p.stockQuantity : 0);
     
     let stockHtml = `<span style="color: var(--color-success); font-weight: 500;">${stock}</span>`;
     if (stock <= 5) stockHtml = `<span style="color: var(--color-danger); font-weight: 500;">${stock}</span>`;
@@ -212,12 +213,12 @@ async function openModal(id = null) {
         document.getElementById('prod-desc-uz').value = p.description || '';
       }
       
-      document.getElementById('prod-category').value = p.category_id || '';
+      document.getElementById('prod-category').value = p.categoryId || p.category_id || '';
       document.getElementById('prod-price').value = p.price || '';
-      document.getElementById('prod-discount-price').value = p.discount_price || '';
+      document.getElementById('prod-discount-price').value = p.discountPrice || p.discount_price || '';
       document.getElementById('prod-unit').value = p.unit || 'dona';
-      document.getElementById('prod-stock').value = p.stock !== undefined ? p.stock : (p.stock_quantity || 0);
-      document.getElementById('prod-has-delivery').checked = p.has_delivery !== undefined ? p.has_delivery : true;
+      document.getElementById('prod-stock').value = p.stock !== undefined ? p.stock : (p.stockQuantity !== undefined ? p.stockQuantity : 0);
+      document.getElementById('prod-has-delivery').checked = p.hasDelivery !== undefined ? p.hasDelivery : (p.has_delivery !== undefined ? p.has_delivery : true);
       document.getElementById('prod-brand').value = p.brand || '';
       
       productImages = p.images || [];
@@ -265,33 +266,19 @@ async function saveProduct() {
     return;
   }
   
-  const nameUz = document.getElementById('prod-name-uz').value;
-  const descUz = document.getElementById('prod-desc-uz').value;
-  
   const payload = {
-    name: {
-      uz: nameUz,
-      ru: document.getElementById('prod-name-ru').value || nameUz,
-      en: nameUz
-    },
-    description: {
-      uz: descUz,
-      ru: document.getElementById('prod-desc-ru').value || descUz,
-      en: descUz
-    },
+    name: { uz: document.getElementById('prod-name-uz').value, ru: document.getElementById('prod-name-ru').value },
+    description: { uz: document.getElementById('prod-desc-uz').value, ru: document.getElementById('prod-desc-ru').value },
+    categoryId: document.getElementById('prod-category').value,
     price: parseFloat(document.getElementById('prod-price').value) || 0,
-    category_id: document.getElementById('prod-category').value,
+    discountPrice: parseFloat(document.getElementById('prod-discount-price').value) || null,
     unit: document.getElementById('prod-unit').value,
     stock: parseInt(document.getElementById('prod-stock').value) || 0,
-    has_delivery: document.getElementById('prod-has-delivery').checked,
+    hasDelivery: document.getElementById('prod-has-delivery').checked,
+    brand: document.getElementById('prod-brand').value || null,
     images: productImages
   };
   
-  const discount = document.getElementById('prod-discount-price').value;
-  if (discount) payload.discount_price = parseFloat(discount);
-  
-  const brand = document.getElementById('prod-brand').value;
-  if (brand) payload.brand = brand;
   
   const btn = document.getElementById('btn-save-product');
   btn.disabled = true;

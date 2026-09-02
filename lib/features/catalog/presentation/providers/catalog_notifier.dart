@@ -11,7 +11,12 @@ class CatalogData {
   final String selectedCategory;
   final double? minPrice;
   final double? maxPrice;
-  final String? selectedLocation;
+  final String? brand;
+  final String? unit;
+  final double? minRating;
+  final int? maxMoq;
+  final bool? hasCertificate;
+  final bool? hasDelivery;
   final String? sortOption;
 
   const CatalogData({
@@ -22,7 +27,12 @@ class CatalogData {
     this.selectedCategory = 'Barchasi',
     this.minPrice,
     this.maxPrice,
-    this.selectedLocation,
+    this.brand,
+    this.unit,
+    this.minRating,
+    this.maxMoq,
+    this.hasCertificate,
+    this.hasDelivery,
     this.sortOption,
   });
 
@@ -34,7 +44,12 @@ class CatalogData {
     String? selectedCategory,
     double? minPrice,
     double? maxPrice,
-    String? selectedLocation,
+    String? brand,
+    String? unit,
+    double? minRating,
+    int? maxMoq,
+    bool? hasCertificate,
+    bool? hasDelivery,
     String? sortOption,
   }) {
     return CatalogData(
@@ -45,7 +60,12 @@ class CatalogData {
       selectedCategory: selectedCategory ?? this.selectedCategory,
       minPrice: minPrice ?? this.minPrice,
       maxPrice: maxPrice ?? this.maxPrice,
-      selectedLocation: selectedLocation ?? this.selectedLocation,
+      brand: brand ?? this.brand,
+      unit: unit ?? this.unit,
+      minRating: minRating ?? this.minRating,
+      maxMoq: maxMoq ?? this.maxMoq,
+      hasCertificate: hasCertificate ?? this.hasCertificate,
+      hasDelivery: hasDelivery ?? this.hasDelivery,
       sortOption: sortOption ?? this.sortOption,
     );
   }
@@ -84,18 +104,15 @@ class CatalogNotifier extends StateNotifier<FeatureState<CatalogData>> {
     }
 
     final filters = <String, dynamic>{};
-    if (currentData?.minPrice != null) {
-      filters['min_price'] = currentData?.minPrice?.toInt();
-    }
-    if (currentData?.maxPrice != null) {
-      filters['max_price'] = currentData?.maxPrice?.toInt();
-    }
-    if (currentData?.selectedLocation != null) {
-      filters['location'] = currentData?.selectedLocation;
-    }
-    if (currentData?.sortOption != null) {
-      filters['sort'] = currentData?.sortOption;
-    }
+    if (currentData?.minPrice != null) filters['min_price'] = currentData?.minPrice?.toInt();
+    if (currentData?.maxPrice != null) filters['max_price'] = currentData?.maxPrice?.toInt();
+    if (currentData?.brand != null) filters['brand'] = currentData?.brand;
+    if (currentData?.unit != null) filters['unit'] = currentData?.unit;
+    if (currentData?.minRating != null) filters['min_rating'] = currentData?.minRating;
+    if (currentData?.maxMoq != null) filters['max_moq'] = currentData?.maxMoq;
+    if (currentData?.hasCertificate != null && currentData!.hasCertificate!) filters['has_certificate'] = true;
+    if (currentData?.hasDelivery != null && currentData!.hasDelivery!) filters['has_delivery'] = true;
+    if (currentData?.sortOption != null) filters['sort_by'] = currentData?.sortOption;
 
     final result = await repository.getProducts(
       page: pageToLoad,
@@ -160,13 +177,27 @@ class CatalogNotifier extends StateNotifier<FeatureState<CatalogData>> {
     loadProducts(refresh: true);
   }
 
-  void setFilters({double? minPrice, double? maxPrice, String? location}) {
+  void setFilters({
+    double? minPrice, 
+    double? maxPrice,
+    String? brand,
+    String? unit,
+    double? minRating,
+    int? maxMoq,
+    bool? hasCertificate,
+    bool? hasDelivery,
+  }) {
     final data = _getCurrentData();
     state = FeatureState.loaded(
       data.copyWith(
         minPrice: minPrice,
         maxPrice: maxPrice,
-        selectedLocation: location,
+        brand: brand,
+        unit: unit,
+        minRating: minRating,
+        maxMoq: maxMoq,
+        hasCertificate: hasCertificate,
+        hasDelivery: hasDelivery,
       ),
     );
     loadProducts(refresh: true);
@@ -178,7 +209,12 @@ class CatalogNotifier extends StateNotifier<FeatureState<CatalogData>> {
       data.copyWith(
         minPrice: null,
         maxPrice: null,
-        selectedLocation: null,
+        brand: null,
+        unit: null,
+        minRating: null,
+        maxMoq: null,
+        hasCertificate: null,
+        hasDelivery: null,
         searchQuery: '',
         selectedCategory: 'Barchasi',
         sortOption: null,
