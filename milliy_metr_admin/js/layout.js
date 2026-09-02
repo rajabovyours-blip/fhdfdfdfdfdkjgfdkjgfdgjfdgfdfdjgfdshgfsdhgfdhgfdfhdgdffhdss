@@ -101,7 +101,8 @@ const layout = {
       document.body.appendChild(backdrop);
     }
     
-    document.getElementById('menu-toggle')?.addEventListener('click', () => {
+    document.getElementById('menu-toggle')?.addEventListener('click', (e) => {
+      e.stopPropagation();
       sidebar.classList.toggle('open');
       backdrop.classList.toggle('active');
     });
@@ -112,12 +113,14 @@ const layout = {
       backdrop.classList.remove('active');
     });
 
-    // Close sidebar when clicking main content on mobile
-    document.querySelector('.app-main')?.addEventListener('click', (e) => {
-      if (window.innerWidth <= 1023 && sidebar.classList.contains('open')) {
-        sidebar.classList.remove('open');
-        backdrop.classList.remove('active');
-      }
+    // Close sidebar when clicking a nav item on mobile
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        if (window.innerWidth <= 1023) {
+          sidebar.classList.remove('open');
+          backdrop.classList.remove('active');
+        }
+      });
     });
   },
   
