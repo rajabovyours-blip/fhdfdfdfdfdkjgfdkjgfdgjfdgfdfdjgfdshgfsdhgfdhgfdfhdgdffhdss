@@ -78,8 +78,10 @@ class UserUpdate(PydanticBaseModel):
     phone_number: Optional[str] = None
     is_active: Optional[bool] = None
 
+from app.api.dependencies import get_current_admin
+
 @router.put("/{id}", response_model=APIResponse[UserModel])
-async def update_user(id: str, payload: UserUpdate, db: AsyncSession = Depends(get_db)):
+async def update_user(id: str, payload: UserUpdate, db: AsyncSession = Depends(get_db), admin: User = Depends(get_current_admin)):
     from uuid import UUID
     try:
         user_id = UUID(str(id))
@@ -95,7 +97,7 @@ async def update_user(id: str, payload: UserUpdate, db: AsyncSession = Depends(g
     if payload.full_name is not None:
         user.full_name = payload.full_name
     if payload.phone_number is not None:
-        user.phone_number = payload.phone_number
+        user.phone = payload.phone_number
     if payload.is_active is not None:
         user.is_active = payload.is_active
         

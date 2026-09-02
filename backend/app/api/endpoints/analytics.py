@@ -15,7 +15,7 @@ router = APIRouter()
 async def get_dashboard_analytics(db: AsyncSession = Depends(get_db)):
     try:
         # 1. Total Revenue (DELIVERED or PAID)
-        revenue_query = select(func.sum(Order.total)).where(Order.status.in_(["DELIVERED", "PAID"]))
+        revenue_query = select(func.sum(Order.total)).where(func.lower(Order.status).in_(["delivered", "paid", "completed"]))
         revenue_result = await db.execute(revenue_query)
         total_revenue = revenue_result.scalar() or 0
         
@@ -63,7 +63,7 @@ async def get_dashboard_analytics(db: AsyncSession = Depends(get_db)):
         
         orders_this_year_query = select(Order.created_at, Order.total).where(
             Order.created_at >= year_start,
-            Order.status.in_(["DELIVERED", "PAID"])
+            func.lower(Order.status).in_(["delivered", "paid", "completed"])
         )
         orders_this_year_result = await db.execute(orders_this_year_query)
         

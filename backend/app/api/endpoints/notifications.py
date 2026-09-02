@@ -13,8 +13,27 @@ async def get_notifications(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    # Returns empty list for now until FCM integration is complete
-    return APIResponse(data=[])
+    from app.models.extras import Notification
+    from sqlalchemy import select
+    
+    result = await db.execute(
+        select(Notification)
+        .where(Notification.user_id == current_user.id)
+        .order_by(Notification.created_at.desc())
+    )
+    notifications = result.scalars().all()
+    
+    return APIResponse(data=[
+        {
+            "id": str(n.id),
+            "title": n.title,
+            "body": n.body,
+            "imageUrl": n.image_url,
+            "isRead": n.is_read,
+            "createdAt": n.created_at.isoformat() if n.created_at else None,
+        }
+        for n in notifications
+    ])
 
 @router.post("/device-token")
 async def register_device_token(
