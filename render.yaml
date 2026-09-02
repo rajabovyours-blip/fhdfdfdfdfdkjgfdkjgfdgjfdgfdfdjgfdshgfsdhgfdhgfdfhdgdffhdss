@@ -35,8 +35,8 @@ services:
     name: milliy-metr-admin
     env: static
     rootDir: milliy_metr_admin
-    buildCommand: "./render-build.sh"
-    staticPublishPath: "./build/web"
+    buildCommand: ""
+    staticPublishPath: "./"
     routes:
       - type: rewrite
         source: /*

@@ -533,6 +533,14 @@ textarea.form-control {
   margin-bottom: var(--space-16);
 }
 
+/* Form Layouts */
+.form-row {
+  display: flex;
+}
+.form-col {
+  flex: 1;
+}
+
 /* Responsive */
 @media (max-width: 1023px) {
   .app-sidebar {
@@ -554,6 +562,15 @@ textarea.form-control {
 @media (max-width: 767px) {
   .app-content {
     padding: var(--space-16);
+  }
+  
+  /* Form stacking */
+  .form-row {
+    flex-direction: column !important;
+  }
+  .form-col, .form-row > .w-100 {
+    flex: unset !important;
+    width: 100% !important;
   }
   
   /* Convert tables to cards */

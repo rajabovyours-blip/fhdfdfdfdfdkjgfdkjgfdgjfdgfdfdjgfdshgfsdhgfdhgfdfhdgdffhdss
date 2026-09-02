@@ -35,6 +35,7 @@ _$ProductModelImpl _$$ProductModelImplFromJson(Map<String, dynamic> json) =>
       certificates: (json['certificates'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
+      hasDelivery: json['hasDelivery'] as bool?,
       deliveryInformation: json['deliveryInformation'] as String?,
       location: json['location'] as String?,
       createdAt: json['createdAt'] == null
@@ -68,6 +69,7 @@ Map<String, dynamic> _$$ProductModelImplToJson(_$ProductModelImpl instance) =>
       'discount': instance.discount,
       'specifications': instance.specifications,
       'certificates': instance.certificates,
+      'hasDelivery': instance.hasDelivery,
       'deliveryInformation': instance.deliveryInformation,
       'location': instance.location,
       'createdAt': instance.createdAt?.toIso8601String(),

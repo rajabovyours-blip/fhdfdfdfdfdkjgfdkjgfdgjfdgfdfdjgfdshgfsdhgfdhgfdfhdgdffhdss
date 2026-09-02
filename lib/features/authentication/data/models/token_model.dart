@@ -9,8 +9,8 @@ class TokenModel with _$TokenModel {
   const TokenModel._();
 
   const factory TokenModel({
-    @JsonKey(name: 'access_token') required String accessToken,
-    @JsonKey(name: 'refresh_token') String? refreshToken,
+    required String accessToken,
+    String? refreshToken,
   }) = _TokenModel;
 
   factory TokenModel.fromJson(Map<String, dynamic> json) =>

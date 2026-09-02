@@ -41,6 +41,7 @@ mixin _$ProductModel {
   double? get discount => throw _privateConstructorUsedError;
   Map<String, String>? get specifications => throw _privateConstructorUsedError;
   List<String>? get certificates => throw _privateConstructorUsedError;
+  bool? get hasDelivery => throw _privateConstructorUsedError;
   String? get deliveryInformation => throw _privateConstructorUsedError;
   String? get location => throw _privateConstructorUsedError;
   DateTime? get createdAt => throw _privateConstructorUsedError;
@@ -80,6 +81,7 @@ abstract class $ProductModelCopyWith<$Res> {
       double? discount,
       Map<String, String>? specifications,
       List<String>? certificates,
+      bool? hasDelivery,
       String? deliveryInformation,
       String? location,
       DateTime? createdAt,
@@ -120,6 +122,7 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
     Object? discount = freezed,
     Object? specifications = freezed,
     Object? certificates = freezed,
+    Object? hasDelivery = freezed,
     Object? deliveryInformation = freezed,
     Object? location = freezed,
     Object? createdAt = freezed,
@@ -210,6 +213,10 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
           ? _value.certificates
           : certificates // ignore: cast_nullable_to_non_nullable
               as List<String>?,
+      hasDelivery: freezed == hasDelivery
+          ? _value.hasDelivery
+          : hasDelivery // ignore: cast_nullable_to_non_nullable
+              as bool?,
       deliveryInformation: freezed == deliveryInformation
           ? _value.deliveryInformation
           : deliveryInformation // ignore: cast_nullable_to_non_nullable
@@ -260,6 +267,7 @@ abstract class _$$ProductModelImplCopyWith<$Res>
       double? discount,
       Map<String, String>? specifications,
       List<String>? certificates,
+      bool? hasDelivery,
       String? deliveryInformation,
       String? location,
       DateTime? createdAt,
@@ -298,6 +306,7 @@ class __$$ProductModelImplCopyWithImpl<$Res>
     Object? discount = freezed,
     Object? specifications = freezed,
     Object? certificates = freezed,
+    Object? hasDelivery = freezed,
     Object? deliveryInformation = freezed,
     Object? location = freezed,
     Object? createdAt = freezed,
@@ -388,6 +397,10 @@ class __$$ProductModelImplCopyWithImpl<$Res>
           ? _value._certificates
           : certificates // ignore: cast_nullable_to_non_nullable
               as List<String>?,
+      hasDelivery: freezed == hasDelivery
+          ? _value.hasDelivery
+          : hasDelivery // ignore: cast_nullable_to_non_nullable
+              as bool?,
       deliveryInformation: freezed == deliveryInformation
           ? _value.deliveryInformation
           : deliveryInformation // ignore: cast_nullable_to_non_nullable
@@ -433,6 +446,7 @@ class _$ProductModelImpl extends _ProductModel {
       this.discount,
       final Map<String, String>? specifications,
       final List<String>? certificates,
+      this.hasDelivery,
       this.deliveryInformation,
       this.location,
       this.createdAt,
@@ -521,6 +535,8 @@ class _$ProductModelImpl extends _ProductModel {
   }
 
   @override
+  final bool? hasDelivery;
+  @override
   final String? deliveryInformation;
   @override
   final String? location;
@@ -531,7 +547,7 @@ class _$ProductModelImpl extends _ProductModel {
 
   @override
   String toString() {
-    return 'ProductModel(id: $id, sku: $sku, name: $name, description: $description, images: $images, videos: $videos, brand: $brand, categoryId: $categoryId, subcategoryId: $subcategoryId, price: $price, oldPrice: $oldPrice, currency: $currency, unit: $unit, moq: $moq, stock: $stock, stockStatus: $stockStatus, rating: $rating, reviewCount: $reviewCount, discount: $discount, specifications: $specifications, certificates: $certificates, deliveryInformation: $deliveryInformation, location: $location, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'ProductModel(id: $id, sku: $sku, name: $name, description: $description, images: $images, videos: $videos, brand: $brand, categoryId: $categoryId, subcategoryId: $subcategoryId, price: $price, oldPrice: $oldPrice, currency: $currency, unit: $unit, moq: $moq, stock: $stock, stockStatus: $stockStatus, rating: $rating, reviewCount: $reviewCount, discount: $discount, specifications: $specifications, certificates: $certificates, hasDelivery: $hasDelivery, deliveryInformation: $deliveryInformation, location: $location, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -570,6 +586,8 @@ class _$ProductModelImpl extends _ProductModel {
                 .equals(other._specifications, _specifications) &&
             const DeepCollectionEquality()
                 .equals(other._certificates, _certificates) &&
+            (identical(other.hasDelivery, hasDelivery) ||
+                other.hasDelivery == hasDelivery) &&
             (identical(other.deliveryInformation, deliveryInformation) ||
                 other.deliveryInformation == deliveryInformation) &&
             (identical(other.location, location) ||
@@ -605,6 +623,7 @@ class _$ProductModelImpl extends _ProductModel {
         discount,
         const DeepCollectionEquality().hash(_specifications),
         const DeepCollectionEquality().hash(_certificates),
+        hasDelivery,
         deliveryInformation,
         location,
         createdAt,
@@ -648,6 +667,7 @@ abstract class _ProductModel extends ProductModel {
       final double? discount,
       final Map<String, String>? specifications,
       final List<String>? certificates,
+      final bool? hasDelivery,
       final String? deliveryInformation,
       final String? location,
       final DateTime? createdAt,
@@ -699,6 +719,8 @@ abstract class _ProductModel extends ProductModel {
   Map<String, String>? get specifications;
   @override
   List<String>? get certificates;
+  @override
+  bool? get hasDelivery;
   @override
   String? get deliveryInformation;
   @override
