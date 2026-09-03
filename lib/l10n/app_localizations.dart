@@ -2799,6 +2799,36 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'qop'**
   String get unitQop;
+
+  /// No description provided for @calculatorTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kalkulyator'**
+  String get calculatorTitle;
+
+  /// No description provided for @calculatorFieldLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xona / Maydon o\'lchami'**
+  String get calculatorFieldLabel;
+
+  /// No description provided for @calculatorReserve.
+  ///
+  /// In uz, this message translates to:
+  /// **'Zaxira bilan (+5%):'**
+  String get calculatorReserve;
+
+  /// No description provided for @calculatorAddToCart.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hisoblangan miqdorni savatga qo\'shish'**
+  String get calculatorAddToCart;
+
+  /// No description provided for @calculatorAddedSnack.
+  ///
+  /// In uz, this message translates to:
+  /// **'dona savatga qo\'shildi'**
+  String get calculatorAddedSnack;
 }
 
 class _AppLocalizationsDelegate

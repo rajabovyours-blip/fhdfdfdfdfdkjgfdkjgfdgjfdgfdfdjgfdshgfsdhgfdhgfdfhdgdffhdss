@@ -1414,4 +1414,19 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get unitQop => 'qop';
+
+  @override
+  String get calculatorTitle => 'Kalkulyator';
+
+  @override
+  String get calculatorFieldLabel => 'Xona / Maydon o\'lchami';
+
+  @override
+  String get calculatorReserve => 'Zaxira bilan (+5%):';
+
+  @override
+  String get calculatorAddToCart => 'Hisoblangan miqdorni savatga qo\'shish';
+
+  @override
+  String get calculatorAddedSnack => 'dona savatga qo\'shildi';
 }

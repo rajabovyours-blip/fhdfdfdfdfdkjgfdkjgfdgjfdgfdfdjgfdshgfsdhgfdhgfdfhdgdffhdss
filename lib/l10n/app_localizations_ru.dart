@@ -1402,4 +1402,20 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get unitQop => 'мешок';
+
+  @override
+  String get calculatorTitle => 'Калькулятор';
+
+  @override
+  String get calculatorFieldLabel => 'Размер комнаты / площади';
+
+  @override
+  String get calculatorReserve => 'С запасом (+5%):';
+
+  @override
+  String get calculatorAddToCart =>
+      'Добавить рассчитанное количество в корзину';
+
+  @override
+  String get calculatorAddedSnack => 'шт добавлено в корзину';
 }

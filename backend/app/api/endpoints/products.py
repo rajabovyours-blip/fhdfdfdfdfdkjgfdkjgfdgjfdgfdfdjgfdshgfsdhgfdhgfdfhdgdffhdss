@@ -138,11 +138,11 @@ from typing import Union, Any, Dict
 class ProductCreateRequest(PydanticBaseModel):
     name: Union[Dict[str, str], str]
     description: Union[Dict[str, str], str]
-    category_id: UUID
+    category_id: UUID = None
     price: float
     discount_price: float | None = None
     unit: str = "pcs"
-    stock: int = Field(default=0, alias="stock_quantity")
+    stock: int = 0
     images: list = []
     brand: str | None = None
     has_delivery: bool = True
@@ -155,14 +155,32 @@ class ProductCreateRequest(PydanticBaseModel):
 
     @model_validator(mode='before')
     @classmethod
-    def convert_strings_to_dicts(cls, data: Any) -> Any:
+    def normalize_fields(cls, data: Any) -> Any:
         if isinstance(data, dict):
+            # Handle name/description as string → dict
             if isinstance(data.get('name'), str):
                 val = data['name']
                 data['name'] = {'uz': val, 'ru': val, 'en': val}
             if isinstance(data.get('description'), str):
                 val = data['description']
                 data['description'] = {'uz': val, 'ru': val, 'en': val}
+            # Normalize category_id from camelCase
+            if 'categoryId' in data and 'category_id' not in data:
+                data['category_id'] = data.pop('categoryId')
+            # Normalize stock from stock_quantity or stockQuantity
+            if 'stock_quantity' in data:
+                data['stock'] = data.pop('stock_quantity')
+            elif 'stockQuantity' in data:
+                data['stock'] = data.pop('stockQuantity')
+            # Normalize discount_price from discountPrice
+            if 'discountPrice' in data and 'discount_price' not in data:
+                data['discount_price'] = data.pop('discountPrice')
+            # Normalize has_delivery from hasDelivery
+            if 'hasDelivery' in data and 'has_delivery' not in data:
+                data['has_delivery'] = data.pop('hasDelivery')
+            # Normalize delivery_price from deliveryPrice
+            if 'deliveryPrice' in data and 'delivery_price' not in data:
+                data['delivery_price'] = data.pop('deliveryPrice')
         return data
 
 @router.post("", response_model=APIResponse[ProductModel])
@@ -176,6 +194,7 @@ async def create_product(payload: ProductCreateRequest, db: AsyncSession = Depen
         category_id=payload.category_id,
         price=payload.price,
         discount=payload.discount_price,
+        old_price=payload.discount_price,
         unit=payload.unit,
         stock=payload.stock,
         images=payload.images,
@@ -207,6 +226,7 @@ async def update_product(id: str, payload: ProductCreateRequest, db: AsyncSessio
     product.category_id = payload.category_id
     product.price = payload.price
     product.discount = payload.discount_price
+    product.old_price = payload.discount_price
     product.unit = payload.unit
     product.stock = payload.stock
     product.brand = payload.brand

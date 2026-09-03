@@ -1402,4 +1402,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unitQop => 'bag';
+
+  @override
+  String get calculatorTitle => 'Calculator';
+
+  @override
+  String get calculatorFieldLabel => 'Room / Area size';
+
+  @override
+  String get calculatorReserve => 'With reserve (+5%):';
+
+  @override
+  String get calculatorAddToCart => 'Add calculated amount to cart';
+
+  @override
+  String get calculatorAddedSnack => 'pcs added to cart';
 }

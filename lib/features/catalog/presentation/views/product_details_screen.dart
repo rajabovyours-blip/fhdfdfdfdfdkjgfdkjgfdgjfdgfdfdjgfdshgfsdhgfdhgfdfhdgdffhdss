@@ -524,7 +524,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                         controller: _calcController,
                                         keyboardType: const TextInputType.numberWithOptions(decimal: true),
                                         decoration: InputDecoration(
-                                          labelText: "Xona / Maydon o'lchami ()",
+                                          labelText: context.l10n.calculatorFieldLabel,
                                           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                                           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                                         ),
@@ -547,7 +547,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text(
-                                                'Zaxira bilan (+5%):',
+                                                context.l10n.calculatorReserve,
                                                 style: TextStyle(color: context.colors.textMedium),
                                               ),
                                               Text(
@@ -574,12 +574,12 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                               ref.read(cartNotifierProvider.notifier).addToCart(product, _calcResult.ceil());
                                               ScaffoldMessenger.of(context).showSnackBar(
                                                 SnackBar(
-                                                  content: const Text(" dona savatga qo'shildi"),
+                                                  content: Text(context.l10n.calculatorAddedSnack),
                                                   backgroundColor: context.colors.success,
                                                 ),
                                               );
                                             },
-                                            child: const Text("Hisoblangan miqdorni savatga qo'shish"),
+                                            child: Text(context.l10n.calculatorAddToCart),
                                           ),
                                         ),
                                       ],
@@ -1091,11 +1091,17 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        IconButton(
-                          icon: const Icon(Icons.remove, color: Colors.white),
-                          onPressed: () {
-                            ref.read(cartNotifierProvider.notifier).addToCart(product, -1);
-                          },
+                        SizedBox(
+                          width: 40,
+                          height: 40,
+                          child: IconButton(
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            icon: const Icon(Icons.remove, color: Colors.white),
+                            onPressed: () {
+                              ref.read(cartNotifierProvider.notifier).addToCart(product, -1);
+                            },
+                          ),
                         ),
                         Text(
                           context.l10n.inCartWithCount(quantityInCart),
@@ -1105,11 +1111,17 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                             fontSize: 15,
                           ),
                         ),
-                        IconButton(
-                          icon: Icon(Icons.add, color: quantityInCart >= (product.stock ?? 0) ? Colors.white54 : Colors.white),
-                          onPressed: quantityInCart >= (product.stock ?? 0) ? null : () {
-                            ref.read(cartNotifierProvider.notifier).addToCart(product, 1);
-                          },
+                        SizedBox(
+                          width: 40,
+                          height: 40,
+                          child: IconButton(
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            icon: Icon(Icons.add, color: quantityInCart >= (product.stock ?? 0) ? Colors.white54 : Colors.white),
+                            onPressed: quantityInCart >= (product.stock ?? 0) ? null : () {
+                              ref.read(cartNotifierProvider.notifier).addToCart(product, 1);
+                            },
+                          ),
                         ),
                       ],
                     ),

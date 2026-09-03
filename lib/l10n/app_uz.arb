@@ -477,5 +477,10 @@
   "unitM3": "m3",
   "unitTonna": "tonna",
   "unitRulon": "rulon",
-  "unitQop": "qop"
+  "unitQop": "qop",
+  "calculatorTitle": "Kalkulyator",
+  "calculatorFieldLabel": "Xona / Maydon o'lchami",
+  "calculatorReserve": "Zaxira bilan (+5%):",
+  "calculatorAddToCart": "Hisoblangan miqdorni savatga qo'shish",
+  "calculatorAddedSnack": "dona savatga qo'shildi"
 }

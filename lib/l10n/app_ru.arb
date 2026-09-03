@@ -456,5 +456,10 @@
   "unitM3": "м3",
   "unitTonna": "тонна",
   "unitRulon": "рулон",
-  "unitQop": "мешок"
+  "unitQop": "мешок",
+  "calculatorTitle": "Калькулятор",
+  "calculatorFieldLabel": "Размер комнаты / площади",
+  "calculatorReserve": "С запасом (+5%):",
+  "calculatorAddToCart": "Добавить рассчитанное количество в корзину",
+  "calculatorAddedSnack": "шт добавлено в корзину"
 }

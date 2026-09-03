@@ -456,5 +456,10 @@
   "unitM3": "m3",
   "unitTonna": "ton",
   "unitRulon": "roll",
-  "unitQop": "bag"
+  "unitQop": "bag",
+  "calculatorTitle": "Calculator",
+  "calculatorFieldLabel": "Room / Area size",
+  "calculatorReserve": "With reserve (+5%):",
+  "calculatorAddToCart": "Add calculated amount to cart",
+  "calculatorAddedSnack": "pcs added to cart"
 }

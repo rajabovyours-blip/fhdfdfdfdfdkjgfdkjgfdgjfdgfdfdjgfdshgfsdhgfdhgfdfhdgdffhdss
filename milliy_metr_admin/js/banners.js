@@ -69,12 +69,13 @@ function renderBannerTable() {
     const linkUrl = b.linkUrl || b.link_url || '-';
     const orderIndex = b.orderIndex !== undefined ? b.orderIndex : b.order_index;
       
+    return `
       <tr>
         <td>
           <img src="${imgSrc}" style="width: 100px; height: 50px; border-radius: 4px; object-fit: cover; background: #eee;">
         </td>
         <td>${b.title || '-'}</td>
-        <td>${linkUrl}</td>
+        <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${linkUrl}</td>
         <td>${orderIndex}</td>
         <td>${statusHtml}</td>
         <td class="text-center">
