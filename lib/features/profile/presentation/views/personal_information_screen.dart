@@ -41,9 +41,9 @@ class _PersonalInformationScreenState
       final authState = ref.read(authProvider);
       authState.whenOrNull(
         authenticated: (user) {
-          _nameController.text = user.fullName;
+          _nameController.text = user.fullName ?? '';
           _emailController.text = user.email ?? '';
-          _phoneController.text = user.phone;
+          _phoneController.text = user.phone ?? '';
           _avatarUrl = user.avatarUrl;
         },
       );
