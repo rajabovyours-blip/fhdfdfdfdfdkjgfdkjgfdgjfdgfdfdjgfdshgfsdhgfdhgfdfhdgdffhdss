@@ -55,6 +55,7 @@ from pydantic import BaseModel as PydanticBaseModel
 class UserMeUpdate(PydanticBaseModel):
     full_name: Optional[str] = None
     email: Optional[str] = None
+    phone_number: Optional[str] = None
     avatar_url: Optional[str] = None
     preferred_language: Optional[str] = None
 
@@ -64,6 +65,8 @@ async def update_me(payload: UserMeUpdate, db: AsyncSession = Depends(get_db), c
         current_user.full_name = payload.full_name
     if payload.email is not None:
         current_user.email = payload.email
+    if payload.phone_number is not None:
+        current_user.phone = payload.phone_number
     if payload.avatar_url is not None:
         current_user.avatar_url = payload.avatar_url
     if payload.preferred_language is not None:

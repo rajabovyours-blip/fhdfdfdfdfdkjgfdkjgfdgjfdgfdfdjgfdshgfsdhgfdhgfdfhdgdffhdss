@@ -90,6 +90,7 @@ class _PersonalInformationScreenState
                   final error = await ref.read(authProvider.notifier).updateProfile(
                     _nameController.text,
                     _emailController.text,
+                    _phoneController.text,
                     _avatarUrl ?? '',
                   );
                   setState(() => _isSaving = false);
@@ -227,7 +228,7 @@ class _PersonalInformationScreenState
                 label: l10n.phone,
                 controller: _phoneController,
                 icon: Icons.phone_outlined,
-                enabled: false,
+                enabled: _isEditing,
                 keyboardType: TextInputType.phone,
               ),
               const SizedBox(height: 16),

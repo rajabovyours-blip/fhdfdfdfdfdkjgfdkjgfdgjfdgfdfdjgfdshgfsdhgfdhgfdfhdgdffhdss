@@ -270,7 +270,7 @@ class AuthController extends StateNotifier<AuthState> {
 
 
 
-  Future<String?> updateProfile(String fullName, String email, String avatarUrl) async {
+  Future<String?> updateProfile(String fullName, String email, String phone, String avatarUrl) async {
     // Save current state in case of failure
     final currentState = state;
     try {
@@ -278,6 +278,8 @@ class AuthController extends StateNotifier<AuthState> {
         'full_name': fullName,
         'fullName': fullName,
         'email': email.isEmpty ? null : email,
+        'phone_number': phone.isEmpty ? null : phone,
+        'phone': phone.isEmpty ? null : phone,
         'avatar_url': avatarUrl,
         'avatarUrl': avatarUrl,
       },);
