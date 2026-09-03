@@ -5,6 +5,9 @@ import 'package:milliy_metr/features/checkout/domain/entities/cart_item_entity.d
 import 'package:milliy_metr/features/checkout/domain/entities/order_entity.dart';
 import 'package:milliy_metr/features/checkout/domain/repositories/checkout_repository.dart';
 import 'package:milliy_metr/features/checkout/domain/usecases/place_order_usecase.dart';
+import 'package:milliy_metr/features/payment/data/datasources/payment_remote_datasource.dart';
+import 'package:milliy_metr/features/payment/data/repositories/payment_repository_impl.dart';
+import 'package:milliy_metr/features/payment/domain/repositories/payment_repository.dart';
 
 import 'package:milliy_metr/features/checkout/data/datasources/checkout_remote_datasource.dart';
 import 'package:milliy_metr/core/providers/auth_provider.dart';
@@ -368,7 +371,44 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
   int get itemCount => state.cartItems.where((item) => item.isSelected).length;
   String get estimatedDelivery =>
       state.deliveryMethod == 'Express Delivery' ? 'Today' : '2-3 days';
+
+  /// Fetch fresh order data from backend to check payment_status
+  Future<void> refreshOrderStatus(String orderId) async {
+    try {
+      final dio = ref.read(dioProvider);
+      final response = await dio.get('/orders/$orderId');
+      if (response.statusCode == 200) {
+        final data = response.data['data'];
+        final order = OrderEntity.fromJson(data);
+        state = state.copyWith(order: order);
+      }
+    } catch (_) {}
+  }
+
+  /// Process payment and get checkout URL
+  Future<String?> processPaymentUrl(String orderId, String paymentMethod) async {
+    try {
+      final paymentRepo = ref.read(paymentRepositoryProvider);
+      final result = await paymentRepo.processPayment(orderId, paymentMethod.toLowerCase());
+      return result.fold(
+        (failure) => null,
+        (url) => url,
+      );
+    } catch (_) {
+      return null;
+    }
+  }
 }
+
+final paymentRemoteDataSourceProvider = Provider<PaymentRemoteDataSource>((ref) {
+  final dio = ref.watch(dioProvider);
+  return PaymentRemoteDataSourceImpl(dio: dio);
+});
+
+final paymentRepositoryProvider = Provider<PaymentRepository>((ref) {
+  final remoteDataSource = ref.watch(paymentRemoteDataSourceProvider);
+  return PaymentRepositoryImpl(remoteDataSource: remoteDataSource);
+});
 
 final checkoutProvider =
     StateNotifierProvider<CheckoutNotifier, CheckoutState>((ref) {

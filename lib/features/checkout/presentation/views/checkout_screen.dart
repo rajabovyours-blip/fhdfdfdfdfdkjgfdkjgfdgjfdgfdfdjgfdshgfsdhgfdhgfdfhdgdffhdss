@@ -223,7 +223,26 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                           ),
                         );
                       } else if (ref.read(checkoutProvider).order != null) {
-                        context.go(AppRoutes.orderSuccess);
+                        final order = ref.read(checkoutProvider).order!;
+                        final method = state.paymentMethod.toLowerCase();
+                        
+                        // For Click/Payme, get payment URL and open webview
+                        if (method == 'click' || method == 'payme') {
+                          final paymentUrl = await notifier.processPaymentUrl(
+                            order.id, method,
+                          );
+                          if (!context.mounted) return;
+                          if (paymentUrl != null) {
+                            await context.push(
+                              '${AppRoutes.paymentWebview}?url=${Uri.encodeComponent(paymentUrl)}&order_id=${order.id}',
+                            );
+                          } else {
+                            // Fallback to success screen if URL generation fails
+                            context.go(AppRoutes.orderSuccess);
+                          }
+                        } else {
+                          context.go(AppRoutes.orderSuccess);
+                        }
                       }
                     },
                   ),

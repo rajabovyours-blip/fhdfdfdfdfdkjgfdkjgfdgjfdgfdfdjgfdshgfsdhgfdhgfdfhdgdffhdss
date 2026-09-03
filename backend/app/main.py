@@ -13,6 +13,7 @@ from app.models.category import Category
 from app.models.product import Product
 from app.models.review import Review
 from app.models.order import Order
+from app.models.extras import Payment
 from app.db.session import AsyncSessionLocal
 from app.db.seed import seed_data
 
@@ -52,6 +53,27 @@ async def lifespan(app: FastAPI):
     try:
         async with engine.begin() as conn:
             await conn.execute(text("ALTER TABLE users ADD COLUMN preferred_language VARCHAR DEFAULT 'uz'"))
+    except Exception:
+        pass
+    
+    # Payment table migrations
+    for col_sql in [
+        "ALTER TABLE payments ADD COLUMN merchant_prepare_id VARCHAR",
+        "ALTER TABLE payments ADD COLUMN cancel_reason INTEGER",
+        "ALTER TABLE payments ADD COLUMN raw_payload JSON",
+        "ALTER TABLE payments ADD COLUMN perform_time TIMESTAMP",
+        "ALTER TABLE payments ADD COLUMN cancel_time TIMESTAMP",
+    ]:
+        try:
+            async with engine.begin() as conn:
+                await conn.execute(text(col_sql))
+        except Exception:
+            pass
+    
+    # Add unique index on transaction_id if not exists
+    try:
+        async with engine.begin() as conn:
+            await conn.execute(text("CREATE UNIQUE INDEX IF NOT EXISTS ix_payments_transaction_id ON payments (transaction_id)"))
     except Exception:
         pass
         

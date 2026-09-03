@@ -4,7 +4,7 @@ import 'package:milliy_metr/features/payment/domain/entities/payment_method_enti
 
 abstract class PaymentRepository {
   Future<Either<Failure, List<PaymentMethodEntity>>> getPaymentMethods();
-  Future<Either<Failure, void>> processPayment(
+  Future<Either<Failure, String>> processPayment(
     String orderId,
     String paymentMethodId,
   );

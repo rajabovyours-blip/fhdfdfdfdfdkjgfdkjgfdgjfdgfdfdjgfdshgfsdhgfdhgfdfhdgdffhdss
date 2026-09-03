@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To'lovlar - Milliy Metr Admin</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+  
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .raw-payload-pre {
+      background: var(--color-surface-variant);
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      max-height: 300px;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <main class="app-main">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">To'lovlar</h1>
+          <p class="page-subtitle">Barcha to'lov tranzaksiyalari</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header d-flex align-items-center gap-16" style="flex-wrap: wrap;">
+          <input type="text" class="form-control" id="search-input" placeholder="Qidirish..." style="max-width: 300px;">
+          <select class="form-control" id="provider-filter" style="max-width: 160px;">
+            <option value="">Barcha provayderlar</option>
+            <option value="click">Click</option>
+            <option value="payme">Payme</option>
+          </select>
+          <select class="form-control" id="status-filter" style="max-width: 160px;">
+            <option value="">Barcha holatlar</option>
+            <option value="pending">Pending</option>
+            <option value="created">Created</option>
+            <option value="performed">Performed</option>
+            <option value="cancelled">Cancelled</option>
+            <option value="cancelled_after_perform">Refunded</option>
+          </select>
+        </div>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Buyurtma</th>
+                <th>Mijoz</th>
+                <th>Provayder</th>
+                <th>Summa</th>
+                <th>Holat</th>
+                <th>Sana</th>
+                <th class="text-center">Amallar</th>
+              </tr>
+            </thead>
+            <tbody id="payments-list">
+              <tr><td colspan="8" class="text-center">Yuklanmoqda...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Payment Detail Modal -->
+      <div class="modal-overlay" id="payment-modal">
+        <div class="modal" style="max-width: 600px;">
+          <div class="modal-header">
+            <h3>To'lov tafsilotlari</h3>
+            <button class="btn btn-sm btn-ghost" id="btn-close-modal">
+              <span class="material-symbols-rounded">close</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+              <div>
+                <div style="color: var(--text-medium); font-size: 12px;">Provayder</div>
+                <div id="detail-provider" style="font-weight: 600;"></div>
+              </div>
+              <div>
+                <div style="color: var(--text-medium); font-size: 12px;">Holat</div>
+                <div id="detail-status" style="font-weight: 600;"></div>
+              </div>
+              <div>
+                <div style="color: var(--text-medium); font-size: 12px;">Summa</div>
+                <div id="detail-amount" style="font-weight: 600;"></div>
+              </div>
+              <div>
+                <div style="color: var(--text-medium); font-size: 12px;">Transaction ID</div>
+                <div id="detail-txn" style="font-weight: 600; word-break: break-all;"></div>
+              </div>
+              <div>
+                <div style="color: var(--text-medium); font-size: 12px;">Yaratilgan</div>
+                <div id="detail-created" style="font-weight: 600;"></div>
+              </div>
+              <div>
+                <div style="color: var(--text-medium); font-size: 12px;">To'langan vaqt</div>
+                <div id="detail-performed" style="font-weight: 600;"></div>
+              </div>
+              <div>
+                <div style="color: var(--text-medium); font-size: 12px;">Bekor qilingan vaqt</div>
+                <div id="detail-cancelled" style="font-weight: 600;"></div>
+              </div>
+              <div>
+                <div style="color: var(--text-medium); font-size: 12px;">Bekor sababi</div>
+                <div id="detail-reason" style="font-weight: 600;"></div>
+              </div>
+            </div>
+            <div>
+              <div style="color: var(--text-medium); font-size: 12px; margin-bottom: 8px;">Xom ma'lumot (Raw Payload)</div>
+              <pre class="raw-payload-pre" id="detail-raw"></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/payments.js"></script>
+</body>
+</html>

@@ -38,6 +38,7 @@ import 'package:milliy_metr/features/orders/presentation/views/order_details_scr
 import 'package:milliy_metr/features/wishlist/presentation/views/wishlist_screen.dart';
 import 'package:milliy_metr/features/reviews/presentation/views/all_reviews_screen.dart';
 import 'package:milliy_metr/features/reviews/presentation/views/review_photo_viewer_screen.dart';
+import 'package:milliy_metr/features/payment/presentation/views/payment_webview_screen.dart';
 
 import 'package:milliy_metr/main.dart';
 import 'package:milliy_metr/features/admin/presentation/views/admin_audit_logs_screen.dart';
@@ -190,6 +191,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.checkout,
         builder: (context, state) => const CheckoutScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.paymentWebview,
+        builder: (context, state) => PaymentWebviewScreen(
+          paymentUrl: Uri.decodeComponent(state.uri.queryParameters['url'] ?? ''),
+          orderId: state.uri.queryParameters['order_id'] ?? '',
+        ),
       ),
       GoRoute(
         path: AppRoutes.addresses,

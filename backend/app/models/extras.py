@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, ForeignKey, Boolean, Integer, DateTime, text
+from sqlalchemy import Column, String, ForeignKey, Boolean, Integer, DateTime, text, JSON
 from sqlalchemy.orm import relationship
 from app.db.base_class import Base
 from sqlalchemy import Uuid
@@ -44,11 +44,16 @@ class Payment(Base):
     
     id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
     order_id = Column(Uuid(as_uuid=True), ForeignKey("orders.id"), nullable=False)
-    provider = Column(String(50), nullable=False) # click, payme
-    transaction_id = Column(String, nullable=True)
-    amount = Column(Integer, nullable=False) # Minor units
-    status = Column(String(50), default="pending")
+    provider = Column(String(50), nullable=False)  # "click" | "payme"
+    transaction_id = Column(String, nullable=True, unique=True, index=True)  # provider tomonidan berilgan id
+    merchant_prepare_id = Column(String, nullable=True)  # faqat Click uchun
+    amount = Column(Integer, nullable=False)  # eng kichik birlikda (tiyin)
+    status = Column(String(50), default="pending")  # pending | created | performed | cancelled | cancelled_after_perform
+    cancel_reason = Column(Integer, nullable=True)
+    raw_payload = Column(JSON, nullable=True)  # webhook so'rovining xom nusxasi
     
+    perform_time = Column(DateTime, nullable=True)
+    cancel_time = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 

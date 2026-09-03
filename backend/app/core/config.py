@@ -25,6 +25,16 @@ class Settings(BaseSettings):
     # DevSMS 
     DEVSMS_TOKEN: str = ""
 
+    # Click
+    CLICK_SERVICE_ID: str = ""
+    CLICK_MERCHANT_ID: str = ""
+    CLICK_SECRET_KEY: str = ""
+    CLICK_MERCHANT_USER_ID: str = ""
+
+    # Payme
+    PAYME_MERCHANT_ID: str = ""
+    PAYME_KEY: str = ""
+
     DATABASE_URL: str | None = None
 
     @property

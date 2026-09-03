@@ -4,7 +4,7 @@ import 'package:milliy_metr/features/payment/domain/entities/payment_method_enti
 
 abstract class PaymentRemoteDataSource {
   Future<List<PaymentMethodEntity>> getPaymentMethods();
-  Future<dynamic> processPayment(String orderId, String paymentMethodId);
+  Future<String> processPayment(String orderId, String paymentMethodId);
 }
 
 class PaymentRemoteDataSourceImpl implements PaymentRemoteDataSource {
@@ -31,7 +31,7 @@ class PaymentRemoteDataSourceImpl implements PaymentRemoteDataSource {
   }
 
   @override
-  Future<dynamic> processPayment(String orderId, String paymentMethodId) async {
+  Future<String> processPayment(String orderId, String paymentMethodId) async {
     try {
       final response = await dio.post(
         '/payments/process',
@@ -41,7 +41,8 @@ class PaymentRemoteDataSourceImpl implements PaymentRemoteDataSource {
         },
       );
       if (response.statusCode == 200) {
-        return response.data['data'];
+        final data = response.data['data'];
+        return data['payment_url'] as String;
       } else {
         throw ServerException('Failed to process payment');
       }

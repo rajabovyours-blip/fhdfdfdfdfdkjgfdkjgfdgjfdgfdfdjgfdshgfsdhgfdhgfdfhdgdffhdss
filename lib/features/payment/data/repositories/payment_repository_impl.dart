@@ -23,13 +23,13 @@ class PaymentRepositoryImpl implements PaymentRepository {
   }
 
   @override
-  Future<Either<Failure, void>> processPayment(
+  Future<Either<Failure, String>> processPayment(
     String orderId,
     String paymentMethodId,
   ) async {
     try {
-      await remoteDataSource.processPayment(orderId, paymentMethodId);
-      return const Right(null);
+      final paymentUrl = await remoteDataSource.processPayment(orderId, paymentMethodId);
+      return Right(paymentUrl);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     } catch (e) {

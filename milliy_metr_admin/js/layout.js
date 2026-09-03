@@ -46,6 +46,10 @@ const layout = {
             <span class="material-symbols-rounded">notifications</span>
             Bildirishnomalar
           </a>
+          <a href="payments.html" class="nav-item ${currentPage.includes('payment') ? 'active' : ''}">
+            <span class="material-symbols-rounded">payments</span>
+            To'lovlar
+          </a>
           <a href="admin-users.html" class="nav-item ${currentPage.includes('admin-users') ? 'active' : ''}">
             <span class="material-symbols-rounded">admin_panel_settings</span>
             Adminlar

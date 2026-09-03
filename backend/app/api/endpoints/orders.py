@@ -2,9 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update
 from sqlalchemy.orm import joinedload
-from typing import List
+from typing import List, Literal
 from uuid import UUID
 import uuid
+from enum import Enum as PyEnum
 
 from app.db.session import get_db
 from app.models.order import Order, OrderItem
@@ -13,9 +14,12 @@ from app.models.user import User
 from app.schemas.order import OrderModel
 from app.schemas.order_create import OrderCreate
 from app.schemas.common import APIResponse
-from app.api.deps import get_current_user
+from app.api.deps import get_current_user, get_current_admin
 
 router = APIRouter()
+
+# Allowed order statuses
+ALLOWED_ORDER_STATUSES = {"pending", "processing", "confirmed", "completed", "delivered", "cancelled"}
 
 @router.post("", response_model=APIResponse[dict])
 async def create_order(
@@ -111,11 +115,19 @@ async def get_order(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    result = await db.execute(
-        select(Order)
-        .options(joinedload(Order.user), joinedload(Order.items).joinedload(OrderItem.product))
-        .where(Order.id == id, Order.user_id == current_user.id)
-    )
+    from app.models.user import RoleEnum
+    if current_user.role in [RoleEnum.ADMIN, RoleEnum.OWNER]:
+        result = await db.execute(
+            select(Order)
+            .options(joinedload(Order.user), joinedload(Order.items).joinedload(OrderItem.product))
+            .where(Order.id == id)
+        )
+    else:
+        result = await db.execute(
+            select(Order)
+            .options(joinedload(Order.user), joinedload(Order.items).joinedload(OrderItem.product))
+            .where(Order.id == id, Order.user_id == current_user.id)
+        )
     order = result.scalar_one_or_none()
     
     if not order:
@@ -124,22 +136,34 @@ async def get_order(
     return APIResponse(data=OrderModel.model_validate(order))
 
 from pydantic import BaseModel as PydanticBaseModel
+
 class OrderStatusUpdate(PydanticBaseModel):
-    status: str
+    status: Literal["pending", "processing", "confirmed", "completed", "delivered", "cancelled"]
 
 @router.patch("/{id}/status", response_model=APIResponse[dict])
 async def update_order_status(
     id: UUID,
     payload: OrderStatusUpdate,
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_admin),  # Only admin/owner
 ):
-    result = await db.execute(select(Order).where(Order.id == id))
+    result = await db.execute(
+        select(Order)
+        .options(joinedload(Order.items))
+        .where(Order.id == id)
+    )
     order = result.scalar_one_or_none()
     
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
-        
+    
+    old_status = order.status
     order.status = payload.status
+    
+    # If cancelling, restore stock
+    if payload.status.lower() == "cancelled" and old_status.lower() != "cancelled":
+        await _restore_order_stock(order, db)
+    
     await db.commit()
     
     return APIResponse(message="Order status updated", data={"status": order.status})
@@ -151,7 +175,9 @@ async def cancel_order(
     current_user: User = Depends(get_current_user)
 ):
     result = await db.execute(
-        select(Order).where(Order.id == id, Order.user_id == current_user.id)
+        select(Order)
+        .options(joinedload(Order.items))
+        .where(Order.id == id, Order.user_id == current_user.id)
     )
     order = result.scalar_one_or_none()
     
@@ -163,8 +189,19 @@ async def cancel_order(
         
     order.status = "Cancelled"
     
-    # We should restore stock if needed, but for now just update status
+    # Restore stock for cancelled order
+    await _restore_order_stock(order, db)
     
     await db.commit()
     
     return APIResponse(message="Order cancelled successfully", data={"status": order.status})
+
+
+async def _restore_order_stock(order: Order, db: AsyncSession):
+    """Restore product stock when an order is cancelled."""
+    for item in order.items:
+        await db.execute(
+            update(Product)
+            .where(Product.id == item.product_id)
+            .values(stock=Product.stock + item.quantity)
+        )
