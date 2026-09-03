@@ -135,7 +135,8 @@ class AuthController extends StateNotifier<AuthState> {
           orElse: () => false,
         );
         if (!isAuthenticated) {
-          state = const AuthState.unauthenticated();
+          // If network failed during initial login/OTP verify, we should probably show error
+          state = AuthState.error(failure.message);
         }
       },
       (user) => state = AuthState.authenticated(user),
@@ -203,8 +204,8 @@ class AuthController extends StateNotifier<AuthState> {
         state = AuthState.error(failure.message);
         return failure.message;
       },
-      (token) {
-        checkAuthStatus(); // fetch user info after getting token
+      (token) async {
+        await checkAuthStatus(); // fetch user info after getting token
         return null; // success
       },
     );
@@ -240,11 +241,11 @@ class AuthController extends StateNotifier<AuthState> {
         state = AuthState.error(failure.message);
         return false;
       },
-      (token) {
+      (token) async {
         // Clear temp data
         _tempFullName = null;
         _tempSurname = null;
-        checkAuthStatus();
+        await checkAuthStatus();
         return true;
       },
     );

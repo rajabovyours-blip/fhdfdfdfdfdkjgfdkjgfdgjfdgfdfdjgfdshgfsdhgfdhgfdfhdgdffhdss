@@ -21,8 +21,8 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$UserModel {
   String get id => throw _privateConstructorUsedError;
-  String get fullName => throw _privateConstructorUsedError;
-  String get phone => throw _privateConstructorUsedError;
+  String? get fullName => throw _privateConstructorUsedError;
+  String? get phone => throw _privateConstructorUsedError;
   String? get email => throw _privateConstructorUsedError;
   String? get avatarUrl => throw _privateConstructorUsedError;
 
@@ -39,8 +39,8 @@ abstract class $UserModelCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
-      String fullName,
-      String phone,
+      String? fullName,
+      String? phone,
       String? email,
       String? avatarUrl});
 }
@@ -59,8 +59,8 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
   @override
   $Res call({
     Object? id = null,
-    Object? fullName = null,
-    Object? phone = null,
+    Object? fullName = freezed,
+    Object? phone = freezed,
     Object? email = freezed,
     Object? avatarUrl = freezed,
   }) {
@@ -69,14 +69,14 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      fullName: null == fullName
+      fullName: freezed == fullName
           ? _value.fullName
           : fullName // ignore: cast_nullable_to_non_nullable
-              as String,
-      phone: null == phone
+              as String?,
+      phone: freezed == phone
           ? _value.phone
           : phone // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       email: freezed == email
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
@@ -99,8 +99,8 @@ abstract class _$$UserModelImplCopyWith<$Res>
   @useResult
   $Res call(
       {String id,
-      String fullName,
-      String phone,
+      String? fullName,
+      String? phone,
       String? email,
       String? avatarUrl});
 }
@@ -117,8 +117,8 @@ class __$$UserModelImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
-    Object? fullName = null,
-    Object? phone = null,
+    Object? fullName = freezed,
+    Object? phone = freezed,
     Object? email = freezed,
     Object? avatarUrl = freezed,
   }) {
@@ -127,14 +127,14 @@ class __$$UserModelImplCopyWithImpl<$Res>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      fullName: null == fullName
+      fullName: freezed == fullName
           ? _value.fullName
           : fullName // ignore: cast_nullable_to_non_nullable
-              as String,
-      phone: null == phone
+              as String?,
+      phone: freezed == phone
           ? _value.phone
           : phone // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       email: freezed == email
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
@@ -151,11 +151,7 @@ class __$$UserModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$UserModelImpl extends _UserModel {
   const _$UserModelImpl(
-      {required this.id,
-      required this.fullName,
-      required this.phone,
-      this.email,
-      this.avatarUrl})
+      {required this.id, this.fullName, this.phone, this.email, this.avatarUrl})
       : super._();
 
   factory _$UserModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -164,9 +160,9 @@ class _$UserModelImpl extends _UserModel {
   @override
   final String id;
   @override
-  final String fullName;
+  final String? fullName;
   @override
-  final String phone;
+  final String? phone;
   @override
   final String? email;
   @override
@@ -213,8 +209,8 @@ class _$UserModelImpl extends _UserModel {
 abstract class _UserModel extends UserModel {
   const factory _UserModel(
       {required final String id,
-      required final String fullName,
-      required final String phone,
+      final String? fullName,
+      final String? phone,
       final String? email,
       final String? avatarUrl}) = _$UserModelImpl;
   const _UserModel._() : super._();
@@ -225,9 +221,9 @@ abstract class _UserModel extends UserModel {
   @override
   String get id;
   @override
-  String get fullName;
+  String? get fullName;
   @override
-  String get phone;
+  String? get phone;
   @override
   String? get email;
   @override
