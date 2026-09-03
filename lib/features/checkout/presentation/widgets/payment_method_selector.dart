@@ -32,12 +32,12 @@ class PaymentMethodSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final methods = [
       PaymentMethodItem(
-        id: 'Payme',
+        id: 'payme',
         name: 'Payme',
         iconAsset: 'assets/svg/payment_payme.svg',
       ),
       PaymentMethodItem(
-        id: 'Click',
+        id: 'click',
         name: 'Click',
         iconAsset: 'assets/svg/payment_click.svg',
       ),

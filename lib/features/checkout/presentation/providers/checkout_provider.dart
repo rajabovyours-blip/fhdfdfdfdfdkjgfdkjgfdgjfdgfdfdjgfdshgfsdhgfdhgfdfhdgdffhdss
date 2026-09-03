@@ -53,7 +53,7 @@ class CheckoutState {
     this.addresses = const [],
     this.selectedAddress,
     this.deliveryMethod = 'Delivery Service',
-    this.paymentMethod = 'Payme',
+    this.paymentMethod = 'payme',
     this.couponCode = '',
     this.notes = '',
     this.selectAll = true,
@@ -98,7 +98,13 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
   CheckoutNotifier(this.repository, this.ref) : super(const CheckoutState());
 
   Future<void> load() async {
-    state = state.copyWith(isLoading: true, error: null);
+    final defaultPaymentMethod = PreferencesManager.getString('selected_payment_method') ?? 'payme';
+    
+    state = state.copyWith(
+      isLoading: true, 
+      error: null,
+      paymentMethod: defaultPaymentMethod,
+    );
     
     // Load local addresses
     final localAddressesStrs = PreferencesManager.getStringList('local_addresses');
@@ -356,18 +362,12 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
           );
 
   double get shippingFee {
-    switch (state.deliveryMethod) {
-      case 'Delivery Service':
-        return 50000;
-      case 'Pickup from warehouse':
-        return 0;
-      default:
-        return 50000;
-    }
+    if (state.deliveryMethod == 'Pickup from warehouse') return 0;
+    return subtotal < 500000 ? 15000 : 0;
   }
-  double get discount => state.couponCode.isNotEmpty ? 10000 : 0;
-  double get tax => subtotal * 0.01;
-  double get total => subtotal + shippingFee + tax - discount;
+  double get discount => 0;
+  double get tax => 0;
+  double get total => subtotal + shippingFee;
   int get itemCount => state.cartItems.where((item) => item.isSelected).length;
   String get estimatedDelivery =>
       state.deliveryMethod == 'Express Delivery' ? 'Today' : '2-3 days';
