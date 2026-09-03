@@ -39,6 +39,49 @@ document.addEventListener('DOMContentLoaded', () => {
       layout.showToast(err.message, 'error');
     }
   });
+
+  // Excel template download
+  document.getElementById('btn-download-template').addEventListener('click', async (e) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem('mm_admin_access_token');
+      const res = await fetch(`${CONFIG.API_BASE_URL}/categories/import/template`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error('Shablonni yuklab olishda xatolik');
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'categories_template.xlsx';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      a.remove();
+    } catch (err) {
+      layout.showToast(err.message, 'error');
+    }
+  });
+
+  // Excel upload
+  document.getElementById('excel-upload').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    try {
+      layout.showToast('Kategoriyalar import qilinmoqda...', 'info');
+      const res = await api.post('/categories/import', formData);
+      layout.showToast(res.data.message || 'Muvaffaqiyatli import qilindi', 'success');
+      loadCategories(); // reload categories
+    } catch (err) {
+      layout.showToast(err.message || 'Importda xatolik yuz berdi', 'error');
+    } finally {
+      e.target.value = ''; // reset input
+    }
+  });
 });
 
 async function loadCategories() {

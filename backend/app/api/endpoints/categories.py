@@ -83,3 +83,102 @@ async def delete_category(id: UUID, db: AsyncSession = Depends(get_db), admin: U
     await db.commit()
     return APIResponse(data={"message": "Category deleted successfully"})
 
+@router.get("/import/template")
+async def download_categories_template(admin: User = Depends(get_current_admin)):
+    import io
+    import openpyxl
+    from fastapi.responses import StreamingResponse
+
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Kategoriyalar"
+    
+    headers = [
+        "name_uz", "name_ru", "name_en",
+        "description_uz", "description_ru", "description_en",
+        "icon_url", "image_url", "is_featured (0 yoki 1)", "order_index"
+    ]
+    ws.append(headers)
+    
+    ws.append(["Elektronika", "Электроника", "Electronics", "Elektronika mahsulotlari", "Электронные товары", "Electronic goods", "", "", 1, 0])
+    
+    output = io.BytesIO()
+    wb.save(output)
+    output.seek(0)
+    
+    return StreamingResponse(
+        output, 
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": "attachment; filename=categories_template.xlsx"}
+    )
+
+@router.post("/import", response_model=APIResponse[dict])
+async def import_categories(
+    file: __import__('fastapi').UploadFile = __import__('fastapi').File(...), 
+    db: AsyncSession = Depends(get_db), 
+    admin: User = Depends(get_current_admin)
+):
+    import io
+    import openpyxl
+    if not file.filename.endswith('.xlsx'):
+        raise HTTPException(status_code=400, detail="Faqat .xlsx fayllar qabul qilinadi")
+    
+    content = await file.read()
+    try:
+        wb = openpyxl.load_workbook(filename=io.BytesIO(content), data_only=True)
+        ws = wb.active
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Faylni o'qishda xatolik: {str(e)}")
+        
+    rows = list(ws.iter_rows(values_only=True))
+    if len(rows) < 2:
+        raise HTTPException(status_code=400, detail="Fayl bo'sh yoki faqat sarlavha mavjud")
+        
+    headers = [str(h).strip() if h else "" for h in rows[0]]
+    if "name_uz" not in headers:
+         raise HTTPException(status_code=400, detail="Noto'g'ri shablon. 'name_uz' ustuni topilmadi.")
+         
+    from uuid import uuid4
+    categories_to_add = []
+    header_map = {col: i for i, col in enumerate(headers)}
+    
+    for i, row in enumerate(rows[1:], start=2):
+        def get_val(key, default=""):
+            if key not in header_map: return default
+            idx = header_map[key]
+            if idx >= len(row): return default
+            val = row[idx]
+            return str(val).strip() if val is not None else default
+            
+        name_uz = get_val("name_uz")
+        if not name_uz:
+            continue
+            
+        feat_val = get_val("is_featured (0 yoki 1)", "0")
+        is_featured = feat_val == "1" or feat_val.lower() == "true"
+        
+        try:
+            order_index = int(get_val("order_index", "0"))
+        except:
+            order_index = 0
+            
+        new_cat = Category(
+            id=uuid4(),
+            name={"uz": name_uz, "ru": get_val("name_ru"), "en": get_val("name_en")},
+            description={"uz": get_val("description_uz"), "ru": get_val("description_ru"), "en": get_val("description_en")},
+            icon_url=get_val("icon_url") or None,
+            image_url=get_val("image_url") or None,
+            is_featured=is_featured,
+            order_index=order_index,
+            parent_id=None
+        )
+        categories_to_add.append(new_cat)
+        
+    if not categories_to_add:
+         raise HTTPException(status_code=400, detail="Yaroqli ma'lumotlar topilmadi.")
+         
+    db.add_all(categories_to_add)
+    await db.commit()
+    
+    return APIResponse(data={"message": f"{len(categories_to_add)} ta kategoriya muvaffaqiyatli import qilindi."})
+

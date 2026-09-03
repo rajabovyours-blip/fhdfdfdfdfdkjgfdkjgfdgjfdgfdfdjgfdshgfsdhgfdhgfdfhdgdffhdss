@@ -17,10 +17,18 @@
   <div id="app">
     <div class="d-flex justify-content-between align-items-center mb-24" style="margin-bottom: 24px;">
       <h2 style="margin: 0;">Kategoriyalar</h2>
-      <button class="btn btn-primary" id="btn-add-category">
-        <span class="material-symbols-rounded">add</span>
-        Yangi Qo'shish
-      </button>
+      <div style="display: flex; gap: 8px;">
+        <a href="#" id="btn-download-template" class="btn btn-outline" style="text-decoration: none; display: flex; align-items: center; gap: 4px;">
+          <span class="material-symbols-rounded">download</span> Shablon
+        </a>
+        <label for="excel-upload" class="btn btn-outline" style="cursor: pointer; margin: 0; display: flex; align-items: center; gap: 4px;">
+          <span class="material-symbols-rounded">upload</span> Excel orqali
+        </label>
+        <input type="file" id="excel-upload" accept=".xlsx" style="display: none;">
+        <button class="btn btn-primary" id="btn-add-category">
+          <span class="material-symbols-rounded">add</span> Yangi Qo'shish
+        </button>
+      </div>
     </div>
 
     <div class="card">
