@@ -6,7 +6,6 @@ import 'package:milliy_metr/core/router/guards/auth_guard.dart';
 
 import 'package:milliy_metr/features/splash/presentation/views/splash_screen.dart';
 import 'package:milliy_metr/features/authentication/presentation/views/login_screen.dart';
-import 'package:milliy_metr/features/authentication/presentation/views/registration_screen.dart';
 
 import 'package:milliy_metr/features/authentication/presentation/views/otp_screen.dart';
 import 'package:milliy_metr/features/home/presentation/views/home_screen.dart';

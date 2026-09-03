@@ -100,6 +100,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       }
       await context.push(route, extra: phone);
     }
+  }
 
   Future<void> _handleGoogleLogin() async {
     try {
