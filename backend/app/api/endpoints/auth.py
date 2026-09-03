@@ -142,17 +142,25 @@ async def social_login(payload: SocialLoginRequest, db: AsyncSession = Depends(g
         
     try:
         if payload.provider == 'google':
-            id_info = id_token.verify_oauth2_token(
-                payload.token, google_requests.Request(), audience=None
-            )
-            
-            known_client_ids = [
-                "433156009799-tia3qrtgo44tq5eaj9n7b03r4t7q6f5j.apps.googleusercontent.com", # Web
-                "433156009799-op4rsucja7jo5ud06lid29dofalg0121.apps.googleusercontent.com", # Android
-            ]
-            
-            if id_info.get('aud') not in known_client_ids and "433156009799-" not in str(id_info.get('aud')):
-                raise ValueError(f"Unrecognized client ID: {id_info.get('aud')}")
+            if payload.token.startswith("ya29."):
+                import httpx
+                async with httpx.AsyncClient() as client:
+                    resp = await client.get(f"https://www.googleapis.com/oauth2/v3/userinfo?access_token={payload.token}")
+                    if resp.status_code != 200:
+                        raise ValueError(f"Invalid access token: {resp.text}")
+                    id_info = resp.json()
+            else:
+                id_info = id_token.verify_oauth2_token(
+                    payload.token, google_requests.Request(), audience=None
+                )
+                
+                known_client_ids = [
+                    "433156009799-tia3qrtgo44tq5eaj9n7b03r4t7q6f5j.apps.googleusercontent.com", # Web
+                    "433156009799-op4rsucja7jo5ud06lid29dofalg0121.apps.googleusercontent.com", # Android
+                ]
+                
+                if id_info.get('aud') not in known_client_ids and "433156009799-" not in str(id_info.get('aud')):
+                    raise ValueError(f"Unrecognized client ID: {id_info.get('aud')}")
 
             email = id_info.get('email')
             provider_id = id_info.get('sub')

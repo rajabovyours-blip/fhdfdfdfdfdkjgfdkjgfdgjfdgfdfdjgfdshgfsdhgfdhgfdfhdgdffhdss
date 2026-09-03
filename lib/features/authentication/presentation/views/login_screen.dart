@@ -111,12 +111,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       final account = await googleSignIn.signIn();
       if (account == null) return; // User canceled
       
-      final auth = await account.authentication;
-      final idToken = auth.idToken;
+      var auth = await account.authentication;
+      var idToken = auth.idToken;
       
-      if (idToken != null) {
+      // On Web (GIS), signIn() might not return idToken, so we use signInSilently
+      if (kIsWeb && idToken == null) {
+        final silentAccount = await googleSignIn.signInSilently();
+        if (silentAccount != null) {
+          auth = await silentAccount.authentication;
+          idToken = auth.idToken;
+        }
+      }
+      
+      // Fallback: If idToken is still null, send accessToken. Our backend will handle it.
+      final tokenToSend = idToken ?? auth.accessToken;
+      
+      if (tokenToSend != null) {
         if (!mounted) return;
-        await ref.read(authProvider.notifier).socialLogin('google', idToken);
+        await ref.read(authProvider.notifier).socialLogin('google', tokenToSend);
+      } else {
+        if (!mounted) return;
+        AppSnackBar.showError(context, 'Google Sign-In failed: Could not retrieve any token.');
       }
     } catch (e) {
       debugPrint('Google Sign-In caught: $e');
