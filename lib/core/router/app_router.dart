@@ -130,20 +130,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   categoryId: state.uri.queryParameters['category_id'],
                   filterOption: state.uri.queryParameters['filter'],
                 ),
-                routes: [
-                  GoRoute(
-                    path: 'category/:id',
-                    builder: (context, state) => CategoryProductsScreen(
-                      categoryId: state.pathParameters['id']!,
-                    ),
-                  ),
-                  GoRoute(
-                    path: 'product/:id',
-                    builder: (context, state) => ProductDetailsScreen(
-                      productId: state.pathParameters['id']!,
-                    ),
-                  ),
-                ],
               ),
             ],
           ),
@@ -180,6 +166,18 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.notifications,
         builder: (context, state) => const NotificationsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.categoryProducts,
+        builder: (context, state) => CategoryProductsScreen(
+          categoryId: state.pathParameters['id']!,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.productDetails,
+        builder: (context, state) => ProductDetailsScreen(
+          productId: state.pathParameters['id']!,
+        ),
       ),
       GoRoute(
         path: AppRoutes.categories,
