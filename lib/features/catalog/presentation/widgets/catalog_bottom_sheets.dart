@@ -91,7 +91,7 @@ class CatalogBottomSheets {
           sortOption: data.sortOption != null 
             ? SortOption.values.firstWhere(
                 (e) => e.apiValue == data.sortOption, 
-                orElse: () => SortOption.relevance
+                orElse: () => SortOption.relevance,
               )
             : SortOption.relevance,
         );

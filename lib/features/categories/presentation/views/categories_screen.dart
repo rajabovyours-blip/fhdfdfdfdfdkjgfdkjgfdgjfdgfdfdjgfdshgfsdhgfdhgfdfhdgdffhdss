@@ -45,7 +45,7 @@ class CategoriesScreen extends ConsumerWidget {
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                             child: Text(
-                              "Ommabop kategoriyalar",
+                              'Ommabop kategoriyalar',
                               style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -76,7 +76,7 @@ class CategoriesScreen extends ConsumerWidget {
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
                             child: Text(
-                              "Barcha kategoriyalar",
+                              'Barcha kategoriyalar',
                               style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -132,7 +132,7 @@ class CategoriesScreen extends ConsumerWidget {
     if (category.subcategories.isNotEmpty) {
       Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => CategoriesScreen(parentCategory: category),
-      ));
+      ),);
     } else {
       context.push(
         AppRoutes.categoryProducts.replaceAll(':id', category.id),

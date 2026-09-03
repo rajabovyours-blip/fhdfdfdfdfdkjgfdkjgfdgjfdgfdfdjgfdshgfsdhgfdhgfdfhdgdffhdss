@@ -372,7 +372,7 @@ class _ProductFilterSheetState extends State<ProductFilterSheet> {
           children: [4.0, 3.0].map((r) {
             final isSelected = _currentFilters.minRating == r;
             return ChoiceChip(
-              label: Text("$r+ ⭐"),
+              label: Text('$r+ ⭐'),
               selected: isSelected,
               onSelected: (selected) {
                 setState(() {

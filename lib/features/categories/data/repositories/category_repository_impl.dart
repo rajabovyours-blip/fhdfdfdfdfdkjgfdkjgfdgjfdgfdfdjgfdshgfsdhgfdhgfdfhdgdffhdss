@@ -36,7 +36,7 @@ class CategoryRepositoryImpl implements CategoryRepository {
                   productCount: cat.productCount,
                   isFeatured: cat.isFeatured,
                   subcategories: buildTree(cat.id),
-                ))
+                ),)
             .toList();
       }
 
