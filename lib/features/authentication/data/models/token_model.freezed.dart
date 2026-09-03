@@ -20,7 +20,9 @@ TokenModel _$TokenModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$TokenModel {
+  @JsonKey(name: 'access_token')
   String get accessToken => throw _privateConstructorUsedError;
+  @JsonKey(name: 'refresh_token')
   String? get refreshToken => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -35,7 +37,9 @@ abstract class $TokenModelCopyWith<$Res> {
           TokenModel value, $Res Function(TokenModel) then) =
       _$TokenModelCopyWithImpl<$Res, TokenModel>;
   @useResult
-  $Res call({String accessToken, String? refreshToken});
+  $Res call(
+      {@JsonKey(name: 'access_token') String accessToken,
+      @JsonKey(name: 'refresh_token') String? refreshToken});
 }
 
 /// @nodoc
@@ -75,7 +79,9 @@ abstract class _$$TokenModelImplCopyWith<$Res>
       __$$TokenModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String accessToken, String? refreshToken});
+  $Res call(
+      {@JsonKey(name: 'access_token') String accessToken,
+      @JsonKey(name: 'refresh_token') String? refreshToken});
 }
 
 /// @nodoc
@@ -108,15 +114,19 @@ class __$$TokenModelImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$TokenModelImpl extends _TokenModel {
-  const _$TokenModelImpl({required this.accessToken, this.refreshToken})
+  const _$TokenModelImpl(
+      {@JsonKey(name: 'access_token') required this.accessToken,
+      @JsonKey(name: 'refresh_token') this.refreshToken})
       : super._();
 
   factory _$TokenModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$TokenModelImplFromJson(json);
 
   @override
+  @JsonKey(name: 'access_token')
   final String accessToken;
   @override
+  @JsonKey(name: 'refresh_token')
   final String? refreshToken;
 
   @override
@@ -155,16 +165,19 @@ class _$TokenModelImpl extends _TokenModel {
 
 abstract class _TokenModel extends TokenModel {
   const factory _TokenModel(
-      {required final String accessToken,
-      final String? refreshToken}) = _$TokenModelImpl;
+          {@JsonKey(name: 'access_token') required final String accessToken,
+          @JsonKey(name: 'refresh_token') final String? refreshToken}) =
+      _$TokenModelImpl;
   const _TokenModel._() : super._();
 
   factory _TokenModel.fromJson(Map<String, dynamic> json) =
       _$TokenModelImpl.fromJson;
 
   @override
+  @JsonKey(name: 'access_token')
   String get accessToken;
   @override
+  @JsonKey(name: 'refresh_token')
   String? get refreshToken;
   @override
   @JsonKey(ignore: true)
