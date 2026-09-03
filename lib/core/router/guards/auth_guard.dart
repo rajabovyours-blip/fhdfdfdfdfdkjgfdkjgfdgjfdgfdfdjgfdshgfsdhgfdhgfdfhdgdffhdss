@@ -56,7 +56,6 @@ class AuthGuard {
     final isGoingToSplash = currentPath == AppRoutes.splash;
 
     final isGoingToOtp = currentPath == AppRoutes.otp;
-    final isGoingToRegister = currentPath == AppRoutes.register;
 
 
 
@@ -75,8 +74,7 @@ class AuthGuard {
       authenticated: (_) {
         if (isGoingToLogin ||
             isGoingToSplash ||
-            isGoingToOtp ||
-            isGoingToRegister) {
+            isGoingToOtp) {
           
           final redirect = state.uri.queryParameters['redirect'];
           if (redirect != null && redirect.isNotEmpty) {

@@ -2,8 +2,6 @@ class AppRoutes {
   static const splash = '/splash';
   static const language = '/language';
   static const login = '/login';
-  static const register = '/register';
-
   static const otp = '/otp';
   static const home = '/home';
   static const search = '/search';

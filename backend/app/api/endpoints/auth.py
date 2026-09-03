@@ -113,7 +113,7 @@ async def verify_otp(otp_in: OTPVerify, db: AsyncSession = Depends(get_db)):
         if otp_in.surname:
             name_parts.append(otp_in.surname.strip())
             
-        final_name = " ".join(name_parts) if name_parts else "New User"
+        final_name = " ".join(name_parts) if name_parts else "Mijoz"
         
         user = User(
             id=uuid.uuid4(),

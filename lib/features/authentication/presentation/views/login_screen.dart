@@ -89,30 +89,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
     final phone = '+998$phoneBody';
     
-    // Check if account exists
-    final exists = await ref.read(authProvider.notifier).checkPhone(phone);
+    // Send OTP directly regardless of whether user exists
+    final success = await ref.read(authProvider.notifier).requestOtp(phone);
     if (!mounted) return;
     
-    if (exists) {
-      // Existing user: send OTP and navigate
-      final success = await ref.read(authProvider.notifier).requestOtp(phone);
-      if (success && mounted) {
-        String route = AppRoutes.otp;
-        if (widget.redirect != null) {
-          route += '?redirect=${Uri.encodeComponent(widget.redirect!)}';
-        }
-        await context.push(route, extra: phone);
+    if (success) {
+      String route = AppRoutes.otp;
+      if (widget.redirect != null) {
+        route += '?redirect=${Uri.encodeComponent(widget.redirect!)}';
       }
-    } else {
-      // New user: show error message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(context.l10n.accountNotFound), // We will add this to l10n
-          backgroundColor: context.colors.danger,
-        ),
-      );
+      await context.push(route, extra: phone);
     }
-  }
 
   Future<void> _handleGoogleLogin() async {
     try {
@@ -408,48 +395,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ),
 
               const Spacer(flex: 2),
-              
-              // 8. LOWER SECTION: REGISTER LINK
-              Center(
-                child: GestureDetector(
-                  key: const Key('register_button'),
-                  onTap: () {
-                    String route = AppRoutes.register;
-                    if (widget.redirect != null) {
-                      route += '?redirect=${Uri.encodeComponent(widget.redirect!)}';
-                    }
-                    context.push(route);
-                  },
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        '${context.l10n.dontHaveAccount} ',
-                        style: TextStyle(
-                          color: context.colors.textMedium,
-                          fontSize: 15,
-                        ),
-                      ),
-                      Text(
-                        context.l10n.register,
-                        style: TextStyle(
-                          color: context.colors.primary,
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      Icon(
-                        Icons.arrow_forward_ios_rounded,
-                        size: 12,
-                        color: context.colors.primary,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 8),
             ],
           ),
         ),

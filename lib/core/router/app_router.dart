@@ -101,12 +101,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           redirect: state.uri.queryParameters['redirect'],
         ),
       ),
-      GoRoute(
-        path: AppRoutes.register,
-        builder: (context, state) => RegistrationScreen(
-          redirect: state.uri.queryParameters['redirect'],
-        ),
-      ),
 
       GoRoute(
         path: AppRoutes.otp,
