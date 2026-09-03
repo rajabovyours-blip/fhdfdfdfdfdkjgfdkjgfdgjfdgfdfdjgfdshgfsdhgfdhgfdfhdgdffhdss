@@ -47,7 +47,7 @@ function renderTable(searchQuery = '') {
       : '<span class="badge badge-danger">Bloklangan</span>';
       
     const dateStr = u.created_at ? new Date(u.created_at).toLocaleDateString('ru-RU') : 'Yaqinda';
-    const provider = u.auth_provider || 'SMS orqali';
+    const provider = u.provider ? (u.provider.toLowerCase() === 'google' ? 'Google orqali' : u.provider) : 'SMS orqali';
     const count = u.orders_count || 0;
       
     return `

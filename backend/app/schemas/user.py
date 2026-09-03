@@ -10,6 +10,7 @@ class UserModel(BaseModel):
     avatar_url: Optional[str] = None
     preferred_language: Optional[str] = None
     phone: Optional[str] = None
+    provider: Optional[str] = None
     model_config = ConfigDict(from_attributes=True, populate_by_name=True, alias_generator=to_camel)
 
 class UserCreate(BaseModel):
