@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Boolean, DateTime, Enum, text
+from sqlalchemy import Column, String, Boolean, DateTime, Enum, text, Integer
 from sqlalchemy.orm import relationship
 from app.db.base_class import Base
 from sqlalchemy import Uuid
@@ -23,6 +23,7 @@ class User(Base):
     avatar_url = Column(String, nullable=True)
     role = Column(Enum(RoleEnum, native_enum=False, length=50), default=RoleEnum.USER, nullable=False)
     is_active = Column(Boolean, default=True)
+    token_version = Column(Integer, default=0, nullable=False)
     provider = Column(String, nullable=True)
     provider_id = Column(String, nullable=True)
     preferred_language = Column(String(10), default='uz')

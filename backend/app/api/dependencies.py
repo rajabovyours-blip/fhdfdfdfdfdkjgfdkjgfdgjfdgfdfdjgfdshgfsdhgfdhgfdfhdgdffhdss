@@ -47,6 +47,9 @@ async def get_current_user(
     if not user.is_active:
         raise AppError("User is inactive", code="USER_INACTIVE", status_code=403)
         
+    if payload.get("tv") != user.token_version:
+        raise AppError("Session expired, please log in again", code="TOKEN_INVALID", status_code=401)
+        
     return user
 
 def require_roles(allowed_roles: List[str]) -> Callable:

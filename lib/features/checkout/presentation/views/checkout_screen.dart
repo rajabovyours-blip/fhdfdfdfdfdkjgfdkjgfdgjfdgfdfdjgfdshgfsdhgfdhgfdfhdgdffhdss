@@ -237,8 +237,13 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                               '${AppRoutes.paymentWebview}?url=${Uri.encodeComponent(paymentUrl)}&order_id=${order.id}',
                             );
                           } else {
-                            // Fallback to success screen if URL generation fails
-                            context.go(AppRoutes.orderSuccess);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('To\'lov tizimiga ulanib bo\'lmadi'),
+                                backgroundColor: context.colors.danger,
+                              ),
+                            );
+                            context.go(AppRoutes.orderDetails.replaceFirst(':id', order.id));
                           }
                         } else {
                           context.go(AppRoutes.orderSuccess);

@@ -42,6 +42,13 @@ services:
         source: /*
         destination: /index.html
 
+  - type: web
+    name: milliy-metr-website
+    env: static
+    rootDir: website
+    buildCommand: ""
+    staticPublishPath: "./"
+
   - type: redis
     name: milliy-metr-redis
     ipAllowList: [] # Allow only internal Render traffic

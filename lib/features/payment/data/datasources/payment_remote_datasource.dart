@@ -15,7 +15,7 @@ class PaymentRemoteDataSourceImpl implements PaymentRemoteDataSource {
   @override
   Future<List<PaymentMethodEntity>> getPaymentMethods() async {
     try {
-      final response = await dio.get('/payment-methods');
+      final response = await dio.get('/payments/payment-methods');
       if (response.statusCode == 200) {
         final data = response.data['data'] as List<dynamic>;
         return data.map((e) => PaymentMethodEntity.fromJson(e)).toList();

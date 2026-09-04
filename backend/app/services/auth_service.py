@@ -83,7 +83,7 @@ class AuthService:
         if not user.is_active:
             raise AppError("User account is disabled", code="USER_DISABLED", status_code=403)
             
-        access_token = create_access_token(data={"sub": str(user.id)})
+        access_token = create_access_token(subject=str(user.id), token_version=user.token_version)
         refresh_token = create_refresh_token(data={"sub": str(user.id)})
         
         return {
@@ -175,7 +175,7 @@ class AuthService:
         if not user.is_active:
             raise AppError("User account is disabled", code="USER_DISABLED", status_code=403)
             
-        access_token = create_access_token(data={"sub": str(user.id)})
+        access_token = create_access_token(subject=str(user.id), token_version=user.token_version)
         refresh_token = create_refresh_token(data={"sub": str(user.id)})
         
         return {
@@ -200,7 +200,7 @@ class AuthService:
         if not user.is_active:
             raise AppError("User account is disabled", code="USER_DISABLED", status_code=403)
 
-        access_token = create_access_token(data={"sub": str(user.id)})
+        access_token = create_access_token(subject=str(user.id), token_version=user.token_version)
         refresh_token = create_refresh_token(data={"sub": str(user.id)})
         
         return {
@@ -224,7 +224,7 @@ class AuthService:
         if not user or not user.is_active:
             raise AppError("User not found or disabled", code="USER_INVALID", status_code=401)
 
-        access_token = create_access_token(data={"sub": str(user.id)})
+        access_token = create_access_token(subject=str(user.id), token_version=user.token_version)
         new_refresh_token = create_refresh_token(data={"sub": str(user.id)})
 
         return {

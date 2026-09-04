@@ -47,7 +47,8 @@ function renderTable() {
         <td>${roleHtml}</td>
         <td>${statusHtml}</td>
         <td class="text-center">
-          <button class="btn btn-sm btn-outline" style="padding: 0 8px;" onclick="openModal('${u.id}')"><span class="material-symbols-rounded" style="font-size: 18px;">edit</span></button>
+          <button class="btn btn-sm btn-outline" style="padding: 0 8px;" onclick="openModal('${u.id}')" title="Tahrirlash"><span class="material-symbols-rounded" style="font-size: 18px;">edit</span></button>
+          <button class="btn btn-sm btn-outline" style="padding: 0 8px; color: var(--danger-color); border-color: var(--danger-color); margin-left: 4px;" onclick="deleteAdmin('${u.id}')" title="O'chirish"><span class="material-symbols-rounded" style="font-size: 18px;">delete</span></button>
         </td>
       </tr>
     `;
@@ -134,14 +135,43 @@ async function saveAdmin() {
         role: role
       };
       await api.post('/admin/users/', payload);
-      layout.showToast('Administrator qo\'shildi');
+      
+      layout.showToast("Admin muvaffaqiyatli saqlandi!", 'success');
+      closeModal();
+      loadAdmins();
     }
-    closeModal();
-    loadAdmins();
   } catch (err) {
-    layout.showToast(err.message, 'error');
+    // Improved error reporting for Add Admin failure
+    let errorMsg = err.message || "Xatolik yuz berdi";
+    if (err.response && err.response.data && err.response.data.detail) {
+      errorMsg = typeof err.response.data.detail === 'string' 
+        ? err.response.data.detail 
+        : JSON.stringify(err.response.data.detail);
+    }
+    layout.showToast("Xatolik: " + errorMsg, 'error');
+    console.error("Admin save error:", err);
   } finally {
     btn.disabled = false;
     btn.textContent = 'Saqlash';
+  }
+}
+
+async function deleteAdmin(id) {
+  if (!confirm("Haqiqatan ham bu adminni o'chirmoqchimisiz?")) {
+    return;
+  }
+  
+  try {
+    await api.delete(`/admin/users/${id}`);
+    layout.showToast("Admin muvaffaqiyatli o'chirildi", 'success');
+    loadAdmins();
+  } catch (err) {
+    let errorMsg = err.message || "Xatolik yuz berdi";
+    if (err.response && err.response.data && err.response.data.detail) {
+      errorMsg = typeof err.response.data.detail === 'string' 
+        ? err.response.data.detail 
+        : JSON.stringify(err.response.data.detail);
+    }
+    layout.showToast("Xatolik: " + errorMsg, 'error');
   }
 }

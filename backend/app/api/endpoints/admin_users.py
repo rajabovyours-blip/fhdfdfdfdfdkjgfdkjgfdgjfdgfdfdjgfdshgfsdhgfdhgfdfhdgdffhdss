@@ -106,6 +106,7 @@ async def update_admin(
         admin_user.full_name = payload.full_name
     if payload.password is not None and len(payload.password) >= 6:
         admin_user.hashed_password = get_password_hash(payload.password)
+        admin_user.token_version += 1
     if payload.role is not None:
         admin_user.role = payload.role
         
@@ -121,6 +122,30 @@ async def update_admin(
     )
     return APIResponse(data=res, message="Administrator updated successfully")
 
+@router.delete("/{admin_id}", response_model=APIResponse[dict])
+async def delete_admin(
+    admin_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    owner: User = Depends(get_current_owner)
+):
+    result = await db.execute(select(User).where(User.id == admin_id))
+    admin_user = result.scalar_one_or_none()
+    if not admin_user:
+        raise HTTPException(status_code=404, detail="Admin not found")
+
+    if admin_user.id == owner.id:
+        raise HTTPException(status_code=400, detail="Cannot delete yourself")
+
+    if admin_user.role == RoleEnum.OWNER:
+        owners_result = await db.execute(select(User).where(User.role == RoleEnum.OWNER))
+        owners_list = owners_result.scalars().all()
+        if len(owners_list) <= 1:
+            raise HTTPException(status_code=400, detail="Cannot delete the last OWNER")
+
+    await db.delete(admin_user)
+    await db.commit()
+    return APIResponse(data={}, message="Administrator deleted successfully")
+
 @router.patch("/{admin_id}/status", response_model=APIResponse[dict])
 async def change_admin_status(
     admin_id: uuid.UUID,
@@ -134,8 +159,8 @@ async def change_admin_status(
     if not admin_user:
         raise HTTPException(status_code=404, detail="Admin not found")
         
-    if admin_user.id == owner.id and not payload.is_active:
-        raise HTTPException(status_code=400, detail="Cannot deactivate yourself")
+    if admin_user.id == owner.id:
+        raise HTTPException(status_code=400, detail="Cannot change your own status")
         
     if admin_user.role == RoleEnum.OWNER and not payload.is_active:
         # Prevent deactivating the last active OWNER
@@ -145,7 +170,9 @@ async def change_admin_status(
             raise HTTPException(status_code=400, detail="Cannot deactivate the last active OWNER")
             
     admin_user.is_active = payload.is_active
+    if not payload.is_active:
+        admin_user.token_version += 1
     await db.commit()
     
     status_text = "activated" if payload.is_active else "deactivated"
-    return APIResponse(message=f"Administrator {status_text} successfully")
+    return APIResponse(data={}, message=f"Administrator {status_text} successfully")

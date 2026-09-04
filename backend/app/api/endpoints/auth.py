@@ -47,7 +47,7 @@ async def login(user_in: UserLogin, db: AsyncSession = Depends(get_db)):
     if not user or not verify_password(user_in.password, user.hashed_password):
         raise HTTPException(status_code=400, detail="Incorrect phone number or password")
         
-    access_token = create_access_token(subject=str(user.id))
+    access_token = create_access_token(subject=str(user.id), token_version=user.token_version)
     
     token = TokenModel(
         access_token=access_token,
@@ -70,7 +70,7 @@ async def admin_login(form_data: OAuth2PasswordRequestForm = Depends(), db: Asyn
     if user.role not in [RoleEnum.ADMIN, RoleEnum.OWNER]:
         raise HTTPException(status_code=403, detail="Not authorized as admin")
         
-    access_token = create_access_token(subject=str(user.id))
+    access_token = create_access_token(subject=str(user.id), token_version=user.token_version)
     
     token = TokenModel(
         access_token=access_token,
@@ -126,7 +126,7 @@ async def verify_otp(otp_in: OTPVerify, db: AsyncSession = Depends(get_db)):
         await db.refresh(user)
 
     # 3. Issue JWT
-    access_token = create_access_token(subject=str(user.id))
+    access_token = create_access_token(subject=str(user.id), token_version=user.token_version)
     
     token = TokenModel(
         access_token=access_token,
@@ -220,7 +220,7 @@ async def social_login(payload: SocialLoginRequest, db: AsyncSession = Depends(g
             await db.rollback()
             raise HTTPException(status_code=500, detail=f"Database error during user creation: {str(e)}")
 
-    access_token = create_access_token(subject=str(user.id))
+    access_token = create_access_token(subject=str(user.id), token_version=user.token_version)
     
     token = TokenModel(
         access_token=access_token,

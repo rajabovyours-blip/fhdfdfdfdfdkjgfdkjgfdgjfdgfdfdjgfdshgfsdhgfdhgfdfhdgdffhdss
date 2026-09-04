@@ -55,6 +55,12 @@ async def lifespan(app: FastAPI):
             await conn.execute(text("ALTER TABLE users ADD COLUMN preferred_language VARCHAR DEFAULT 'uz'"))
     except Exception:
         pass
+        
+    try:
+        async with engine.begin() as conn:
+            await conn.execute(text("ALTER TABLE users ADD COLUMN token_version INTEGER DEFAULT 0 NOT NULL"))
+    except Exception:
+        pass
     
     # Payment table migrations
     for col_sql in [

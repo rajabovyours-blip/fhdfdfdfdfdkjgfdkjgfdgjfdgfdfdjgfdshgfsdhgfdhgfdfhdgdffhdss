@@ -37,3 +37,7 @@
 .env
 google-services.json
 GoogleService-Info.plist
+
+# Web app
+milliy_metr_web/node_modules/
+milliy_metr_web/.next/

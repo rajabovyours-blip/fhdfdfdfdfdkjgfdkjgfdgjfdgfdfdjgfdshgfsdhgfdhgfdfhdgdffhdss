@@ -67,11 +67,15 @@ async def process_payment(
     method = payload.payment_method_id.lower()
 
     if method == "payme":
+        if not settings.PAYME_MERCHANT_ID:
+            raise HTTPException(status_code=400, detail="Payme is not configured yet")
         amount_tiyin = int(round(amount * 100))
         raw = f"m={settings.PAYME_MERCHANT_ID};ac.order_id={order.id};a={amount_tiyin}"
         encoded = base64.b64encode(raw.encode()).decode()
         url = f"https://checkout.paycom.uz/{encoded}"
     elif method == "click":
+        if not settings.CLICK_SERVICE_ID:
+            raise HTTPException(status_code=400, detail="Click is not configured yet")
         url = (
             f"https://my.click.uz/services/pay"
             f"?service_id={settings.CLICK_SERVICE_ID}"
