@@ -271,6 +271,23 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                       ),
                                     ),
                                   const Spacer(),
+                                  if (!outOfStock && product.stock > 0 && product.stock <= 5)
+                                    Container(
+                                      margin: const EdgeInsets.only(right: 8),
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: Colors.orange.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      child: Text(
+                                        'Faqat ${product.stock} dona qoldi!',
+                                        style: const TextStyle(
+                                          color: Colors.orange,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
                                   Container(
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 8,
@@ -369,7 +386,50 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
 
                                 ],
                               ),
-                              const SizedBox(height: 24),
+                              const SizedBox(height: 16),
+                              
+                              // Quick Facts
+                              if (product.specifications != null && product.specifications!.isNotEmpty)
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 16.0),
+                                  child: Row(
+                                    children: product.specifications!.entries.take(2).map((e) {
+                                      // Determine a simple icon based on keyword
+                                      IconData icon = Icons.info_outline;
+                                      final keyLower = e.key.toLowerCase();
+                                      if (keyLower.contains('og\'irlik') || keyLower.contains('kg')) icon = Icons.fitness_center;
+                                      if (keyLower.contains('o\'lcham') || keyLower.contains('uzunlik') || keyLower.contains('mm')) icon = Icons.straighten;
+                                      if (keyLower.contains('maydon') || keyLower.contains('m2')) icon = Icons.square_foot;
+                                      if (keyLower.contains('hajmi') || keyLower.contains('litr')) icon = Icons.water_drop;
+                                      
+                                      return Container(
+                                        margin: const EdgeInsets.only(right: 8),
+                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                        decoration: BoxDecoration(
+                                          color: context.colors.primary.withOpacity(0.1),
+                                          borderRadius: BorderRadius.circular(20),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(icon, size: 14, color: context.colors.primary),
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              e.value,
+                                              style: TextStyle(
+                                                color: context.colors.primary,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
+
+                              const SizedBox(height: 8),
 
                               // Delivery Info Card
                               Text(
@@ -632,8 +692,25 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                         ),
                                         child: Row(
                                           crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                              CrossAxisAlignment.center,
                                           children: [
+                                            Builder(
+                                              builder: (context) {
+                                                IconData icon = Icons.article_outlined;
+                                                final keyLower = e.key.toLowerCase();
+                                                if (keyLower.contains('og\'irlik') || keyLower.contains('kg') || keyLower.contains('zichlig')) icon = Icons.scale;
+                                                if (keyLower.contains('o\'lcham') || keyLower.contains('uzunlik') || keyLower.contains('qalinlig') || keyLower.contains('kenglig') || keyLower.contains('diametr')) icon = Icons.straighten;
+                                                if (keyLower.contains('maydon') || keyLower.contains('m2')) icon = Icons.square_foot;
+                                                if (keyLower.contains('hajmi') || keyLower.contains('litr')) icon = Icons.water_drop;
+                                                if (keyLower.contains('rang')) icon = Icons.palette_outlined;
+                                                if (keyLower.contains('vaqt')) icon = Icons.access_time;
+                                                if (keyLower.contains('material')) icon = Icons.category_outlined;
+                                                return Padding(
+                                                  padding: const EdgeInsets.only(right: 12.0),
+                                                  child: Icon(icon, size: 20, color: context.colors.textMedium),
+                                                );
+                                              }
+                                            ),
                                             Expanded(
                                               flex: 2,
                                               child: Text(
@@ -652,8 +729,10 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                                 style: TextStyle(
                                                   color:
                                                       context.colors.textHigh,
-                                                  fontSize: 13,
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w600,
                                                 ),
+                                                textAlign: TextAlign.right,
                                               ),
                                             ),
                                           ],
@@ -664,38 +743,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                 ),
                               ],
 
-                              const SizedBox(height: 24),
 
-                              // Leave Review Button
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 16),
-                                child: SizedBox(
-                                  width: double.infinity,
-                                  height: 48,
-                                  child: OutlinedButton.icon(
-                                    icon: const Icon(Icons.edit_note, size: 20),
-                                    label: Text(
-                                      context.l10n.leaveReviewBtn,
-                                      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                                    ),
-                                    style: OutlinedButton.styleFrom(
-                                      foregroundColor: context.colors.primary,
-                                      side: BorderSide(color: context.colors.primary),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                    ),
-                                    onPressed: () {
-                                      showReviewComposer(
-                                        context,
-                                        product.id,
-                                        product.name.get(Localizations.localeOf(context).languageCode),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 16),
 
                               // Reviews Section
                               Row(

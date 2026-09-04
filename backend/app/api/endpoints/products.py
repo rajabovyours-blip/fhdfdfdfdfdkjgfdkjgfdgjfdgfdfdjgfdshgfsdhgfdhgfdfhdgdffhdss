@@ -6,10 +6,12 @@ from typing import List, Optional
 from uuid import UUID
 
 from app.db.session import get_db
-from app.api.dependencies import get_current_admin
+from app.api.dependencies import get_current_admin, get_current_user
 from app.models.product import Product
 from app.models.category import Category
 from app.models.user import User
+from app.models.review import Review
+from app.models.order import Order, OrderItem
 from app.schemas.product import ProductModel, CategoryModel
 from app.schemas.common import APIResponse
 
@@ -147,6 +149,10 @@ class ProductCreateRequest(PydanticBaseModel):
     brand: str | None = None
     has_delivery: bool = True
     delivery_price: float = 0.0
+    specifications: Dict[str, str] | None = None
+    certificates: list | None = None
+    delivery_information: str | None = None
+    moq: int = 1
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -201,6 +207,10 @@ async def create_product(payload: ProductCreateRequest, db: AsyncSession = Depen
         brand=payload.brand,
         has_delivery=payload.has_delivery,
         delivery_price=payload.delivery_price,
+        specifications=payload.specifications,
+        certificates=payload.certificates,
+        delivery_information=payload.delivery_information,
+        moq=payload.moq,
         currency="UZS",
     )
     db.add(product)
@@ -232,12 +242,19 @@ async def update_product(id: str, payload: ProductCreateRequest, db: AsyncSessio
     product.brand = payload.brand
     product.has_delivery = payload.has_delivery
     product.delivery_price = payload.delivery_price
+    
+    if payload.specifications is not None:
+        product.specifications = payload.specifications
+    if payload.certificates is not None:
+        product.certificates = payload.certificates
+    if payload.delivery_information is not None:
+        product.delivery_information = payload.delivery_information
+    if payload.moq is not None:
+        product.moq = payload.moq
     if payload.images:
         product.images = payload.images
     if payload.brand is not None:
         product.brand = payload.brand
-    
-    product.has_delivery = payload.has_delivery
         
     await db.commit()
     await db.refresh(product)
@@ -434,14 +451,17 @@ from pydantic import BaseModel as PydanticBaseModel
 class ReviewCreate(PydanticBaseModel):
     rating: int
     text: str
-    photos: List[str] = []
 
 @router.get("/{id}/reviews", response_model=APIResponse[list])
 async def get_product_reviews(
     id: UUID,
     db: AsyncSession = Depends(get_db)
 ):
-    result = await db.execute(select(Product).where(Product.id == id).options(selectinload(Product.reviews)))
+    result = await db.execute(
+        select(Product)
+        .where(Product.id == id)
+        .options(selectinload(Product.reviews).selectinload(Review.user))
+    )
     product = result.scalar_one_or_none()
     
     if not product:
@@ -454,7 +474,7 @@ async def get_product_reviews(
                 "id": str(r.id),
                 "productId": str(r.product_id),
                 "userId": str(r.user_id),
-                "userName": "User", # Mock since user relation might not be loaded
+                "userName": r.user.full_name if r.user else "User",
                 "rating": float(r.rating) if r.rating else 5.0,
                 "text": r.comment if hasattr(r, 'comment') else "",
                 "photos": [],
@@ -467,32 +487,67 @@ async def get_product_reviews(
 @router.get("/{id}/eligibility")
 async def check_review_eligibility(
     id: UUID,
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    # Mock eligibility check: return True for now
-    return {"eligible": True, "reason": None}
+    result = await db.execute(
+        select(OrderItem)
+        .join(Order, Order.id == OrderItem.order_id)
+        .where(Order.user_id == current_user.id, OrderItem.product_id == id)
+    )
+    has_purchased = result.first() is not None
+    return {"eligible": has_purchased, "reason": None if has_purchased else "purchase_required"}
 
 @router.get("/{id}/user-review")
 async def get_user_review(
     id: UUID,
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    # Mock returning no user review for now
-    return {"data": None}
+    result = await db.execute(
+        select(Review).where(Review.product_id == id, Review.user_id == current_user.id)
+    )
+    review = result.scalar_one_or_none()
+    if not review:
+        return {"data": None}
+    return {"data": {
+        "id": str(review.id), 
+        "rating": float(review.rating),
+        "text": review.comment, 
+        "createdAt": review.created_at.isoformat(),
+    }}
 
 @router.post("/{id}/reviews", response_model=APIResponse[dict])
 async def add_product_review(
     id: UUID,
     payload: ReviewCreate,
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     result = await db.execute(select(Product).where(Product.id == id))
     product = result.scalar_one_or_none()
-    
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
-        
-    return APIResponse(message="Review submitted successfully", data={
-        "rating": payload.rating,
-        "text": payload.text
-    })
+
+    existing = await db.execute(
+        select(Review).where(Review.product_id == id, Review.user_id == current_user.id)
+    )
+    review = existing.scalar_one_or_none()
+    if review:
+        review.rating = payload.rating
+        review.comment = payload.text
+    else:
+        review = Review(user_id=current_user.id, product_id=id, rating=payload.rating, comment=payload.text)
+        db.add(review)
+    await db.flush()
+
+    # Recompute cached rating/review_count on the product
+    agg = await db.execute(
+        select(func.avg(Review.rating), func.count(Review.id)).where(Review.product_id == id)
+    )
+    avg_rating, count = agg.first()
+    product.rating = round(float(avg_rating or 0), 2)
+    product.review_count = count
+
+    await db.commit()
+    return APIResponse(message="Review saved successfully", data={"id": str(review.id)})

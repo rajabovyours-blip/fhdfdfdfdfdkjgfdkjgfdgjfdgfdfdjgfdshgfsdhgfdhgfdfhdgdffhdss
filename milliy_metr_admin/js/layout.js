@@ -42,6 +42,10 @@ const layout = {
             <span class="material-symbols-rounded">view_carousel</span>
             Bannerlar
           </a>
+          <a href="reviews.html" class="nav-item ${currentPage.includes('review') ? 'active' : ''}">
+            <span class="material-symbols-rounded">reviews</span>
+            Sharhlar
+          </a>
           <a href="notifications.html" class="nav-item ${currentPage.includes('notification') ? 'active' : ''}">
             <span class="material-symbols-rounded">notifications</span>
             Bildirishnomalar

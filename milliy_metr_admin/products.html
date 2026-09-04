@@ -220,14 +220,42 @@
                 <label class="form-label" style="margin: 0;">Yetkazib berish xizmati mavjudmi?</label>
               </div>
               
-              <div class="form-group" style="margin-top: 24px;">
+              <div class="form-group" style="margin-top: 16px;">
                 <label class="form-label">Rasmlar</label>
                 <input type="file" id="prod-img-upload" class="form-control" accept="image/*" style="padding-top: 10px;">
                 <div class="product-img-list" id="prod-image-list">
                   <!-- JS renders images here -->
                 </div>
               </div>
-              
+
+            </div>
+          </div>
+          
+          <div class="form-row" style="margin-top: 24px;">
+            <div class="form-col" style="flex: 1;">
+              <h4 style="margin-bottom: 12px; font-size: 14px; color: var(--color-primary);">Qo'shimcha Ma'lumotlar</h4>
+              <div class="d-flex gap-16 form-row">
+                <div class="form-group w-100">
+                  <label class="form-label">Minimal Buyurtma Miqdori (MOQ)</label>
+                  <input type="number" class="form-control" id="prod-moq" value="1" min="1">
+                </div>
+                <div class="form-group w-100">
+                  <label class="form-label">Yetkazib berish ma'lumoti</label>
+                  <input type="text" class="form-control" id="prod-delivery-info" placeholder="Masalan: 2 kun ichida Toshkent bo'ylab">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div class="d-flex justify-content-between align-items-center mb-12">
+                  <label class="form-label mb-0">Xususiyatlar (Specifications)</label>
+                  <button type="button" class="btn btn-sm btn-outline" id="btn-add-spec">
+                    <span class="material-symbols-rounded" style="font-size: 18px;">add</span> Qator qo'shish
+                  </button>
+                </div>
+                <div id="specs-container" class="d-flex flex-column gap-12">
+                  <!-- JS renders specs here -->
+                </div>
+              </div>
             </div>
           </div>
         </form>

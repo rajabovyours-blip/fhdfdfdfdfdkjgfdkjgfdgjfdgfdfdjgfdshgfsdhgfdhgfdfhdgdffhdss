@@ -16,6 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-cancel-modal').addEventListener('click', closeModal);
   document.getElementById('btn-save-product').addEventListener('click', saveProduct);
   
+  document.getElementById('btn-add-spec').addEventListener('click', () => addSpecRow());
+  document.getElementById('prod-unit').addEventListener('change', handleUnitChange);
+  
   document.getElementById('btn-search').addEventListener('click', () => {
     currentPage = 1;
     loadProducts();
@@ -220,9 +223,14 @@ async function openModal(id = null) {
       document.getElementById('prod-stock').value = p.stock !== undefined ? p.stock : (p.stockQuantity !== undefined ? p.stockQuantity : 0);
       document.getElementById('prod-has-delivery').checked = p.hasDelivery !== undefined ? p.hasDelivery : (p.has_delivery !== undefined ? p.has_delivery : true);
       document.getElementById('prod-brand').value = p.brand || '';
+      document.getElementById('prod-moq').value = p.moq || 1;
+      document.getElementById('prod-delivery-info').value = p.delivery_information || '';
       
       productImages = p.images || [];
       renderImages();
+      
+      const specs = p.specifications || {};
+      renderSpecs(specs);
       
     } catch (err) {
       layout.showToast(err.message, 'error');
@@ -231,6 +239,10 @@ async function openModal(id = null) {
   } else {
     title.textContent = "Mahsulot Qo'shish";
     currentEditProduct = null;
+    document.getElementById('prod-moq').value = 1;
+    document.getElementById('prod-delivery-info').value = '';
+    renderSpecs({});
+    handleUnitChange();
   }
   
   modal.classList.add('active');
@@ -276,7 +288,10 @@ async function saveProduct() {
     stock: parseInt(document.getElementById('prod-stock').value) || 0,
     hasDelivery: document.getElementById('prod-has-delivery').checked,
     brand: document.getElementById('prod-brand').value || null,
-    images: productImages
+    images: productImages,
+    moq: parseInt(document.getElementById('prod-moq').value) || 1,
+    delivery_information: document.getElementById('prod-delivery-info').value || null,
+    specifications: serializeSpecs()
   };
   
   
@@ -430,4 +445,86 @@ function closeImportModal() {
   document.getElementById('btn-confirm-import').style.display = 'none';
   document.getElementById('excel-file').value = '';
   importPreviewData = [];
+}
+
+function handleUnitChange() {
+  if (currentEditProduct) return; // Do not overwrite existing specs when editing
+  
+  const unit = document.getElementById('prod-unit').value;
+  let labels = [];
+  
+  switch(unit) {
+    case 'kv.m':
+      labels = ["Qadoqdagi maydon (m²)", "Qalinligi (mm)", "Material turi", "Rangi"];
+      break;
+    case 'kg':
+      labels = ["Qadoq og'irligi (kg)", "Markasi/Brendi", "Qotish vaqti"];
+      break;
+    case 'metr':
+      labels = ["Uzunligi (m)", "Diametri (mm)", "Material turi"];
+      break;
+    case 'litr':
+      labels = ["Hajmi (litr)", "1 litr necha m² yetadi", "Qurish vaqti"];
+      break;
+    case 'dona':
+      labels = ["O'lchamlari (UzxKxQ)", "Og'irligi (kg)", "Material"];
+      break;
+    case 'm3':
+      labels = ["Fraksiya/o'lcham", "Zichligi"];
+      break;
+    case 'rulon':
+      labels = ["Rulon uzunligi (m)", "Kengligi (m)"];
+      break;
+    case 'komplekt':
+      labels = ["Tarkibidagi dona soni"];
+      break;
+    case 'tonna':
+      labels = ["Fraksiya", "Kelib chiqishi"];
+      break;
+  }
+  
+  const specs = {};
+  labels.forEach(l => specs[l] = '');
+  renderSpecs(specs);
+}
+
+function renderSpecs(specs) {
+  const container = document.getElementById('specs-container');
+  container.innerHTML = '';
+  
+  const keys = Object.keys(specs);
+  if (keys.length === 0) {
+    // Add one empty row by default if none
+    addSpecRow('', '');
+  } else {
+    keys.forEach(k => addSpecRow(k, specs[k]));
+  }
+}
+
+function addSpecRow(key = '', value = '') {
+  const container = document.getElementById('specs-container');
+  
+  const div = document.createElement('div');
+  div.className = 'd-flex gap-8 align-items-center spec-row';
+  div.innerHTML = `
+    <input type="text" class="form-control spec-key" placeholder="Nomi (masalan: Og'irligi)" value="${key}" style="flex: 1;">
+    <input type="text" class="form-control spec-value" placeholder="Qiymati (masalan: 10 kg)" value="${value}" style="flex: 1;">
+    <button type="button" class="btn btn-sm btn-outline" style="padding: 0 8px; color: var(--color-danger); border-color: var(--color-danger);" onclick="this.parentElement.remove()">
+      <span class="material-symbols-rounded" style="font-size: 18px;">delete</span>
+    </button>
+  `;
+  container.appendChild(div);
+}
+
+function serializeSpecs() {
+  const specs = {};
+  const rows = document.querySelectorAll('#specs-container .spec-row');
+  rows.forEach(r => {
+    const key = r.querySelector('.spec-key').value.trim();
+    const value = r.querySelector('.spec-value').value.trim();
+    if (key && value) {
+      specs[key] = value;
+    }
+  });
+  return Object.keys(specs).length > 0 ? specs : null;
 }
