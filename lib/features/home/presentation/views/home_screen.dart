@@ -94,7 +94,7 @@ class HomeScreen extends ConsumerWidget {
                           child: SectionHeader(
                             title: context.l10n.popularProductsSection,
                             onViewAll: () {
-                              context.push(AppRoutes.catalog);
+                              context.push('${AppRoutes.catalog}?category_id=Barchasi');
                             },
                           ),
                         ),

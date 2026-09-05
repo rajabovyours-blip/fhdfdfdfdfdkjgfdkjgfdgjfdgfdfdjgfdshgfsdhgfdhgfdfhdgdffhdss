@@ -40,10 +40,7 @@ class SectionHeader extends StatelessWidget {
               ),
               if (onViewAll != null)
                 GestureDetector(
-                  onTap: () {
-                    context.push(AppRoutes.catalog);
-                    onViewAll?.call();
-                  },
+                  onTap: onViewAll,
                   child: Padding(
                     padding:
                         const EdgeInsets.only(left: 8.0, top: 4.0, bottom: 4.0),
