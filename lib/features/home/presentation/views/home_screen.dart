@@ -93,7 +93,9 @@ class HomeScreen extends ConsumerWidget {
                         SliverToBoxAdapter(
                           child: SectionHeader(
                             title: context.l10n.popularProductsSection,
-                            onViewAll: () {},
+                            onViewAll: () {
+                              context.push(AppRoutes.catalog);
+                            },
                           ),
                         ),
                         SliverPadding(

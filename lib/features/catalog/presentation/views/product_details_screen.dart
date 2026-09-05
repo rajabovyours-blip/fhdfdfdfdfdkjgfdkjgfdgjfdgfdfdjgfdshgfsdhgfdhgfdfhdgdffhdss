@@ -84,7 +84,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                 onPressed: () {
                   final title = product.name.get(Localizations.localeOf(context).languageCode);
                   SharePlus.instance.share(ShareParams(
-                    text: 'Milliy Metr: $title - ${AppFormatters.currency(product.price, Localizations.localeOf(context).languageCode)}\nhttps://milliymetr.uz/products/${product.id}',
+                    text: 'Milliy Metr: $title - ${AppFormatters.currency(product.price, Localizations.localeOf(context).languageCode)}\nhttps://milliymetr.uz/#product/${product.id}',
                   ),);
                 },
               );
@@ -158,13 +158,18 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                         });
                                       },
                                       itemBuilder: (context, index) {
-                                        return ProductImage(
-                                          imageUrl: product.images[index],
-                                          fallbackSeed: product.name.get(
-                                            Localizations.localeOf(context)
-                                                .languageCode,
+                                        return GestureDetector(
+                                          onTap: () {
+                                            _openImageViewer(context, product.images, index);
+                                          },
+                                          child: ProductImage(
+                                            imageUrl: product.images[index],
+                                            fallbackSeed: product.name.get(
+                                              Localizations.localeOf(context)
+                                                  .languageCode,
+                                            ),
+                                            fit: BoxFit.contain,
                                           ),
-                                          fit: isDesktop ? BoxFit.contain : BoxFit.cover,
                                         );
                                       },
                                     ),
@@ -1271,7 +1276,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                         Expanded(
                           child: ElevatedButton(
                             onPressed: outOfStock ? null : () async {
-                              await ref.read(cartNotifierProvider.notifier).addToCart(product, 1);
+                              await ref.read(cartNotifierProvider.notifier).ensureInCart(product, 1);
                               if (context.mounted) {
                                 unawaited(context.push(AppRoutes.checkout));
                               }
@@ -1297,6 +1302,55 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                           ),
                         ),
         ],
+      ),
+    );
+  }
+  void _openImageViewer(BuildContext context, List<String> images, int initialIndex) {
+    if (images.isEmpty) return;
+    
+    int currentIndex = initialIndex;
+    
+    showDialog(
+      context: context,
+      useSafeArea: false,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) {
+          return Scaffold(
+            backgroundColor: Colors.black,
+            appBar: AppBar(
+              backgroundColor: Colors.black,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              leading: IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              title: Text(
+                '${currentIndex + 1} / ${images.length}',
+                style: const TextStyle(color: Colors.white, fontSize: 16),
+              ),
+            ),
+            body: PageView.builder(
+              itemCount: images.length,
+              controller: PageController(initialPage: initialIndex),
+              onPageChanged: (index) {
+                setState(() {
+                  currentIndex = index;
+                });
+              },
+              itemBuilder: (context, index) {
+                return InteractiveViewer(
+                  minScale: 1.0,
+                  maxScale: 4.0,
+                  child: ProductImage(
+                    imageUrl: images[index],
+                    fit: BoxFit.contain,
+                  ),
+                );
+              },
+            ),
+          );
+        }
       ),
     );
   }

@@ -118,7 +118,7 @@ class _ProductCardState extends ConsumerState<ProductCard> {
                             size: 18,
                             color: isFavorite
                                 ? const Color(0xFFFF7A00)
-                                : context.colors.onPrimary,
+                                : context.colors.textMedium,
                           ),
                         ),
                       ),

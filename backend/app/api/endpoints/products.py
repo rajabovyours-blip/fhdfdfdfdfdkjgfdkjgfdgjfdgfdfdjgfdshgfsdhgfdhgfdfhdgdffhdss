@@ -263,7 +263,9 @@ async def update_product(id: str, payload: ProductCreateRequest, db: AsyncSessio
 
 @router.delete("/{id}", response_model=APIResponse[dict])
 async def delete_product(id: str, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_admin)):
-    from sqlalchemy.exc import IntegrityError
+    from app.models.cart import CartItem
+    from app.models.review import Review
+    from app.models.order import OrderItem
     try:
         product_id = UUID(str(id))
     except ValueError:
@@ -274,13 +276,32 @@ async def delete_product(id: str, db: AsyncSession = Depends(get_db), current_us
     
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
-        
+    
     try:
+        # 1. Remove all cart items referencing this product (across ALL users)
+        await db.execute(
+            CartItem.__table__.delete().where(CartItem.product_id == product_id)
+        )
+        
+        # 2. Remove all reviews referencing this product
+        await db.execute(
+            Review.__table__.delete().where(Review.product_id == product_id)
+        )
+        
+        # 3. Nullify order_items.product_id to preserve order history
+        #    (order_items already stores price_at_time and quantity as snapshots)
+        from sqlalchemy import update
+        await db.execute(
+            update(OrderItem).where(OrderItem.product_id == product_id).values(product_id=None)
+        )
+        
+        # 4. Delete the product itself
+        #    (wishlist has ON DELETE CASCADE in the DB schema, so it auto-cleans)
         await db.delete(product)
         await db.commit()
-    except IntegrityError as e:
+    except Exception as e:
         await db.rollback()
-        raise HTTPException(status_code=400, detail="Bu mahsulot buyurtmalar yoki savatchalarda mavjud bo'lganligi sababli o'chirib bo'lmaydi. Iltimos, o'rniga zaxirani (stock) 0 qilib qo'ying.")
+        raise HTTPException(status_code=500, detail=f"Failed to delete product: {str(e)}")
     
     return APIResponse(data={"success": True, "message": "Product deleted successfully"})
 

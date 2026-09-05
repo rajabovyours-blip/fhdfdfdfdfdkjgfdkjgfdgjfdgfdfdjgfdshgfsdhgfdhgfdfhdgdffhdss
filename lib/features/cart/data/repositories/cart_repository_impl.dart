@@ -41,6 +41,21 @@ class CartRepositoryImpl implements CartRepository {
   }
 
   @override
+  Future<Either<Failure, void>> ensureInCart(
+    String productId,
+    int quantity,
+  ) async {
+    try {
+      await remoteDataSource.ensureInCart(productId, quantity);
+      return const Right(null);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
   Future<Either<Failure, void>> updateCartItem(
     String cartItemId,
     int quantity,

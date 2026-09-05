@@ -4,6 +4,7 @@ import 'package:milliy_metr/core/errors/app_exception.dart';
 abstract class CartRemoteDataSource {
   Future<List<dynamic>> getCartItems();
   Future<void> addToCart(String productId, int quantity);
+  Future<void> ensureInCart(String productId, int quantity);
   Future<void> updateCartItem(String cartItemId, int quantity);
   Future<void> removeFromCart(String cartItemId);
   Future<void> clearCart();
@@ -40,6 +41,24 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
       );
       if (response.statusCode != 200 && response.statusCode != 201) {
         throw ServerException('Failed to add to cart');
+      }
+    } on DioException catch (e) {
+      throw ServerException(e.message ?? 'Network error');
+    }
+  }
+
+  @override
+  Future<void> ensureInCart(String productId, int quantity) async {
+    try {
+      final response = await dio.post(
+        '/cart/ensure',
+        data: {
+          'product_id': productId,
+          'quantity': quantity,
+        },
+      );
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw ServerException('Failed to ensure in cart');
       }
     } on DioException catch (e) {
       throw ServerException(e.message ?? 'Network error');

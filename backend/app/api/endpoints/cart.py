@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, delete as sa_delete
 from sqlalchemy.orm import selectinload
+from sqlalchemy.exc import IntegrityError
 from typing import List
 from uuid import UUID
 
@@ -47,10 +48,7 @@ async def add_to_cart(
     if existing_item:
         existing_item.quantity += item_in.quantity
         await db.commit()
-        await db.refresh(existing_item)
-        # Note: refresh might drop eager loaded relationships in sqlalchemy,
-        # so we fetch it again if needed or just return. Wait, if it drops it, it might cause an error on serialization.
-        # Let's fetch it again to be safe.
+        # Re-fetch with relationships loaded
         result = await db.execute(
             select(CartItem)
             .options(selectinload(CartItem.product))
@@ -65,8 +63,86 @@ async def add_to_cart(
         quantity=item_in.quantity
     )
     db.add(new_item)
-    await db.commit()
+    try:
+        await db.commit()
+    except IntegrityError:
+        # Race condition: another request created the row between our SELECT and INSERT
+        await db.rollback()
+        result = await db.execute(
+            select(CartItem)
+            .options(selectinload(CartItem.product))
+            .where(
+                CartItem.user_id == current_user.id,
+                CartItem.product_id == item_in.product_id
+            )
+        )
+        existing_item = result.scalar_one()
+        existing_item.quantity += item_in.quantity
+        await db.commit()
+        result = await db.execute(
+            select(CartItem)
+            .options(selectinload(CartItem.product))
+            .where(CartItem.id == existing_item.id)
+        )
+        existing_item = result.scalar_one()
+        return APIResponse(data=CartItemModel.model_validate(existing_item))
+
     # Fetch with product loaded
+    result = await db.execute(
+        select(CartItem)
+        .options(selectinload(CartItem.product))
+        .where(CartItem.id == new_item.id)
+    )
+    new_item_loaded = result.scalar_one()
+    return APIResponse(data=CartItemModel.model_validate(new_item_loaded))
+
+@router.post("/ensure", response_model=APIResponse[CartItemModel])
+async def ensure_in_cart(
+    item_in: CartItemCreate,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Idempotent add: ensures product is in cart with at least the given quantity.
+    If already present, does NOT increment. Used by Buy Now.
+    """
+    result = await db.execute(
+        select(CartItem)
+        .options(selectinload(CartItem.product))
+        .where(
+            CartItem.user_id == current_user.id,
+            CartItem.product_id == item_in.product_id
+        )
+    )
+    existing_item = result.scalar_one_or_none()
+    
+    if existing_item:
+        # Already in cart — do not modify quantity. Just return existing.
+        return APIResponse(data=CartItemModel.model_validate(existing_item))
+    
+    # Not in cart — create with requested quantity
+    new_item = CartItem(
+        user_id=current_user.id,
+        product_id=item_in.product_id,
+        quantity=item_in.quantity
+    )
+    db.add(new_item)
+    try:
+        await db.commit()
+    except IntegrityError:
+        # Race condition: another concurrent request just added the same product
+        await db.rollback()
+        result = await db.execute(
+            select(CartItem)
+            .options(selectinload(CartItem.product))
+            .where(
+                CartItem.user_id == current_user.id,
+                CartItem.product_id == item_in.product_id
+            )
+        )
+        existing_item = result.scalar_one()
+        return APIResponse(data=CartItemModel.model_validate(existing_item))
+    
     result = await db.execute(
         select(CartItem)
         .options(selectinload(CartItem.product))
@@ -100,7 +176,7 @@ async def clear_cart(
     current_user: User = Depends(get_current_user)
 ):
     await db.execute(
-        CartItem.__table__.delete().where(CartItem.user_id == current_user.id)
+        sa_delete(CartItem).where(CartItem.user_id == current_user.id)
     )
     await db.commit()
     return APIResponse(message="Cart cleared successfully")
@@ -122,7 +198,6 @@ async def update_cart_item(
         
     item.quantity = item_in.quantity
     await db.commit()
-    await db.refresh(item)
     
     # Refresh drops relationships so let's fetch again
     result = await db.execute(

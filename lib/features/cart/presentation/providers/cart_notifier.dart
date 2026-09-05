@@ -127,6 +127,44 @@ class CartNotifier extends StateNotifier<FeatureState<List<CartItemEntity>>> {
     }
   }
 
+  /// Idempotent: ensures product is in cart without incrementing existing quantity.
+  /// Used by Buy Now.
+  Future<void> ensureInCart(ProductEntity product, int quantity) async {
+    final currentItems = state.maybeWhen(
+      loaded: (items) => List<CartItemEntity>.from(items),
+      orElse: () => <CartItemEntity>[],
+    );
+    
+    final existingIndex = currentItems.indexWhere((i) => i.product.id == product.id);
+    if (existingIndex >= 0) {
+      // Already in cart — do not modify. Just keep existing state.
+      state = FeatureState.loaded(currentItems);
+    } else {
+      currentItems.add(CartItemEntity(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        product: product,
+        quantity: quantity,
+        isSelected: true,
+        isSavedForLater: false,
+        isWholesale: false,
+        minimumOrderQuantity: 1,
+        maximumQuantity: product.stock,
+        warehouseName: 'Asosiy ombor',
+      ));
+      state = FeatureState.loaded(currentItems);
+    }
+    
+    final isAuthenticated = _ref.read(milliy_metr_auth_provider.authProvider).maybeWhen(
+      authenticated: (_) => true,
+      orElse: () => false,
+    );
+    
+    if (isAuthenticated) {
+      final repository = _ref.read(cartRepositoryProvider);
+      await repository.ensureInCart(product.id, quantity);
+    }
+  }
+
   Future<bool> updateCartItem(String cartItemId, int quantity) async {
     final isAuthenticated = _ref.read(milliy_metr_auth_provider.authProvider).maybeWhen(
       authenticated: (_) => true,
