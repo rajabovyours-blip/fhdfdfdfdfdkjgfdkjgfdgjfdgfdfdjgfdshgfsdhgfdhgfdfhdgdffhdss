@@ -30,17 +30,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
   int _selectedImageIndex = 0;
   bool _isDescriptionExpanded = false;
   bool _isAddingToCart = false;
-  final TextEditingController _calcController = TextEditingController();
-  double _calcResult = 0;
 
-  @override
-  @override
-  void dispose() {
-    _calcController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final state = ref.watch(productDetailsNotifierProvider(widget.productId));
 
@@ -555,101 +545,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                   ),
                                 ),
 
-                              // Material Calculator
-                              if (['m2', 'm3', 'metr', 'kg'].contains(product.unit)) ...[
-                                const SizedBox(height: 24),
-                                Container(
-                                  padding: const EdgeInsets.all(16),
-                                  decoration: BoxDecoration(
-                                    color: context.colors.surface,
-                                    borderRadius: BorderRadius.circular(16),
-                                    border: Border.all(color: context.colors.outline),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Icon(Icons.calculate, color: context.colors.primary),
-                                          const SizedBox(width: 8),
-                                          Text(
-                                            'Kalkulyator',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color: context.colors.textHigh,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 12),
-                                      TextField(
-                                        controller: _calcController,
-                                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                                        decoration: InputDecoration(
-                                          labelText: context.l10n.calculatorFieldLabel,
-                                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                        ),
-                                        onChanged: (val) {
-                                          final parsed = double.tryParse(val) ?? 0;
-                                          setState(() {
-                                            _calcResult = parsed * 1.05; // 5% reserve
-                                          });
-                                        },
-                                      ),
-                                      if (_calcResult > 0) ...[
-                                        const SizedBox(height: 12),
-                                        Container(
-                                          padding: const EdgeInsets.all(12),
-                                          decoration: BoxDecoration(
-                                            color: context.colors.background,
-                                            borderRadius: BorderRadius.circular(8),
-                                          ),
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                context.l10n.calculatorReserve,
-                                                style: TextStyle(color: context.colors.textMedium),
-                                              ),
-                                              Text(
-                                                ' ',
-                                                style: TextStyle(
-                                                  color: context.colors.textHigh,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        const SizedBox(height: 12),
-                                        SizedBox(
-                                          width: double.infinity,
-                                          child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: context.colors.primary,
-                                              foregroundColor: Colors.white,
-                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                            ),
-                                            onPressed: () {
-                                              ref.read(cartNotifierProvider.notifier).addToCart(product, _calcResult.ceil());
-                                              ScaffoldMessenger.of(context).showSnackBar(
-                                                SnackBar(
-                                                  content: Text(context.l10n.calculatorAddedSnack),
-                                                  backgroundColor: context.colors.success,
-                                                ),
-                                              );
-                                            },
-                                            child: Text(context.l10n.calculatorAddToCart),
-                                          ),
-                                        ),
-                                      ],
-                                    ],
-                                  ),
-                                ),
-                              ],
+
                               
                               // Specifications
                               if (product.specifications != null &&

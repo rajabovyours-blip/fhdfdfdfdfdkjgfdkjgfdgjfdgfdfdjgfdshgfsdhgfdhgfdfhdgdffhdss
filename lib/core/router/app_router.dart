@@ -192,10 +192,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.categories,
         builder: (context, state) => const CategoriesScreen(),
       ),
-      GoRoute(
-        path: AppRoutes.comparison,
-        builder: (context, state) => const ComparisonScreen(),
-      ),
+
       GoRoute(
         path: AppRoutes.checkout,
         builder: (context, state) => const CheckoutScreen(),

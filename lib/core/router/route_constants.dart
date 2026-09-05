@@ -10,7 +10,6 @@ class AppRoutes {
   static const catalog = '/catalog';
   static const categoryProducts = '/catalog/category/:id';
   static const productDetails = '/catalog/product/:id';
-  static const comparison = '/comparison';
   static const cart = '/cart';
   static const checkout = '/checkout';
   static const addresses = '/addresses';
