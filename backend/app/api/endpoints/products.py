@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, or_, cast, String, func
+from sqlalchemy import select, or_, cast, String, func, case
 from sqlalchemy.orm import selectinload
 from typing import List, Optional
 from uuid import UUID
@@ -72,31 +72,29 @@ async def get_products(
         query = query.where(Product.discount_price.isnot(None))
         
     if search:
-        search_lower = search.lower().replace("'", "").replace("", "")
-        synonyms = {
-            'kraska': "bo'yoq",
-            'sement': 'cement',
-            'oboy': "gulqog'oz",
-            'gipsokarton': 'gips karton',
-            'shpatlevka': 'shpaklyovka',
-            'shurup': 'vint',
-            'kley': 'yelim',
-            'truba': 'quvur',
-            'armatura': 'temir',
-        }
-        for k, v in synonyms.items():
-            if k in search_lower:
-                search_lower = search_lower.replace(k, v)
-
-        search_term = f"%{search_lower}%"
-        # Search in JSON name field. Cast to String for simple ILIKE search
-        query = query.where(
-            or_(
-                cast(Product.name, String).ilike(search_term),
-                cast(Product.description, String).ilike(search_term)
-            )
-        )
+        from app.utils.search_helpers import normalize_search_term, get_intent_keywords
         
+        normalized_term = normalize_search_term(search)
+        keywords = get_intent_keywords(normalized_term)
+        
+        query = query.outerjoin(Category, Product.category_id == Category.id)
+        
+        search_conditions = []
+        for kw in keywords:
+            kw_term = f"%{kw}%"
+            search_conditions.append(cast(Product.name, String).ilike(kw_term))
+            search_conditions.append(cast(Product.description, String).ilike(kw_term))
+            search_conditions.append(cast(Category.name, String).ilike(kw_term))
+
+        query = query.where(or_(*search_conditions))
+        
+        # We will use this in the sorting logic if no sort_by is provided
+        exact_term = f"%{normalized_term}%"
+        exact_match_cond = or_(
+            cast(Product.name, String).ilike(exact_term),
+            cast(Product.brand, String).ilike(exact_term)
+        )
+
     if sort_by == 'price_asc':
         query = query.order_by(Product.price.asc())
     elif sort_by == 'price_desc':
@@ -107,11 +105,31 @@ async def get_products(
         query = query.order_by(Product.rating.desc())
     elif sort_by == 'popular':
         query = query.order_by(Product.review_count.desc())
+    elif search:
+        query = query.order_by(
+            case(
+                (exact_match_cond, 0),
+                else_=1
+            ),
+            Product.rating.desc(),
+            Product.review_count.desc()
+        )
         
     query = query.offset((page - 1) * limit).limit(limit)
         
     result = await db.execute(query)
     products = result.scalars().all()
+    
+    # Fallback Logic: if search yielded no results, return similar/popular items instead
+    if search and len(products) == 0 and page == 1:
+        fallback_query = select(Product).order_by(Product.rating.desc(), Product.review_count.desc()).limit(limit)
+        fallback_result = await db.execute(fallback_query)
+        products = fallback_result.scalars().all()
+        return APIResponse(
+            data=[ProductModel.model_validate(p) for p in products],
+            message="Siz qidirgan mahsulot topilmadi, o'rniga o'xshash mahsulotlar taqdim etildi."
+        )
+
     return APIResponse(data=[ProductModel.model_validate(p) for p in products])
 
 @router.get("/{id}", response_model=APIResponse[ProductModel])
