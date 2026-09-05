@@ -86,6 +86,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         scaffoldMessengerKey.currentState?.clearSnackBars();
       });
+
+      // Handle deep links that contain a hash fragment (e.g. from share links)
+      // On Android/iOS deep linking, the '#' is parsed as a fragment, 
+      // so we need to manually redirect it to the correct path.
+      if (state.uri.fragment.isNotEmpty && state.uri.fragment.startsWith('/')) {
+        return state.uri.fragment;
+      }
+
       // COMPLETELY REMOVE AUTHENTICATION GUARDS FOR ADMIN
       if (isAdminApp) return null;
       return AuthGuard.redirect(context, state, ref);
