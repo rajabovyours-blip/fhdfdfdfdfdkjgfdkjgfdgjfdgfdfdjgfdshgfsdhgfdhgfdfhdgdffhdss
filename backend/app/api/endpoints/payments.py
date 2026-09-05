@@ -343,7 +343,7 @@ async def _payme_cancel(req_id, params, body, db):
         .options(joinedload(Payment.order).joinedload(Order.items))
         .where(Payment.transaction_id == payme_id)
     )
-    payment = existing.scalar_one_or_none()
+    payment = existing.unique().scalar_one_or_none()
     if not payment:
         return _payme_error(req_id, PAYME_ERRORS["TRANSACTION_NOT_FOUND"],
                             "Tranzaksiya topilmadi", "Транзакция не найдена", "Transaction not found")
@@ -548,7 +548,7 @@ async def _click_complete(data, db):
         .options(joinedload(Payment.order).joinedload(Order.items))
         .where(Payment.transaction_id == click_trans_id)
     )
-    payment = existing.scalar_one_or_none()
+    payment = existing.unique().scalar_one_or_none()
     if not payment:
         return _click_response(data, -6, "Transaction not found")
 
