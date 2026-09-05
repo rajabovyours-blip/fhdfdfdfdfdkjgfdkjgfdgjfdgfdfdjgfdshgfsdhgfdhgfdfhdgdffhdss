@@ -257,6 +257,8 @@
   "faqA6": "Товары предоставляются производителями и поставщиками.",
   "clickPayment": "Оплата через Click",
   "clickPaymentDesc": "Оплата через приложение Click",
+  "paymePayment": "Оплата через Payme",
+  "paymePaymentDesc": "Оплата через приложение Payme",
   "paymentMethodSelected": "Способ оплаты выбран",
   "defaultPayment": "Основной",
   "noReviewsWritten": "Вы ещё не написали отзывов",

@@ -288,6 +288,8 @@
   "faqA6": "Mahsulotlar ishlab chiqaruvchilar va yetkazib beruvchilardan taqdim etiladi.",
   "clickPayment": "Click orqali to'lov",
   "clickPaymentDesc": "Click ilovasi orqali to'lang",
+  "paymePayment": "Payme orqali to'lov",
+  "paymePaymentDesc": "Payme orqali to'lash",
   "paymentMethodSelected": "To'lov usuli tanlandi",
   "defaultPayment": "Asosiy",
   "noReviewsWritten": "Siz hali sharh yozmadingiz",

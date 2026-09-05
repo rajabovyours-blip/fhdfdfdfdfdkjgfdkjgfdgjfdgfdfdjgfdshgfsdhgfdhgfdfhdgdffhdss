@@ -85,8 +85,8 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
             context,
             id: 'payme',
             iconWidget: SvgPicture.asset('assets/svg/payment_payme.svg'),
-            title: 'Payme',
-            subtitle: 'Payme orqali to\'lash', // Or use l10n
+            title: l10n.paymePayment,
+            subtitle: l10n.paymePaymentDesc,
           ),
         ],
       ),

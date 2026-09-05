@@ -257,6 +257,8 @@
   "faqA6": "Products are supplied by manufacturers and suppliers.",
   "clickPayment": "Pay via Click",
   "clickPaymentDesc": "Pay through the Click app",
+  "paymePayment": "Pay via Payme",
+  "paymePaymentDesc": "Pay through the Payme app",
   "paymentMethodSelected": "Payment method selected",
   "defaultPayment": "Default",
   "noReviewsWritten": "You haven't written any reviews yet",
