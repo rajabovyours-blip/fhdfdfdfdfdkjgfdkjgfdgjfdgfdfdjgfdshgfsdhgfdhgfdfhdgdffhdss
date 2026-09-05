@@ -41,16 +41,24 @@ class ResponsivePageContainer extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final width = constraints.maxWidth;
-        if (width < 700) {
+        final maxW = maxWidth ?? 1280.0;
+        
+        if (width <= maxW) {
           return child;
         }
-        return Center(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: maxWidth ?? 1280),
-            child: child,
-          ),
+        
+        final padding = (width - maxW) / 2;
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: padding),
+          child: child,
         );
       },
     );
   }
+}
+
+double responsiveHorizontalPadding(BuildContext context, {double maxWidth = 1280, double defaultPadding = 16}) {
+  final width = MediaQuery.sizeOf(context).width;
+  if (width <= maxWidth) return defaultPadding;
+  return (width - maxWidth) / 2 + defaultPadding;
 }

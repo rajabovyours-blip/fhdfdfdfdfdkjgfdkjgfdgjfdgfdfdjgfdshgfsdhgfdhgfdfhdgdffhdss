@@ -113,52 +113,57 @@ class _LocationSelectorState extends State<LocationSelector> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: _requestLocation,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        child: Row(
-          children: [
-            Icon(Icons.location_on, color: context.colors.primary, size: 20),
-            const SizedBox(width: 8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1280),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: Row(
               children: [
-                Text(
-                  context.l10n.deliveryAddress,
-                  style: TextStyle(
-                    color: context.colors.textMedium,
-                    fontSize: 12,
-                  ),
-                ),
-                Row(
+                Icon(Icons.location_on, color: context.colors.primary, size: 20),
+                const SizedBox(width: 8),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _isLoading
-                        ? SizedBox(
-                            width: 14,
-                            height: 14,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: context.colors.primary,
-                            ),
-                          )
-                        : Text(
-                            _location ?? context.l10n.determineLocation,
-                            style: TextStyle(
-                              color: context.colors.textHigh,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                    if (!_isLoading)
-                      Icon(
-                        Icons.keyboard_arrow_down,
-                        color: context.colors.textDisabled,
-                        size: 18,
+                    Text(
+                      context.l10n.deliveryAddress,
+                      style: TextStyle(
+                        color: context.colors.textMedium,
+                        fontSize: 12,
                       ),
+                    ),
+                    Row(
+                      children: [
+                        _isLoading
+                            ? SizedBox(
+                                width: 14,
+                                height: 14,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: context.colors.primary,
+                                ),
+                              )
+                            : Text(
+                                _location ?? context.l10n.determineLocation,
+                                style: TextStyle(
+                                  color: context.colors.textHigh,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                        if (!_isLoading)
+                          Icon(
+                            Icons.keyboard_arrow_down,
+                            color: context.colors.textDisabled,
+                            size: 18,
+                          ),
+                      ],
+                    ),
                   ],
                 ),
               ],
             ),
-          ],
+          ),
         ),
       ),
     );

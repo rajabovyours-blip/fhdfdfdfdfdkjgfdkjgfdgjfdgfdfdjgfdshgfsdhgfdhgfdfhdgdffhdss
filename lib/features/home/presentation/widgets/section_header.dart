@@ -18,43 +18,48 @@ class SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Text(
-              title,
-              style: TextStyle(
-                color: context.colors.textHigh,
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          if (onViewAll != null)
-            GestureDetector(
-              onTap: () {
-                context.push(AppRoutes.catalog);
-                onViewAll?.call();
-              },
-              child: Padding(
-                padding:
-                    const EdgeInsets.only(left: 8.0, top: 4.0, bottom: 4.0),
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 1280),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
                 child: Text(
-                  viewAllText ?? context.l10n.viewAll,
+                  title,
                   style: TextStyle(
-                    color: context.colors.primary,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
+                    color: context.colors.textHigh,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-            ),
-        ],
+              if (onViewAll != null)
+                GestureDetector(
+                  onTap: () {
+                    context.push(AppRoutes.catalog);
+                    onViewAll?.call();
+                  },
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.only(left: 8.0, top: 4.0, bottom: 4.0),
+                    child: Text(
+                      viewAllText ?? context.l10n.viewAll,
+                      style: TextStyle(
+                        color: context.colors.primary,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }

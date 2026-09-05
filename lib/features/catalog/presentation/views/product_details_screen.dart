@@ -129,6 +129,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         ),
         loaded: (product) {
           final bool outOfStock = product.stock <= 0;
+          final isDesktop = MediaQuery.of(context).size.width >= 900;
           return Stack(
             children: [
               CustomScrollView(
@@ -136,7 +137,6 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                   SliverToBoxAdapter(
                     child: LayoutBuilder(
                       builder: (context, constraints) {
-                        final isDesktop = constraints.maxWidth >= 900;
                         final imageWidget = Container(
                           height: isDesktop ? 500 : MediaQuery.of(context).size.width * 0.6,
                           width: double.infinity,
@@ -1069,6 +1069,10 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                 },
                               ),
 
+                              if (isDesktop) ...[
+                                const SizedBox(height: 24),
+                                _buildBottomBar(context, product),
+                              ],
                               const SizedBox(
                                 height: 120,
                               ), // Padding to prevent content from hiding behind the sticky bottom bar
@@ -1118,12 +1122,13 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
               ),
 
               // Bottom Action Bar (Sticky)
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: _buildBottomBar(context, product),
-              ),
+              if (!isDesktop)
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: _buildBottomBar(context, product),
+                ),
             ],
           );
         },
