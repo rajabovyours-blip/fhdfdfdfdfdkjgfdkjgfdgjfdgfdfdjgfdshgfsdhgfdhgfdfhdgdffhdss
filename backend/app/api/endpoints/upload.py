@@ -17,7 +17,7 @@ UPLOAD_DIR = os.path.join(BASE_UPLOAD_DIR, "images")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 # Path to the watermark logo
-WATERMARK_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "assets", "watermark.png")
+WATERMARK_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), "assets", "watermark.png")
 
 def process_image(image_bytes, watermark_path):
     # Remove background if rembg is available
