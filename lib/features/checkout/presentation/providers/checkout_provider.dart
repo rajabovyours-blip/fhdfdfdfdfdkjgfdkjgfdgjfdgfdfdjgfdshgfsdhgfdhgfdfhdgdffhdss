@@ -362,7 +362,6 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
           );
 
   double get shippingFee {
-    if (state.deliveryMethod == 'Pickup from warehouse') return 0;
     return subtotal < 500000 ? 15000 : 0;
   }
   double get discount => 0;

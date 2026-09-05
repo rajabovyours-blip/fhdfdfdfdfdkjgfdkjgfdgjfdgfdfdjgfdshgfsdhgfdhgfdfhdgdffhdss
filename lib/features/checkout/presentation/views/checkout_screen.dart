@@ -140,12 +140,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                               l10n.shipping,
                               _formatCurrency(notifier.shippingFee),
                             ),
-                            const SizedBox(height: 8),
-                            _buildSummaryRow(
-                              context,
-                              l10n.tax,
-                              _formatCurrency(notifier.tax),
-                            ),
+
                             if (notifier.discount > 0) ...[
                               const SizedBox(height: 8),
                               _buildSummaryRow(
@@ -309,15 +304,6 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
           subtitle: '',
           price: _formatCurrency(50000),
           value: 'Delivery Service',
-          groupValue: state.deliveryMethod,
-          onChanged: (v) => notifier.setDeliveryMethod(v!),
-        ),
-        const SizedBox(height: 8),
-        _DeliveryOptionCard(
-          title: context.l10n.pickupFromWarehouse,
-          subtitle: '',
-          price: _formatCurrency(0),
-          value: 'Pickup from warehouse',
           groupValue: state.deliveryMethod,
           onChanged: (v) => notifier.setDeliveryMethod(v!),
         ),

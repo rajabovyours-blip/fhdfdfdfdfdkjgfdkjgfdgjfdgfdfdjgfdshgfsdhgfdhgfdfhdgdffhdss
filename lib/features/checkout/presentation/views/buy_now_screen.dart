@@ -71,10 +71,7 @@ class _BuyNowScreenState extends ConsumerState<BuyNowScreen> {
                   value: 'Express Delivery',
                   child: Text(context.l10n.expressDelivery),
                 ),
-                DropdownMenuItem(
-                  value: 'Pickup',
-                  child: Text(context.l10n.pickup),
-                ),
+
               ],
               onChanged: (value) =>
                   notifier.setDeliveryMethod(value ?? 'Standard Delivery'),
