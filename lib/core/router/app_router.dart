@@ -23,7 +23,7 @@ import 'package:milliy_metr/features/search/presentation/views/search_screen.dar
 import 'package:milliy_metr/features/notifications/presentation/views/notifications_screen.dart';
 import 'package:milliy_metr/features/catalog/presentation/views/product_details_screen.dart';
 import 'package:milliy_metr/features/catalog/presentation/views/category_products_screen.dart';
-import 'package:milliy_metr/features/catalog/presentation/views/comparison_screen.dart';
+
 import 'package:milliy_metr/features/checkout/presentation/views/cart_screen.dart';
 import 'package:milliy_metr/features/checkout/presentation/views/checkout_screen.dart';
 import 'package:milliy_metr/features/checkout/presentation/views/address_list_screen.dart';

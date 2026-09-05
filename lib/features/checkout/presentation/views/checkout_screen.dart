@@ -238,6 +238,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                             
                             if (success == true) {
                               await notifier.refreshOrderStatus(order.id);
+                              if (!context.mounted) return;
                               final updatedOrder = ref.read(checkoutProvider).order;
                               if (updatedOrder != null && updatedOrder.paymentStatus.toLowerCase() == 'paid') {
                                 context.go(AppRoutes.orderSuccess);
@@ -251,6 +252,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                                 );
                               }
                             }
+                            if (!context.mounted) return;
                             context.go(AppRoutes.orderDetails.replaceFirst(':id', order.id));
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
