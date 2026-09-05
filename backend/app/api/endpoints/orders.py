@@ -106,8 +106,13 @@ async def get_orders(
             .where(Order.user_id == current_user.id)
             .order_by(Order.created_at.desc())
         )
-    orders = result.scalars().all()
-    return APIResponse(data=[OrderModel.model_validate(o) for o in orders])
+    try:
+        orders = result.unique().scalars().all()
+        return APIResponse(data=[OrderModel.model_validate(o) for o in orders])
+    except Exception as e:
+        import traceback
+        error_msg = traceback.format_exc()
+        return APIResponse(data=[], message=f"DEBUG ERROR: {error_msg}")
 
 @router.get("/{id}", response_model=APIResponse[OrderModel])
 async def get_order(
@@ -128,7 +133,7 @@ async def get_order(
             .options(joinedload(Order.user), joinedload(Order.items).joinedload(OrderItem.product))
             .where(Order.id == id, Order.user_id == current_user.id)
         )
-    order = result.scalar_one_or_none()
+    order = result.unique().scalar_one_or_none()
     
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
@@ -152,7 +157,7 @@ async def update_order_status(
         .options(joinedload(Order.items))
         .where(Order.id == id)
     )
-    order = result.scalar_one_or_none()
+    order = result.unique().scalar_one_or_none()
     
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
@@ -179,7 +184,7 @@ async def cancel_order(
         .options(joinedload(Order.items))
         .where(Order.id == id, Order.user_id == current_user.id)
     )
-    order = result.scalar_one_or_none()
+    order = result.unique().scalar_one_or_none()
     
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
