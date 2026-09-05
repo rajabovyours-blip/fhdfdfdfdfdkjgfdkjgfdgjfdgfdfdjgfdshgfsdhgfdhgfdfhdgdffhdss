@@ -120,3 +120,5 @@ dependency_overrides:
   shared_preferences_web: 2.4.2
   google_sign_in_web: 0.12.4+4
   image_picker_for_web: 3.0.6
+  geolocator_android: 5.0.0
+
