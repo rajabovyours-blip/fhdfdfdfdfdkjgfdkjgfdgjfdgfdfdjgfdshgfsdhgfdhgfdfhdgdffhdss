@@ -1,3 +1,4 @@
+import 'package:milliy_metr/core/utils/responsive_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -95,8 +96,8 @@ class HomeScreen extends ConsumerWidget {
                         SliverPadding(
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           sliver: SliverGrid(
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: responsiveCrossAxisCount(context, mobileColumns: 2),
                               childAspectRatio: 0.63,
                               crossAxisSpacing: 12,
                               mainAxisSpacing: 16,

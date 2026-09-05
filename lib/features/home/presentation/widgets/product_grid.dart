@@ -1,3 +1,4 @@
+import 'package:milliy_metr/core/utils/responsive_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:go_router/go_router.dart';
@@ -52,14 +53,14 @@ class ProductGrid extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       sliver: SliverLayoutBuilder(
         builder: (context, constraints) {
-          const crossAxisCount = 2;
+          final crossAxisCount = responsiveCrossAxisCount(context, mobileColumns: 2);
           const crossAxisSpacing = 12.0;
           const mainAxisSpacing = 16.0;
 
           const childAspectRatio = 0.55;
 
           return SliverGrid(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: crossAxisCount,
               mainAxisSpacing: mainAxisSpacing,
               crossAxisSpacing: crossAxisSpacing,

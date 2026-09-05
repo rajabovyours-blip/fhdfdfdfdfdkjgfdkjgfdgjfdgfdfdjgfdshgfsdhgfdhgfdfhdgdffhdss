@@ -3,37 +3,49 @@ import 'package:flutter/material.dart';
 
 class ResponsiveWrapper extends StatelessWidget {
   final Widget child;
-  final double maxWidth;
 
   const ResponsiveWrapper({
     super.key,
     required this.child,
-    this.maxWidth = 480.0,
   });
 
   @override
   Widget build(BuildContext context) {
-    // Only apply the layout constraints on Web or Desktop platforms
+    // Mobil ilova (Android/iOS) — hech narsa o'zgarmaydi, asl holida qoladi
     if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.android)) {
       return child;
     }
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        if (constraints.maxWidth > maxWidth) {
-          return ColoredBox(
-            color: const Color(0xFFF3F4F6), // subtle gray background for the outer area
-            child: Center(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: maxWidth),
-                child: ClipRect(
-                  child: child,
-                ),
-              ),
-            ),
-          );
+        final width = constraints.maxWidth;
+
+        // Telefon brauzerida (tor oyna) — hech narsa o'zgarmaydi
+        if (width < 700) {
+          return child;
         }
-        return child;
+
+        // Kompyuter/planshet uchun bosqichma-bosqich kengroq joy —
+        // 480px emas, ekranga mos, lekin cheksiz cho'zilib ketmaydigan kenglik
+        double maxWidth;
+        if (width >= 1400) {
+          maxWidth = 1280;
+        } else if (width >= 1024) {
+          maxWidth = 1100;
+        } else {
+          maxWidth = 900; // planshet
+        }
+
+        return ColoredBox(
+          color: const Color(0xFFF3F4F6),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: maxWidth),
+              // ClipRect OLIB TASHLANDI — endi hech narsa kesilmaydi
+              child: child,
+            ),
+          ),
+        );
       },
     );
   }

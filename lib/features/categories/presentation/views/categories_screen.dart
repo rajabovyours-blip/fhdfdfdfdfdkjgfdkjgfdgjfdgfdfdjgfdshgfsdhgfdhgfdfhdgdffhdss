@@ -1,3 +1,4 @@
+import 'package:milliy_metr/core/utils/responsive_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:milliy_metr/core/router/route_constants.dart';
@@ -85,8 +86,8 @@ class CategoriesScreen extends ConsumerWidget {
                       SliverPadding(
                         padding: const EdgeInsets.all(16),
                         sliver: SliverGrid(
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: responsiveCrossAxisCount(context, mobileColumns: 2),
                             crossAxisSpacing: 16,
                             mainAxisSpacing: 16,
                             childAspectRatio: 0.8,
@@ -143,8 +144,8 @@ class CategoriesScreen extends ConsumerWidget {
   Widget _buildCategoryList(BuildContext context, List<CategoryEntity> categories) {
     return GridView.builder(
       padding: const EdgeInsets.all(16),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: responsiveCrossAxisCount(context, mobileColumns: 2),
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
         childAspectRatio: 0.8,

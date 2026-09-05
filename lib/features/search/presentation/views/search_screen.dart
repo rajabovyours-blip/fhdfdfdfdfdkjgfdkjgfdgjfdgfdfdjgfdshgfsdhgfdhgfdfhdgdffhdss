@@ -1,3 +1,4 @@
+import 'package:milliy_metr/core/utils/responsive_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
 import 'package:go_router/go_router.dart';
@@ -89,8 +90,8 @@ class SearchScreen extends ConsumerWidget {
                 }
                 return GridView.builder(
                   padding: const EdgeInsets.all(16),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: responsiveCrossAxisCount(context, mobileColumns: 2),
                     mainAxisSpacing: 16,
                     crossAxisSpacing: 16,
                     childAspectRatio: 0.63,

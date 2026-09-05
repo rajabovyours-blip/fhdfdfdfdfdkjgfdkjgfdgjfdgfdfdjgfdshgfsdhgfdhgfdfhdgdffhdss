@@ -1,3 +1,4 @@
+import 'package:milliy_metr/core/utils/responsive_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
@@ -163,8 +164,8 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                   return SliverPadding(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                     sliver: SliverGrid(
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: responsiveCrossAxisCount(context, mobileColumns: 3),
                         crossAxisSpacing: 10,
                         mainAxisSpacing: 16,
                         childAspectRatio: 0.74,

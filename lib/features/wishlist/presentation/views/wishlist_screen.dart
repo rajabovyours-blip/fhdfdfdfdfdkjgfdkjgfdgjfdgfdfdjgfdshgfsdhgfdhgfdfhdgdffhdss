@@ -1,3 +1,4 @@
+import 'package:milliy_metr/core/utils/responsive_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:milliy_metr/shared/components/product_card.dart';
@@ -427,7 +428,7 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
   Widget _buildGrid(List<ProductEntity> products) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        const crossAxisCount = 2;
+        final crossAxisCount = responsiveCrossAxisCount(context, mobileColumns: 2);
         const crossAxisSpacing = 16.0;
         const mainAxisSpacing = 16.0;
 
@@ -465,14 +466,14 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
   Widget _buildLoadingState() {
     return LayoutBuilder(
       builder: (context, constraints) {
-        const crossAxisCount = 2;
+        final crossAxisCount = responsiveCrossAxisCount(context, mobileColumns: 2);
         const crossAxisSpacing = 16.0;
         const mainAxisSpacing = 16.0;
 
         return GridView.builder(
           padding: const EdgeInsets.all(16),
           physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: crossAxisCount,
             mainAxisSpacing: mainAxisSpacing,
             crossAxisSpacing: crossAxisSpacing,
