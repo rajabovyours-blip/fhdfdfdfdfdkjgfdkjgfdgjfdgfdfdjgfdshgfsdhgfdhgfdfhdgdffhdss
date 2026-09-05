@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  if (!auth.checkAuth()) return;
+  auth.requireAuth();
   
   layout.inject();
   loadReviews();
