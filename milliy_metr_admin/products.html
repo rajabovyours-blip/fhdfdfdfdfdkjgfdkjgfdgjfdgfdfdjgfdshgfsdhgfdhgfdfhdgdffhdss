@@ -84,6 +84,10 @@
           <span class="material-symbols-rounded">upload_file</span>
           Excel orqali qo'shish
         </button>
+        <button class="btn btn-danger" id="btn-delete-selected" style="display: none;">
+          <span class="material-symbols-rounded">delete</span>
+          Belgilanganlarni o'chirish
+        </button>
         <button class="btn btn-primary" id="btn-add-product">
           <span class="material-symbols-rounded">add</span>
           Yangi Qo'shish
@@ -114,6 +118,12 @@
         <table class="table">
           <thead>
             <tr>
+              <th width="80" class="text-center">
+                <label style="display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer; font-size: 11px; margin: 0;">
+                  <input type="checkbox" id="select-all-products" style="cursor: pointer; width: 16px; height: 16px;">
+                  Barchasi
+                </label>
+              </th>
               <th width="70">Rasm</th>
               <th>Nomi (Uz)</th>
               <th>Kategoriya</th>
@@ -124,7 +134,7 @@
           </thead>
           <tbody id="product-list">
             <tr>
-              <td colspan="6" class="text-center">Yuklanmoqda...</td>
+              <td colspan="7" class="text-center">Yuklanmoqda...</td>
             </tr>
           </tbody>
         </table>

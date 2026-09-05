@@ -56,7 +56,61 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('import-modal').classList.add('active');
   });
   document.getElementById('btn-upload-excel').addEventListener('click', uploadExcel);
+
+  // Bulk delete logic
+  const selectAllCb = document.getElementById('select-all-products');
+  const btnDeleteSelected = document.getElementById('btn-delete-selected');
+  
+  if(selectAllCb) {
+    selectAllCb.addEventListener('change', (e) => {
+      const isChecked = e.target.checked;
+      document.querySelectorAll('.product-checkbox').forEach(cb => {
+        cb.checked = isChecked;
+      });
+      updateDeleteSelectedButton();
+    });
+  }
+  
+  if(btnDeleteSelected) {
+    btnDeleteSelected.addEventListener('click', async () => {
+      const selectedIds = Array.from(document.querySelectorAll('.product-checkbox:checked')).map(cb => cb.value);
+      if (selectedIds.length === 0) return;
+      
+      if (!confirm(`Siz rostdan ham belgilangan ${selectedIds.length} ta mahsulotni o'chirmoqchimisiz?`)) return;
+      
+      btnDeleteSelected.disabled = true;
+      btnDeleteSelected.innerHTML = '<span class="material-symbols-rounded">hourglass_empty</span>O\'chirilmoqda...';
+      
+      try {
+        // Since we may not have a dedicated bulk delete, use Promise.all to delete each.
+        await Promise.all(selectedIds.map(id => api.delete(`/products/${id}`)));
+        layout.showToast('Barcha belgilangan mahsulotlar o\'chirildi');
+        document.getElementById('select-all-products').checked = false;
+        updateDeleteSelectedButton();
+        loadProducts();
+      } catch (err) {
+        layout.showToast(err.message, 'error');
+      } finally {
+        btnDeleteSelected.disabled = false;
+        btnDeleteSelected.innerHTML = '<span class="material-symbols-rounded">delete</span>Belgilanganlarni o\'chirish';
+      }
+    });
+  }
 });
+
+function updateDeleteSelectedButton() {
+  const selectedCount = document.querySelectorAll('.product-checkbox:checked').length;
+  const btn = document.getElementById('btn-delete-selected');
+  if (btn) {
+    btn.style.display = selectedCount > 0 ? 'inline-flex' : 'none';
+  }
+  
+  const selectAll = document.getElementById('select-all-products');
+  const allCount = document.querySelectorAll('.product-checkbox').length;
+  if(selectAll && allCount > 0) {
+    selectAll.checked = selectedCount === allCount;
+  }
+}
 
 async function loadCategories() {
   try {
@@ -88,7 +142,7 @@ async function loadProducts() {
   if (q) url += `&search=${encodeURIComponent(q)}`;
   if (cat) url += `&category_id=${cat}`;
   
-  tbody.innerHTML = `<tr><td colspan="6" class="text-center">Yuklanmoqda...</td></tr>`;
+  tbody.innerHTML = `<tr><td colspan="7" class="text-center">Yuklanmoqda...</td></tr>`;
   
   try {
     const res = await api.get(url);
@@ -110,7 +164,7 @@ function renderTable(products) {
   const tbody = document.getElementById('product-list');
   
   if (products.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="6" class="text-center">Mahsulotlar topilmadi</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" class="text-center">Mahsulotlar topilmadi</td></tr>`;
     return;
   }
   
@@ -137,6 +191,7 @@ function renderTable(products) {
     
     return `
       <tr>
+        <td class="text-center"><input type="checkbox" class="product-checkbox" value="${p.id}" style="cursor: pointer; width: 16px; height: 16px;" onchange="updateDeleteSelectedButton()"></td>
         <td>${imgHtml}</td>
         <td style="font-weight: 500;">${nameUz}</td>
         <td><span class="badge badge-neutral">${catName}</span></td>
