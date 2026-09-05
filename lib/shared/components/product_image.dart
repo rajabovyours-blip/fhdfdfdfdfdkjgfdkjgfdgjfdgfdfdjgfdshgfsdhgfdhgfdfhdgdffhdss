@@ -4,15 +4,12 @@ import 'package:shimmer/shimmer.dart';
 
 import 'package:milliy_metr/core/utils/image_utils.dart';
 
-class ProductImage extends StatelessWidget {
+class ProductImage extends StatefulWidget {
   final String? imageUrl;
   final double height;
   final double width;
   final String fallbackSeed;
   final BoxFit fit;
-  
-  // Decoding size limit to prevent OOM
-  static const int _cacheSize = 400;
 
   const ProductImage({
     super.key,
@@ -24,34 +21,81 @@ class ProductImage extends StatelessWidget {
   });
 
   @override
+  State<ProductImage> createState() => _ProductImageState();
+}
+
+class _ProductImageState extends State<ProductImage> {
+  // Decoding size limit to prevent OOM
+  static const int _cacheSize = 400;
+  static const int _maxRetries = 2;
+
+  int _retryCount = 0;
+  bool _retryScheduled = false;
+
+  @override
+  void didUpdateWidget(covariant ProductImage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.imageUrl != widget.imageUrl) {
+      _retryCount = 0;
+      _retryScheduled = false;
+    }
+  }
+
+  void _scheduleRetry(String url) {
+    if (_retryScheduled || _retryCount >= _maxRetries) return;
+    _retryScheduled = true;
+    // Avvalgi (xato bilan tugagan) yozuvni keshdan tozalaymiz — aks holda
+    // Flutter xuddi shu URL uchun eski xatoni qayta ko'rsatib qo'yaveradi
+    CachedNetworkImage.evictFromCache(url);
+    Future.delayed(Duration(milliseconds: 500 * (_retryCount + 1)), () {
+      if (!mounted) return;
+      setState(() {
+        _retryCount++;
+        _retryScheduled = false;
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if (imageUrl == null || imageUrl!.isEmpty || imageUrl == 'NEEDS_IMAGE') {
+    final imageUrl = widget.imageUrl;
+    if (imageUrl == null || imageUrl.isEmpty || imageUrl == 'NEEDS_IMAGE') {
       return _buildErrorFallback(context);
     }
 
-    if (imageUrl!.startsWith('assets/')) {
+    if (imageUrl.startsWith('assets/')) {
       return Image.asset(
-        imageUrl!,
-        height: height,
-        width: width,
-        fit: fit,
+        imageUrl,
+        height: widget.height,
+        width: widget.width,
+        fit: widget.fit,
         cacheWidth: _cacheSize,
         errorBuilder: (context, error, stackTrace) => _buildErrorFallback(context),
       );
     }
 
-    final String processedUrl = ImageUtils.getFullImageUrl(imageUrl!);
+    final String processedUrl = ImageUtils.getFullImageUrl(imageUrl);
 
     return CachedNetworkImage(
+      // _retryCount o'zgarganda kalit ham o'zgaradi — bu Flutter'ga eski,
+      // xato bilan tugagan urinishni emas, yangi, toza urinishni
+      // ishlatishini majburlaydi
+      key: ValueKey('$processedUrl#$_retryCount'),
       imageUrl: processedUrl,
-      height: height,
-      width: width,
-      fit: fit,
+      height: widget.height,
+      width: widget.width,
+      fit: widget.fit,
       memCacheWidth: _cacheSize,
       memCacheHeight: _cacheSize,
       fadeInDuration: const Duration(milliseconds: 200),
       placeholder: (context, url) => _buildLoadingPlaceholder(context),
-      errorWidget: (context, url, error) => _buildErrorFallback(context),
+      errorWidget: (context, url, error) {
+        if (_retryCount < _maxRetries) {
+          _scheduleRetry(url);
+          return _buildLoadingPlaceholder(context);
+        }
+        return _buildErrorFallback(context);
+      },
     );
   }
 

@@ -65,10 +65,12 @@ async def upload_image(file: UploadFile = File(...)):
     unique_filename = f"{uuid.uuid4().hex}.png"
     file_path = os.path.join(UPLOAD_DIR, unique_filename)
     
+    from starlette.concurrency import run_in_threadpool
+    
     try:
         content = await file.read()
-        final_image = process_image(content, WATERMARK_PATH)
-        final_image.save(file_path, "PNG")
+        final_image = await run_in_threadpool(process_image, content, WATERMARK_PATH)
+        await run_in_threadpool(final_image.save, file_path, "PNG")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to upload image: {e}")
         
