@@ -16,6 +16,7 @@ WATERMARK_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os
 
 def process_image(image_bytes, watermark_path):
     base_image = Image.open(io.BytesIO(image_bytes))
+    base_image = base_image.convert("RGBA")
     
     # Add watermark
     if os.path.exists(watermark_path):
@@ -23,20 +24,23 @@ def process_image(image_bytes, watermark_path):
             with Image.open(watermark_path) as watermark:
                 watermark = watermark.convert("RGBA")
                 
-                # Resize watermark to be 15% of the image width
-                wm_width = int(base_image.width * 0.15)
+                # Resize watermark to be 25% of the image width
+                wm_width = int(base_image.width * 0.25)
                 wm_ratio = wm_width / float(watermark.width)
                 wm_height = int(watermark.height * wm_ratio)
                 watermark = watermark.resize((wm_width, wm_height), Image.Resampling.LANCZOS)
                 
-                # Adjust opacity to 50%
-                alpha = watermark.split()[3]
-                alpha = alpha.point(lambda p: p * 0.5)
-                watermark.putalpha(alpha)
+                # Calculate top right corner with 20px padding
+                padding_x = 20
+                padding_y = 20
+                pos_x = base_image.width - wm_width - padding_x
+                if pos_x < 0:
+                    pos_x = 0
+                pos_y = padding_y
                 
-                # Create transparent layer and paste watermark at top corner (10, 10)
+                # Create transparent layer and paste watermark
                 transparent = Image.new('RGBA', base_image.size, (0,0,0,0))
-                transparent.paste(watermark, (10, 10), mask=watermark)
+                transparent.paste(watermark, (pos_x, pos_y), mask=watermark)
                 
                 # Composite
                 base_image = Image.alpha_composite(base_image, transparent)
