@@ -122,20 +122,19 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(10),
+              width: 64,
+              height: 48,
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: isSelected
                     ? context.colors.primary.withValues(alpha: 0.1)
                     : context.colors.surfaceVariant,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: SizedBox(
-                width: id == 'card' ? 60 : 24,
-                height: 24,
-                child: FittedBox(
-                  fit: BoxFit.contain,
-                  child: iconWidget,
-                ),
+              alignment: Alignment.center,
+              child: FittedBox(
+                fit: BoxFit.contain,
+                child: iconWidget,
               ),
             ),
             const SizedBox(width: 16),
