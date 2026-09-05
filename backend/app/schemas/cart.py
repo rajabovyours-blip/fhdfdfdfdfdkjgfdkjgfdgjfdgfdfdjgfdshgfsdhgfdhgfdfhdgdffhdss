@@ -6,7 +6,7 @@ from .product import ProductModel
 
 class CartItemModel(BaseModel):
     id: UUID
-    product: ProductModel
+    product: Optional[ProductModel] = None
     quantity: int = 1
     is_selected: bool = True
     is_saved_for_later: bool = False
