@@ -297,9 +297,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                           ? context.l10n.outOfStock
                                           : context.l10n.inStock(
                                               product.stock,
-                                              product.unit == 'piece'
-                                                  ? context.l10n.piece
-                                                  : product.unit,
+                                              product.unit.localizedUnit(context),
                                             ),
                                       style: TextStyle(
                                         color: outOfStock
