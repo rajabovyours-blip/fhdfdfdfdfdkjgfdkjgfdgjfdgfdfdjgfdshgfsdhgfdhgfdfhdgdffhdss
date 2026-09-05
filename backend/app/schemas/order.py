@@ -16,17 +16,17 @@ class OrderModel(BaseModel):
     id: UUID
     order_number: str
     invoice_number: Optional[str] = None
-    status: str
-    payment_status: str
-    delivery_status: str
-    subtotal: float
-    shipping_fee: float
-    discount: float
-    tax: float
-    total: float
-    delivery_address: str
-    payment_method: str
-    delivery_method: str
+    status: str = "Pending"
+    payment_status: str = "Pending"
+    delivery_status: str = "Pending"
+    subtotal: float = 0.0
+    shipping_fee: float = 0.0
+    discount: float = 0.0
+    tax: float = 0.0
+    total: float = 0.0
+    delivery_address: str = ""
+    payment_method: str = ""
+    delivery_method: str = ""
     tracking_number: Optional[str] = None
     customer_notes: Optional[str] = None
     created_at: datetime
