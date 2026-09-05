@@ -40,7 +40,7 @@ dependencies:
 
   # Environment & Localization
   flutter_dotenv: ^5.1.0
-  intl: ^0.19.0
+  intl: 0.20.2
 
   # Social Auth
   google_sign_in: ^6.2.1
@@ -114,3 +114,9 @@ flutter_native_splash:
     image_dark: "assets/images/milliy_metr_logo_transparent.png"
     color: "#000000"
     color_dark: "#000000"
+
+dependency_overrides:
+  url_launcher_web: 2.3.2
+  shared_preferences_web: 2.4.2
+  google_sign_in_web: 0.12.4+4
+  image_picker_for_web: 3.0.6
