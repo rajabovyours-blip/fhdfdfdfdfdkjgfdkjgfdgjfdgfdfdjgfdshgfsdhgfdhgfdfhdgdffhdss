@@ -373,6 +373,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
         child: Row(
           children: [
             Expanded(
+              flex: 3,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -399,43 +400,49 @@ class _CartScreenState extends ConsumerState<CartScreen> {
               ),
             ),
             const SizedBox(width: 16),
-            SizedBox(
-              height: 44,
-              child: ElevatedButton(
-                key: const Key('checkout_button'),
-                onPressed: canCheckout
-                    ? () {
-                        // Pass selected items to checkout provider
-                        final selectedItems =
-                            items.where((e) => e.isSelected).toList();
-                        ref
-                            .read(checkoutProvider.notifier)
-                            .initializeWithCartItems(selectedItems);
-                        context.push(AppRoutes.checkout);
-                      }
-                    : () {
-                        AppSnackBar.showError(context, context.l10n.someItemsOutOfStock);
-                      },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  backgroundColor: canCheckout
-                      ? context.colors.primary
-                      : context.colors.outline,
-                  foregroundColor: canCheckout
-                      ? context.colors.onPrimary
-                      : context.colors.textMedium,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: Text(
-                  context.l10n.checkout,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: canCheckout
+            Expanded(
+              flex: 4,
+              child: SizedBox(
+                height: 44,
+                child: ElevatedButton(
+                  key: const Key('checkout_button'),
+                  onPressed: canCheckout
+                      ? () {
+                          // Pass selected items to checkout provider
+                          final selectedItems =
+                              items.where((e) => e.isSelected).toList();
+                          ref
+                              .read(checkoutProvider.notifier)
+                              .initializeWithCartItems(selectedItems);
+                          context.push(AppRoutes.checkout);
+                        }
+                      : () {
+                          AppSnackBar.showError(context, context.l10n.someItemsOutOfStock);
+                        },
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    backgroundColor: canCheckout
+                        ? context.colors.primary
+                        : context.colors.outline,
+                    foregroundColor: canCheckout
                         ? context.colors.onPrimary
                         : context.colors.textMedium,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      context.l10n.checkout,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: canCheckout
+                            ? context.colors.onPrimary
+                            : context.colors.textMedium,
+                      ),
+                    ),
                   ),
                 ),
               ),
