@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
   
   <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
   <style>
     .kpi-grid {
       display: grid;
@@ -49,6 +50,16 @@
       margin: 0;
       font-size: 14px;
     }
+    
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: var(--space-24);
+      margin-bottom: var(--space-32);
+    }
+    .chart-grid canvas {
+      max-height: 300px;
+    }
   </style>
 </head>
 <body>
@@ -57,35 +68,70 @@
     <div id="loading-overlay" class="loading-overlay">
       <div class="spinner primary"></div>
     </div>
-    
+
     <div class="kpi-grid">
       <div class="card kpi-card">
-        <div class="kpi-icon"><span class="material-symbols-rounded">inventory_2</span></div>
-        <div class="kpi-info">
-          <p>Jami Mahsulotlar</p>
-          <h3 id="kpi-products">-</h3>
-        </div>
+        <div class="kpi-icon"><span class="material-symbols-rounded">group</span></div>
+        <div class="kpi-info"><p>Jami Mijozlar</p><h3 id="kpi-users">-</h3></div>
       </div>
       <div class="card kpi-card">
-        <div class="kpi-icon"><span class="material-symbols-rounded">group</span></div>
-        <div class="kpi-info">
-          <p>Jami Mijozlar</p>
-          <h3 id="kpi-users">-</h3>
-        </div>
+        <div class="kpi-icon"><span class="material-symbols-rounded">inventory_2</span></div>
+        <div class="kpi-info"><p>Jami Mahsulotlar</p><h3 id="kpi-products">-</h3></div>
       </div>
       <div class="card kpi-card">
         <div class="kpi-icon"><span class="material-symbols-rounded">shopping_cart</span></div>
-        <div class="kpi-info">
-          <p>Jami Buyurtmalar</p>
-          <h3 id="kpi-orders">-</h3>
-        </div>
+        <div class="kpi-info"><p>Jami Buyurtmalar</p><h3 id="kpi-orders">-</h3></div>
       </div>
       <div class="card kpi-card">
         <div class="kpi-icon"><span class="material-symbols-rounded">payments</span></div>
-        <div class="kpi-info">
-          <p>Jami Daromad</p>
-          <h3 id="kpi-revenue">-</h3>
-        </div>
+        <div class="kpi-info"><p>Jami Daromad</p><h3 id="kpi-revenue">-</h3></div>
+      </div>
+      <div class="card kpi-card">
+        <div class="kpi-icon"><span class="material-symbols-rounded">receipt_long</span></div>
+        <div class="kpi-info"><p>O'rtacha Chek</p><h3 id="kpi-aov">-</h3></div>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="card">
+        <h3>Daromad dinamikasi (oxirgi 12 oy)</h3>
+        <canvas id="chart-revenue"></canvas>
+      </div>
+      <div class="card">
+        <h3>Buyurtmalar holati</h3>
+        <canvas id="chart-status"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="card">
+        <h3>Yangi mijozlar (oxirgi 12 oy)</h3>
+        <canvas id="chart-customers"></canvas>
+      </div>
+      <div class="card">
+        <h3>To'lov turlari bo'yicha daromad</h3>
+        <canvas id="chart-payment"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="card">
+        <h3>Eng ko'p sotilgan 10 mahsulot (90 kun)</h3>
+        <canvas id="chart-top-products"></canvas>
+      </div>
+      <div class="card">
+        <h3>Kategoriyalar bo'yicha savdo (90 kun)</h3>
+        <canvas id="chart-categories"></canvas>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom: var(--space-16); color: var(--color-danger);">⚠ Ombordagi kam qolgan mahsulotlar</h3>
+      <div class="table-responsive">
+        <table class="table">
+          <thead><tr><th>Mahsulot</th><th>Qolgan miqdor</th></tr></thead>
+          <tbody id="low-stock-list"><!-- Rendered by JS --></tbody>
+        </table>
       </div>
     </div>
 
@@ -94,17 +140,9 @@
       <div class="table-responsive">
         <table class="table">
           <thead>
-            <tr>
-              <th>ID</th>
-              <th>Mijoz</th>
-              <th>Summa</th>
-              <th>Sana</th>
-              <th>Holat</th>
-            </tr>
+            <tr><th>ID</th><th>Mijoz</th><th>Summa</th><th>Sana</th><th>Holat</th></tr>
           </thead>
-          <tbody id="recent-orders-list">
-            <!-- Rendered by JS -->
-          </tbody>
+          <tbody id="recent-orders-list"><!-- Rendered by JS --></tbody>
         </table>
       </div>
     </div>
