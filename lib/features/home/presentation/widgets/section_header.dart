@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
-import 'package:go_router/go_router.dart';
-import 'package:milliy_metr/core/router/route_constants.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
 
 class SectionHeader extends StatelessWidget {
