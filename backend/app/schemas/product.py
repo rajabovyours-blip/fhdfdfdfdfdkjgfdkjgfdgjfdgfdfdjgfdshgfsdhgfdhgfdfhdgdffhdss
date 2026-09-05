@@ -14,15 +14,15 @@ class ProductModel(BaseModel):
     brand: Optional[str] = None
     category_id: UUID
     subcategory_id: Optional[UUID] = None
-    price: float
+    price: Optional[float] = 0.0
     old_price: Optional[float] = None
     currency: str = "UZS"
     unit: str = "pcs"
-    moq: int = 1
-    stock: int = 0
+    moq: Optional[int] = 1
+    stock: Optional[int] = 0
     stock_status: str = "in_stock"
-    rating: float = 0.0
-    review_count: int = 0
+    rating: Optional[float] = 0.0
+    review_count: Optional[int] = 0
     discount: Optional[float] = None
     specifications: Optional[Dict[str, str]] = None
     certificates: Optional[List[str]] = None

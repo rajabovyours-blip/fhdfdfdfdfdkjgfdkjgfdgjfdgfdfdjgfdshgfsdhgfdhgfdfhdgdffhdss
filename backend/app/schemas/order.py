@@ -19,11 +19,11 @@ class OrderModel(BaseModel):
     status: str = "Pending"
     payment_status: str = "Pending"
     delivery_status: str = "Pending"
-    subtotal: float = 0.0
-    shipping_fee: float = 0.0
-    discount: float = 0.0
-    tax: float = 0.0
-    total: float = 0.0
+    subtotal: Optional[float] = 0.0
+    shipping_fee: Optional[float] = 0.0
+    discount: Optional[float] = 0.0
+    tax: Optional[float] = 0.0
+    total: Optional[float] = 0.0
     delivery_address: str = ""
     payment_method: str = ""
     delivery_method: str = ""
