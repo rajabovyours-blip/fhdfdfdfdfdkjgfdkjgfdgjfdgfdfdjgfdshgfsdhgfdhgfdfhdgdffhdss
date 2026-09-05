@@ -207,7 +207,8 @@ class _CartScreenState extends ConsumerState<CartScreen> {
               // Sticky Checkout CTA
               _buildCheckoutSticky(notifier, cartItems),
             ],
-          ));
+          ),
+        );
         },
         orElse: () => _buildSkeleton(),
       ),

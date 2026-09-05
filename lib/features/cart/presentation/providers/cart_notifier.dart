@@ -150,7 +150,7 @@ class CartNotifier extends StateNotifier<FeatureState<List<CartItemEntity>>> {
         minimumOrderQuantity: 1,
         maximumQuantity: product.stock,
         warehouseName: 'Asosiy ombor',
-      ));
+      ),);
       state = FeatureState.loaded(currentItems);
     }
     

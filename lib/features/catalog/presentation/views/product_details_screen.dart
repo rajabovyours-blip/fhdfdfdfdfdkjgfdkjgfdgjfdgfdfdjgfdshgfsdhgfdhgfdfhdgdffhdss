@@ -1350,7 +1350,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
               },
             ),
           );
-        }
+        },
       ),
     );
   }
