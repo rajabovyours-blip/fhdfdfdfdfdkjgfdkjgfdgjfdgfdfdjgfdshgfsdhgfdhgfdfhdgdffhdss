@@ -1,4 +1,5 @@
 import 'package:milliy_metr/core/utils/responsive_grid.dart';
+import 'package:milliy_metr/shared/components/responsive_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -106,8 +107,10 @@ class _CategoryProductsScreenState extends ConsumerState<CategoryProductsScreen>
           onRefresh: () => ref
               .read(catalogNotifierProvider.notifier)
               .loadProducts(refresh: true),
-          child: CustomScrollView(
-            controller: _scrollController,
+          child: ResponsivePageContainer(
+            maxWidth: 1280,
+            child: CustomScrollView(
+              controller: _scrollController,
             slivers: [
               const SliverToBoxAdapter(child: CatalogSearchBar()),
               const SliverToBoxAdapter(child: SizedBox(height: 8)),
@@ -283,6 +286,7 @@ class _CategoryProductsScreenState extends ConsumerState<CategoryProductsScreen>
                 child: SizedBox(height: 100),
               ), // Bottom nav padding
             ],
+          ),
           ),
         ),
       ),

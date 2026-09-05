@@ -20,9 +20,12 @@ class AppButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: height,
-      width: double.infinity,
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 400),
+        child: SizedBox(
+          height: height,
+          width: double.infinity,
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
@@ -54,6 +57,8 @@ class AppButton extends StatelessWidget {
                 style:
                     const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
               ),
+      ),
+        ),
       ),
     );
   }

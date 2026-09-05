@@ -18,32 +18,36 @@ class ResponsiveWrapper extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final width = constraints.maxWidth;
+        // Desktop should use full width at the root level, 
+        // constraints will be applied per-page or per-component.
+        return child;
+      },
+    );
+  }
+}
 
-        // Telefon brauzerida (tor oyna) — hech narsa o'zgarmaydi
+class ResponsivePageContainer extends StatelessWidget {
+  final Widget child;
+  final double? maxWidth;
+
+  const ResponsivePageContainer({
+    super.key,
+    required this.child,
+    this.maxWidth = 1280,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth;
         if (width < 700) {
           return child;
         }
-
-        // Kompyuter/planshet uchun bosqichma-bosqich kengroq joy —
-        // 480px emas, ekranga mos, lekin cheksiz cho'zilib ketmaydigan kenglik
-        double maxWidth;
-        if (width >= 1400) {
-          maxWidth = 1280;
-        } else if (width >= 1024) {
-          maxWidth = 1100;
-        } else {
-          maxWidth = 900; // planshet
-        }
-
-        return ColoredBox(
-          color: const Color(0xFFF3F4F6),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: maxWidth),
-              // ClipRect OLIB TASHLANDI — endi hech narsa kesilmaydi
-              child: child,
-            ),
+        return Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: maxWidth ?? 1280),
+            child: child,
           ),
         );
       },

@@ -1,4 +1,5 @@
 import 'package:milliy_metr/core/utils/responsive_grid.dart';
+import 'package:milliy_metr/shared/components/responsive_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:milliy_metr/shared/components/product_card.dart';
@@ -199,30 +200,33 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
           ),
         ],
       ),
-      body: !isAuthenticated ? _buildGuestState() : RefreshIndicator(
-        onRefresh: () =>
-            ref.read(wishlistNotifierProvider.notifier).loadWishlist(),
-        child: state.maybeWhen(
-          loaded: (products) {
-            if (products.isEmpty) {
-              return _buildEmptyState();
-            }
-
-            final displayProducts = _getFilteredAndSorted(products);
-
-            return Column(
-              children: [
-                if (products.length > 3) _buildSearchBar(),
-                Expanded(
-                  child: displayProducts.isEmpty
-                      ? _buildNoSearchResults()
-                      : _buildGrid(displayProducts),
-                ),
-              ],
-            );
-          },
-          error: (e) => _buildErrorState(e),
-          orElse: () => _buildLoadingState(),
+      body: ResponsivePageContainer(
+        maxWidth: 1280,
+        child: !isAuthenticated ? _buildGuestState() : RefreshIndicator(
+          onRefresh: () =>
+              ref.read(wishlistNotifierProvider.notifier).loadWishlist(),
+          child: state.maybeWhen(
+            loaded: (products) {
+              if (products.isEmpty) {
+                return _buildEmptyState();
+              }
+  
+              final displayProducts = _getFilteredAndSorted(products);
+  
+              return Column(
+                children: [
+                  if (products.length > 3) _buildSearchBar(),
+                  Expanded(
+                    child: displayProducts.isEmpty
+                        ? _buildNoSearchResults()
+                        : _buildGrid(displayProducts),
+                  ),
+                ],
+              );
+            },
+            error: (e) => _buildErrorState(e),
+            orElse: () => _buildLoadingState(),
+          ),
         ),
       ),
     );

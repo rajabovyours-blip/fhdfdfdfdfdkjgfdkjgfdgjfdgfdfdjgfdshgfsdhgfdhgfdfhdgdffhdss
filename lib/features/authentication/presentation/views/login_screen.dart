@@ -6,6 +6,7 @@ import 'package:milliy_metr/core/router/route_constants.dart';
 import 'package:milliy_metr/core/providers/auth_provider.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
 import 'package:milliy_metr/features/authentication/presentation/widgets/auth_language_selector.dart';
+import 'package:milliy_metr/shared/components/responsive_wrapper.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -200,9 +201,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     return Scaffold(
       backgroundColor: context.colors.background,
       resizeToAvoidBottomInset: true,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+      body: ResponsivePageContainer(
+        maxWidth: 600,
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -414,7 +417,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             ],
           ),
         ),
-      ),
+      )),
     );
   }
 

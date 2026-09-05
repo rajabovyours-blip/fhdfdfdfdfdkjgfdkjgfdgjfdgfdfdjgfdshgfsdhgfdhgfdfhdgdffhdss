@@ -134,12 +134,11 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
               CustomScrollView(
                 slivers: [
                   SliverToBoxAdapter(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Image Gallery (Hero Section)
-                        Container(
-                          height: MediaQuery.of(context).size.width * 0.6,
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final isDesktop = constraints.maxWidth >= 900;
+                        final imageWidget = Container(
+                          height: isDesktop ? 500 : MediaQuery.of(context).size.width * 0.6,
                           width: double.infinity,
                           decoration: BoxDecoration(
                             color: context.colors.surface,
@@ -165,7 +164,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                             Localizations.localeOf(context)
                                                 .languageCode,
                                           ),
-                                          fit: BoxFit.cover,
+                                          fit: isDesktop ? BoxFit.contain : BoxFit.cover,
                                         );
                                       },
                                     ),
@@ -208,12 +207,11 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                     Localizations.localeOf(context)
                                         .languageCode,
                                   ),
-                                  fit: BoxFit.cover,
+                                  fit: isDesktop ? BoxFit.contain : BoxFit.cover,
                                 ),
-                        ),
-
-                        // Content
-                        Padding(
+                        );
+                        
+                        final contentWidget = Padding(
                           padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1076,8 +1074,44 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                               ), // Padding to prevent content from hiding behind the sticky bottom bar
                             ],
                           ),
-                        ),
-                      ],
+                        );
+
+                        if (isDesktop) {
+                          return Center(
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 1200),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    flex: 5,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(top: 24, bottom: 120),
+                                      child: imageWidget,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 32),
+                                  Expanded(
+                                    flex: 7,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(top: 24, bottom: 120, right: 24),
+                                      child: contentWidget,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }
+
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            imageWidget,
+                            contentWidget,
+                          ],
+                        );
+                      },
                     ),
                   ),
                 ],

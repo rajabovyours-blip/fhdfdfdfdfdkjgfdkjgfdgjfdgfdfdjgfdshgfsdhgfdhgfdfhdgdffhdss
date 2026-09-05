@@ -1,4 +1,5 @@
 import 'package:milliy_metr/core/utils/responsive_grid.dart';
+import 'package:milliy_metr/shared/components/responsive_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -32,7 +33,9 @@ class HomeScreen extends ConsumerWidget {
           backgroundColor: context.colors.surface,
           onRefresh: () =>
               ref.read(homeNotifierProvider.notifier).loadHomeData(),
-          child: CustomScrollView(
+          child: ResponsivePageContainer(
+            maxWidth: 1280,
+            child: CustomScrollView(
             slivers: [
               const SliverToBoxAdapter(child: HomeHeader()),
               const SliverToBoxAdapter(child: LocationSelector()),
@@ -127,6 +130,7 @@ class HomeScreen extends ConsumerWidget {
                 orElse: () => const HomeSkeleton(),
               ),
             ],
+          ),
           ),
         ),
       ),

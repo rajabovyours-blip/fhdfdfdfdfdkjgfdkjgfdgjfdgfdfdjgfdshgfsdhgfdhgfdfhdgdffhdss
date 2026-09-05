@@ -41,7 +41,7 @@ class CategoryCard extends StatelessWidget {
               borderRadius: const BorderRadius.vertical(top: Radius.circular(13)),
               child: BrandImageLoader(
                 imageUrl: assetPath,
-                fit: BoxFit.cover,
+                fit: BoxFit.contain,
                 borderRadius: 0,
               ),
             ),

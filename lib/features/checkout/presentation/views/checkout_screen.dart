@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:milliy_metr/shared/components/responsive_wrapper.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -55,9 +56,11 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
           ? Center(
               child: CircularProgressIndicator(color: context.colors.primary),
             )
-          : Column(
-              children: [
-                Expanded(
+          : ResponsivePageContainer(
+              maxWidth: 800,
+              child: Column(
+                children: [
+                  Expanded(
                   child: ListView(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 20,
@@ -254,6 +257,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                 ),
               ],
             ),
+          ),
     );
   }
 

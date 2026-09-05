@@ -59,66 +59,86 @@ class _MainScreenState extends ConsumerState<MainScreen> {
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent,
         ),
-        child: BottomNavigationBar(
-          currentIndex: currentIndex,
-          onTap: (index) {
-            ref.read(authProvider.notifier).clearError();
-            if (widget.navigationShell != null) {
-              widget.navigationShell!.goBranch(
-                index,
-                initialLocation: index == widget.navigationShell!.currentIndex,
-              );
-            } else {
-              ref.read(mainTabIndexProvider.notifier).state = index;
-            }
-          },
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: context.colors.surface,
-          selectedItemColor: context.colors.primary,
-          unselectedItemColor: context.colors.textMedium,
-          showSelectedLabels: true,
-          showUnselectedLabels: true,
-          selectedLabelStyle:
-              const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-          unselectedLabelStyle: const TextStyle(fontSize: 12),
-          elevation: 8,
-          items: [
-            BottomNavigationBarItem(
-              icon: const Icon(Icons.home_outlined, key: Key('home_tab')),
-              activeIcon: const Icon(Icons.home),
-              label: context.l10n.home,
-            ),
-            BottomNavigationBarItem(
-              icon: const Icon(Icons.grid_view_outlined, key: Key('catalog_tab')),
-              activeIcon: const Icon(Icons.grid_view),
-              label: context.l10n.catalog,
-            ),
-            BottomNavigationBarItem(
-              icon: const Icon(Icons.favorite_outline, key: Key('wishlist_tab')),
-              activeIcon: const Icon(Icons.favorite),
-              label: context.l10n.wishlist,
-            ),
-            BottomNavigationBarItem(
-              icon: Badge(
-                isLabelVisible: cartCount > 0,
-                label: Text(cartCount.toString()),
-                backgroundColor: context.colors.primary,
-                child: const Icon(Icons.shopping_cart_outlined, key: Key('cart_tab')),
+        child: Container(
+          decoration: BoxDecoration(
+            color: context.colors.surface,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 8,
+                offset: const Offset(0, -2),
               ),
-              activeIcon: Badge(
-                isLabelVisible: cartCount > 0,
-                label: Text(cartCount.toString()),
-                backgroundColor: context.colors.primary,
-                child: const Icon(Icons.shopping_cart),
+            ],
+          ),
+          child: SafeArea(
+            child: Center(
+              heightFactor: 1.0,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 600),
+                child: BottomNavigationBar(
+                  currentIndex: currentIndex,
+                  onTap: (index) {
+                    ref.read(authProvider.notifier).clearError();
+                    if (widget.navigationShell != null) {
+                      widget.navigationShell!.goBranch(
+                        index,
+                        initialLocation: index == widget.navigationShell!.currentIndex,
+                      );
+                    } else {
+                      ref.read(mainTabIndexProvider.notifier).state = index;
+                    }
+                  },
+                  type: BottomNavigationBarType.fixed,
+                  backgroundColor: Colors.transparent,
+                  selectedItemColor: context.colors.primary,
+                  unselectedItemColor: context.colors.textMedium,
+                  showSelectedLabels: true,
+                  showUnselectedLabels: true,
+                  selectedLabelStyle:
+                      const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                  unselectedLabelStyle: const TextStyle(fontSize: 12),
+                  elevation: 0,
+                  items: [
+                    BottomNavigationBarItem(
+                      icon: const Icon(Icons.home_outlined, key: Key('home_tab')),
+                      activeIcon: const Icon(Icons.home),
+                      label: context.l10n.home,
+                    ),
+                    BottomNavigationBarItem(
+                      icon: const Icon(Icons.grid_view_outlined, key: Key('catalog_tab')),
+                      activeIcon: const Icon(Icons.grid_view),
+                      label: context.l10n.catalog,
+                    ),
+                    BottomNavigationBarItem(
+                      icon: const Icon(Icons.favorite_outline, key: Key('wishlist_tab')),
+                      activeIcon: const Icon(Icons.favorite),
+                      label: context.l10n.wishlist,
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Badge(
+                        isLabelVisible: cartCount > 0,
+                        label: Text(cartCount.toString()),
+                        backgroundColor: context.colors.primary,
+                        child: const Icon(Icons.shopping_cart_outlined, key: Key('cart_tab')),
+                      ),
+                      activeIcon: Badge(
+                        isLabelVisible: cartCount > 0,
+                        label: Text(cartCount.toString()),
+                        backgroundColor: context.colors.primary,
+                        child: const Icon(Icons.shopping_cart),
+                      ),
+                      label: context.l10n.cart,
+                    ),
+                    BottomNavigationBarItem(
+                      icon: const Icon(Icons.person_outline, key: Key('profile_tab')),
+                      activeIcon: const Icon(Icons.person),
+                      label: context.l10n.profile,
+                    ),
+                  ],
+                ),
               ),
-              label: context.l10n.cart,
             ),
-            BottomNavigationBarItem(
-              icon: const Icon(Icons.person_outline, key: Key('profile_tab')),
-              activeIcon: const Icon(Icons.person),
-              label: context.l10n.profile,
-            ),
-          ],
+          ),
         ),
       ),
     );

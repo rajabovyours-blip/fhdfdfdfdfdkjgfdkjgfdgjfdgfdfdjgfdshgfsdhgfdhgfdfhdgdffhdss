@@ -1,4 +1,5 @@
 import 'package:milliy_metr/core/utils/responsive_grid.dart';
+import 'package:milliy_metr/shared/components/responsive_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
@@ -75,8 +76,10 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
             color: context.colors.primary,
             backgroundColor: context.colors.surface,
             onRefresh: () => ref.read(categoryNotifierProvider.notifier).loadCategories(),
-            child: CustomScrollView(
-              physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+            child: ResponsivePageContainer(
+              maxWidth: 1280,
+              child: CustomScrollView(
+                physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
             slivers: [
               const SliverToBoxAdapter(child: CatalogSearchBar()),
               const SliverToBoxAdapter(child: SizedBox(height: 8)),
@@ -204,8 +207,9 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
               ),
             ],
           ),
+          ),
+          ),
         ),
-      ),
       ),
     );
   }
