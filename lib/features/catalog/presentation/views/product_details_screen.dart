@@ -138,7 +138,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                     child: LayoutBuilder(
                       builder: (context, constraints) {
                         final imageWidget = Container(
-                          height: isDesktop ? 500 : MediaQuery.of(context).size.width * 0.6,
+                          height: isDesktop ? 500 : MediaQuery.of(context).size.width,
                           width: double.infinity,
                           decoration: BoxDecoration(
                             color: context.colors.surface,
