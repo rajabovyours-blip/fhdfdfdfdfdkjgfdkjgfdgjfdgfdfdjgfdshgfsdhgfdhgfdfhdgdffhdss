@@ -39,10 +39,14 @@ class CategoryCard extends StatelessWidget {
             flex: 65,
             child: ClipRRect(
               borderRadius: const BorderRadius.vertical(top: Radius.circular(13)),
-              child: BrandImageLoader(
-                imageUrl: assetPath,
-                fit: BoxFit.contain,
-                borderRadius: 0,
+              child: Container(
+                width: double.infinity,
+                color: Colors.white, // Ensure white background for white-background images
+                child: BrandImageLoader(
+                  imageUrl: assetPath,
+                  fit: BoxFit.contain,
+                  borderRadius: 0,
+                ),
               ),
             ),
           ),
