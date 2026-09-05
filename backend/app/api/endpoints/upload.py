@@ -4,11 +4,6 @@ import uuid
 import io
 from PIL import Image
 
-try:
-    from rembg import remove
-except ImportError:
-    remove = None
-
 router = APIRouter()
 
 # Ensure uploads directory exists. Use absolute path for Render persistent disk
@@ -20,14 +15,7 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 WATERMARK_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), "assets", "watermark.png")
 
 def process_image(image_bytes, watermark_path):
-    # Remove background if rembg is available
-    if remove:
-        output_bytes = remove(image_bytes)
-        base_image = Image.open(io.BytesIO(output_bytes))
-    else:
-        base_image = Image.open(io.BytesIO(image_bytes))
-        
-    base_image = base_image.convert("RGBA")
+    base_image = Image.open(io.BytesIO(image_bytes))
     
     # Add watermark
     if os.path.exists(watermark_path):
