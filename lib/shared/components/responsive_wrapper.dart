@@ -18,9 +18,31 @@ class ResponsiveWrapper extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Desktop should use full width at the root level, 
-        // constraints will be applied per-page or per-component.
-        return child;
+        final width = constraints.maxWidth;
+
+        // Telefon brauzerida (tor oyna) — hech narsa o'zgarmaydi
+        if (width < 700) {
+          return child;
+        }
+
+        // Kompyuter/planshet uchun ekran kengligining deyarli barchasini
+        // (94%) egallaydi — endi "o'rtada tor ustuncha" bo'lib qolmaydi.
+        // Faqat juda katta (ultra-wide) monitorlarda qator uzunligi
+        // cheksiz cho'zilib ketmasligi uchun 1600px'da chegara qo'yiladi
+        final double maxWidth = width >= 1600 ? 1600 : width * 0.94;
+
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final outerColor = isDark ? const Color(0xFF010409) : const Color(0xFFF3F4F6);
+
+        return ColoredBox(
+          color: outerColor,
+          child: Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: maxWidth),
+              child: child,
+            ),
+          ),
+        );
       },
     );
   }
