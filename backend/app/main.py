@@ -18,6 +18,42 @@ from app.db.session import AsyncSessionLocal
 from app.db.seed import seed_data
 
 from sqlalchemy import text
+import asyncio
+from datetime import datetime, timedelta
+from sqlalchemy import select, func
+from sqlalchemy.orm import joinedload
+
+async def _abandoned_order_cleanup_loop():
+    """Every 10 minutes, cancel and restore stock for orders that have been
+    sitting unpaid (payme/click) for more than 30 minutes with no webhook received."""
+    from app.models.order import Order
+    from app.api.endpoints.orders import _restore_order_stock
+
+    while True:
+        try:
+            async with AsyncSessionLocal() as db:
+                cutoff = datetime.utcnow() - timedelta(minutes=30)
+                result = await db.execute(
+                    select(Order)
+                    .options(joinedload(Order.items))
+                    .where(
+                        Order.created_at < cutoff,
+                        func.lower(Order.status) == "pending",
+                        func.lower(Order.payment_method).in_(["payme", "click"]),
+                        func.lower(Order.payment_status).in_(["pending", "waiting"]),
+                    )
+                )
+                stale_orders = result.unique().scalars().all()
+                for order in stale_orders:
+                    order.status = "Cancelled"
+                    order.payment_status = "Cancelled"
+                    await _restore_order_stock(order, db)
+                if stale_orders:
+                    await db.commit()
+                    print(f"[abandoned_order_cleanup] cancelled {len(stale_orders)} stale order(s), stock restored")
+        except Exception as e:
+            print(f"[abandoned_order_cleanup] error: {e}")
+        await asyncio.sleep(600)  # 10 minutes
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -93,6 +129,8 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         print(f"Error seeding/cleaning data: {e}")
         
+    asyncio.create_task(_abandoned_order_cleanup_loop())
+
     yield
 
 

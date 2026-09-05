@@ -231,9 +231,27 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                           );
                           if (!context.mounted) return;
                           if (paymentUrl != null) {
-                            await context.push(
+                            final success = await context.push<bool>(
                               '${AppRoutes.paymentWebview}?url=${Uri.encodeComponent(paymentUrl)}&order_id=${order.id}',
                             );
+                            if (!context.mounted) return;
+                            
+                            if (success == true) {
+                              await notifier.refreshOrderStatus(order.id);
+                              final updatedOrder = ref.read(checkoutProvider).order;
+                              if (updatedOrder != null && updatedOrder.paymentStatus.toLowerCase() == 'paid') {
+                                context.go(AppRoutes.orderSuccess);
+                                return;
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: const Text('To\'lov amalga oshmadi yoki hali tasdiqlanmadi'),
+                                    backgroundColor: context.colors.danger,
+                                  ),
+                                );
+                              }
+                            }
+                            context.go(AppRoutes.orderDetails.replaceFirst(':id', order.id));
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(

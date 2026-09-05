@@ -4,6 +4,7 @@ import base64
 import uuid
 import json
 from datetime import datetime
+from urllib.parse import quote
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import JSONResponse
@@ -65,12 +66,13 @@ async def process_payment(
 
     amount = float(order.total)
     method = payload.payment_method_id.lower()
+    return_url = f"{settings.PUBLIC_BACKEND_URL}/api/v1/payments/return?order_id={order.id}"
 
     if method == "payme":
         if not settings.PAYME_MERCHANT_ID:
             raise HTTPException(status_code=400, detail="Payme is not configured yet")
         amount_tiyin = int(round(amount * 100))
-        raw = f"m={settings.PAYME_MERCHANT_ID};ac.order_id={order.id};a={amount_tiyin}"
+        raw = f"m={settings.PAYME_MERCHANT_ID};ac.order_id={order.id};a={amount_tiyin};c={return_url}"
         encoded = base64.b64encode(raw.encode()).decode()
         url = f"https://checkout.paycom.uz/{encoded}"
     elif method == "click":
@@ -82,11 +84,26 @@ async def process_payment(
             f"&merchant_id={settings.CLICK_MERCHANT_ID}"
             f"&amount={amount}"
             f"&transaction_param={order.id}"
+            f"&return_url={quote(return_url, safe='')}"
         )
     else:
         raise HTTPException(status_code=400, detail="Unsupported payment method")
 
     return APIResponse(data={"payment_url": url})
+
+from fastapi.responses import HTMLResponse
+
+@router.get("/return", response_class=HTMLResponse)
+async def payment_return_page(order_id: str = None):
+    """Landing page the payment provider redirects to after checkout.
+    The mobile app's in-app webview watches for this URL and closes itself
+    when it navigates here — see PART B3 below."""
+    return """
+    <html><body style="font-family:sans-serif;text-align:center;padding-top:80px;">
+      <h2>To'lov yakunlandi</h2>
+      <p>Ilovaga qaytishingiz mumkin.</p>
+    </body></html>
+    """
 
 
 # ──────────────────────────────────────────────
