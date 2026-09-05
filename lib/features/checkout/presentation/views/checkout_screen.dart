@@ -239,7 +239,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('To\'lov tizimiga ulanib bo\'lmadi'),
+                                content: const Text('To\'lov tizimiga ulanib bo\'lmadi'),
                                 backgroundColor: context.colors.danger,
                               ),
                             );

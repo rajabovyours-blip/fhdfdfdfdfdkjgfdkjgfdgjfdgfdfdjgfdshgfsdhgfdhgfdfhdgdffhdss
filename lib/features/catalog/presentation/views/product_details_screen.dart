@@ -276,7 +276,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                       margin: const EdgeInsets.only(right: 8),
                                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                       decoration: BoxDecoration(
-                                        color: Colors.orange.withOpacity(0.1),
+                                        color: Colors.orange.withValues(alpha: 0.1),
                                         borderRadius: BorderRadius.circular(6),
                                       ),
                                       child: Text(
@@ -406,7 +406,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                         margin: const EdgeInsets.only(right: 8),
                                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                                         decoration: BoxDecoration(
-                                          color: context.colors.primary.withOpacity(0.1),
+                                          color: context.colors.primary.withValues(alpha: 0.1),
                                           borderRadius: BorderRadius.circular(20),
                                         ),
                                         child: Row(
@@ -709,7 +709,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                                   padding: const EdgeInsets.only(right: 12.0),
                                                   child: Icon(icon, size: 20, color: context.colors.textMedium),
                                                 );
-                                              }
+                                              },
                                             ),
                                             Expanded(
                                               flex: 2,
