@@ -84,7 +84,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                 onPressed: () {
                   final title = product.name.get(Localizations.localeOf(context).languageCode);
                   SharePlus.instance.share(ShareParams(
-                    text: 'Milliy Metr: $title - ${AppFormatters.currency(product.price, Localizations.localeOf(context).languageCode)}\nhttps://milliymetr.uz/#product/${product.id}',
+                    text: 'Milliy Metr: $title - ${AppFormatters.currency(product.price, Localizations.localeOf(context).languageCode)}\nhttps://milliymetr.uz/#/catalog/product/${product.id}',
                   ),);
                 },
               );

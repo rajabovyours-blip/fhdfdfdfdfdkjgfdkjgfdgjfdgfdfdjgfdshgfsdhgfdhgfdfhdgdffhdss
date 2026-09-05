@@ -122,7 +122,13 @@ app.include_router(api_router, prefix=settings.API_V1_STR)
 # Mount static files directory
 BASE_UPLOAD_DIR = os.getenv("UPLOAD_DIR", "/app/uploads")
 os.makedirs(os.path.join(BASE_UPLOAD_DIR, "images"), exist_ok=True)
-app.mount("/uploads", StaticFiles(directory=BASE_UPLOAD_DIR), name="uploads")
+
+class CachedStaticFiles(StaticFiles):
+    def is_not_modified(self, response_headers, request_headers) -> bool:
+        response_headers["Cache-Control"] = "public, max-age=31536000, immutable"
+        return super().is_not_modified(response_headers, request_headers)
+
+app.mount("/uploads", CachedStaticFiles(directory=BASE_UPLOAD_DIR), name="uploads")
 
 from app.core.exceptions import AppError, app_error_handler
 app.add_exception_handler(AppError, app_error_handler)

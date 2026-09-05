@@ -76,6 +76,8 @@ class CatalogNotifier extends StateNotifier<FeatureState<CatalogData>> {
 
   CatalogNotifier(this._ref) : super(const FeatureState.initial());
 
+  String _activeCategoryId = 'Barchasi';
+
   Future<void> loadProducts({bool refresh = false}) async {
     final currentData = state.maybeWhen(
       loaded: (data) => data,
@@ -102,6 +104,7 @@ class CatalogNotifier extends StateNotifier<FeatureState<CatalogData>> {
     if (catId != 'Barchasi') {
       categoryId = catId;
     }
+    _activeCategoryId = catId;
 
     final filters = <String, dynamic>{};
     if (currentData?.minPrice != null) filters['min_price'] = currentData?.minPrice?.toInt();
@@ -123,13 +126,7 @@ class CatalogNotifier extends StateNotifier<FeatureState<CatalogData>> {
     );
 
     // Stale request check: if category changed mid-flight, ignore this result
-    final currentCatId = state.maybeWhen(
-      loaded: (d) => d.selectedCategory,
-      orElse: () => null,
-    );
-    final reqCatId = categoryId ?? 'Barchasi';
-    final stateCatId = currentCatId ?? 'Barchasi';
-    if (reqCatId != stateCatId) {
+    if (_activeCategoryId != catId) {
       return;
     }
 

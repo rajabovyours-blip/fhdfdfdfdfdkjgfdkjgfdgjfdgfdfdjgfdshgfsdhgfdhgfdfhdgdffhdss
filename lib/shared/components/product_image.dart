@@ -47,6 +47,9 @@ class ProductImage extends StatelessWidget {
       height: height,
       width: width,
       fit: fit,
+      memCacheWidth: _cacheSize,
+      memCacheHeight: _cacheSize,
+      fadeInDuration: const Duration(milliseconds: 200),
       placeholder: (context, url) => _buildLoadingPlaceholder(context),
       errorWidget: (context, url, error) => _buildErrorFallback(context),
     );
