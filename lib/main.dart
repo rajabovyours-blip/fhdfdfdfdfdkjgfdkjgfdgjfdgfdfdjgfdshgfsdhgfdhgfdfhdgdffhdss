@@ -8,7 +8,6 @@ import 'package:milliy_metr/core/providers/theme_provider.dart';
 import 'package:milliy_metr/core/providers/locale_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:milliy_metr/l10n/app_localizations.dart';
-import 'package:milliy_metr/shared/components/responsive_wrapper.dart';
 
 
 

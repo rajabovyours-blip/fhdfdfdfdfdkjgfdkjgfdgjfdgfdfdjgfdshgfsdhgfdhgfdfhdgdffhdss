@@ -11,7 +11,6 @@ import 'package:milliy_metr/features/cart/presentation/providers/cart_notifier.d
 import 'package:milliy_metr/core/providers/main_navigation_provider.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
 import 'package:milliy_metr/core/providers/auth_provider.dart';
-import 'package:milliy_metr/shared/components/responsive_wrapper.dart';
 
 class MainScreen extends ConsumerStatefulWidget {
   final StatefulNavigationShell? navigationShell;
@@ -76,6 +75,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
               },
               labelType: NavigationRailLabelType.all,
               backgroundColor: context.colors.surface,
+              indicatorColor: context.colors.primary.withValues(alpha: 0.15),
+              indicatorShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               selectedIconTheme: IconThemeData(color: context.colors.primary),
               selectedLabelTextStyle: TextStyle(color: context.colors.primary, fontWeight: FontWeight.w600),
               unselectedLabelTextStyle: TextStyle(color: context.colors.textMedium),
@@ -118,12 +119,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
               ],
             ),
             const VerticalDivider(thickness: 1, width: 1),
-            Expanded(
-              child: ResponsivePageContainer(
-                maxWidth: 1440,
-                child: body,
-              ),
-            ),
+            Expanded(child: body),
           ],
         ),
       );

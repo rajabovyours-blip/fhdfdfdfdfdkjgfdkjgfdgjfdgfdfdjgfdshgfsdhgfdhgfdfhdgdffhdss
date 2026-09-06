@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:milliy_metr/features/home/domain/entities/home_entities.dart';
 import 'package:milliy_metr/core/utils/image_utils.dart';
@@ -49,9 +50,13 @@ class _PromotionalBannerState extends State<PromotionalBanner> {
         constraints: const BoxConstraints(maxWidth: 1280),
         child: Column(
           children: [
-            SizedBox(
-              height: 160,
-              child: PageView.builder(
+            LayoutBuilder(
+              builder: (context, constraints) {
+                // Desktop: taller banner, mobile: 160px
+                final bannerHeight = constraints.maxWidth > 700 ? 220.0 : 160.0;
+                return SizedBox(
+                  height: bannerHeight,
+                  child: PageView.builder(
                 controller: _pageController,
                 onPageChanged: (index) {
                   setState(() {
@@ -77,11 +82,13 @@ class _PromotionalBannerState extends State<PromotionalBanner> {
                           ),
                         ],
                       ),
-                      child: Image.network(
-                        ImageUtils.getFullImageUrl(banner.imageUrl),
+                      child: CachedNetworkImage(
+                        imageUrl: ImageUtils.getFullImageUrl(banner.imageUrl),
                         fit: BoxFit.cover,
                         width: double.infinity,
-                        errorBuilder: (_, __, ___) => Icon(
+                        memCacheWidth: 800,
+                        fadeInDuration: const Duration(milliseconds: 200),
+                        errorWidget: (_, __, ___) => Icon(
                           Icons.image,
                           size: 60,
                           color: context.colors.textHigh.withValues(alpha: 0.2),
@@ -91,6 +98,8 @@ class _PromotionalBannerState extends State<PromotionalBanner> {
                   );
                 },
               ),
+                );
+              },
             ),
             if (widget.banners.length > 1)
               Row(
