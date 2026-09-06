@@ -306,6 +306,17 @@ async def delete_product(id: str, db: AsyncSession = Depends(get_db), current_us
             Review.__table__.delete().where(Review.product_id == product_id)
         )
         
+        # 2.5 Remove from wishlists to avoid foreign key constraints
+        from app.models.extras import Wishlist
+        await db.execute(
+            Wishlist.__table__.delete().where(Wishlist.product_id == product_id)
+        )
+        
+        from app.models.product import wishlist_table
+        await db.execute(
+            wishlist_table.delete().where(wishlist_table.c.product_id == product_id)
+        )
+        
         # 3. Nullify order_items.product_id to preserve order history
         #    (order_items already stores price_at_time and quantity as snapshots)
         from sqlalchemy import update
@@ -314,7 +325,6 @@ async def delete_product(id: str, db: AsyncSession = Depends(get_db), current_us
         )
         
         # 4. Delete the product itself
-        #    (wishlist has ON DELETE CASCADE in the DB schema, so it auto-cleans)
         await db.delete(product)
         await db.commit()
     except Exception as e:
