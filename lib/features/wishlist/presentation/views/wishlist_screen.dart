@@ -272,9 +272,11 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 400),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
@@ -330,6 +332,7 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
               ),
             ),
           ],
+          ),
         ),
       ),
     );
@@ -342,9 +345,11 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
         height: MediaQuery.of(context).size.height - kToolbarHeight - 100,
         alignment: Alignment.center,
         padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 400),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
@@ -400,6 +405,7 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
               ),
             ),
           ],
+          ),
         ),
       ),
     );
@@ -496,9 +502,11 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 400),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
             Icon(Icons.wifi_off, size: 64, color: context.colors.danger),
             const SizedBox(height: 16),
             Text(
@@ -535,6 +543,7 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
               ),
             ),
           ],
+          ),
         ),
       ),
     );

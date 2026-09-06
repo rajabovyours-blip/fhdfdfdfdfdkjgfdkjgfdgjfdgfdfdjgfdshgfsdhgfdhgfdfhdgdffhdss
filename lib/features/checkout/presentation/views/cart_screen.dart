@@ -222,9 +222,11 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 400),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
@@ -280,6 +282,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
               ),
             ),
           ],
+          ),
         ),
       ),
     );
@@ -466,9 +469,11 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 400),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
             Icon(Icons.error_outline, size: 48, color: context.colors.danger),
             const SizedBox(height: 16),
             Text(
@@ -492,6 +497,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
               child: Text(context.l10n.retry),
             ),
           ],
+          ),
         ),
       ),
     );

@@ -56,9 +56,11 @@ class ProfileScreen extends ConsumerWidget {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 400),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
             Icon(
               Icons.person_outline,
               size: 80,
@@ -88,6 +90,7 @@ class ProfileScreen extends ConsumerWidget {
               ),
             ),
           ],
+          ),
         ),
       ),
     );
@@ -97,9 +100,11 @@ class ProfileScreen extends ConsumerWidget {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 400),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
             Icon(Icons.error_outline, size: 80, color: context.colors.danger),
             const SizedBox(height: 16),
             Text(
@@ -116,6 +121,7 @@ class ProfileScreen extends ConsumerWidget {
               ),
             ),
           ],
+          ),
         ),
       ),
     );

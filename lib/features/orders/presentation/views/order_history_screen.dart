@@ -57,9 +57,11 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
               error: (e) => Center(
                 child: Padding(
                   padding: const EdgeInsets.all(32.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 400),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
                       Container(
                         padding: const EdgeInsets.all(24),
                         decoration: BoxDecoration(
@@ -110,6 +112,7 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
                         ),
                       ),
                     ],
+                    ),
                   ),
                 ),
               ),
@@ -118,9 +121,11 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
                   return Center(
                     child: Padding(
                       padding: const EdgeInsets.all(32.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 400),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
                           Container(
                             padding: const EdgeInsets.all(24),
                             decoration: BoxDecoration(
@@ -162,6 +167,7 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
                             ),
                           ),
                         ],
+                        ),
                       ),
                     ),
                   );
