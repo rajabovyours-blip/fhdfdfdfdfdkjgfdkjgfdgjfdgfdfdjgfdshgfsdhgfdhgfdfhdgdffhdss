@@ -1,5 +1,5 @@
 import 'package:milliy_metr/core/utils/responsive_grid.dart';
-import 'package:milliy_metr/shared/components/responsive_wrapper.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:milliy_metr/shared/components/product_card.dart';

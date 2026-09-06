@@ -13,7 +13,7 @@ import 'package:milliy_metr/features/reviews/presentation/widgets/review_card.da
 import 'package:milliy_metr/features/reviews/presentation/widgets/review_composer_sheet.dart';
 import 'package:milliy_metr/features/reviews/presentation/providers/review_providers.dart';
 import 'package:milliy_metr/shared/components/product_image.dart';
-import 'package:milliy_metr/shared/components/responsive_wrapper.dart';
+
 import 'package:milliy_metr/l10n/l10n_extension.dart';
 import 'package:share_plus/share_plus.dart';
 

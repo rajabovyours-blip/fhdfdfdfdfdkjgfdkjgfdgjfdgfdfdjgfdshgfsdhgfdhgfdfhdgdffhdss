@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:milliy_metr/core/router/route_constants.dart';
 import 'package:milliy_metr/features/home/presentation/widgets/category_item.dart';
-import 'package:milliy_metr/shared/components/responsive_wrapper.dart';
+
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:milliy_metr/features/categories/presentation/providers/category_notifier.dart';

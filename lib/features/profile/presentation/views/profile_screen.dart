@@ -13,7 +13,7 @@ import 'package:milliy_metr/core/utils/image_utils.dart';
 import 'package:milliy_metr/core/providers/main_navigation_provider.dart';
 import 'package:milliy_metr/features/wishlist/presentation/providers/wishlist_notifier.dart';
 
-import 'package:milliy_metr/shared/components/responsive_wrapper.dart';
+
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
