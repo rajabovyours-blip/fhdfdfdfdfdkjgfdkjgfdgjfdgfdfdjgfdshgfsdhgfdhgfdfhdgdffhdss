@@ -32,6 +32,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
   bool _isDescriptionExpanded = false;
   bool _isAddingToCart = false;
 
+  @override
   Widget build(BuildContext context) {
     final state = ref.watch(productDetailsNotifierProvider(widget.productId));
 
