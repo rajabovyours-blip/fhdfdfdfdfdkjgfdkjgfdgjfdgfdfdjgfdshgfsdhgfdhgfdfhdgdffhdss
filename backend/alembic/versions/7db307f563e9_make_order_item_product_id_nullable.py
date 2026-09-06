@@ -20,15 +20,13 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     """Upgrade schema."""
-    with op.batch_alter_table('order_items') as batch_op:
-        batch_op.alter_column('product_id',
-                   existing_type=sa.UUID(),
-                   nullable=True)
+    op.alter_column('order_items', 'product_id',
+               existing_type=sa.UUID(),
+               nullable=True)
 
 
 def downgrade() -> None:
     """Downgrade schema."""
-    with op.batch_alter_table('order_items') as batch_op:
-        batch_op.alter_column('product_id',
-                   existing_type=sa.UUID(),
-                   nullable=False)
+    op.alter_column('order_items', 'product_id',
+               existing_type=sa.UUID(),
+               nullable=False)
