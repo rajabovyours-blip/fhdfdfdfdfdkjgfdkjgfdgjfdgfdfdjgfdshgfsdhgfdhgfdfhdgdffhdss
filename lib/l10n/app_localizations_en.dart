@@ -842,6 +842,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clickPaymentDesc => 'Pay through the Click app';
 
   @override
+  String get paymePayment => 'Pay via Payme';
+
+  @override
+  String get paymePaymentDesc => 'Pay through the Payme app';
+
+  @override
   String get paymentMethodSelected => 'Payment method selected';
 
   @override

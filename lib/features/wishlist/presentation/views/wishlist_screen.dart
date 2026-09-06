@@ -200,9 +200,7 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
           ),
         ],
       ),
-      body: ResponsivePageContainer(
-        maxWidth: 1280,
-        child: !isAuthenticated ? _buildGuestState() : RefreshIndicator(
+      body: !isAuthenticated ? _buildGuestState() : RefreshIndicator(
           onRefresh: () =>
               ref.read(wishlistNotifierProvider.notifier).loadWishlist(),
           child: state.maybeWhen(
@@ -228,7 +226,6 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
             orElse: () => _buildLoadingState(),
           ),
         ),
-      ),
     );
   }
 

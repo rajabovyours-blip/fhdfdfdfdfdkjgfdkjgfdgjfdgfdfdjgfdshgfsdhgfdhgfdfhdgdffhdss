@@ -25,8 +25,8 @@ class CategoryCarousel extends ConsumerWidget {
         return SizedBox(
           height: 120,
           child: ListView.separated(
-            padding: EdgeInsets.symmetric(
-              horizontal: responsiveHorizontalPadding(context, maxWidth: 1280),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
             ),
             scrollDirection: Axis.horizontal,
             itemCount: displayCategories.length,

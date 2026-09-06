@@ -107,9 +107,7 @@ class _CategoryProductsScreenState extends ConsumerState<CategoryProductsScreen>
           onRefresh: () => ref
               .read(catalogNotifierProvider.notifier)
               .loadProducts(refresh: true),
-          child: ResponsivePageContainer(
-            maxWidth: 1280,
-            child: CustomScrollView(
+          child: CustomScrollView(
               controller: _scrollController,
             slivers: [
               const SliverToBoxAdapter(child: CatalogSearchBar()),
@@ -286,7 +284,6 @@ class _CategoryProductsScreenState extends ConsumerState<CategoryProductsScreen>
                 child: SizedBox(height: 100),
               ), // Bottom nav padding
             ],
-          ),
           ),
         ),
       ),

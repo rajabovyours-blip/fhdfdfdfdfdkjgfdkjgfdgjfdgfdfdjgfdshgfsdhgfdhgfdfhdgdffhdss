@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:milliy_metr/core/router/route_constants.dart';
 import 'package:milliy_metr/core/router/guards/auth_guard.dart';
+import 'package:flutter/foundation.dart';
 
 import 'package:milliy_metr/features/splash/presentation/views/splash_screen.dart';
 import 'package:milliy_metr/features/authentication/presentation/views/login_screen.dart';
@@ -79,7 +80,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   const isAdminApp = bool.fromEnvironment('IS_ADMIN', defaultValue: false);
 
   return GoRouter(
-    initialLocation: isAdminApp ? AppRoutes.adminDashboard : AppRoutes.splash,
+    initialLocation: isAdminApp ? AppRoutes.adminDashboard : (kIsWeb ? AppRoutes.home : AppRoutes.splash),
     refreshListenable: notifier,
     redirect: (context, state) {
       // Clear snackbars on route change to prevent them sticking

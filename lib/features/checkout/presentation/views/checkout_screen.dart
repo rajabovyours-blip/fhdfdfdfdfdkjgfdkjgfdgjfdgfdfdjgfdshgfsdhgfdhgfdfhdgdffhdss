@@ -56,12 +56,13 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
           ? Center(
               child: CircularProgressIndicator(color: context.colors.primary),
             )
-          : ResponsivePageContainer(
-              maxWidth: 800,
-              child: Column(
-                children: [
-                  Expanded(
-                  child: ListView(
+          : Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 800),
+                child: Column(
+                  children: [
+                    Expanded(
+                    child: ListView(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 20,
                       vertical: 16,

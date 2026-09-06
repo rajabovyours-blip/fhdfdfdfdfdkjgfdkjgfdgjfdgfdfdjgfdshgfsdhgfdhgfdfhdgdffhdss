@@ -33,18 +33,20 @@ class ProfileScreen extends ConsumerWidget {
         elevation: 0,
         centerTitle: true,
       ),
-      body: ResponsivePageContainer(
-        maxWidth: 800,
-        child: authState.when(
-          initial: () => Center(
-            child: CircularProgressIndicator(color: context.colors.primary),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: authState.when(
+            initial: () => Center(
+              child: CircularProgressIndicator(color: context.colors.primary),
+            ),
+            loading: () => Center(
+              child: CircularProgressIndicator(color: context.colors.primary),
+            ),
+            unauthenticated: () => _buildUnauthenticatedState(context),
+            authenticated: (user) => _buildAuthenticatedState(context, ref, user),
+            error: (message) => _buildErrorState(context, message, ref),
           ),
-          loading: () => Center(
-            child: CircularProgressIndicator(color: context.colors.primary),
-          ),
-          unauthenticated: () => _buildUnauthenticatedState(context),
-          authenticated: (user) => _buildAuthenticatedState(context, ref, user),
-          error: (message) => _buildErrorState(context, message, ref),
         ),
       ),
     );

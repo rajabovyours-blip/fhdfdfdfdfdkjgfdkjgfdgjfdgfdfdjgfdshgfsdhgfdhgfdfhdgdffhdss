@@ -76,9 +76,7 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
             color: context.colors.primary,
             backgroundColor: context.colors.surface,
             onRefresh: () => ref.read(categoryNotifierProvider.notifier).loadCategories(),
-            child: ResponsivePageContainer(
-              maxWidth: 1280,
-              child: CustomScrollView(
+            child: CustomScrollView(
                 physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
             slivers: [
               const SliverToBoxAdapter(child: CatalogSearchBar()),
@@ -206,7 +204,6 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                 child: SizedBox(height: 100),
               ),
             ],
-          ),
           ),
           ),
         ),

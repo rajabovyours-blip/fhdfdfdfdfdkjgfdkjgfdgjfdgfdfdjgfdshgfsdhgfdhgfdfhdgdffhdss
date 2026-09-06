@@ -33,9 +33,7 @@ class HomeScreen extends ConsumerWidget {
           backgroundColor: context.colors.surface,
           onRefresh: () =>
               ref.read(homeNotifierProvider.notifier).loadHomeData(),
-          child: ResponsivePageContainer(
-            maxWidth: 1280,
-            child: CustomScrollView(
+          child: CustomScrollView(
             slivers: [
               const SliverToBoxAdapter(child: HomeHeader()),
               const SliverToBoxAdapter(child: LocationSelector()),
@@ -132,7 +130,6 @@ class HomeScreen extends ConsumerWidget {
                 orElse: () => const HomeSkeleton(),
               ),
             ],
-          ),
           ),
         ),
       ),

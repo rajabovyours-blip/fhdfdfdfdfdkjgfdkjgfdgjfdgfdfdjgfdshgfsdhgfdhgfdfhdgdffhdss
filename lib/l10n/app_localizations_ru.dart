@@ -843,6 +843,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get clickPaymentDesc => 'Оплата через приложение Click';
 
   @override
+  String get paymePayment => 'Оплата через Payme';
+
+  @override
+  String get paymePaymentDesc => 'Оплата через приложение Payme';
+
+  @override
   String get paymentMethodSelected => 'Способ оплаты выбран';
 
   @override

@@ -850,6 +850,12 @@ class AppLocalizationsUz extends AppLocalizations {
   String get clickPaymentDesc => 'Click ilovasi orqali to\'lang';
 
   @override
+  String get paymePayment => 'Payme orqali to\'lov';
+
+  @override
+  String get paymePaymentDesc => 'Payme orqali to\'lash';
+
+  @override
   String get paymentMethodSelected => 'To\'lov usuli tanlandi';
 
   @override

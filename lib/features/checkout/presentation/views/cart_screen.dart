@@ -135,78 +135,80 @@ class _CartScreenState extends ConsumerState<CartScreen> {
             return _buildEmptyState();
           }
 
-          return ResponsivePageContainer(
-            maxWidth: 800,
-            child: Column(
-              children: [
-              Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.all(16),
-                  children: [
-                    // Cart Items
-                    ...cartItems.map((item) {
-                      return CartItemCard(
-                        item: item,
-                        onIncrement: () async {
-                          final maxQty = item.product.stock > 0 ? item.product.stock : 99;
-                          if (item.quantity < maxQty) {
-                            final success = await notifier.updateCartItem(item.id, item.quantity + 1);
-                            if (!success && context.mounted) {
-                              AppSnackBar.showError(context, context.l10n.errorUpdatingQuantity);
+          return Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 800),
+              child: Column(
+                children: [
+                Expanded(
+                  child: ListView(
+                    padding: const EdgeInsets.all(16),
+                    children: [
+                      // Cart Items
+                      ...cartItems.map((item) {
+                        return CartItemCard(
+                          item: item,
+                          onIncrement: () async {
+                            final maxQty = item.product.stock > 0 ? item.product.stock : 99;
+                            if (item.quantity < maxQty) {
+                              final success = await notifier.updateCartItem(item.id, item.quantity + 1);
+                              if (!success && context.mounted) {
+                                AppSnackBar.showError(context, context.l10n.errorUpdatingQuantity);
+                              }
                             }
-                          }
-                        },
-                        onDecrement: () async {
-                          if (item.quantity <= 1) {
-                            await showDialog(
-                              context: context,
-                              builder: (ctx) => AlertDialog(
-                                backgroundColor: context.colors.surface,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                                title: Text(context.l10n.confirm, style: TextStyle(color: context.colors.textHigh)),
-                                content: Text(context.l10n.confirmRemoveFromCart, style: TextStyle(color: context.colors.textMedium)),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(ctx),
-                                    child: Text(context.l10n.cancel, style: TextStyle(color: context.colors.textMedium)),
-                                  ),
-                                  TextButton(
-                                    onPressed: () async {
-                                      Navigator.pop(ctx);
-                                      final success = await notifier.removeFromCart(item.id);
-                                      if (success) {
-                                        _removeItemWithUndo(item);
-                                      } else if (context.mounted) {
-                                        AppSnackBar.showError(context, context.l10n.errorUpdatingQuantity);
-                                      }
-                                    },
-                                    child: Text(context.l10n.clear, style: TextStyle(color: context.colors.danger)),
-                                  ),
-                                ],
-                              ),
-                            );
-                          } else {
-                            final success = await notifier.updateCartItem(item.id, item.quantity - 1);
-                            if (!success && context.mounted) {
-                              AppSnackBar.showError(context, context.l10n.errorUpdatingQuantity);
+                          },
+                          onDecrement: () async {
+                            if (item.quantity <= 1) {
+                              await showDialog(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                  backgroundColor: context.colors.surface,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                  title: Text(context.l10n.confirm, style: TextStyle(color: context.colors.textHigh)),
+                                  content: Text(context.l10n.confirmRemoveFromCart, style: TextStyle(color: context.colors.textMedium)),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(ctx),
+                                      child: Text(context.l10n.cancel, style: TextStyle(color: context.colors.textMedium)),
+                                    ),
+                                    TextButton(
+                                      onPressed: () async {
+                                        Navigator.pop(ctx);
+                                        final success = await notifier.removeFromCart(item.id);
+                                        if (success) {
+                                          _removeItemWithUndo(item);
+                                        } else if (context.mounted) {
+                                          AppSnackBar.showError(context, context.l10n.errorUpdatingQuantity);
+                                        }
+                                      },
+                                      child: Text(context.l10n.clear, style: TextStyle(color: context.colors.danger)),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            } else {
+                              final success = await notifier.updateCartItem(item.id, item.quantity - 1);
+                              if (!success && context.mounted) {
+                                AppSnackBar.showError(context, context.l10n.errorUpdatingQuantity);
+                              }
                             }
-                          }
-                        },
-                        onRemove: () => _removeItemWithUndo(item),
-                      );
-                    }),
+                          },
+                          onRemove: () => _removeItemWithUndo(item),
+                        );
+                      }),
 
-                    const SizedBox(height: 16),
+                      const SizedBox(height: 16),
 
-                    // Order Summary
-                    _buildOrderSummary(notifier),
-                  ],
+                      // Order Summary
+                      _buildOrderSummary(notifier),
+                    ],
+                  ),
                 ),
-              ),
 
-              // Sticky Checkout CTA
-              _buildCheckoutSticky(notifier, cartItems),
-            ],
+                // Sticky Checkout CTA
+                _buildCheckoutSticky(notifier, cartItems),
+              ],
+            ),
           ),
         );
         },

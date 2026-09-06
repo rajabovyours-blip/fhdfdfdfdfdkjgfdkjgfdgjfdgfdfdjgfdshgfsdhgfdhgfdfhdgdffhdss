@@ -1702,6 +1702,18 @@ abstract class AppLocalizations {
   /// **'Click ilovasi orqali to\'lang'**
   String get clickPaymentDesc;
 
+  /// No description provided for @paymePayment.
+  ///
+  /// In uz, this message translates to:
+  /// **'Payme orqali to\'lov'**
+  String get paymePayment;
+
+  /// No description provided for @paymePaymentDesc.
+  ///
+  /// In uz, this message translates to:
+  /// **'Payme orqali to\'lash'**
+  String get paymePaymentDesc;
+
   /// No description provided for @paymentMethodSelected.
   ///
   /// In uz, this message translates to:

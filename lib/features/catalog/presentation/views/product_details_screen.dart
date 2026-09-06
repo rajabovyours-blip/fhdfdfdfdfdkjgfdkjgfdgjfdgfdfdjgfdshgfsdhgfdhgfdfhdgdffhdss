@@ -121,8 +121,9 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         loaded: (product) {
           final bool outOfStock = product.stock <= 0;
           final isDesktop = MediaQuery.of(context).size.width >= 900;
-          return ResponsivePageContainer(
-            maxWidth: 800,
+          return Center(
+            child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: isDesktop ? 900 : double.infinity),
             child: Stack(
               children: [
                 CustomScrollView(
@@ -1032,6 +1033,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                   child: _buildBottomBar(context, product),
                 ),
             ],
+          ),
           ),
           );
         },
