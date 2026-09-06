@@ -120,9 +120,11 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         loaded: (product) {
           final bool outOfStock = product.stock <= 0;
           final isDesktop = MediaQuery.of(context).size.width >= 900;
-          return Stack(
-            children: [
-              CustomScrollView(
+          return ResponsivePageContainer(
+            maxWidth: 800,
+            child: Stack(
+              children: [
+                CustomScrollView(
                 slivers: [
                   SliverToBoxAdapter(
                     child: LayoutBuilder(

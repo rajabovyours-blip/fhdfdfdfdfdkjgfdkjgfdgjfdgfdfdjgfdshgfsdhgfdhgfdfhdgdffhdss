@@ -136,7 +136,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
           }
 
           return ResponsivePageContainer(
-            maxWidth: 1000,
+            maxWidth: 800,
             child: Column(
               children: [
               Expanded(

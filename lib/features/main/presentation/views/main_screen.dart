@@ -46,14 +46,86 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     final int currentIndex =
         widget.navigationShell?.currentIndex ?? ref.watch(mainTabIndexProvider);
 
-    return Scaffold(
-      backgroundColor: context.colors.background,
-      body: widget.navigationShell != null
+    final isDesktop = MediaQuery.sizeOf(context).width > 700;
+    
+    final body = widget.navigationShell != null
           ? widget.navigationShell!
           : IndexedStack(
               index: currentIndex,
               children: _screens,
+            );
+
+    if (isDesktop) {
+      return Scaffold(
+        backgroundColor: context.colors.background,
+        body: Row(
+          children: [
+            NavigationRail(
+              selectedIndex: currentIndex,
+              onDestinationSelected: (index) {
+                ref.read(authProvider.notifier).clearError();
+                if (widget.navigationShell != null) {
+                  widget.navigationShell!.goBranch(
+                    index,
+                    initialLocation: index == widget.navigationShell!.currentIndex,
+                  );
+                } else {
+                  ref.read(mainTabIndexProvider.notifier).state = index;
+                }
+              },
+              labelType: NavigationRailLabelType.all,
+              backgroundColor: context.colors.surface,
+              selectedIconTheme: IconThemeData(color: context.colors.primary),
+              selectedLabelTextStyle: TextStyle(color: context.colors.primary, fontWeight: FontWeight.w600),
+              unselectedLabelTextStyle: TextStyle(color: context.colors.textMedium),
+              destinations: [
+                NavigationRailDestination(
+                  icon: const Icon(Icons.home_outlined),
+                  selectedIcon: const Icon(Icons.home),
+                  label: Text(context.l10n.home),
+                ),
+                NavigationRailDestination(
+                  icon: const Icon(Icons.grid_view_outlined),
+                  selectedIcon: const Icon(Icons.grid_view),
+                  label: Text(context.l10n.catalog),
+                ),
+                NavigationRailDestination(
+                  icon: const Icon(Icons.favorite_outline),
+                  selectedIcon: const Icon(Icons.favorite),
+                  label: Text(context.l10n.wishlist),
+                ),
+                NavigationRailDestination(
+                  icon: Badge(
+                    isLabelVisible: cartCount > 0,
+                    label: Text(cartCount.toString()),
+                    backgroundColor: context.colors.primary,
+                    child: const Icon(Icons.shopping_cart_outlined),
+                  ),
+                  selectedIcon: Badge(
+                    isLabelVisible: cartCount > 0,
+                    label: Text(cartCount.toString()),
+                    backgroundColor: context.colors.primary,
+                    child: const Icon(Icons.shopping_cart),
+                  ),
+                  label: Text(context.l10n.cart),
+                ),
+                NavigationRailDestination(
+                  icon: const Icon(Icons.person_outline),
+                  selectedIcon: const Icon(Icons.person),
+                  label: Text(context.l10n.profile),
+                ),
+              ],
             ),
+            const VerticalDivider(thickness: 1, width: 1),
+            Expanded(child: body),
+          ],
+        ),
+      );
+    }
+
+    return Scaffold(
+      backgroundColor: context.colors.background,
+      body: body,
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
           splashColor: Colors.transparent,

@@ -25,14 +25,17 @@ class ResponsiveWrapper extends StatelessWidget {
           return child;
         }
 
-        // Kompyuter/planshet uchun ekran kengligining deyarli barchasini
-        // (94%) egallaydi — endi "o'rtada tor ustuncha" bo'lib qolmaydi.
-        // Faqat juda katta (ultra-wide) monitorlarda qator uzunligi
-        // cheksiz cho'zilib ketmasligi uchun 1600px'da chegara qo'yiladi
-        final double maxWidth = width >= 1600 ? 1600 : width * 0.94;
+        // Kompyuter/planshet uchun ekran kengligining o'rtacha qismini egallaydi
+        // Shunda tugmalar va elementlar haddan tashqari cho'zilib ketmaydi.
+        // Maksimal kenglik 1200px (Desktop standarti)
+        final double maxWidth = width > 1200 ? 1200 : width;
 
         final isDark = Theme.of(context).brightness == Brightness.dark;
         final outerColor = isDark ? const Color(0xFF010409) : const Color(0xFFF3F4F6);
+
+        if (width <= 1200) {
+          return child;
+        }
 
         return ColoredBox(
           color: outerColor,
