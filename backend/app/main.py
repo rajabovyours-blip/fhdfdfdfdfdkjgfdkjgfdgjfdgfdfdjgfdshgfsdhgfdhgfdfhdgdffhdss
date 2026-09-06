@@ -162,6 +162,13 @@ BASE_UPLOAD_DIR = os.getenv("UPLOAD_DIR", "/app/uploads")
 os.makedirs(os.path.join(BASE_UPLOAD_DIR, "images"), exist_ok=True)
 
 class CachedStaticFiles(StaticFiles):
+    async def get_response(self, path: str, scope):
+        response = await super().get_response(path, scope)
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "*"
+        response.headers["Access-Control-Allow-Headers"] = "*"
+        return response
+
     def is_not_modified(self, response_headers, request_headers) -> bool:
         response_headers["Cache-Control"] = "public, max-age=31536000, immutable"
         return super().is_not_modified(response_headers, request_headers)

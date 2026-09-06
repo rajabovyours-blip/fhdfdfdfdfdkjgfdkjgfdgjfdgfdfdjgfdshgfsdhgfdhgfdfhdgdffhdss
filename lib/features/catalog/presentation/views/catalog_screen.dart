@@ -76,135 +76,140 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
             color: context.colors.primary,
             backgroundColor: context.colors.surface,
             onRefresh: () => ref.read(categoryNotifierProvider.notifier).loadCategories(),
-            child: CustomScrollView(
-                physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-            slivers: [
-              const SliverToBoxAdapter(child: CatalogSearchBar()),
-              const SliverToBoxAdapter(child: SizedBox(height: 8)),
-              
-              state.maybeWhen(
-                loading: () => SliverFillRemaining(
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      color: context.colors.primary,
-                    ),
-                  ),
-                ),
-                error: (e) => SliverFillRemaining(
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.error_outline,
-                          size: 48,
-                          color: context.colors.danger,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          context.l10n.errorOccurred,
-                          style: TextStyle(
-                            color: context.colors.textHigh,
-                            fontSize: 16,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        SizedBox(
-                          height: 44,
-                          child: ElevatedButton(
-                            onPressed: () => ref.read(categoryNotifierProvider.notifier).loadCategories(),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: context.colors.primary,
-                              padding: const EdgeInsets.symmetric(horizontal: 32),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            child: Text(
-                              context.l10n.retry,
-                              style: TextStyle(
-                                color: context.colors.onPrimary,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                loaded: (categories) {
-                  final catalogState = ref.watch(catalogNotifierProvider);
-                  final searchQuery = catalogState.maybeWhen(
-                    loaded: (data) => data.searchQuery,
-                    orElse: () => '',
-                  );
-
-                  var displayCategories = categories;
-                  if (searchQuery.isNotEmpty) {
-                    final locale = Localizations.localeOf(context).languageCode;
-                    final queryLower = SearchNormalizer.normalizeSearch(searchQuery);
-                    displayCategories = categories.where((c) {
-                      final nameStr = SearchNormalizer.normalizeSearch(c.name.get(locale));
-                      return nameStr.contains(queryLower);
-                    }).toList();
-                  }
-
-                  if (displayCategories.isEmpty) {
-                    return SliverFillRemaining(
-                      child: Center(
-                        child: Text(
-                          context.l10n.categoriesNotFound,
-                          style: TextStyle(color: context.colors.textHigh),
-                        ),
-                      ),
-                    );
-                  }
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1280),
+                child: CustomScrollView(
+                    physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                slivers: [
+                  const SliverToBoxAdapter(child: CatalogSearchBar()),
+                  const SliverToBoxAdapter(child: SizedBox(height: 8)),
                   
-                  // 3-column grid layout
-                  return SliverPadding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                    sliver: SliverGrid(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: responsiveCrossAxisCount(context, mobileColumns: 3),
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 16,
-                        childAspectRatio: 0.74,
+                  state.maybeWhen(
+                    loading: () => SliverFillRemaining(
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: context.colors.primary,
+                        ),
                       ),
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                          final category = displayCategories[index];
-                          return InkWell(
-                            key: Key('category_card_${category.id}'),
-                            borderRadius: BorderRadius.circular(12),
-                            onTap: () {
-                              context.push(
-                                AppRoutes.categoryProducts.replaceAll(':id', category.id),
+                    ),
+                    error: (e) => SliverFillRemaining(
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.error_outline,
+                              size: 48,
+                              color: context.colors.danger,
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              context.l10n.errorOccurred,
+                              style: TextStyle(
+                                color: context.colors.textHigh,
+                                fontSize: 16,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            SizedBox(
+                              height: 44,
+                              child: ElevatedButton(
+                                onPressed: () => ref.read(categoryNotifierProvider.notifier).loadCategories(),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: context.colors.primary,
+                                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                                child: Text(
+                                  context.l10n.retry,
+                                  style: TextStyle(
+                                    color: context.colors.onPrimary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    loaded: (categories) {
+                      final catalogState = ref.watch(catalogNotifierProvider);
+                      final searchQuery = catalogState.maybeWhen(
+                        loaded: (data) => data.searchQuery,
+                        orElse: () => '',
+                      );
+
+                      var displayCategories = categories;
+                      if (searchQuery.isNotEmpty) {
+                        final locale = Localizations.localeOf(context).languageCode;
+                        final queryLower = SearchNormalizer.normalizeSearch(searchQuery);
+                        displayCategories = categories.where((c) {
+                          final nameStr = SearchNormalizer.normalizeSearch(c.name.get(locale));
+                          return nameStr.contains(queryLower);
+                        }).toList();
+                      }
+
+                      if (displayCategories.isEmpty) {
+                        return SliverFillRemaining(
+                          child: Center(
+                            child: Text(
+                              context.l10n.categoriesNotFound,
+                              style: TextStyle(color: context.colors.textHigh),
+                            ),
+                          ),
+                        );
+                      }
+                      
+                      // 3-column grid layout
+                      return SliverPadding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                        sliver: SliverGrid(
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: responsiveCrossAxisCount(context, mobileColumns: 3),
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 16,
+                            childAspectRatio: 0.74,
+                          ),
+                          delegate: SliverChildBuilderDelegate(
+                            (context, index) {
+                              final category = displayCategories[index];
+                              return InkWell(
+                                key: Key('category_card_${category.id}'),
+                                borderRadius: BorderRadius.circular(12),
+                                onTap: () {
+                                  context.push(
+                                    AppRoutes.categoryProducts.replaceAll(':id', category.id),
+                                  );
+                                },
+                                child: CategoryCard(category: category),
                               );
                             },
-                            child: CategoryCard(category: category),
-                          );
-                        },
-                        childCount: displayCategories.length,
-                        addAutomaticKeepAlives: false,
-                        addRepaintBoundaries: true,
+                            childCount: displayCategories.length,
+                            addAutomaticKeepAlives: false,
+                            addRepaintBoundaries: true,
+                          ),
+                        ),
+                      );
+                    },
+                    orElse: () => SliverFillRemaining(
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: context.colors.primary,
+                        ),
                       ),
                     ),
-                  );
-                },
-                orElse: () => SliverFillRemaining(
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      color: context.colors.primary,
-                    ),
                   ),
-                ),
+                  const SliverToBoxAdapter(
+                    child: SizedBox(height: 100),
+                  ),
+                ],
               ),
-              const SliverToBoxAdapter(
-                child: SizedBox(height: 100),
               ),
-            ],
-          ),
+            ),
           ),
         ),
       ),

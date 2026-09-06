@@ -33,103 +33,108 @@ class HomeScreen extends ConsumerWidget {
           backgroundColor: context.colors.surface,
           onRefresh: () =>
               ref.read(homeNotifierProvider.notifier).loadHomeData(),
-          child: CustomScrollView(
-            slivers: [
-              const SliverToBoxAdapter(child: HomeHeader()),
-              const SliverToBoxAdapter(child: LocationSelector()),
-              state.maybeWhen(
-                loading: () => const HomeSkeleton(),
-                error: (e) => HomeErrorState(
-                  error: e,
-                  onRetry: () =>
-                      ref.read(homeNotifierProvider.notifier).loadHomeData(),
-                ),
-                loaded: (data) {
-                  return SliverMainAxisGroup(
-                    slivers: [
-                      if (data.banners.isNotEmpty)
-                        SliverToBoxAdapter(
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 16.0),
-                            child: PromotionalBanner(banners: data.banners),
-                          ),
-                        ),
-                      SliverToBoxAdapter(
-                        child: SectionHeader(
-                          title: context.l10n.categories,
-                          onViewAll: () {
-                            context.push(AppRoutes.categories);
-                          },
-                        ),
-                      ),
-                      const SliverToBoxAdapter(
-                        child: CategoryCarousel(),
-                      ),
-                      
-                      if (data.featuredProducts.isEmpty)
-                        SliverToBoxAdapter(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 64.0),
-                            child: Center(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(Icons.inventory_2_outlined, size: 64, color: context.colors.textMedium),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    context.l10n.noProductsInStore,
-                                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                      color: context.colors.textMedium,
-                                    ),
-                                  ),
-                                ],
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 1280),
+              child: CustomScrollView(
+                slivers: [
+                  const SliverToBoxAdapter(child: HomeHeader()),
+                  const SliverToBoxAdapter(child: LocationSelector()),
+                  state.maybeWhen(
+                    loading: () => const HomeSkeleton(),
+                    error: (e) => HomeErrorState(
+                      error: e,
+                      onRetry: () =>
+                          ref.read(homeNotifierProvider.notifier).loadHomeData(),
+                    ),
+                    loaded: (data) {
+                      return SliverMainAxisGroup(
+                        slivers: [
+                          if (data.banners.isNotEmpty)
+                            SliverToBoxAdapter(
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 16.0),
+                                child: PromotionalBanner(banners: data.banners),
                               ),
                             ),
-                          ),
-                        )
-                      else ...[
-                        SliverToBoxAdapter(
-                          child: SectionHeader(
-                            title: context.l10n.popularProductsSection,
-                            onViewAll: () {
-                              context.push('${AppRoutes.catalog}?category_id=Barchasi');
-                            },
-                          ),
-                        ),
-                        SliverPadding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          sliver: SliverGrid(
-                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: responsiveCrossAxisCount(context, mobileColumns: 2),
-                              childAspectRatio: 0.63,
-                              crossAxisSpacing: 12,
-                              mainAxisSpacing: 16,
-                            ),
-                            delegate: SliverChildBuilderDelegate(
-                              (context, index) {
-                                final product = data.featuredProducts[index];
-                                return ProductCard(
-                                  product: product,
-                                  showCartAction: true,
-                                  onTap: () => context.push(
-                                    AppRoutes.productDetails.replaceAll(':id', product.id),
-                                  ),
-                                );
+                          SliverToBoxAdapter(
+                            child: SectionHeader(
+                              title: context.l10n.categories,
+                              onViewAll: () {
+                                context.push(AppRoutes.categories);
                               },
-                              childCount: data.featuredProducts.length,
                             ),
                           ),
-                        ),
-                      ],
-                      
-                      // Bottom padding
-                      const SliverToBoxAdapter(child: SizedBox(height: 32)),
-                    ],
-                  );
-                },
-                orElse: () => const HomeSkeleton(),
+                          const SliverToBoxAdapter(
+                            child: CategoryCarousel(),
+                          ),
+                          
+                          if (data.featuredProducts.isEmpty)
+                            SliverToBoxAdapter(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 64.0),
+                                child: Center(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(Icons.inventory_2_outlined, size: 64, color: context.colors.textMedium),
+                                      const SizedBox(height: 16),
+                                      Text(
+                                        context.l10n.noProductsInStore,
+                                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                          color: context.colors.textMedium,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            )
+                          else ...[
+                            SliverToBoxAdapter(
+                              child: SectionHeader(
+                                title: context.l10n.popularProductsSection,
+                                onViewAll: () {
+                                  context.push('${AppRoutes.catalog}?category_id=Barchasi');
+                                },
+                              ),
+                            ),
+                            SliverPadding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                              sliver: SliverGrid(
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: responsiveCrossAxisCount(context, mobileColumns: 2),
+                                  childAspectRatio: 0.63,
+                                  crossAxisSpacing: 12,
+                                  mainAxisSpacing: 16,
+                                ),
+                                delegate: SliverChildBuilderDelegate(
+                                  (context, index) {
+                                    final product = data.featuredProducts[index];
+                                    return ProductCard(
+                                      product: product,
+                                      showCartAction: true,
+                                      onTap: () => context.push(
+                                        AppRoutes.productDetails.replaceAll(':id', product.id),
+                                      ),
+                                    );
+                                  },
+                                  childCount: data.featuredProducts.length,
+                                ),
+                              ),
+                            ),
+                          ],
+                          
+                          // Bottom padding
+                          const SliverToBoxAdapter(child: SizedBox(height: 32)),
+                        ],
+                      );
+                    },
+                    orElse: () => const HomeSkeleton(),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
