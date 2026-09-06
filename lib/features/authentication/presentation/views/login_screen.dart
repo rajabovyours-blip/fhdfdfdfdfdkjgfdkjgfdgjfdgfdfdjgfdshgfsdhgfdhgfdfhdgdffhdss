@@ -415,10 +415,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ),
 
               const Spacer(flex: 2),
-            ],
           ),
         ),
       ),
+    ),
     ),
     );
   }
