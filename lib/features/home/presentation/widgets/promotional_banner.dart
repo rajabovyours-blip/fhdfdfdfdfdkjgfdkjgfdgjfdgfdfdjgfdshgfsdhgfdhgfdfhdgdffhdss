@@ -45,18 +45,15 @@ class _PromotionalBannerState extends State<PromotionalBanner> {
   Widget build(BuildContext context) {
     if (widget.banners.isEmpty) return const SizedBox.shrink();
 
-    return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 1280),
-        child: Column(
-          children: [
-            LayoutBuilder(
-              builder: (context, constraints) {
-                // Desktop: taller banner, mobile: 160px
-                final bannerHeight = constraints.maxWidth > 700 ? 220.0 : 160.0;
-                return SizedBox(
-                  height: bannerHeight,
-                  child: PageView.builder(
+    return Column(
+      children: [
+        LayoutBuilder(
+          builder: (context, constraints) {
+            // Desktop: taller banner, mobile: 160px
+            final bannerHeight = constraints.maxWidth > 700 ? 220.0 : 160.0;
+            return SizedBox(
+              height: bannerHeight,
+              child: PageView.builder(
                 controller: _pageController,
                 onPageChanged: (index) {
                   setState(() {
@@ -98,30 +95,28 @@ class _PromotionalBannerState extends State<PromotionalBanner> {
                   );
                 },
               ),
-                );
-              },
-            ),
-            if (widget.banners.length > 1)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
-                  widget.banners.length,
-                  (index) => Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 4.0),
-                    width: _currentPage == index ? 24.0 : 8.0,
-                    height: 8.0,
-                    decoration: BoxDecoration(
-                      color: _currentPage == index
-                          ? context.colors.primary
-                          : context.colors.outline,
-                      borderRadius: BorderRadius.circular(4.0),
-                    ),
-                  ),
+            );
+          },
+        ),
+        if (widget.banners.length > 1)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+              widget.banners.length,
+              (index) => Container(
+                margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                width: _currentPage == index ? 24.0 : 8.0,
+                height: 8.0,
+                decoration: BoxDecoration(
+                  color: _currentPage == index
+                      ? context.colors.primary
+                      : context.colors.outline,
+                  borderRadius: BorderRadius.circular(4.0),
                 ),
               ),
-          ],
-        ),
-      ),
+            ),
+          ),
+      ],
     );
   }
 }
