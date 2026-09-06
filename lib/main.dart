@@ -58,9 +58,7 @@ class MilliyMetrApp extends ConsumerWidget {
               physics: const BouncingScrollPhysics(),
               overscroll: false,
             ),
-            child: ResponsiveWrapper(
-              child: child ?? const SizedBox.shrink(),
-            ),
+            child: child ?? const SizedBox.shrink(),
           ),
         );
       },

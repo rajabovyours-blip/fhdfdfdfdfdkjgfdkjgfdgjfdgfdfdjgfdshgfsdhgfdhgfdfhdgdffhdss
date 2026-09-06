@@ -11,6 +11,7 @@ import 'package:milliy_metr/features/cart/presentation/providers/cart_notifier.d
 import 'package:milliy_metr/core/providers/main_navigation_provider.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
 import 'package:milliy_metr/core/providers/auth_provider.dart';
+import 'package:milliy_metr/shared/components/responsive_wrapper.dart';
 
 class MainScreen extends ConsumerStatefulWidget {
   final StatefulNavigationShell? navigationShell;
@@ -117,7 +118,12 @@ class _MainScreenState extends ConsumerState<MainScreen> {
               ],
             ),
             const VerticalDivider(thickness: 1, width: 1),
-            Expanded(child: body),
+            Expanded(
+              child: ResponsivePageContainer(
+                maxWidth: 1440,
+                child: body,
+              ),
+            ),
           ],
         ),
       );
