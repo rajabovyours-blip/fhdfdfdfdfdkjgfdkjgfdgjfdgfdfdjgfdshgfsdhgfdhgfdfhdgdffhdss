@@ -8,7 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
 async function loadReviews() {
   const list = document.getElementById('reviews-list');
   try {
-    const data = await api.get('/admin/reviews');
+    const res = await api.get('/admin/reviews');
+    const data = res.data || [];
     
     if (data.length === 0) {
       list.innerHTML = '<tr><td colspan="6" class="text-center text-medium">Sharhlar topilmadi</td></tr>';
