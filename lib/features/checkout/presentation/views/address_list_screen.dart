@@ -62,39 +62,44 @@ class _AddressListScreenState extends ConsumerState<AddressListScreen> {
                     ),
                   ),
                 )
-              : ListView.separated(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: state.addresses.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 12),
-                  itemBuilder: (context, index) {
-                    final address = state.addresses[index];
-                    return Card(
-                      child: ListTile(
-                        leading: Icon(
-                          address.addressType == 'Home'
-                              ? Icons.home
-                              : address.addressType == 'Office'
-                                  ? Icons.work
-                                  : address.addressType == 'Construction Site'
-                                      ? Icons.construction
-                                      : Icons.location_on,
-                        ),
-                        title: Text(
-                          '${address.label} ${address.isDefault ? '(Default)' : ''}',
-                        ),
-                        subtitle: Text(
-                          '${address.region}, ${address.district}, ${address.street}, ${address.building}, ${address.apartment}',
-                        ),
-                        trailing: address.id == state.selectedAddress?.id
-                            ? Icon(Icons.check_circle, color: context.colors.primary)
-                            : null,
-                        onTap: () {
-                          notifier.setAddress(address);
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    );
-                  },
+              : Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 800),
+                    child: ListView.separated(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: state.addresses.length,
+                      separatorBuilder: (_, __) => const SizedBox(height: 12),
+                      itemBuilder: (context, index) {
+                        final address = state.addresses[index];
+                        return Card(
+                          child: ListTile(
+                            leading: Icon(
+                              address.addressType == 'Home'
+                                  ? Icons.home
+                                  : address.addressType == 'Office'
+                                      ? Icons.work
+                                      : address.addressType == 'Construction Site'
+                                          ? Icons.construction
+                                          : Icons.location_on,
+                            ),
+                            title: Text(
+                              '${address.label} ${address.isDefault ? '(Default)' : ''}',
+                            ),
+                            subtitle: Text(
+                              '${address.region}, ${address.district}, ${address.street}, ${address.building}, ${address.apartment}',
+                            ),
+                            trailing: address.id == state.selectedAddress?.id
+                                ? Icon(Icons.check_circle, color: context.colors.primary)
+                                : null,
+                            onTap: () {
+                              notifier.setAddress(address);
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                 ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color(0xFFFF7A00),

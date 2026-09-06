@@ -36,82 +36,87 @@ class SearchScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: state.query.isEmpty
-          ? ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                if (state.recentSearches.isNotEmpty) ...[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        context.l10n.recentSearches,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: context.colors.textHigh,
-                        ),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1280),
+          child: state.query.isEmpty
+              ? ListView(
+                  padding: const EdgeInsets.all(16),
+                  children: [
+                    if (state.recentSearches.isNotEmpty) ...[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            context.l10n.recentSearches,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: context.colors.textHigh,
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              notifier.clearRecentSearches();
+                            },
+                            child: Text(
+                              context.l10n.clear,
+                              style: TextStyle(color: context.colors.primary),
+                            ),
+                          ),
+                        ],
                       ),
-                      TextButton(
-                        onPressed: () {
-                          notifier.clearRecentSearches();
-                        },
-                        child: Text(
-                          context.l10n.clear,
-                          style: TextStyle(color: context.colors.primary),
-                        ),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: state.recentSearches.map((query) {
+                          return ActionChip(
+                            label: Text(query),
+                            backgroundColor: context.colors.surfaceVariant,
+                            labelStyle: TextStyle(color: context.colors.textHigh),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              side: BorderSide(color: context.colors.outline),
+                            ),
+                            onPressed: () => notifier.updateQuery(query),
+                          );
+                        }).toList(),
                       ),
                     ],
-                  ),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: state.recentSearches.map((query) {
-                      return ActionChip(
-                        label: Text(query),
-                        backgroundColor: context.colors.surfaceVariant,
-                        labelStyle: TextStyle(color: context.colors.textHigh),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                          side: BorderSide(color: context.colors.outline),
-                        ),
-                        onPressed: () => notifier.updateQuery(query),
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ],
-            )
-          : state.results.maybeWhen(
-              loaded: (products) {
-                if (products.isEmpty) {
-                  return Center(child: Text(context.l10n.noSuchProductFound));
-                }
-                return GridView.builder(
-                  padding: const EdgeInsets.all(16),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: responsiveCrossAxisCount(context, mobileColumns: 2),
-                    mainAxisSpacing: 16,
-                    crossAxisSpacing: 16,
-                    childAspectRatio: 0.63,
-                  ),
-                  itemCount: products.length,
-                  itemBuilder: (context, index) =>
-                      ProductCard(
-                        product: products[index],
-                        onTap: () {
-                          context.push(AppRoutes.productDetails
-                              .replaceFirst(':id', products[index].id),);
-                        },
+                  ],
+                )
+              : state.results.maybeWhen(
+                  loaded: (products) {
+                    if (products.isEmpty) {
+                      return Center(child: Text(context.l10n.noSuchProductFound));
+                    }
+                    return GridView.builder(
+                      padding: const EdgeInsets.all(16),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: responsiveCrossAxisCount(context, mobileColumns: 2),
+                        mainAxisSpacing: 16,
+                        crossAxisSpacing: 16,
+                        childAspectRatio: 0.63,
                       ),
-                );
-              },
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e) => Center(child: Text(e.toString())),
-              orElse: () =>
-                  Center(child: Text(context.l10n.startTypingToSearch)),
-            ),
+                      itemCount: products.length,
+                      itemBuilder: (context, index) =>
+                          ProductCard(
+                            product: products[index],
+                            onTap: () {
+                              context.push(AppRoutes.productDetails
+                                  .replaceFirst(':id', products[index].id),);
+                            },
+                          ),
+                    );
+                  },
+                  loading: () => const Center(child: CircularProgressIndicator()),
+                  error: (e) => Center(child: Text(e.toString())),
+                  orElse: () =>
+                      Center(child: Text(context.l10n.startTypingToSearch)),
+                ),
+        ),
+      ),
     );
   }
 }

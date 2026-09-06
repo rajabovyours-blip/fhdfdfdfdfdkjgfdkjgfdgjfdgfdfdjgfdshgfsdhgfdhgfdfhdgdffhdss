@@ -49,146 +49,151 @@ class _AllReviewsScreenState extends ConsumerState<AllReviewsScreen> {
         ),
         centerTitle: true,
       ),
-      body: reviewsState.when(
-        initial: () => Center(
-          child: CircularProgressIndicator(color: context.colors.primary),
-        ),
-        loading: () => Center(
-          child: CircularProgressIndicator(color: context.colors.primary),
-        ),
-        error: (e) => Center(
-          child: Text(e, style: TextStyle(color: context.colors.textHigh)),
-        ),
-        loaded: (reviews) {
-          if (reviews.isEmpty) {
-            return Center(
-              child: Text(
-                context.l10n.noReviewsAvailableYet,
-                style: TextStyle(color: context.colors.textHigh),
-              ),
-            );
-          }
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: reviewsState.when(
+            initial: () => Center(
+              child: CircularProgressIndicator(color: context.colors.primary),
+            ),
+            loading: () => Center(
+              child: CircularProgressIndicator(color: context.colors.primary),
+            ),
+            error: (e) => Center(
+              child: Text(e, style: TextStyle(color: context.colors.textHigh)),
+            ),
+            loaded: (reviews) {
+              if (reviews.isEmpty) {
+                return Center(
+                  child: Text(
+                    context.l10n.noReviewsAvailableYet,
+                    style: TextStyle(color: context.colors.textHigh),
+                  ),
+                );
+              }
 
-          // Calculate summary
-          final averageRating =
-              reviews.fold(0.0, (sum, item) => sum + item.rating) /
-                  reviews.length;
+              // Calculate summary
+              final averageRating =
+                  reviews.fold(0.0, (sum, item) => sum + item.rating) /
+                      reviews.length;
 
-          // Apply filter
-          final filteredReviews = reviews.where((review) {
-            if (_selectedFilter == context.l10n.all) return true;
-            if (_selectedFilter == context.l10n.withPhotos) {
-              return review.photos.isNotEmpty;
-            }
-            final star = int.parse(_selectedFilter.split(' ')[0]);
-            return review.rating == star;
-          }).toList();
+              // Apply filter
+              final filteredReviews = reviews.where((review) {
+                if (_selectedFilter == context.l10n.all) return true;
+                if (_selectedFilter == context.l10n.withPhotos) {
+                  return review.photos.isNotEmpty;
+                }
+                final star = int.parse(_selectedFilter.split(' ')[0]);
+                return review.rating == star;
+              }).toList();
 
-          return CustomScrollView(
-            slivers: [
-              // Summary Header
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+              return CustomScrollView(
+                slivers: [
+                  // Summary Header
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
                         children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.baseline,
-                            textBaseline: TextBaseline.alphabetic,
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                averageRating.toStringAsFixed(1),
-                                style: TextStyle(
-                                  color: context.colors.textHigh,
-                                  fontSize: 32,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.baseline,
+                                textBaseline: TextBaseline.alphabetic,
+                                children: [
+                                  Text(
+                                    averageRating.toStringAsFixed(1),
+                                    style: TextStyle(
+                                      color: context.colors.textHigh,
+                                      fontSize: 32,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Icon(
+                                    Icons.star,
+                                    color: context.colors.warning,
+                                    size: 24,
+                                  ),
+                                ],
                               ),
-                              const SizedBox(width: 4),
-                              Icon(
-                                Icons.star,
-                                color: context.colors.warning,
-                                size: 24,
+                              const SizedBox(height: 4),
+                              Text(
+                                context.l10n.reviewsCountLabel(reviews.length),
+                                style: TextStyle(
+                                  color: context.colors.textMedium,
+                                  fontSize: 14,
+                                ),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            context.l10n.reviewsCountLabel(reviews.length),
-                            style: TextStyle(
-                              color: context.colors.textMedium,
-                              fontSize: 14,
-                            ),
-                          ),
                         ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
 
-              // Filter Chips
-              SliverToBoxAdapter(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    children: _filters.map((filter) {
-                      final isSelected = _selectedFilter == filter;
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: ChoiceChip(
-                          label: Text(filter),
-                          selected: isSelected,
-                          onSelected: (selected) {
-                            setState(() {
-                              _selectedFilter = filter;
-                            });
-                          },
-                          backgroundColor: context.colors.surface,
-                          selectedColor:
-                              context.colors.primary.withValues(alpha: 0.15),
-                          labelStyle: TextStyle(
-                            color: isSelected
-                                ? context.colors.primary
-                                : context.colors.textMedium,
-                            fontWeight: isSelected
-                                ? FontWeight.bold
-                                : FontWeight.normal,
-                          ),
-                          side: BorderSide(
-                            color: isSelected
-                                ? context.colors.primary
-                                : context.colors.outline,
-                          ),
-                        ),
-                      );
-                    }).toList(),
+                  // Filter Chips
+                  SliverToBoxAdapter(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        children: _filters.map((filter) {
+                          final isSelected = _selectedFilter == filter;
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: ChoiceChip(
+                              label: Text(filter),
+                              selected: isSelected,
+                              onSelected: (selected) {
+                                setState(() {
+                                  _selectedFilter = filter;
+                                });
+                              },
+                              backgroundColor: context.colors.surface,
+                              selectedColor:
+                                  context.colors.primary.withValues(alpha: 0.15),
+                              labelStyle: TextStyle(
+                                color: isSelected
+                                    ? context.colors.primary
+                                    : context.colors.textMedium,
+                                fontWeight: isSelected
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                              ),
+                              side: BorderSide(
+                                color: isSelected
+                                    ? context.colors.primary
+                                    : context.colors.outline,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
                   ),
-                ),
-              ),
 
-              const SliverToBoxAdapter(child: SizedBox(height: 16)),
+                  const SliverToBoxAdapter(child: SizedBox(height: 16)),
 
-              // Reviews List
-              SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(
-                          left: 16, right: 16, bottom: 16,),
-                      child: ReviewCard(review: filteredReviews[index]),
-                    );
-                  },
-                  childCount: filteredReviews.length,
-                ),
-              ),
-            ],
-          );
-        },
+                  // Reviews List
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                              left: 16, right: 16, bottom: 16,),
+                          child: ReviewCard(review: filteredReviews[index]),
+                        );
+                      },
+                      childCount: filteredReviews.length,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
       ),
     );
   }

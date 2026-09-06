@@ -123,9 +123,12 @@ class _PersonalInformationScreenState
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Form(
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 600),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: Form(
           key: _formKey,
           child: Column(
             children: [
@@ -249,6 +252,8 @@ class _PersonalInformationScreenState
               ),
             ],
           ),
+        ),
+      ),
         ),
       ),
     );

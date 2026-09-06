@@ -26,106 +26,111 @@ class CategoriesScreen extends ConsumerWidget {
               )
             : null,
       ),
-      body: parentCategory != null
-          ? _buildCategoryList(context, parentCategory!.subcategories)
-          : RefreshIndicator(
-              onRefresh: () =>
-                  ref.read(categoryNotifierProvider.notifier).loadCategories(),
-              child: state.maybeWhen(
-                loaded: (categories) {
-                  if (categories.isEmpty) {
-                    return Center(child: Text(context.l10n.noCategoriesAvailable));
-                  }
-                  
-                  final featured = categories.where((c) => c.isFeatured).toList();
-                  
-                  return CustomScrollView(
-                    slivers: [
-                      if (featured.isNotEmpty) ...[
-                        SliverToBoxAdapter(
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                            child: Text(
-                              'Ommabop kategoriyalar',
-                              style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1280),
+          child: parentCategory != null
+              ? _buildCategoryList(context, parentCategory!.subcategories)
+              : RefreshIndicator(
+                  onRefresh: () =>
+                      ref.read(categoryNotifierProvider.notifier).loadCategories(),
+                  child: state.maybeWhen(
+                    loaded: (categories) {
+                      if (categories.isEmpty) {
+                        return Center(child: Text(context.l10n.noCategoriesAvailable));
+                      }
+                      
+                      final featured = categories.where((c) => c.isFeatured).toList();
+                      
+                      return CustomScrollView(
+                        slivers: [
+                          if (featured.isNotEmpty) ...[
+                            SliverToBoxAdapter(
+                              child: Padding(
+                                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                                child: Text(
+                                  'Ommabop kategoriyalar',
+                                  style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ),
+                            SliverToBoxAdapter(
+                              child: SizedBox(
+                                height: 140,
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                                  itemCount: featured.length,
+                                  itemBuilder: (context, index) {
+                                    return SizedBox(
+                                      width: 120,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                                        child: InkWell(
+                                          onTap: () => _onCategoryTap(context, featured[index]),
+                                          child: CategoryCard(category: featured[index]),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                            SliverToBoxAdapter(
+                              child: Padding(
+                                padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
+                                child: Text(
+                                  'Barcha kategoriyalar',
+                                  style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ),
+                          ],
+                          SliverPadding(
+                            padding: const EdgeInsets.all(16),
+                            sliver: SliverGrid(
+                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: responsiveCrossAxisCount(context, mobileColumns: 2),
+                                crossAxisSpacing: 16,
+                                mainAxisSpacing: 16,
+                                childAspectRatio: 0.8,
+                              ),
+                              delegate: SliverChildBuilderDelegate(
+                                (context, index) {
+                                  final category = categories[index];
+                                  return InkWell(
+                                    onTap: () => _onCategoryTap(context, category),
+                                    child: CategoryCard(category: category),
+                                  );
+                                },
+                                childCount: categories.length,
+                              ),
                             ),
                           ),
-                        ),
-                        SliverToBoxAdapter(
-                          child: SizedBox(
-                            height: 140,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              padding: const EdgeInsets.symmetric(horizontal: 8),
-                              itemCount: featured.length,
-                              itemBuilder: (context, index) {
-                                return SizedBox(
-                                  width: 120,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                                    child: InkWell(
-                                      onTap: () => _onCategoryTap(context, featured[index]),
-                                      child: CategoryCard(category: featured[index]),
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
+                        ],
+                      );
+                    },
+                    loading: () => const Center(child: CircularProgressIndicator()),
+                    error: (e) => Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('Error: $e'),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () => ref
+                                .read(categoryNotifierProvider.notifier)
+                                .loadCategories(),
+                            child: Text(context.l10n.retry),
                           ),
-                        ),
-                        SliverToBoxAdapter(
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
-                            child: Text(
-                              'Barcha kategoriyalar',
-                              style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                      ],
-                      SliverPadding(
-                        padding: const EdgeInsets.all(16),
-                        sliver: SliverGrid(
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: responsiveCrossAxisCount(context, mobileColumns: 2),
-                            crossAxisSpacing: 16,
-                            mainAxisSpacing: 16,
-                            childAspectRatio: 0.8,
-                          ),
-                          delegate: SliverChildBuilderDelegate(
-                            (context, index) {
-                              final category = categories[index];
-                              return InkWell(
-                                onTap: () => _onCategoryTap(context, category),
-                                child: CategoryCard(category: category),
-                              );
-                            },
-                            childCount: categories.length,
-                          ),
-                        ),
+                        ],
                       ),
-                    ],
-                  );
-                },
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (e) => Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('Error: $e'),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () => ref
-                            .read(categoryNotifierProvider.notifier)
-                            .loadCategories(),
-                        child: Text(context.l10n.retry),
-                      ),
-                    ],
+                    ),
+                    orElse: () => const Center(child: CircularProgressIndicator()),
                   ),
                 ),
-                orElse: () => const Center(child: CircularProgressIndicator()),
-              ),
-            ),
+        ),
+      ),
     );
   }
 

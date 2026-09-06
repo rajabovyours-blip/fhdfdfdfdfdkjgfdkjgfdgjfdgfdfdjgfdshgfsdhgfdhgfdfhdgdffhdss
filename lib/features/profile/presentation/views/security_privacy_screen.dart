@@ -40,7 +40,10 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
         elevation: 0,
         centerTitle: true,
       ),
-      body: ListView(
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: ListView(
         padding: const EdgeInsets.symmetric(vertical: 8),
         children: [
           // Account Security Section
@@ -287,6 +290,8 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
           ),
           const SizedBox(height: 32),
         ],
+      ),
+        ),
       ),
     );
   }

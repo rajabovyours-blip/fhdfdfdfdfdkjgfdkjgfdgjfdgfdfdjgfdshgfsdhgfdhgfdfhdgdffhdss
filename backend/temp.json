@@ -1,0 +1,76 @@
+[
+  {
+    "id": "6ae6bb29-43b3-4b93-b1f9-b8dadacec28d",
+    "sku": "HR-001",
+    "name": {
+      "uz": "Grant SF-01 Finish 20 kg",
+      "ru": "\u0413\u0440\u0430\u043d\u0442 SF-01 \u0444\u0438\u043d\u0438\u0448 20 \u043a\u0433"
+    },
+    "description": {
+      "uz": "Grant SF-01 Finish 20 kg - devor va shiftlarni yakuniy tekislash uchun mo\u2018ljallangan finish shpaklyovka. Silliq yuza hosil qiladi, bo\u2018yash yoki oboy yopishtirishdan oldin qo\u2018llanadi. Ichki ta\u2019mirlash ishlari uchun qulay",
+      "ru": "Grant SF-01 Finish 20 \u043a\u0433 - \u0444\u0438\u043d\u0438\u0448\u043d\u0430\u044f \u0448\u043f\u0430\u043a\u043b\u0435\u0432\u043a\u0430 \u0434\u043b\u044f \u043e\u043a\u043e\u043d\u0447\u0430\u0442\u0435\u043b\u044c\u043d\u043e\u0433\u043e \u0432\u044b\u0440\u0430\u0432\u043d\u0438\u0432\u0430\u043d\u0438\u044f \u0441\u0442\u0435\u043d \u0438 \u043f\u043e\u0442\u043e\u043b\u043a\u043e\u0432. \u041e\u0431\u0440\u0430\u0437\u0443\u0435\u0442 \u0433\u043b\u0430\u0434\u043a\u0443\u044e \u043f\u043e\u0432\u0435\u0440\u0445\u043d\u043e\u0441\u0442\u044c, \u043f\u0440\u0438\u043c\u0435\u043d\u044f\u0435\u0442\u0441\u044f \u043f\u0435\u0440\u0435\u0434 \u043f\u043e\u043a\u0440\u0430\u0441\u043a\u043e\u0439 \u0438\u043b\u0438 \u043f\u043e\u043a\u043b\u0435\u0439\u043a\u043e\u0439 \u043e\u0431\u043e\u0435\u0432. \u041f\u043e\u0434\u0445\u043e\u0434\u0438\u0442 \u0434\u043b\u044f \u0432\u043d\u0443\u0442\u0440\u0435\u043d\u043d\u0438\u0445 \u043e\u0442\u0434\u0435\u043b\u043e\u0447\u043d\u044b\u0445 \u0440\u0430\u0431\u043e\u0442"
+    },
+    "images": [
+      "/uploads/images/88cd71aa5a1845f0b28d31b04fdf6213.webp"
+    ],
+    "videos": [],
+    "brand": "Grant",
+    "categoryId": "9a544ab9-587e-48df-80da-59f1f973feb3",
+    "subcategoryId": null,
+    "price": 26000.0,
+    "oldPrice": null,
+    "currency": "UZS",
+    "unit": "qop",
+    "moq": 1,
+    "stock": 1000,
+    "stockStatus": "in_stock",
+    "rating": 0.0,
+    "reviewCount": 0,
+    "discount": null,
+    "specifications": null,
+    "certificates": null,
+    "deliveryInformation": null,
+    "hasDelivery": true,
+    "deliveryPrice": 0.0,
+    "location": null,
+    "createdAt": "2026-09-04T19:12:18.463120",
+    "updatedAt": "2026-09-04T19:52:37.242116"
+  },
+  {
+    "id": "3e013912-c98a-416d-90c3-d1db53108fd6",
+    "sku": "HR-007",
+    "name": {
+      "uz": "Grant Dojdik 25 kg",
+      "ru": "\u0413\u0440\u0430\u043d\u0442 \u0434\u043e\u0436\u0434\u0438\u043a 25 \u043a\u0433"
+    },
+    "description": {
+      "uz": "Grant Dojdik 25 kg - dekorativ suvoq bo\u2018lib, devor yuzasida chiroyli relyefli bezak hosil qilish uchun mo\u2018ljallangan. Ichki va tashqi pardozlash ishlarida qo\u2018llanadi, yuzaga dekorativ ko\u2018rinish beradi",
+      "ru": "\u0413\u0440\u0430\u043d\u0442 \u0414\u043e\u0436\u0434\u0438\u043a 25 \u043a\u0433 - \u0434\u0435\u043a\u043e\u0440\u0430\u0442\u0438\u0432\u043d\u0430\u044f \u0448\u0442\u0443\u043a\u0430\u0442\u0443\u0440\u043a\u0430 \u0434\u043b\u044f \u0441\u043e\u0437\u0434\u0430\u043d\u0438\u044f \u043a\u0440\u0430\u0441\u0438\u0432\u043e\u0433\u043e \u0440\u0435\u043b\u044c\u0435\u0444\u043d\u043e\u0433\u043e \u043f\u043e\u043a\u0440\u044b\u0442\u0438\u044f \u043d\u0430 \u0441\u0442\u0435\u043d\u0430\u0445. \u041f\u0440\u0438\u043c\u0435\u043d\u044f\u0435\u0442\u0441\u044f \u0434\u043b\u044f \u0432\u043d\u0443\u0442\u0440\u0435\u043d\u043d\u0438\u0445 \u0438 \u043d\u0430\u0440\u0443\u0436\u043d\u044b\u0445 \u043e\u0442\u0434\u0435\u043b\u043e\u0447\u043d\u044b\u0445 \u0440\u0430\u0431\u043e\u0442, \u043f\u0440\u0438\u0434\u0430\u0435\u0442 \u043f\u043e\u0432\u0435\u0440\u0445\u043d\u043e\u0441\u0442\u0438 \u0434\u0435\u043a\u043e\u0440\u0430\u0442\u0438\u0432\u043d\u044b\u0439 \u0432\u043d\u0435\u0448\u043d\u0438\u0439 \u0432\u0438\u0434"
+    },
+    "images": [
+      "/uploads/images/8b57ac370cd2467e9477272d2d110718.webp"
+    ],
+    "videos": [],
+    "brand": "Grant",
+    "categoryId": "957822c2-9fa7-4f1e-823a-4dea481046df",
+    "subcategoryId": null,
+    "price": 33000.0,
+    "oldPrice": null,
+    "currency": "UZS",
+    "unit": "qop",
+    "moq": 1,
+    "stock": 1000,
+    "stockStatus": "in_stock",
+    "rating": 0.0,
+    "reviewCount": 0,
+    "discount": null,
+    "specifications": null,
+    "certificates": null,
+    "deliveryInformation": null,
+    "hasDelivery": true,
+    "deliveryPrice": 0.0,
+    "location": null,
+    "createdAt": "2026-09-04T19:12:18.463144",
+    "updatedAt": "2026-09-04T19:57:30.129978"
+  }
+]

@@ -10,30 +10,35 @@ class DeliveryTrackingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Delivery Tracking')),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: ListView(
-          children: [
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Order: $orderId',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 600),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: ListView(
+              children: [
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Order: $orderId',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(context.l10n.statusOnTheWay),
+                        Text(context.l10n.driverJamshid),
+                        Text(context.l10n.estimatedArrival),
+                        Text(context.l10n.liveTrackingReady),
+                      ],
                     ),
-                    const SizedBox(height: 8),
-                    Text(context.l10n.statusOnTheWay),
-                    Text(context.l10n.driverJamshid),
-                    Text(context.l10n.estimatedArrival),
-                    Text(context.l10n.liveTrackingReady),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

@@ -49,76 +49,15 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
 
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.myOrders)),
-      body: Column(
-        children: [
-          Expanded(
-            child: state.maybeWhen(
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e) => Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(32.0),
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 400),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                      Container(
-                        padding: const EdgeInsets.all(24),
-                        decoration: BoxDecoration(
-                          color: context.colors.primary.withValues(alpha: 0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.wifi_off_rounded,
-                          size: 64,
-                          color: context.colors.primary,
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      Text(
-                        context.l10n.errorOccurred,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        context.l10n.networkError,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Theme.of(context).textTheme.bodySmall?.color,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 32),
-                      SizedBox(
-                        height: 44,
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () => ref.read(orderNotifierProvider.notifier).loadOrders(),
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: const Text(
-                            'Qayta urinish',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                    ),
-                  ),
-                ),
-              ),
-              loaded: (orders) {
-                if (orders.isEmpty) {
-                  return Center(
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: Column(
+            children: [
+              Expanded(
+                child: state.maybeWhen(
+                  loading: () => const Center(child: CircularProgressIndicator()),
+                  error: (e) => Center(
                     child: Padding(
                       padding: const EdgeInsets.all(32.0),
                       child: ConstrainedBox(
@@ -133,33 +72,42 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
-                              Icons.receipt_long_outlined,
+                              Icons.wifi_off_rounded,
                               size: 64,
                               color: context.colors.primary,
                             ),
                           ),
                           const SizedBox(height: 24),
                           Text(
-                            context.l10n.noOrdersFound,
+                            context.l10n.errorOccurred,
                             style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            context.l10n.networkError,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Theme.of(context).textTheme.bodySmall?.color,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 32),
                           SizedBox(
                             height: 44,
                             width: double.infinity,
                             child: ElevatedButton(
-                              onPressed: () => context.go('/home'),
+                              onPressed: () => ref.read(orderNotifierProvider.notifier).loadOrders(),
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                               ),
-                              child: Text(
-                                context.l10n.viewProducts,
-                                style: const TextStyle(
+                              child: const Text(
+                                'Qayta urinish',
+                                style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -170,91 +118,148 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
                         ),
                       ),
                     ),
-                  );
-                }
-
-                final filtered = orders.where((order) {
-                  final matchesStatus =
-                      selectedStatus == 'All' || order.status == selectedStatus;
-                  final matchesSearch = searchText.isEmpty ||
-                      SearchNormalizer.normalizeSearch(order.orderNumber)
-                          .contains(SearchNormalizer.normalizeSearch(searchText));
-                  return matchesStatus && matchesSearch;
-                }).toList();
-
-                return Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.search),
-                          labelText: context.l10n.searchOrders,
-                        ),
-                        onChanged: (value) => setState(() => searchText = value),
-                      ),
-                    ),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          'All',
-                          ...statuses,
-                        ].map((status) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4),
-                            child: FilterChip(
-                              label: Text(getLocalizedOrderStatus(status, context)),
-                              selected: selectedStatus == status,
-                              onSelected: (_) => setState(() => selectedStatus = status),
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                    Expanded(
-                      child: filtered.isEmpty
-                          ? Center(
-                              child: Text(
-                                context.l10n.noOrdersFound,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
+                  ),
+                  loaded: (orders) {
+                    if (orders.isEmpty) {
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(32.0),
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 400),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                              Container(
+                                padding: const EdgeInsets.all(24),
+                                decoration: BoxDecoration(
+                                  color: context.colors.primary.withValues(alpha: 0.1),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.receipt_long_outlined,
+                                  size: 64,
+                                  color: context.colors.primary,
                                 ),
                               ),
-                            )
-                          : ListView.separated(
-                              padding: const EdgeInsets.all(16),
-                              itemCount: filtered.length,
-                              separatorBuilder: (_, __) => const SizedBox(height: 12),
-                              itemBuilder: (context, index) {
-                                final order = filtered[index];
-                                return Card(
-                                  child: ListTile(
-                                    title: Text(
-                                      context.l10n.orderNumberLabel(order.orderNumber),
-                                      style: const TextStyle(fontWeight: FontWeight.bold),
-                                    ),
-                                    subtitle: Text(
-                                      '${context.l10n.status}: ${getLocalizedOrderStatus(order.status, context)}\n${context.l10n.total}: ${CurrencyFormatter.format(order.total, context)}',
-                                    ),
-                                    isThreeLine: true,
-                                    trailing: const Icon(Icons.chevron_right),
-                                    onTap: () => context.push(
-                                      AppRoutes.orderDetails.replaceFirst(':id', order.id),
+                              const SizedBox(height: 24),
+                              Text(
+                                context.l10n.noOrdersFound,
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 32),
+                              SizedBox(
+                                height: 44,
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  onPressed: () => context.go('/home'),
+                                  style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
                                     ),
                                   ),
-                                );
-                              },
+                                  child: Text(
+                                    context.l10n.viewProducts,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                             ),
-                    ),
-                  ],
-                );
-              },
-              orElse: () => const Center(child: CircularProgressIndicator()),
-            ),
+                          ),
+                        ),
+                      );
+                    }
+    
+                    final filtered = orders.where((order) {
+                      final matchesStatus =
+                          selectedStatus == 'All' || order.status == selectedStatus;
+                      final matchesSearch = searchText.isEmpty ||
+                          SearchNormalizer.normalizeSearch(order.orderNumber)
+                              .contains(SearchNormalizer.normalizeSearch(searchText));
+                      return matchesStatus && matchesSearch;
+                    }).toList();
+    
+                    return Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: TextField(
+                            decoration: InputDecoration(
+                              prefixIcon: const Icon(Icons.search),
+                              labelText: context.l10n.searchOrders,
+                            ),
+                            onChanged: (value) => setState(() => searchText = value),
+                          ),
+                        ),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              'All',
+                              ...statuses,
+                            ].map((status) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 4),
+                                child: FilterChip(
+                                  label: Text(getLocalizedOrderStatus(status, context)),
+                                  selected: selectedStatus == status,
+                                  onSelected: (_) => setState(() => selectedStatus = status),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                        Expanded(
+                          child: filtered.isEmpty
+                              ? Center(
+                                  child: Text(
+                                    context.l10n.noOrdersFound,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                )
+                              : ListView.separated(
+                                  padding: const EdgeInsets.all(16),
+                                  itemCount: filtered.length,
+                                  separatorBuilder: (_, __) => const SizedBox(height: 12),
+                                  itemBuilder: (context, index) {
+                                    final order = filtered[index];
+                                    return Card(
+                                      child: ListTile(
+                                        title: Text(
+                                          context.l10n.orderNumberLabel(order.orderNumber),
+                                          style: const TextStyle(fontWeight: FontWeight.bold),
+                                        ),
+                                        subtitle: Text(
+                                          '${context.l10n.status}: ${getLocalizedOrderStatus(order.status, context)}\n${context.l10n.total}: ${CurrencyFormatter.format(order.total, context)}',
+                                        ),
+                                        isThreeLine: true,
+                                        trailing: const Icon(Icons.chevron_right),
+                                        onTap: () => context.push(
+                                          AppRoutes.orderDetails.replaceFirst(':id', order.id),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                        ),
+                      ],
+                    );
+                  },
+                  orElse: () => const Center(child: CircularProgressIndicator()),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

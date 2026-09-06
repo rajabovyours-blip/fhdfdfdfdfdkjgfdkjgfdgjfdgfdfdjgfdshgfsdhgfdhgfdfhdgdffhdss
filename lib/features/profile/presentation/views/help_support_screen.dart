@@ -22,7 +22,10 @@ class HelpSupportScreen extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
       ),
-      body: ListView(
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: ListView(
         padding: const EdgeInsets.symmetric(vertical: 8),
         children: [
           // FAQ Section
@@ -167,6 +170,8 @@ class HelpSupportScreen extends StatelessWidget {
           ),
           const SizedBox(height: 32),
         ],
+      ),
+        ),
       ),
     );
   }

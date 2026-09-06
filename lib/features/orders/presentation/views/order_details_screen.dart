@@ -23,123 +23,128 @@ class OrderDetailsScreen extends ConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text(e.toString())),
         data: (order) {
-          return ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              Text(
-                '${context.l10n.orderDate}: ${DateFormat.yMMMd().format(order.createdAt)}',
-              ),
-              Text(
-                '${context.l10n.status}: ${order.status}',
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 24),
-              const Divider(),
-              Text(
-                context.l10n.trackingTimeline,
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-              _buildTrackingStepper(context, order.status),
-              const SizedBox(height: 24),
-              const Divider(),
-              Text(
-                context.l10n.items,
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              ...order.items.map(
-                (item) => ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: Container(
-                    width: 50,
-                    height: 50,
-                    color: context.colors.surfaceVariant,
-                    child: const Icon(Icons.image),
-                  ),
-                  title: Text(
-                    item.product.name
-                        .get(Localizations.localeOf(context).languageCode),
-                  ),
-                  subtitle: Text('${context.l10n.qty}: ${item.quantity}'),
-                  trailing: Text(
-                    CurrencyFormatter.format(
-                      item.product.price * item.quantity,
-                      context,
-                    ),
-                  ),
-                ),
-              ),
-              const Divider(),
-              Text(
-                context.l10n.deliveryAddress,
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              Text(order.deliveryAddress),
-              const SizedBox(height: 16),
-              Text(
-                context.l10n.paymentMethod,
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              Text(order.paymentMethod),
-              const Divider(),
-              Text(
-                context.l10n.paymentSummary,
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(context.l10n.subtotal),
-                  Text(CurrencyFormatter.format(order.subtotal, context)),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(context.l10n.delivery),
-                  Text(CurrencyFormatter.format(order.shippingFee, context)),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(context.l10n.tax),
-                  Text(CurrencyFormatter.format(order.tax, context)),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(context.l10n.discount),
-                  Text('-${CurrencyFormatter.format(order.discount, context)}'),
-                ],
-              ),
-              const Divider(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          return Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 800),
+              child: ListView(
+                padding: const EdgeInsets.all(16),
                 children: [
                   Text(
-                    context.l10n.total,
+                    '${context.l10n.orderDate}: ${DateFormat.yMMMd().format(order.createdAt)}',
+                  ),
+                  Text(
+                    '${context.l10n.status}: ${order.status}',
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
+                  const SizedBox(height: 24),
+                  const Divider(),
                   Text(
-                    CurrencyFormatter.format(order.total, context),
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: context.colors.primary,
+                    context.l10n.trackingTimeline,
+                    style:
+                        const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  _buildTrackingStepper(context, order.status),
+                  const SizedBox(height: 24),
+                  const Divider(),
+                  Text(
+                    context.l10n.items,
+                    style:
+                        const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  ...order.items.map(
+                    (item) => ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: Container(
+                        width: 50,
+                        height: 50,
+                        color: context.colors.surfaceVariant,
+                        child: const Icon(Icons.image),
+                      ),
+                      title: Text(
+                        item.product.name
+                            .get(Localizations.localeOf(context).languageCode),
+                      ),
+                      subtitle: Text('${context.l10n.qty}: ${item.quantity}'),
+                      trailing: Text(
+                        CurrencyFormatter.format(
+                          item.product.price * item.quantity,
+                          context,
+                        ),
+                      ),
                     ),
+                  ),
+                  const Divider(),
+                  Text(
+                    context.l10n.deliveryAddress,
+                    style:
+                        const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(order.deliveryAddress),
+                  const SizedBox(height: 16),
+                  Text(
+                    context.l10n.paymentMethod,
+                    style:
+                        const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(order.paymentMethod),
+                  const Divider(),
+                  Text(
+                    context.l10n.paymentSummary,
+                    style:
+                        const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(context.l10n.subtotal),
+                      Text(CurrencyFormatter.format(order.subtotal, context)),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(context.l10n.delivery),
+                      Text(CurrencyFormatter.format(order.shippingFee, context)),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(context.l10n.tax),
+                      Text(CurrencyFormatter.format(order.tax, context)),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(context.l10n.discount),
+                      Text('-${CurrencyFormatter.format(order.discount, context)}'),
+                    ],
+                  ),
+                  const Divider(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        context.l10n.total,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        CurrencyFormatter.format(order.total, context),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: context.colors.primary,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           );
         },
       ),

@@ -27,7 +27,10 @@ class LanguageScreen extends ConsumerWidget {
         elevation: 0,
         centerTitle: true,
       ),
-      body: Padding(
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -70,6 +73,8 @@ class LanguageScreen extends ConsumerWidget {
               isSelected: !isSystem && currentLocale.languageCode == 'en',
             ),
           ],
+        ),
+      ),
         ),
       ),
     );

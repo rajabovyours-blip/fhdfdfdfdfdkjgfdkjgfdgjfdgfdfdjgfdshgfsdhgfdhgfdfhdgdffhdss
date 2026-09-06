@@ -2841,6 +2841,12 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'dona savatga qo\'shildi'**
   String get calculatorAddedSnack;
+
+  /// No description provided for @allProducts.
+  ///
+  /// In uz, this message translates to:
+  /// **'Barcha mahsulotlar'**
+  String get allProducts;
 }
 
 class _AppLocalizationsDelegate

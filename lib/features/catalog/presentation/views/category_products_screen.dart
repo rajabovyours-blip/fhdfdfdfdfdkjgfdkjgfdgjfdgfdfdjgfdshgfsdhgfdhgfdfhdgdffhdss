@@ -86,7 +86,9 @@ class _CategoryProductsScreenState extends ConsumerState<CategoryProductsScreen>
           },
         ),
         title: Text(
-          context.l10n.catalog,
+          widget.categoryId == 'Barchasi' 
+              ? context.l10n.allProducts 
+              : context.l10n.catalog,
           style: TextStyle(
             color: context.colors.textHigh,
             fontSize: 20,
@@ -101,189 +103,194 @@ class _CategoryProductsScreenState extends ConsumerState<CategoryProductsScreen>
         ],
       ),
       body: SafeArea(
-        child: RefreshIndicator(
-          color: context.colors.primary,
-          backgroundColor: context.colors.surface,
-          onRefresh: () => ref
-              .read(catalogNotifierProvider.notifier)
-              .loadProducts(refresh: true),
-          child: CustomScrollView(
-              controller: _scrollController,
-            slivers: [
-              const SliverToBoxAdapter(child: CatalogSearchBar()),
-              const SliverToBoxAdapter(child: SizedBox(height: 8)),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 1280),
+            child: RefreshIndicator(
+              color: context.colors.primary,
+              backgroundColor: context.colors.surface,
+              onRefresh: () => ref
+                  .read(catalogNotifierProvider.notifier)
+                  .loadProducts(refresh: true),
+              child: CustomScrollView(
+                  controller: _scrollController,
+                slivers: [
+                  const SliverToBoxAdapter(child: CatalogSearchBar()),
+                  const SliverToBoxAdapter(child: SizedBox(height: 8)),
 
-              SliverToBoxAdapter(
-                child: CatalogFilterSortRow(
-                  onFilterTap: () =>
-                      CatalogBottomSheets.showFilterSheet(context, ref),
-                  onSortTap: () =>
-                      CatalogBottomSheets.showSortSheet(context, ref),
-                ),
-              ),
-
-              state.maybeWhen(
-                loading: () => SliverFillRemaining(
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      color: context.colors.primary,
+                  SliverToBoxAdapter(
+                    child: CatalogFilterSortRow(
+                      onFilterTap: () =>
+                          CatalogBottomSheets.showFilterSheet(context, ref),
+                      onSortTap: () =>
+                          CatalogBottomSheets.showSortSheet(context, ref),
                     ),
                   ),
-                ),
-                error: (e) => SliverFillRemaining(
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.error_outline,
-                          size: 48,
-                          color: context.colors.danger,
+
+                  state.maybeWhen(
+                    loading: () => SliverFillRemaining(
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: context.colors.primary,
                         ),
-                        const SizedBox(height: 16),
-                        Text(
-                          context.l10n.errorLoadingProducts,
-                          style: TextStyle(
-                            color: context.colors.textHigh,
-                            fontSize: 16,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed: () => ref
-                              .read(catalogNotifierProvider.notifier)
-                              .loadProducts(refresh: true),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: context.colors.primary,
-                            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: Text(
-                            context.l10n.retry,
-                            style: TextStyle(
-                              color: context.colors.textHigh,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-                loaded: (data) {
-                  if (data.products.isEmpty) {
-                    return SliverFillRemaining(
+                    error: (e) => SliverFillRemaining(
                       child: Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(
-                              Icons.inventory_2_outlined,
-                              size: 56,
-                              color: Colors.grey,
+                            Icon(
+                              Icons.error_outline,
+                              size: 48,
+                              color: context.colors.danger,
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              context.l10n.noSuchProductFound,
-                              style: const TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
+                              context.l10n.errorLoadingProducts,
+                              style: TextStyle(
+                                color: context.colors.textHigh,
+                                fontSize: 16,
                               ),
-                              textAlign: TextAlign.center,
                             ),
-                            const SizedBox(height: 24),
+                            const SizedBox(height: 16),
                             ElevatedButton(
-                              onPressed: () {
-                                ref.read(catalogNotifierProvider.notifier).clearFilters();
-                                if (Navigator.of(context).canPop()) {
-                                  Navigator.pop(context);
-                                } else {
-                                  context.go(AppRoutes.catalog);
-                                }
-                              },
+                              onPressed: () => ref
+                                  .read(catalogNotifierProvider.notifier)
+                                  .loadProducts(refresh: true),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: context.colors.primary,
-                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                elevation: 0,
                               ),
                               child: Text(
-                                context.l10n.catalog,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
+                                context.l10n.retry,
+                                style: TextStyle(
+                                  color: context.colors.textHigh,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ),
                           ],
                         ),
                       ),
-                    );
-                  }
-
-                  return SliverMainAxisGroup(
-                    slivers: [
-                      SliverPadding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        sliver: SliverLayoutBuilder(
-                          builder: (context, constraints) {
-                            return SliverGrid(
-                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: responsiveCrossAxisCount(context, mobileColumns: 2),
-                                mainAxisSpacing: 16,
-                                crossAxisSpacing: 16,
-                                childAspectRatio: 0.63,
-                              ),
-                              delegate: SliverChildBuilderDelegate(
-                                (context, index) {
-                                  final product = data.products[index];
-                                  return ProductCard(
-                                    key: Key('product_card_${product.id}'),
-                                    product: product,
-                                    onTap: () {
-                                      context.push(
-                                        AppRoutes.productDetails
-                                            .replaceAll(':id', product.id),
-                                      );
-                                    },
-                                  );
-                                },
-                                childCount: data.products.length,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      if (!data.hasReachedMax)
-                        SliverToBoxAdapter(
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                color: context.colors.primary,
-                              ),
+                    ),
+                    loaded: (data) {
+                      if (data.products.isEmpty) {
+                        return SliverFillRemaining(
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.inventory_2_outlined,
+                                  size: 56,
+                                  color: Colors.grey,
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  context.l10n.noSuchProductFound,
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 24),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    ref.read(catalogNotifierProvider.notifier).clearFilters();
+                                    if (Navigator.of(context).canPop()) {
+                                      Navigator.pop(context);
+                                    } else {
+                                      context.go(AppRoutes.catalog);
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: context.colors.primary,
+                                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    elevation: 0,
+                                  ),
+                                  child: Text(
+                                    context.l10n.catalog,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
+                        );
+                      }
+
+                      return SliverMainAxisGroup(
+                        slivers: [
+                          SliverPadding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                            sliver: SliverLayoutBuilder(
+                              builder: (context, constraints) {
+                                return SliverGrid(
+                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: responsiveCrossAxisCount(context, mobileColumns: 2),
+                                    mainAxisSpacing: 16,
+                                    crossAxisSpacing: 16,
+                                    childAspectRatio: 0.63,
+                                  ),
+                                  delegate: SliverChildBuilderDelegate(
+                                    (context, index) {
+                                      final product = data.products[index];
+                                      return ProductCard(
+                                        key: Key('product_card_${product.id}'),
+                                        product: product,
+                                        onTap: () {
+                                          context.push(
+                                            AppRoutes.productDetails
+                                                .replaceAll(':id', product.id),
+                                          );
+                                        },
+                                      );
+                                    },
+                                    childCount: data.products.length,
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          if (!data.hasReachedMax)
+                            SliverToBoxAdapter(
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    color: context.colors.primary,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      );
+                    },
+                    orElse: () => SliverFillRemaining(
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: context.colors.primary,
                         ),
-                    ],
-                  );
-                },
-                orElse: () => SliverFillRemaining(
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      color: context.colors.primary,
+                      ),
                     ),
                   ),
-                ),
+                  const SliverToBoxAdapter(
+                    child: SizedBox(height: 100),
+                  ), // Bottom nav padding
+                ],
               ),
-              const SliverToBoxAdapter(
-                child: SizedBox(height: 100),
-              ), // Bottom nav padding
-            ],
+            ),
           ),
         ),
       ),

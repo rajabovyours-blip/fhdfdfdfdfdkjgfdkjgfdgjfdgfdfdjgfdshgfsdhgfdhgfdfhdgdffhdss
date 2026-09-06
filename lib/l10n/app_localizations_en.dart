@@ -1423,4 +1423,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get calculatorAddedSnack => 'pcs added to cart';
+
+  @override
+  String get allProducts => 'All products';
 }

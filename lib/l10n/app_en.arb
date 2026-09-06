@@ -463,5 +463,6 @@
   "calculatorFieldLabel": "Room / Area size",
   "calculatorReserve": "With reserve (+5%):",
   "calculatorAddToCart": "Add calculated amount to cart",
-  "calculatorAddedSnack": "pcs added to cart"
+  "calculatorAddedSnack": "pcs added to cart",
+  "allProducts": "All products"
 }

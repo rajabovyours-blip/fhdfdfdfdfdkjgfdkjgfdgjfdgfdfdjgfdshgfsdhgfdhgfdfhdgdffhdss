@@ -101,13 +101,16 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
         child: LayoutBuilder(
           builder: (context, constraints) {
             final isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
-            return SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+            return Center(
               child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: constraints.maxHeight - 32.0,
-                ),
-                child: Column(
+                constraints: const BoxConstraints(maxWidth: 600),
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight - 32.0,
+                    ),
+                    child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     // Header with Language Selector
@@ -299,7 +302,9 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                   ],
                 ),
               ),
-            );
+            ),
+          ),
+        );
           },
         ),
       ),

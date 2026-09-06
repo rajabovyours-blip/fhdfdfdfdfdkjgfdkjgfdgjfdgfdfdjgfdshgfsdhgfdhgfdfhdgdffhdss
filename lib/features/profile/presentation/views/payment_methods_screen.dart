@@ -70,7 +70,10 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
           ),
         ],
       ),
-      body: ListView(
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: ListView(
         padding: const EdgeInsets.all(20),
         children: [
           _buildPaymentCard(
@@ -89,6 +92,8 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
             subtitle: l10n.paymePaymentDesc,
           ),
         ],
+      ),
+        ),
       ),
     );
   }

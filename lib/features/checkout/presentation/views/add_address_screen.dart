@@ -61,8 +61,11 @@ class _AddAddressScreenState extends ConsumerState<AddAddressScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.addAddress)),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 600),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
         child: Form(
           key: _formKey,
           child: Column(
@@ -145,6 +148,8 @@ class _AddAddressScreenState extends ConsumerState<AddAddressScreen> {
                     ),
             ],
           ),
+        ),
+      ),
         ),
       ),
     );

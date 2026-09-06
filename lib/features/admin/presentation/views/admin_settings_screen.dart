@@ -29,40 +29,45 @@ class _AdminSettingsScreenState extends ConsumerState<AdminSettingsScreen> {
         backgroundColor: context.colors.background,
         elevation: 0,
       ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
-            child: Text(
-              l10n.general,
-              style: TextStyle(
-                color: context.colors.textMedium,
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.5,
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: ListView(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+                child: Text(
+                  l10n.general,
+                  style: TextStyle(
+                    color: context.colors.textMedium,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.5,
+                  ),
+                ),
               ),
-            ),
+              SwitchListTile(
+                secondary:
+                    Icon(Icons.build_outlined, color: context.colors.textMedium),
+                title: Text(
+                  l10n.maintenanceMode,
+                  style: TextStyle(color: context.colors.textHigh, fontSize: 15),
+                ),
+                subtitle: Text(
+                  l10n.maintenanceModeDesc,
+                  style: TextStyle(color: context.colors.textMedium, fontSize: 13),
+                ),
+                value: _maintenanceMode,
+                activeThumbColor: context.colors.primary,
+                onChanged: (val) {
+                  setState(() => _maintenanceMode = val);
+                  /* AppSnackBar.showSuccess(context, l10n.requiresBackendIntegration); */
+                },
+              ),
+            ],
           ),
-          SwitchListTile(
-            secondary:
-                Icon(Icons.build_outlined, color: context.colors.textMedium),
-            title: Text(
-              l10n.maintenanceMode,
-              style: TextStyle(color: context.colors.textHigh, fontSize: 15),
-            ),
-            subtitle: Text(
-              l10n.maintenanceModeDesc,
-              style: TextStyle(color: context.colors.textMedium, fontSize: 13),
-            ),
-            value: _maintenanceMode,
-            activeThumbColor: context.colors.primary,
-            onChanged: (val) {
-              setState(() => _maintenanceMode = val);
-              /* AppSnackBar.showSuccess(context, l10n.requiresBackendIntegration); */
-            },
-          ),
-        ],
+        ),
       ),
     );
   }

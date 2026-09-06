@@ -1435,4 +1435,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get calculatorAddedSnack => 'dona savatga qo\'shildi';
+
+  @override
+  String get allProducts => 'Barcha mahsulotlar';
 }

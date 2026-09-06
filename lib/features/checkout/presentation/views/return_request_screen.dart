@@ -21,82 +21,87 @@ class ReturnRequestScreen extends StatelessWidget {
         backgroundColor: context.colors.background,
         elevation: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l10n.refundReason,
-              style: TextStyle(
-                color: context.colors.textHigh,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            DropdownButtonFormField<String>(
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: context.colors.surfaceVariant,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: context.colors.outline),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 600),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.refundReason,
+                  style: TextStyle(
+                    color: context.colors.textHigh,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              hint: Text(l10n.selectReason),
-              items: [
-                DropdownMenuItem(
-                  value: 'damaged',
-                  child: Text(context.l10n.damagedItem),
+                const SizedBox(height: 8),
+                DropdownButtonFormField<String>(
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: context.colors.surfaceVariant,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: context.colors.outline),
+                    ),
+                  ),
+                  hint: Text(l10n.selectReason),
+                  items: [
+                    DropdownMenuItem(
+                      value: 'damaged',
+                      child: Text(context.l10n.damagedItem),
+                    ),
+                    DropdownMenuItem(
+                      value: 'wrong',
+                      child: Text(context.l10n.wrongItem),
+                    ),
+                    DropdownMenuItem(
+                      value: 'late',
+                      child: Text(context.l10n.lateDelivery),
+                    ),
+                  ],
+                  onChanged: (_) {},
                 ),
-                DropdownMenuItem(
-                  value: 'wrong',
-                  child: Text(context.l10n.wrongItem),
+                const SizedBox(height: 16),
+                Text(
+                  'Notes',
+                  style: TextStyle(
+                    color: context.colors.textHigh,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                DropdownMenuItem(
-                  value: 'late',
-                  child: Text(context.l10n.lateDelivery),
+                const SizedBox(height: 8),
+                TextField(
+                  maxLines: 4,
+                  style: TextStyle(color: context.colors.textHigh),
+                  decoration: InputDecoration(
+                    labelText: l10n.refundDescription,
+                    labelStyle: TextStyle(color: context.colors.textMedium),
+                    filled: true,
+                    fillColor: context.colors.surfaceVariant,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: context.colors.outline),
+                    ),
+                  ),
+                ),
+                const Spacer(),
+                AppButton(
+                  text: l10n.submitRequest,
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(l10n.refundSubmitted),
+                        backgroundColor: context.colors.success,
+                      ),
+                    );
+                    context.pop();
+                  },
                 ),
               ],
-              onChanged: (_) {},
             ),
-            const SizedBox(height: 16),
-            Text(
-              'Notes',
-              style: TextStyle(
-                color: context.colors.textHigh,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              maxLines: 4,
-              style: TextStyle(color: context.colors.textHigh),
-              decoration: InputDecoration(
-                labelText: l10n.refundDescription,
-                labelStyle: TextStyle(color: context.colors.textMedium),
-                filled: true,
-                fillColor: context.colors.surfaceVariant,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: context.colors.outline),
-                ),
-              ),
-            ),
-            const Spacer(),
-            AppButton(
-              text: l10n.submitRequest,
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(l10n.refundSubmitted),
-                    backgroundColor: context.colors.success,
-                  ),
-                );
-                context.pop();
-              },
-            ),
-          ],
+          ),
         ),
       ),
     );

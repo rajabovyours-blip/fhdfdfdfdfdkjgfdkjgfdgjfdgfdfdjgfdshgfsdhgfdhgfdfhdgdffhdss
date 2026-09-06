@@ -33,40 +33,43 @@ class NotificationsScreen extends StatelessWidget {
         ],
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: context.colors.surface,
-                shape: BoxShape.circle,
-                border: Border.all(color: context.colors.outline),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: context.colors.surface,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: context.colors.outline),
+                ),
+                child: Icon(
+                  Icons.notifications_off_outlined,
+                  size: 48,
+                  color: context.colors.textMedium,
+                ),
               ),
-              child: Icon(
-                Icons.notifications_off_outlined,
-                size: 48,
-                color: context.colors.textMedium,
+              const SizedBox(height: 24),
+              Text(
+                l10n.notificationsEmpty,
+                style: TextStyle(
+                  color: context.colors.textHigh,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              l10n.notificationsEmpty,
-              style: TextStyle(
-                color: context.colors.textHigh,
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
+              const SizedBox(height: 8),
+              Text(
+                l10n.notificationsEmptyDesc,
+                style: TextStyle(
+                  color: context.colors.textMedium,
+                  fontSize: 14,
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              l10n.notificationsEmptyDesc,
-              style: TextStyle(
-                color: context.colors.textMedium,
-                fontSize: 14,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

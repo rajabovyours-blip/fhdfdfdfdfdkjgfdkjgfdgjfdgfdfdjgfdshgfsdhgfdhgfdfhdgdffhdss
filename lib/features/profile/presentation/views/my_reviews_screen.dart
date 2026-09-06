@@ -25,72 +25,77 @@ class MyReviewsScreen extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
       ),
-      body: _reviews.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      color: context.colors.surface,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: context.colors.outline),
-                    ),
-                    child: Icon(
-                      Icons.star_outline,
-                      size: 48,
-                      color: context.colors.textMedium,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  Text(
-                    l10n.noReviewsWritten,
-                    style: TextStyle(
-                      color: context.colors.textHigh,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    l10n.noReviewsWrittenDesc,
-                    style: TextStyle(
-                      color: context.colors.textMedium,
-                      fontSize: 14,
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-                  ElevatedButton(
-                    onPressed: () => context.go('/home'),
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(0, 48),
-                      backgroundColor: context.colors.primary,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 32),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: _reviews.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: context.colors.surface,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: context.colors.outline),
+                        ),
+                        child: Icon(
+                          Icons.star_outline,
+                          size: 48,
+                          color: context.colors.textMedium,
+                        ),
                       ),
-                    ),
-                    child: Text(
-                      l10n.shopNow,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                      const SizedBox(height: 24),
+                      Text(
+                        l10n.noReviewsWritten,
+                        style: TextStyle(
+                          color: context.colors.textHigh,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
+                      const SizedBox(height: 8),
+                      Text(
+                        l10n.noReviewsWrittenDesc,
+                        style: TextStyle(
+                          color: context.colors.textMedium,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+                      ElevatedButton(
+                        onPressed: () => context.go('/home'),
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(0, 48),
+                          backgroundColor: context.colors.primary,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 32),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Text(
+                          l10n.shopNow,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            )
-          : ListView.separated(
-              padding: const EdgeInsets.all(16),
-              itemCount: _reviews.length,
-              separatorBuilder: (context, index) => const SizedBox(height: 16),
-              itemBuilder: (context, index) {
-                return ReviewCard(review: _reviews[index]);
-              },
-            ),
+                )
+              : ListView.separated(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: _reviews.length,
+                  separatorBuilder: (context, index) => const SizedBox(height: 16),
+                  itemBuilder: (context, index) {
+                    return ReviewCard(review: _reviews[index]);
+                  },
+                ),
+        ),
+      ),
     );
   }
 }

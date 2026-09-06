@@ -463,5 +463,6 @@
   "calculatorFieldLabel": "Размер комнаты / площади",
   "calculatorReserve": "С запасом (+5%):",
   "calculatorAddToCart": "Добавить рассчитанное количество в корзину",
-  "calculatorAddedSnack": "шт добавлено в корзину"
+  "calculatorAddedSnack": "шт добавлено в корзину",
+  "allProducts": "Все товары"
 }

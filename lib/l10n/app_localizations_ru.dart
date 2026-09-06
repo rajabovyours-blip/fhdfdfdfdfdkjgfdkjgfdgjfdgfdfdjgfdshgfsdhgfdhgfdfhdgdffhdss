@@ -1424,4 +1424,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get calculatorAddedSnack => 'шт добавлено в корзину';
+
+  @override
+  String get allProducts => 'Все товары';
 }

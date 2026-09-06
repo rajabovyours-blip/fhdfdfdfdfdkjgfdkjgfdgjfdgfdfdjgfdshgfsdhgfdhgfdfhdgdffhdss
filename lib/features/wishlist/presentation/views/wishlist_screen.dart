@@ -200,32 +200,37 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
           ),
         ],
       ),
-      body: !isAuthenticated ? _buildGuestState() : RefreshIndicator(
-          onRefresh: () =>
-              ref.read(wishlistNotifierProvider.notifier).loadWishlist(),
-          child: state.maybeWhen(
-            loaded: (products) {
-              if (products.isEmpty) {
-                return _buildEmptyState();
-              }
-  
-              final displayProducts = _getFilteredAndSorted(products);
-  
-              return Column(
-                children: [
-                  if (products.length > 3) _buildSearchBar(),
-                  Expanded(
-                    child: displayProducts.isEmpty
-                        ? _buildNoSearchResults()
-                        : _buildGrid(displayProducts),
-                  ),
-                ],
-              );
-            },
-            error: (e) => _buildErrorState(e),
-            orElse: () => _buildLoadingState(),
-          ),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1280),
+          child: !isAuthenticated ? _buildGuestState() : RefreshIndicator(
+              onRefresh: () =>
+                  ref.read(wishlistNotifierProvider.notifier).loadWishlist(),
+              child: state.maybeWhen(
+                loaded: (products) {
+                  if (products.isEmpty) {
+                    return _buildEmptyState();
+                  }
+      
+                  final displayProducts = _getFilteredAndSorted(products);
+      
+                  return Column(
+                    children: [
+                      if (products.length > 3) _buildSearchBar(),
+                      Expanded(
+                        child: displayProducts.isEmpty
+                            ? _buildNoSearchResults()
+                            : _buildGrid(displayProducts),
+                      ),
+                    ],
+                  );
+                },
+                error: (e) => _buildErrorState(e),
+                orElse: () => _buildLoadingState(),
+              ),
+            ),
         ),
+      ),
     );
   }
 

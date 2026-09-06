@@ -29,59 +29,63 @@ class _BuyNowScreenState extends ConsumerState<BuyNowScreen> {
     final notifier = ref.read(checkoutProvider.notifier);
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.buyNow)),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Quantity',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Row(
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 600),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                IconButton(
-                  onPressed: () => setState(
-                    () => quantity = quantity > 1 ? quantity - 1 : 1,
-                  ),
-                  icon: const Icon(Icons.remove_circle_outline),
+                const Text(
+                  'Quantity',
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                Text(quantity.toString()),
-                IconButton(
-                  onPressed: () => setState(() => quantity = quantity + 1),
-                  icon: const Icon(Icons.add_circle_outline),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: () => setState(
+                        () => quantity = quantity > 1 ? quantity - 1 : 1,
+                      ),
+                      icon: const Icon(Icons.remove_circle_outline),
+                    ),
+                    Text(quantity.toString()),
+                    IconButton(
+                      onPressed: () => setState(() => quantity = quantity + 1),
+                      icon: const Icon(Icons.add_circle_outline),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Delivery Method',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                DropdownButtonFormField<String>(
+                  initialValue: 'Standard Delivery',
+                  items: [
+                    DropdownMenuItem(
+                      value: 'Standard Delivery',
+                      child: Text(context.l10n.standardDelivery),
+                    ),
+                    DropdownMenuItem(
+                      value: 'Express Delivery',
+                      child: Text(context.l10n.expressDelivery),
+                    ),
+                  ],
+                  onChanged: (value) =>
+                      notifier.setDeliveryMethod(value ?? 'Standard Delivery'),
+                ),
+                const SizedBox(height: 24),
+                AppButton(
+                  text: 'Place Order',
+                  onPressed: () => context.push(AppRoutes.orderSuccess),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-            const Text(
-              'Delivery Method',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            DropdownButtonFormField<String>(
-              initialValue: 'Standard Delivery',
-              items: [
-                DropdownMenuItem(
-                  value: 'Standard Delivery',
-                  child: Text(context.l10n.standardDelivery),
-                ),
-                DropdownMenuItem(
-                  value: 'Express Delivery',
-                  child: Text(context.l10n.expressDelivery),
-                ),
-
-              ],
-              onChanged: (value) =>
-                  notifier.setDeliveryMethod(value ?? 'Standard Delivery'),
-            ),
-            const SizedBox(height: 24),
-            AppButton(
-              text: 'Place Order',
-              onPressed: () => context.push(AppRoutes.orderSuccess),
-            ),
-          ],
+          ),
         ),
       ),
     );

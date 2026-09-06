@@ -9,6 +9,13 @@ class ImageUtils {
     if (rawUrl.startsWith('uploads/')) {
       return 'https://milliymetr-backend.onrender.com/$rawUrl';
     }
+    // Tanilmagan format — masalan bazada faqat fayl nomi saqlangan
+    // ("cat1.png" kabi, "/uploads/" prefiksisiz). Buni to'g'ridan-to'g'ri
+    // tarmoqqa yuborib xato chiqarish o'rniga, yuklangan rasm manzili
+    // deb hisoblab, to'g'ri manzilga moslaymiz.
+    if (!rawUrl.contains('/')) {
+      return 'https://milliymetr-backend.onrender.com/uploads/images/$rawUrl';
+    }
     return rawUrl;
   }
 }
