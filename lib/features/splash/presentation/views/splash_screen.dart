@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter/foundation.dart';
 
 import 'package:milliy_metr/core/router/route_constants.dart';
 import 'package:milliy_metr/core/providers/auth_provider.dart';
@@ -54,6 +55,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (kIsWeb) {
+      return const Scaffold(
+        backgroundColor: Colors.transparent,
+      );
+    }
+    
     return Scaffold(
       backgroundColor: Colors.black,
       body: Center(
