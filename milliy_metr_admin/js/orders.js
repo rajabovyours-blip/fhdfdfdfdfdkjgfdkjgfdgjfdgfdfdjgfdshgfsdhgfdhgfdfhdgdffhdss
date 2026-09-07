@@ -143,7 +143,7 @@ async function updateStatus() {
     // Expected to be PATCH /orders/{id}/status?status=... or body {status: ...}
     // According to backend, PATCH /orders/{id}/status with query param `status` is typical, 
     // but we can send as body. Let's try query param since it's common.
-    await api.patch(`/orders/${currentOrderId}/status?status=${status}`);
+    await api.patch(`/orders/${currentOrderId}/status`, { status: status });
     layout.showToast('Buyurtma holati yangilandi');
     
     // Update local data
@@ -165,7 +165,7 @@ async function cancelOrder() {
   btn.disabled = true;
   
   try {
-    await api.put(`/orders/${currentOrderId}/cancel`);
+    await api.patch(`/orders/${currentOrderId}/status`, { status: 'cancelled' });
     layout.showToast('Buyurtma bekor qilindi');
     
     // Update local data

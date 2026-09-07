@@ -33,6 +33,7 @@ class AuthGuard {
       AppRoutes.profileReviews,
       AppRoutes.profileNotifications,
       AppRoutes.profileSecurity,
+      AppRoutes.paymentWebview,
     ];
 
     return protectedPrefixes.any((prefix) => path.startsWith(prefix));
@@ -54,9 +55,8 @@ class AuthGuard {
 
     final isGoingToLogin = currentPath == AppRoutes.login;
     final isGoingToSplash = currentPath == AppRoutes.splash;
-
     final isGoingToOtp = currentPath == AppRoutes.otp;
-
+    final isRoot = currentPath == '/';
 
 
     return authState.maybeWhen(
@@ -74,7 +74,8 @@ class AuthGuard {
       authenticated: (_) {
         if (isGoingToLogin ||
             isGoingToSplash ||
-            isGoingToOtp) {
+            isGoingToOtp ||
+            isRoot) {
           
           final redirect = state.uri.queryParameters['redirect'];
           if (redirect != null && redirect.isNotEmpty) {

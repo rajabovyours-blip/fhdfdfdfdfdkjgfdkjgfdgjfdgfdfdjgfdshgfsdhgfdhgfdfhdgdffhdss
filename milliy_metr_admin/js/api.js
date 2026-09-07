@@ -58,7 +58,14 @@ const api = {
       }
 
       if (!response.ok) {
-        const errorMsg = data.detail || data.message || `Xatolik yuz berdi (${response.status})`;
+        let errorMsg = data.message || `Xatolik yuz berdi (${response.status})`;
+        if (Array.isArray(data.detail)) {
+          errorMsg = data.detail.map(e => e.msg || JSON.stringify(e)).join(', ');
+        } else if (typeof data.detail === 'string') {
+          errorMsg = data.detail;
+        } else if (data.detail) {
+          errorMsg = JSON.stringify(data.detail);
+        }
         throw new Error(errorMsg);
       }
 

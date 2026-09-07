@@ -101,6 +101,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     },
     routes: [
       GoRoute(
+        path: '/',
+        redirect: (context, state) => AppRoutes.home,
+      ),
+      GoRoute(
         path: AppRoutes.splash,
         builder: (context, state) => const SplashScreen(),
       ),

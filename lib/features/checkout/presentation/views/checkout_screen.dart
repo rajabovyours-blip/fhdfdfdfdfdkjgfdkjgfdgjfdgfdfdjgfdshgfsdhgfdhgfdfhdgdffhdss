@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:milliy_metr/core/router/route_constants.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:milliy_metr/shared/widgets/app_button.dart';
@@ -225,40 +226,30 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                         final order = ref.read(checkoutProvider).order!;
                         final method = state.paymentMethod.toLowerCase();
                         
-                        // For Click/Payme, get payment URL and open webview
+                        // For Click/Payme, get payment URL and open via external browser/app
                         if (method == 'click' || method == 'payme') {
                           final paymentUrl = await notifier.processPaymentUrl(
                             order.id, method,
                           );
                           if (!context.mounted) return;
                           if (paymentUrl != null) {
-                            final success = await context.push<bool>(
-                              '${AppRoutes.paymentWebview}?url=${Uri.encodeComponent(paymentUrl)}&order_id=${order.id}',
-                            );
-                            if (!context.mounted) return;
-                            
-                            if (success == true) {
-                              await notifier.refreshOrderStatus(order.id);
+                            try {
+                              final uri = Uri.parse(paymentUrl);
+                              await launchUrl(uri, mode: LaunchMode.externalApplication);
+                            } catch (e) {
                               if (!context.mounted) return;
-                              final updatedOrder = ref.read(checkoutProvider).order;
-                              if (updatedOrder != null && updatedOrder.paymentStatus.toLowerCase() == 'paid') {
-                                context.go(AppRoutes.orderSuccess);
-                                return;
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: const Text('To\'lov amalga oshmadi yoki hali tasdiqlanmadi'),
-                                    backgroundColor: context.colors.danger,
-                                  ),
-                                );
-                              }
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: const Text('To\'lov ilovasini ochishda xatolik yuz berdi'),
+                                  backgroundColor: context.colors.danger,
+                                ),
+                              );
                             }
-                            if (!context.mounted) return;
                             context.go(AppRoutes.orderDetails.replaceFirst(':id', order.id));
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: const Text('To\'lov tizimiga ulanib bo\'lmadi'),
+                                content: const Text('To\'lov tizimiga ulanib bo\'lmadi. Sozlamalarni tekshiring.'),
                                 backgroundColor: context.colors.danger,
                               ),
                             );
