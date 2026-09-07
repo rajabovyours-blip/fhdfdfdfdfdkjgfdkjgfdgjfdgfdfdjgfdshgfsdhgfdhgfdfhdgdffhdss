@@ -49,7 +49,7 @@ async def get_featured_products(db: AsyncSession = Depends(get_db)):
         select(Product)
         .join(OrderItem, OrderItem.product_id == Product.id)
         .join(Order, Order.id == OrderItem.order_id)
-        .where(Order.status == 'Completed', Product.stock > 0)
+        .where(func.lower(Order.payment_status) == 'paid', Product.stock > 0)
         .group_by(Product.id)
         .order_by(desc(func.sum(OrderItem.quantity)))
         .limit(10)

@@ -14,7 +14,7 @@ from app.api.dependencies import get_current_admin
 
 router = APIRouter()
 
-COMPLETED_STATUSES = ["delivered", "paid", "completed"]
+PAID_STATUSES = ["paid"]
 MONTH_NAMES_UZ = ["Yan", "Fev", "Mar", "Apr", "May", "Iyun", "Iyul", "Avg", "Sen", "Okt", "Noy", "Dek"]
 
 
@@ -59,7 +59,7 @@ async def get_admin_dashboard(
     # ---- Revenue & average order value (completed orders only) ----
     completed_totals = [
         row[0] or 0 for row in
-        (await db.execute(select(Order.total).where(func.lower(Order.status).in_(COMPLETED_STATUSES)))).all()
+        (await db.execute(select(Order.total).where(func.lower(Order.payment_status).in_(PAID_STATUSES)))).all()
     ]
     total_revenue = float(sum(completed_totals))
     completed_orders_count = len(completed_totals)
@@ -80,7 +80,7 @@ async def get_admin_dashboard(
     for created_at, amount in (await db.execute(
         select(Order.created_at, Order.total).where(
             Order.created_at >= twelve_months_ago,
-            func.lower(Order.status).in_(COMPLETED_STATUSES)
+            func.lower(Order.payment_status).in_(PAID_STATUSES)
         )
     )).all():
         if created_at and (created_at.year, created_at.month) in revenue_by_month:
@@ -116,7 +116,7 @@ async def get_admin_dashboard(
             )
             .join(OrderItem, OrderItem.product_id == Product.id)
             .join(Order, Order.id == OrderItem.order_id)
-            .where(func.lower(Order.status).in_(COMPLETED_STATUSES), Order.created_at >= ninety_days_ago)
+            .where(func.lower(Order.payment_status).in_(PAID_STATUSES), Order.created_at >= ninety_days_ago)
             .group_by(Product.id)
             .order_by(func.sum(OrderItem.quantity).desc())
             .limit(10)
@@ -134,7 +134,7 @@ async def get_admin_dashboard(
             .join(Product, Product.category_id == Category.id)
             .join(OrderItem, OrderItem.product_id == Product.id)
             .join(Order, Order.id == OrderItem.order_id)
-            .where(func.lower(Order.status).in_(COMPLETED_STATUSES), Order.created_at >= ninety_days_ago)
+            .where(func.lower(Order.payment_status).in_(PAID_STATUSES), Order.created_at >= ninety_days_ago)
             .group_by(Category.id)
             .order_by(func.sum(OrderItem.quantity * OrderItem.price_at_time).desc())
             .limit(10)
@@ -146,7 +146,7 @@ async def get_admin_dashboard(
         {"method": method or "Noma'lum", "count": count, "revenue": float(revenue or 0)}
         for method, count, revenue in (await db.execute(
             select(Order.payment_method, func.count(Order.id), func.sum(Order.total))
-            .where(func.lower(Order.status).in_(COMPLETED_STATUSES))
+            .where(func.lower(Order.payment_status).in_(PAID_STATUSES))
             .group_by(Order.payment_method)
         )).all()
     ]
