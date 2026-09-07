@@ -31,7 +31,7 @@ function renderTable(searchQuery = '') {
   const q = searchQuery.toLowerCase();
   
   const filtered = allUsers.filter(u => {
-    const name = (u.full_name || '').toLowerCase();
+    const name = (u.fullName || u.full_name || '').toLowerCase();
     const phone = (u.phone || '').toLowerCase();
     return name.includes(q) || phone.includes(q);
   });
@@ -42,17 +42,19 @@ function renderTable(searchQuery = '') {
   }
   
   tbody.innerHTML = filtered.map(u => {
-    const statusHtml = u.is_active !== false 
+    const isActive = u.isActive !== undefined ? u.isActive : u.is_active;
+    const statusHtml = isActive !== false 
       ? '<span class="badge badge-success">Faol</span>' 
       : '<span class="badge badge-danger">Bloklangan</span>';
       
-    const dateStr = u.created_at ? new Date(u.created_at).toLocaleDateString('ru-RU') : 'Yaqinda';
+    const createdAt = u.createdAt || u.created_at;
+    const dateStr = createdAt ? new Date(createdAt).toLocaleDateString('ru-RU') : 'Yaqinda';
     const provider = u.provider ? (u.provider.toLowerCase() === 'google' ? 'Google orqali' : u.provider) : 'SMS orqali';
-    const count = u.orders_count || 0;
+    const count = u.ordersCount || u.orders_count || 0;
       
     return `
       <tr>
-        <td style="font-weight: 500;">${u.full_name || 'Ism kiritilmagan'}</td>
+        <td style="font-weight: 500;">${u.fullName || u.full_name || 'Ism kiritilmagan'}</td>
         <td>${u.phone || '-'}</td>
         <td>${dateStr}</td>
         <td><span class="badge badge-neutral">${count} ta</span></td>
@@ -75,13 +77,15 @@ function openModal(id) {
   const u = allUsers.find(x => x.id === id);
   if (u) {
     document.getElementById('user-id').value = u.id;
-    document.getElementById('user-fullname').value = u.full_name || '';
+    document.getElementById('user-fullname').value = u.fullName || u.full_name || '';
     document.getElementById('user-phone').value = u.phone || '';
-    document.getElementById('user-active').checked = u.is_active !== false; // defaults to true
+    const isActive = u.isActive !== undefined ? u.isActive : u.is_active;
+    document.getElementById('user-active').checked = isActive !== false; // defaults to true
     
-    document.getElementById('user-date').textContent = u.created_at ? new Date(u.created_at).toLocaleDateString('ru-RU') : 'Yaqinda';
-    document.getElementById('user-orders-count').textContent = u.orders_count || 0;
-    document.getElementById('user-auth-method').textContent = u.auth_provider || 'SMS orqali';
+    const createdAt = u.createdAt || u.created_at;
+    document.getElementById('user-date').textContent = createdAt ? new Date(createdAt).toLocaleDateString('ru-RU') : 'Yaqinda';
+    document.getElementById('user-orders-count').textContent = u.ordersCount || u.orders_count || 0;
+    document.getElementById('user-auth-method').textContent = u.authProvider || u.auth_provider || 'SMS orqali';
     
     modal.classList.add('active');
   }

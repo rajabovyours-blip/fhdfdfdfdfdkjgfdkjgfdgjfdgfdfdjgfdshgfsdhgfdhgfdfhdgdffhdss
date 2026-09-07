@@ -46,6 +46,10 @@ async def get_users(role: Optional[str] = None, db: AsyncSession = Depends(get_d
             u_dict["authProvider"] = "Apple ID"
         else:
             u_dict["authProvider"] = "SMS orqali"
+            
+        u_dict["isActive"] = u.is_active
+        u_dict["createdAt"] = u.created_at.isoformat() if u.created_at else None
+        
         user_data_list.append(u_dict)
         
     return APIResponse(data=user_data_list)
