@@ -22,6 +22,7 @@ class CategoryRepositoryImpl implements CategoryRepository {
     try {
       final categories = await remoteDataSource.getCategories(tree: tree);
       final List<CategoryEntity> flatEntities = categories.map((e) => e.toEntity()).toList();
+      flatEntities.sort((a, b) => a.name.uz.toLowerCase().compareTo(b.name.uz.toLowerCase()));
       
       List<CategoryEntity> buildTree(String? parentId) {
         return flatEntities
