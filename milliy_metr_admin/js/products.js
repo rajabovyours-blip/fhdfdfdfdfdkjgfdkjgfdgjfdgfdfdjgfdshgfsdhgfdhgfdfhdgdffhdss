@@ -273,13 +273,13 @@ async function openModal(id = null) {
       
       document.getElementById('prod-category').value = p.categoryId || p.category_id || '';
       document.getElementById('prod-price').value = p.price || '';
-      document.getElementById('prod-discount-price').value = p.discountPrice || p.discount_price || '';
+      document.getElementById('prod-discount-price').value = p.oldPrice || p.old_price || '';
       document.getElementById('prod-unit').value = p.unit || 'dona';
       document.getElementById('prod-stock').value = p.stock !== undefined ? p.stock : (p.stockQuantity !== undefined ? p.stockQuantity : 0);
       document.getElementById('prod-has-delivery').checked = p.hasDelivery !== undefined ? p.hasDelivery : (p.has_delivery !== undefined ? p.has_delivery : true);
       document.getElementById('prod-brand').value = p.brand || '';
       document.getElementById('prod-moq').value = p.moq || 1;
-      document.getElementById('prod-delivery-info').value = p.delivery_information || '';
+      document.getElementById('prod-delivery-info').value = p.deliveryInformation || p.delivery_information || '';
       
       productImages = p.images || [];
       renderImages();

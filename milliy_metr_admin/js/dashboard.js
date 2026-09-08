@@ -155,13 +155,13 @@ function renderRecentOrders(recentOrders) {
     else if (['pending', 'processing'].includes(statusText.toLowerCase())) statusBadge = 'badge-warning';
     else if (['cancelled', 'rejected'].includes(statusText.toLowerCase())) statusBadge = 'badge-danger';
 
-    const dateStr = order.created_at ? new Date(order.created_at).toLocaleString('ru-RU') : '-';
-    const total = order.total_amount ? formatMoney(order.total_amount) : '-';
+    const dateStr = order.createdAt ? new Date(order.createdAt).toLocaleString('ru-RU') : '-';
+    const total = order.total ? formatMoney(order.total) : '-';
 
     return `
       <tr>
         <td data-label="ID">#${(order.id || '').substring(0, 8)}</td>
-        <td data-label="Mijoz">${order.user?.full_name || order.user?.phone || 'Mijoz'}</td>
+        <td data-label="Mijoz">${order.user?.fullName || order.user?.phoneNumber || 'Mijoz'}</td>
         <td data-label="Summa" style="font-weight: 500;">${total}</td>
         <td data-label="Sana">${dateStr}</td>
         <td data-label="Holat"><span class="badge ${statusBadge}">${statusText}</span></td>
