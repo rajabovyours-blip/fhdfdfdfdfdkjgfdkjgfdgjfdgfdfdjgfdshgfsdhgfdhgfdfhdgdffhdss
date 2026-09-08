@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="uz">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#ff6b00" />
+    <meta name="description" content="Milliy Metr qurilish materiallari katalogi" />
+    <title>Milliy Metr — Qurilish materiallari</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="fixes.css" />
+    <link rel="stylesheet" href="pages.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="shell header-row">
+        <a class="brand" href="#home" aria-label="Milliy Metr bosh sahifasi">
+          <img src="assets/logo.png" alt="" class="brand-logo" />
+          <span class="brand-name">MILLIY <b>METR</b></span>
+        </a>
+        <nav class="main-nav" aria-label="Asosiy menyu">
+          <a href="#home" data-route="home" data-i18n="nav.home">Bosh sahifa</a>
+          <a href="#products" data-route="products" data-i18n="nav.products">Mahsulotlar</a>
+          <a href="#categories" data-route="categories" data-i18n="nav.categories">Kategoriyalar</a>
+        </nav>
+        <div class="header-actions">
+          <select class="language-select" id="language-select" aria-label="Til">
+            <option value="uz">O‘zbek</option><option value="ru">Русский</option>
+          </select>
+          <button class="header-icon desktop-search" type="button" data-action="search" aria-label="Mahsulot qidirish"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"></circle><path d="m16 16 4.5 4.5"></path></svg></button>
+          <button class="header-icon desktop-favorite" type="button" data-action="favorites" aria-label="Sevimlilar"><svg viewBox="0 0 24 24"><path d="M20.8 4.8a5.5 5.5 0 0 0-7.8 0L12 5.9l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.9-8.4a5.5 5.5 0 0 0-.1-7.8Z"></path></svg></button>
+          <button class="cart-button" type="button" data-action="cart" aria-label="Savat"><svg viewBox="0 0 24 24"><path d="M4 5h2l1.7 9.1a2 2 0 0 0 2 1.6h6.9a2 2 0 0 0 1.9-1.4L20 8H7"></path><circle cx="10" cy="19" r="1"></circle><circle cx="17" cy="19" r="1"></circle></svg><span id="cart-count">0</span></button>
+          <button class="login-button" type="button" data-action="profile" id="login-button" data-i18n="auth.login">Kirish</button>
+          <button class="menu-button" type="button" data-action="menu" aria-label="Menyuni ochish" aria-expanded="false"><i></i><i></i><i></i></button>
+        </div>
+      </div>
+      <div class="mobile-menu" id="mobile-menu">
+        <a href="#home" data-i18n="nav.home">Bosh sahifa</a><a href="#products" data-i18n="nav.products">Mahsulotlar</a><a href="#categories" data-i18n="nav.categories">Kategoriyalar</a><a href="#favorites" data-i18n="nav.favorites">Sevimlilar</a><a href="#cart" data-i18n="nav.cart">Savat</a><a href="#profile" data-i18n="nav.profile">Profil</a>
+      </div>
+    </header>
+    <main id="app" tabindex="-1"></main>
+    <nav class="bottom-nav" aria-label="Mobil menyu">
+      <a href="#home" data-route="home"><span>H</span><small data-i18n="nav.home">Bosh sahifa</small></a>
+      <a href="#catalog" data-route="catalog"><span>K</span><small data-i18n="nav.catalog">Katalog</small></a>
+      <a href="#favorites" data-route="favorites"><span>S</span><small data-i18n="nav.favorites">Sevimlilar</small></a>
+      <a href="#cart" data-route="cart"><span>Q</span><small data-i18n="nav.cart">Savat</small><b id="bottom-cart-count">0</b></a>
+      <a href="#profile" data-route="profile"><span>P</span><small data-i18n="nav.profile">Profil</small></a>
+    </nav>
+    <div class="modal-layer" id="modal-layer" aria-hidden="true"></div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="app.js"></script>
+  </body>
+</html>
