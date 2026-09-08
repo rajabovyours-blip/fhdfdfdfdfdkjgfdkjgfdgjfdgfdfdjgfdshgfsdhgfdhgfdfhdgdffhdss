@@ -52,11 +52,11 @@ function renderTable() {
     else if (['cancelled', 'rejected'].includes(statusText.toLowerCase())) statusBadge = 'badge-danger';
     else if (['confirmed'].includes(statusText.toLowerCase())) statusBadge = 'badge-info';
     
-    const dateStr = o.created_at ? new Date(o.created_at).toLocaleString('ru-RU') : '-';
-    const total = o.total_amount ? parseInt(o.total_amount).toLocaleString('ru-RU') + ' so\'m' : '-';
-    const customer = o.user?.full_name || o.user?.phone || 'Mijoz';
-    const address = o.address?.full_address || '-';
-    const payment = o.payment_method || '-';
+    const dateStr = o.createdAt ? new Date(o.createdAt).toLocaleString('ru-RU') : '-';
+    const total = o.total ? parseInt(o.total).toLocaleString('ru-RU') + ' so\'m' : '-';
+    const customer = o.user?.fullName || o.user?.phoneNumber || 'Mijoz';
+    const address = o.deliveryAddress || '-';
+    const payment = o.paymentMethod || '-';
       
     return `
       <tr>
@@ -81,13 +81,13 @@ function openModal(id) {
   
   const o = allOrders.find(x => x.id === id);
   if (o) {
-    document.getElementById('order-customer').textContent = o.user?.full_name || 'Noma\'lum';
-    document.getElementById('order-phone').textContent = o.user?.phone || 'Noma\'lum';
-    document.getElementById('order-date').textContent = o.created_at ? new Date(o.created_at).toLocaleString('ru-RU') : '-';
-    document.getElementById('order-address').textContent = o.address?.full_address || '-';
-    document.getElementById('order-payment').textContent = o.payment_method || '-';
-    document.getElementById('order-payment-status').textContent = o.payment_status || '-';
-    document.getElementById('order-total').textContent = o.total_amount ? parseInt(o.total_amount).toLocaleString('ru-RU') + ' so\'m' : '-';
+    document.getElementById('order-customer').textContent = o.user?.fullName || 'Noma\'lum';
+    document.getElementById('order-phone').textContent = o.user?.phoneNumber || 'Noma\'lum';
+    document.getElementById('order-date').textContent = o.createdAt ? new Date(o.createdAt).toLocaleString('ru-RU') : '-';
+    document.getElementById('order-address').textContent = o.deliveryAddress || '-';
+    document.getElementById('order-payment').textContent = o.paymentMethod || '-';
+    document.getElementById('order-payment-status').textContent = o.paymentStatus || '-';
+    document.getElementById('order-total').textContent = o.total ? parseInt(o.total).toLocaleString('ru-RU') + ' so\'m' : '-';
     
     // Set current status in dropdown
     const statusSelect = document.getElementById('edit-order-status');

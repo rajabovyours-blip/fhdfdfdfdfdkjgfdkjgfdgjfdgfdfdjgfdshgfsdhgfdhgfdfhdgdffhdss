@@ -5,6 +5,15 @@ from uuid import UUID
 from datetime import datetime
 from .cart import CartItemModel
 
+from .product import ProductModel
+
+class OrderItemModel(BaseModel):
+    id: UUID
+    product: Optional["ProductModel"] = None
+    quantity: int = 1
+    price: float = Field(default=0.0, validation_alias="price_at_time")
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True, alias_generator=to_camel)
+
 class OrderUserModel(BaseModel):
     id: UUID
     full_name: str
@@ -30,6 +39,6 @@ class OrderModel(BaseModel):
     tracking_number: Optional[str] = None
     customer_notes: Optional[str] = None
     created_at: datetime
-    items: List[CartItemModel] = []
+    items: List[OrderItemModel] = []
     user: Optional[OrderUserModel] = None
     model_config = ConfigDict(from_attributes=True, populate_by_name=True, alias_generator=to_camel)
