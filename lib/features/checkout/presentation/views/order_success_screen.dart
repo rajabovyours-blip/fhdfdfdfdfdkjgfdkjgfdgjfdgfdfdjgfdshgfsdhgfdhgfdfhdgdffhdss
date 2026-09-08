@@ -72,7 +72,7 @@ class OrderSuccessScreen extends ConsumerWidget {
                     text: 'Track Order',
                     onPressed: () => context.push(
                       AppRoutes.orderDetails
-                          .replaceFirst(':id', order?.orderNumber ?? 'ORD-1'),
+                          .replaceFirst(':id', order?.id ?? 'ORD-1'),
                     ),
                   ),
                   const SizedBox(height: 16),

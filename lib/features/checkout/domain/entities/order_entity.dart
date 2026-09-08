@@ -43,7 +43,7 @@ class OrderEntity {
 
   factory OrderEntity.fromJson(Map<String, dynamic> json) {
     return OrderEntity(
-      id: json['id'] as String? ?? '',
+      id: json['id'] as String? ?? json['order_id'] as String? ?? '',
       orderNumber: json['orderNumber'] as String? ?? '',
       invoiceNumber: json['invoiceNumber'] as String? ?? '',
       status: json['status'] as String? ?? 'Pending',
