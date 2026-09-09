@@ -203,8 +203,7 @@ async def get_orders(
                 pass
         if date_to:
             try:
-                end = datetime.fromisoformat(date_to)
-                end = end.replace(hour=23, minute=59, second=59)
+                end = datetime.fromisoformat(date_to).replace(hour=23, minute=59, second=59)
                 query = query.where(Order.created_at <= end)
             except ValueError:
                 pass
@@ -215,7 +214,7 @@ async def get_orders(
                     Order.order_number.ilike(term),
                     cast(Order.id, String).ilike(term),
                     User.full_name.ilike(term),
-                    User.phone_number.ilike(term),
+                    User.phone.ilike(term),
                 )
             )
 
