@@ -38,15 +38,34 @@ class Settings(BaseSettings):
     CLICK_MERCHANT_USER_ID: str = ""
 
     # ── Payme ─────────────────────────────────────────────────────
-    # PAYME_KEY      — production (asosiy) kassa kaliti
-    # PAYME_TEST_KEY — sandbox (песочница) kaliti, faqat test davrida
+    # PAYME_TEST_MODE=true qilinsa, checkout havolasi sandbox manziliga
+    # (test.paycom.uz) va test merchant ID'ga o'tadi. Bitta flag bilan
+    # butun oqim test rejimiga ko'chadi — kod o'zgartirish shart emas.
     #
-    # Webhook ikkala kalitni ham qabul qiladi. Shu tufayli Payme'ning
-    # sandbox testini o'tkazish uchun production sozlamasini o'chirish
-    # SHART EMAS — test tugagach PAYME_TEST_KEY ni bo'sh qoldirish kifoya.
+    # Webhook auth esa HAR DOIM ikkala kalitni qabul qiladi, shuning uchun
+    # Payme sandbox sertifikatsiyasi prod sozlamasini buzmaydi.
     PAYME_MERCHANT_ID: str = ""
     PAYME_KEY: str = ""
+    PAYME_TEST_MERCHANT_ID: str = ""
     PAYME_TEST_KEY: str = ""
+    PAYME_TEST_MODE: bool = False
+
+    PAYME_CHECKOUT_URL: str = "https://checkout.paycom.uz"
+    PAYME_TEST_CHECKOUT_URL: str = "https://test.paycom.uz"
+
+    @property
+    def payme_checkout_base(self) -> str:
+        """Checkout havolasining asosiy manzili (test yoki prod)."""
+        if self.PAYME_TEST_MODE:
+            return self.PAYME_TEST_CHECKOUT_URL.rstrip("/")
+        return self.PAYME_CHECKOUT_URL.rstrip("/")
+
+    @property
+    def payme_active_merchant_id(self) -> str:
+        """Hozir ishlatilayotgan merchant ID (test yoki prod)."""
+        if self.PAYME_TEST_MODE and self.PAYME_TEST_MERCHANT_ID:
+            return self.PAYME_TEST_MERCHANT_ID
+        return self.PAYME_MERCHANT_ID
 
     # ── Yetkazib berish (shipping) ────────────────────────────────
     # Asosiy narx endi HAR BIR MAHSULOTGA admin panelda belgilanadi
