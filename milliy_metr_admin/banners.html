@@ -16,10 +16,10 @@
 
   <div id="app">
     <div class="d-flex justify-content-between align-items-center mb-24" style="margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
-      <h2 style="margin: 0;">Bannerlar</h2>
+      <h2 style="margin: 0;" data-i18n="banners">Bannerlar</h2>
       <button class="btn btn-primary" id="btn-add-banner" style="white-space: nowrap;">
         <span class="material-symbols-rounded">add</span>
-        Yangi Qo'shish
+        <span data-i18n="add">Yangi Qo'shish</span>
       </button>
     </div>
 
@@ -28,17 +28,17 @@
         <table class="table">
           <thead>
             <tr>
-              <th width="120">Rasm</th>
-              <th>Sarlavha</th>
-              <th>Havola</th>
-              <th>Tartib</th>
-              <th>Holat</th>
-              <th width="120" class="text-center">Amallar</th>
+              <th width="120" data-i18n="image">Rasm</th>
+              <th data-i18n="title">Sarlavha</th>
+              <th data-i18n="link">Havola</th>
+              <th data-i18n="order">Tartib</th>
+              <th data-i18n="status">Holat</th>
+              <th width="120" class="text-center" data-i18n="actions">Amallar</th>
             </tr>
           </thead>
           <tbody id="banner-list">
             <tr>
-              <td colspan="6" class="text-center">Yuklanmoqda...</td>
+              <td colspan="6" class="text-center" data-i18n="loading">Yuklanmoqda...</td>
             </tr>
           </tbody>
         </table>
@@ -50,7 +50,7 @@
   <div class="modal-overlay" id="banner-modal">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 id="modal-title" style="margin: 0;">Banner Qo'shish</h3>
+        <h3 id="modal-title" style="margin: 0;" data-i18n="add">Banner Qo'shish</h3>
         <button class="modal-close" id="btn-close-modal"><span class="material-symbols-rounded">close</span></button>
       </div>
       <div class="modal-body">
@@ -58,31 +58,31 @@
           <input type="hidden" id="banner-id">
           
           <div class="form-group">
-            <label class="form-label">Sarlavha (Ixtiyoriy)</label>
+            <label class="form-label"><span data-i18n="title">Sarlavha</span> <span data-i18n="optional">(Ixtiyoriy)</span></label>
             <input type="text" class="form-control" id="banner-title">
           </div>
           
           <div class="form-group">
-            <label class="form-label">Havola (Link) (Ixtiyoriy)</label>
+            <label class="form-label"><span data-i18n="link">Havola</span> <span data-i18n="optional">(Ixtiyoriy)</span></label>
             <input type="text" class="form-control" id="banner-link">
           </div>
           
           <div class="d-flex gap-16 form-row">
             <div class="form-group w-100">
-              <label class="form-label">Tartib raqami</label>
+              <label class="form-label" data-i18n="order">Tartib raqami</label>
               <input type="number" class="form-control" id="banner-order" value="0">
             </div>
             
             <div class="form-group w-100" style="display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 12px;">
               <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
                 <input type="checkbox" id="banner-active" checked style="width: 18px; height: 18px;">
-                <span class="form-label" style="margin:0;">Faol</span>
+                <span class="form-label" style="margin:0;" data-i18n="active">Faol</span>
               </label>
             </div>
           </div>
           
           <div class="form-group">
-            <label class="form-label">Rasm yuklash <span style="color:red">*</span></label>
+            <label class="form-label"><span data-i18n="image">Rasm yuklash</span> <span style="color:red">*</span></label>
             <div class="d-flex gap-16 align-items-center form-row">
               <img id="banner-img-preview" src="" style="width: 120px; height: 60px; object-fit: cover; border-radius: 8px; background: var(--color-surface-variant); display: none;">
               <input type="file" id="banner-img-upload" class="form-control" accept="image/*" style="padding-top: 10px;">
@@ -92,13 +92,14 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-outline" id="btn-cancel-modal">Bekor qilish</button>
-        <button class="btn btn-primary" id="btn-save-banner">Saqlash</button>
+        <button class="btn btn-outline" id="btn-cancel-modal" data-i18n="cancel">Bekor qilish</button>
+        <button class="btn btn-primary" id="btn-save-banner" data-i18n="save">Saqlash</button>
       </div>
     </div>
   </div>
 
   <script src="js/config.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/layout.js"></script>
