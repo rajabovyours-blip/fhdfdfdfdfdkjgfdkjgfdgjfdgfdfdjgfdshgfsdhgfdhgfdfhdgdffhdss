@@ -4,10 +4,43 @@ let totalPages = 1;
 let currentLimit = 10;
 let productImages = []; // store urls of uploaded images
 
+/**
+ * Har bir mahsulot uchun "Yetkazib berish narxi" maydonini
+ * "Yetkazib berish bor" checkboxi yoniga qo'shadi.
+ * Shu tufayli admin har bir mahsulotga o'z narxini belgilaydi
+ * (0 = bepul), va ilova bu narxni serverdan oladi.
+ */
+function ensureDeliveryPriceField() {
+  if (document.getElementById('prod-delivery-price')) return;
+
+  const hasDeliveryEl = document.getElementById('prod-has-delivery');
+  if (!hasDeliveryEl) return;
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'form-group';
+  wrapper.style.marginTop = '8px';
+  wrapper.innerHTML = `
+    <label class="form-label" for="prod-delivery-price">
+      Yetkazib berish narxi (so'm)
+    </label>
+    <input type="number" min="0" step="1000" class="form-control"
+           id="prod-delivery-price" placeholder="0 = bepul yetkazib berish">
+    <small style="color: var(--color-text-medium, #666); display: block; margin-top: 4px;">
+      0 qoldirilsa, bu mahsulot uchun yetkazib berish bepul bo'ladi.
+      Buyurtmada bir nechta mahsulot bo'lsa, eng katta narx olinadi.
+    </small>
+  `;
+
+  const container = hasDeliveryEl.closest('.form-group') || hasDeliveryEl.parentElement;
+  container.parentElement.insertBefore(wrapper, container.nextSibling);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   auth.requireAuth();
   layout.inject();
-  
+
+  ensureDeliveryPriceField();
+
   loadCategories();
   loadProducts();
   
@@ -148,8 +181,6 @@ async function loadProducts() {
     const res = await api.get(url);
     const data = res.data || [];
     
-    // Pagination data might be in res.meta or res.total_pages, but backend might not return it cleanly.
-    // If it returns total count:
     const total = res.total || (data.length === currentLimit ? currentPage * currentLimit + 1 : currentPage * currentLimit);
     totalPages = Math.ceil(total / currentLimit);
     
@@ -216,7 +247,6 @@ function renderPagination() {
   let html = `<button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}><span class="material-symbols-rounded">chevron_left</span></button>`;
   
   for (let i = 1; i <= totalPages; i++) {
-    // Basic logic to show current, first, last, and neighbors
     if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
         html += `<button class="${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
     } else if (i === currentPage - 2 || i === currentPage + 2) {
@@ -242,7 +272,9 @@ async function openModal(id = null) {
   const modal = document.getElementById('product-modal');
   const title = document.getElementById('modal-title');
   const form = document.getElementById('product-form');
-  
+
+  ensureDeliveryPriceField();
+
   form.reset();
   document.getElementById('prod-id').value = '';
   productImages = [];
@@ -277,6 +309,13 @@ async function openModal(id = null) {
       document.getElementById('prod-unit').value = p.unit || 'dona';
       document.getElementById('prod-stock').value = p.stock !== undefined ? p.stock : (p.stockQuantity !== undefined ? p.stockQuantity : 0);
       document.getElementById('prod-has-delivery').checked = p.hasDelivery !== undefined ? p.hasDelivery : (p.has_delivery !== undefined ? p.has_delivery : true);
+
+      const deliveryPriceEl = document.getElementById('prod-delivery-price');
+      if (deliveryPriceEl) {
+        const dp = p.deliveryPrice !== undefined ? p.deliveryPrice : p.delivery_price;
+        deliveryPriceEl.value = (dp === null || dp === undefined) ? 0 : dp;
+      }
+
       document.getElementById('prod-brand').value = p.brand || '';
       document.getElementById('prod-moq').value = p.moq || 1;
       document.getElementById('prod-delivery-info').value = p.deliveryInformation || p.delivery_information || '';
@@ -296,6 +335,8 @@ async function openModal(id = null) {
     currentEditProduct = null;
     document.getElementById('prod-moq').value = 1;
     document.getElementById('prod-delivery-info').value = '';
+    const deliveryPriceEl = document.getElementById('prod-delivery-price');
+    if (deliveryPriceEl) deliveryPriceEl.value = 0;
     renderSpecs({});
     handleUnitChange();
   }
@@ -332,7 +373,12 @@ async function saveProduct() {
     layout.showToast("Kategoriya tanlanishi shart", 'error');
     return;
   }
-  
+
+  const deliveryPriceEl = document.getElementById('prod-delivery-price');
+  const deliveryPrice = deliveryPriceEl
+    ? (parseFloat(deliveryPriceEl.value) || 0)
+    : 0;
+
   const payload = {
     name: { uz: document.getElementById('prod-name-uz').value, ru: document.getElementById('prod-name-ru').value },
     description: { uz: document.getElementById('prod-desc-uz').value, ru: document.getElementById('prod-desc-ru').value },
@@ -342,13 +388,13 @@ async function saveProduct() {
     unit: document.getElementById('prod-unit').value,
     stock: parseInt(document.getElementById('prod-stock').value) || 0,
     hasDelivery: document.getElementById('prod-has-delivery').checked,
+    deliveryPrice: deliveryPrice,
     brand: document.getElementById('prod-brand').value || null,
     images: productImages,
     moq: parseInt(document.getElementById('prod-moq').value) || 1,
     delivery_information: document.getElementById('prod-delivery-info').value || null,
     specifications: serializeSpecs()
   };
-  
   
   const btn = document.getElementById('btn-save-product');
   btn.disabled = true;
@@ -407,7 +453,6 @@ async function uploadExcel() {
     importPreviewData = data.rows || [];
     const stats = data.stats || {};
     
-    // Show stats
     const statsEl = document.getElementById('import-stats');
     statsEl.innerHTML = `
       <span class="badge badge-neutral" style="padding: 8px 12px; height: auto;">Jami: ${stats.total || 0}</span>
@@ -417,7 +462,6 @@ async function uploadExcel() {
       ${stats.needs_review ? `<span class="badge badge-warning" style="padding: 8px 12px; height: auto;">Tekshirish: ${stats.needs_review}</span>` : ''}
     `;
     
-    // Render preview table
     const tbody = document.getElementById('import-preview-body');
     tbody.innerHTML = importPreviewData.map(row => {
       let statusBadge = 'badge-neutral';
@@ -442,12 +486,10 @@ async function uploadExcel() {
       </tr>`;
     }).join('');
     
-    // Toggle steps
     document.getElementById('import-step-upload').style.display = 'none';
     document.getElementById('import-step-preview').style.display = 'block';
     btn.style.display = 'none';
     
-    // Show confirm button only if there are valid rows
     const validRows = importPreviewData.filter(r => r.status === 'Valid' || r.status === 'Needs Review');
     if (validRows.length > 0) {
       const confirmBtn = document.getElementById('btn-confirm-import');
@@ -493,7 +535,6 @@ async function confirmImport() {
 
 function closeImportModal() {
   document.getElementById('import-modal').classList.remove('active');
-  // Reset modal state
   document.getElementById('import-step-upload').style.display = 'block';
   document.getElementById('import-step-preview').style.display = 'none';
   document.getElementById('btn-upload-excel').style.display = 'inline-flex';
@@ -549,7 +590,6 @@ function renderSpecs(specs) {
   
   const keys = Object.keys(specs);
   if (keys.length === 0) {
-    // Add one empty row by default if none
     addSpecRow('', '');
   } else {
     keys.forEach(k => addSpecRow(k, specs[k]));
