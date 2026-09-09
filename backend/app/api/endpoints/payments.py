@@ -154,31 +154,25 @@ async def payment_return_page(order_id: str = None, db: AsyncSession = Depends(g
     ushlab, oynani yopadi va holatni /payments/status/{id} orqali
     qayta tekshiradi.
     """
+    fallback = HTMLResponse(_RETURN_PAGE.format(
+        icon="&#8505;",
+        title="Ilovaga qayting",
+        message="Buyurtma holatini ilovadan tekshirishingiz mumkin.",
+    ))
+
     if not order_id:
-        return HTMLResponse(_RETURN_PAGE.format(
-            icon="&#8505;",
-            title="Ilovaga qayting",
-            message="Buyurtma holatini ilovadan tekshirishingiz mumkin.",
-        ))
+        return fallback
 
     try:
         oid = uuid.UUID(order_id)
     except ValueError:
-        return HTMLResponse(_RETURN_PAGE.format(
-            icon="&#8505;",
-            title="Ilovaga qayting",
-            message="Buyurtma holatini ilovadan tekshirishingiz mumkin.",
-        ))
+        return fallback
 
     result = await db.execute(select(Order).where(Order.id == oid))
     order = result.scalar_one_or_none()
 
     if not order:
-        return HTMLResponse(_RETURN_PAGE.format(
-            icon="&#8505;",
-            title="Ilovaga qayting",
-            message="Buyurtma holatini ilovadan tekshirishingiz mumkin.",
-        ))
+        return fallback
 
     status_value = (order.payment_status or "pending").lower()
 
@@ -288,9 +282,22 @@ async def payme_webhook(request: Request, db: AsyncSession = Depends(get_db)):
 
     # 1. Auth check
     auth_header = request.headers.get("Authorization", "")
-    expected = base64.b64encode(f"Paycom:{settings.PAYME_KEY}".encode()).decode()
     provided = auth_header.replace("Basic ", "")
-    if not hmac.compare_digest(provided, expected):
+
+    # Prod va sandbox kalitlarining IKKALASI ham qabul qilinadi.
+    # Shu tufayli Payme'ning sandbox sertifikatsiyasini o'tkazish uchun
+    # production sozlamasini o'chirish SHART EMAS. Test tugagach
+    # PAYME_TEST_KEY ni bo'sh qoldirish kifoya.
+    accepted_keys = [k for k in (settings.PAYME_KEY, settings.PAYME_TEST_KEY) if k]
+    authorized = any(
+        hmac.compare_digest(
+            provided,
+            base64.b64encode(f"Paycom:{key}".encode()).decode(),
+        )
+        for key in accepted_keys
+    )
+
+    if not authorized:
         return _payme_error(req_id, PAYME_ERRORS["PERM_DENIED"],
                             "Ruxsat yo'q", "Доступ запрещён", "Access denied")
 
