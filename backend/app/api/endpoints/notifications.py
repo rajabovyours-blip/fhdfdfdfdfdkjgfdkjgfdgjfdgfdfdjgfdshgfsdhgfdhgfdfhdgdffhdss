@@ -1,28 +1,31 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List
+from sqlalchemy import select
+from typing import List, Optional
+from pydantic import BaseModel
+
 from app.db.session import get_db
 from app.schemas.common import APIResponse
-from app.api.deps import get_current_user
-from app.models.user import User
+from app.api.deps import get_current_user, get_current_admin
+from app.models.user import User, RoleEnum
+from app.models.extras import Notification, NotificationBroadcast
 
 router = APIRouter()
+
 
 @router.get("", response_model=APIResponse[list])
 async def get_notifications(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    from app.models.extras import Notification
-    from sqlalchemy import select
-    
+    """Foydalanuvchining O'ZIGA kelgan bildirishnomalar (mijoz ilovasi uchun)."""
     result = await db.execute(
         select(Notification)
         .where(Notification.user_id == current_user.id)
         .order_by(Notification.created_at.desc())
     )
     notifications = result.scalars().all()
-    
+
     return APIResponse(data=[
         {
             "id": str(n.id),
@@ -35,6 +38,32 @@ async def get_notifications(
         for n in notifications
     ])
 
+
+@router.get("/admin/history", response_model=APIResponse[list])
+async def get_broadcast_history(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_admin),
+):
+    """Admin panel uchun: yuborilgan PUSH xabarlar tarixi (har bir broadcast — bitta qator)."""
+    result = await db.execute(
+        select(NotificationBroadcast).order_by(NotificationBroadcast.created_at.desc())
+    )
+    rows = result.scalars().all()
+
+    return APIResponse(data=[
+        {
+            "id": str(b.id),
+            "title": b.title,
+            "body": b.body,
+            "image_url": b.image_url,
+            "target": b.target,
+            "recipient_count": b.recipient_count,
+            "created_at": b.created_at.isoformat() if b.created_at else None,
+        }
+        for b in rows
+    ])
+
+
 @router.post("/device-token")
 async def register_device_token(
     token: str,
@@ -44,59 +73,50 @@ async def register_device_token(
     # Store FCM device token
     return APIResponse(message="Device token registered")
 
-from pydantic import BaseModel, ConfigDict
-from typing import Optional
-from app.models.user import RoleEnum
 
 class BroadcastRequest(BaseModel):
-    title: dict[str, str] # e.g. {"uz": "...", "ru": "...", "en": "..."}
-    body: dict[str, str]
+    """Admin panel oddiy matn yuboradi (ko'p tilli dict emas)."""
+    title: str
+    body: str
     image_url: Optional[str] = None
-    target: Optional[str] = "all" # 'all' or user ID
+    target: Optional[str] = "all"  # 'all' | 'admins' | <user_id>
+
 
 @router.post("/broadcast")
 async def broadcast_notification(
     payload: BroadcastRequest,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_admin),
 ):
-    if current_user.role not in [RoleEnum.ADMIN, RoleEnum.OWNER]:
-        raise HTTPException(status_code=403, detail="Not authorized")
-        
-    from app.models.extras import Notification
-    from sqlalchemy import select
-
-    if payload.target == "all" or payload.target == "users":
-        # Target all users
-        result = await db.execute(select(User).where(User.role == RoleEnum.USER))
-        users = result.scalars().all()
-    elif payload.target == "admins":
+    if payload.target == "admins":
         result = await db.execute(select(User).where(User.role == RoleEnum.ADMIN))
         users = result.scalars().all()
+    elif payload.target in (None, "all", "users", "customers", "sellers"):
+        result = await db.execute(select(User).where(User.role == RoleEnum.USER))
+        users = result.scalars().all()
     else:
-        # Target a specific user ID
+        # Aniq bitta foydalanuvchi ID
         result = await db.execute(select(User).where(User.id == payload.target))
         users = result.scalars().all()
 
-    if not users:
-        return APIResponse(data={"delivered_count": 0}, message="Bildirishnoma tizimda saqlandi")
-
-    notifications = []
     for user in users:
-        lang = getattr(user, 'preferred_language', 'uz') or 'uz'
-        # Fallback logic: Try preferred language, then 'uz', then whatever is available
-        title = payload.title.get(lang) or payload.title.get('uz') or next(iter(payload.title.values()), "")
-        body = payload.body.get(lang) or payload.body.get('uz') or next(iter(payload.body.values()), "")
-        
-        notification = Notification(
+        db.add(Notification(
             user_id=user.id,
-            title=title,
-            body=body,
+            title=payload.title,
+            body=payload.body,
             image_url=payload.image_url,
-        )
-        notifications.append(notification)
-        db.add(notification)
-    
+        ))
+
+    # Broadcast tarixiga BITTA yozuv — admin panelida shu ko'rinadi
+    db.add(NotificationBroadcast(
+        title=payload.title,
+        body=payload.body,
+        image_url=payload.image_url,
+        target=payload.target or "all",
+        recipient_count=len(users),
+        sent_by=current_user.id,
+    ))
+
     await db.commit()
-    
-    return APIResponse(message=f"Notification dispatched successfully to {len(notifications)} users")
+
+    return APIResponse(message=f"Xabar {len(users)} foydalanuvchiga yuborildi", data={"delivered_count": len(users)})
