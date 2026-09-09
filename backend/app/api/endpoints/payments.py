@@ -2,12 +2,11 @@ import hashlib
 import hmac
 import base64
 import uuid
-import json
 from datetime import datetime
 from urllib.parse import quote
 
 from fastapi import APIRouter, Depends, HTTPException, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, HTMLResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update
 from sqlalchemy.orm import joinedload
@@ -15,7 +14,7 @@ from pydantic import BaseModel as PydanticBaseModel
 
 from app.db.session import get_db
 from app.schemas.common import APIResponse
-from app.models.order import Order, OrderItem
+from app.models.order import Order
 from app.models.product import Product
 from app.models.extras import Payment
 from app.models.user import User
@@ -26,7 +25,7 @@ router = APIRouter()
 
 
 # ──────────────────────────────────────────────
-# 1. Payment Methods (existing)
+# 1. Payment Methods
 # ──────────────────────────────────────────────
 
 @router.get("/payment-methods", response_model=APIResponse[list])
@@ -91,19 +90,116 @@ async def process_payment(
 
     return APIResponse(data={"payment_url": url})
 
-from fastapi.responses import HTMLResponse
+
+# ──────────────────────────────────────────────
+# 2b. Real payment status (single source of truth)
+# ──────────────────────────────────────────────
+
+@router.get("/status/{order_id}", response_model=APIResponse[dict])
+async def payment_status(
+    order_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Buyurtma HAQIQATAN to'langanmi. To'lov tizimidan qaytgan URL
+    hech qachon to'lov dalili emas — faqat shu endpoint javob beradi."""
+    result = await db.execute(
+        select(Order).where(Order.id == order_id, Order.user_id == current_user.id)
+    )
+    order = result.scalar_one_or_none()
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    payment_status_value = (order.payment_status or "pending").lower()
+    return APIResponse(data={
+        "order_id": str(order.id),
+        "payment_status": payment_status_value,
+        "order_status": order.status,
+        "is_paid": payment_status_value == "paid",
+    })
+
+
+_RETURN_PAGE = """
+<!doctype html>
+<html lang="uz"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Milliy Metr</title>
+<style>
+  body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+         text-align: center; padding: 64px 24px; color: #11181C; }}
+  h2 {{ margin-bottom: 8px; }}
+  p  {{ color: #536471; }}
+  .icon {{ font-size: 48px; margin-bottom: 16px; }}
+</style></head>
+<body>
+  <div class="icon">{icon}</div>
+  <h2>{title}</h2>
+  <p>{message}</p>
+</body></html>
+"""
+
 
 @router.get("/return", response_class=HTMLResponse)
-async def payment_return_page(order_id: str = None):
-    """Landing page the payment provider redirects to after checkout.
-    The mobile app's in-app webview watches for this URL and closes itself
-    when it navigates here — see PART B3 below."""
-    return """
-    <html><body style="font-family:sans-serif;text-align:center;padding-top:80px;">
-      <h2>To'lov yakunlandi</h2>
-      <p>Ilovaga qaytishingiz mumkin.</p>
-    </body></html>
+async def payment_return_page(order_id: str = None, db: AsyncSession = Depends(get_db)):
+    """To'lov tizimi to'lovdan keyin shu manzilga qaytaradi.
+
+    MUHIM: bu sahifa haqiqiy holatni bazadan tekshiradi. Ilgari u
+    har doim "To'lov yakunlandi" deb yozardi — pul yechilmagan bo'lsa
+    ham. Endi holat faqat provayder webhook'i tasdiqlagandan keyin
+    "to'landi" deb ko'rsatiladi.
+
+    Ilova bu sahifani ko'rsatmaydi: in-app webview shu manzilni
+    ushlab, oynani yopadi va holatni /payments/status/{id} orqali
+    qayta tekshiradi.
     """
+    if not order_id:
+        return HTMLResponse(_RETURN_PAGE.format(
+            icon="&#8505;",
+            title="Ilovaga qayting",
+            message="Buyurtma holatini ilovadan tekshirishingiz mumkin.",
+        ))
+
+    try:
+        oid = uuid.UUID(order_id)
+    except ValueError:
+        return HTMLResponse(_RETURN_PAGE.format(
+            icon="&#8505;",
+            title="Ilovaga qayting",
+            message="Buyurtma holatini ilovadan tekshirishingiz mumkin.",
+        ))
+
+    result = await db.execute(select(Order).where(Order.id == oid))
+    order = result.scalar_one_or_none()
+
+    if not order:
+        return HTMLResponse(_RETURN_PAGE.format(
+            icon="&#8505;",
+            title="Ilovaga qayting",
+            message="Buyurtma holatini ilovadan tekshirishingiz mumkin.",
+        ))
+
+    status_value = (order.payment_status or "pending").lower()
+
+    if status_value == "paid":
+        return HTMLResponse(_RETURN_PAGE.format(
+            icon="&#10004;",
+            title="To'lov qabul qilindi",
+            message="Buyurtmangiz tasdiqlandi. Ilovaga qaytishingiz mumkin.",
+        ))
+    if status_value in ("cancelled", "refunded"):
+        return HTMLResponse(_RETURN_PAGE.format(
+            icon="&#10006;",
+            title="To'lov amalga oshmadi",
+            message="To'lov bekor qilindi. Ilovadan qayta urinib ko'ring.",
+        ))
+
+    return HTMLResponse(_RETURN_PAGE.format(
+        icon="&#8987;",
+        title="To'lov tekshirilmoqda",
+        message="To'lov hali tasdiqlanmadi. Ilovaga qaytib, buyurtma holatini kuzating.",
+    ))
 
 
 # ──────────────────────────────────────────────
@@ -236,7 +332,6 @@ async def _payme_check_perform(req_id, params, body, db):
         return _payme_error(req_id, PAYME_ERRORS["INVALID_AMOUNT"],
                             "Noto'g'ri summa", "Неверная сумма", "Invalid amount")
 
-    # Check if already paid
     existing = await db.execute(
         select(Payment).where(Payment.order_id == order.id, Payment.status == "performed")
     )
@@ -250,7 +345,6 @@ async def _payme_check_perform(req_id, params, body, db):
 async def _payme_create(req_id, params, body, db):
     payme_id = params.get("id")
 
-    # Idempotency: check if transaction already exists
     existing = await db.execute(
         select(Payment).where(Payment.transaction_id == payme_id)
     )
@@ -265,7 +359,6 @@ async def _payme_create(req_id, params, body, db):
             "state": 1,
         })
 
-    # Validate order
     order = await _find_order_by_account(params, db)
     if not order:
         return _payme_error(req_id, PAYME_ERRORS["ACCOUNT_NOT_FOUND"],
@@ -276,7 +369,6 @@ async def _payme_create(req_id, params, body, db):
         return _payme_error(req_id, PAYME_ERRORS["INVALID_AMOUNT"],
                             "Noto'g'ri summa", "Неверная сумма", "Invalid amount")
 
-    # Create payment record
     payment = Payment(
         order_id=order.id,
         provider="payme",
@@ -307,7 +399,6 @@ async def _payme_perform(req_id, params, body, db):
         return _payme_error(req_id, PAYME_ERRORS["TRANSACTION_NOT_FOUND"],
                             "Tranzaksiya topilmadi", "Транзакция не найдена", "Transaction not found")
 
-    # Idempotency
     if payment.status == "performed":
         return _payme_result(req_id, {
             "transaction": str(payment.id),
@@ -348,7 +439,6 @@ async def _payme_cancel(req_id, params, body, db):
         return _payme_error(req_id, PAYME_ERRORS["TRANSACTION_NOT_FOUND"],
                             "Tranzaksiya topilmadi", "Транзакция не найдена", "Transaction not found")
 
-    # Already cancelled — idempotency
     if payment.status in ("cancelled", "cancelled_after_perform"):
         state = -1 if payment.status == "cancelled" else -2
         return _payme_result(req_id, {
@@ -361,7 +451,6 @@ async def _payme_cancel(req_id, params, body, db):
     order = payment.order
 
     if payment.status == "created":
-        # Money was not yet charged
         payment.status = "cancelled"
         payment.cancel_reason = reason
         payment.cancel_time = now
@@ -370,12 +459,10 @@ async def _payme_cancel(req_id, params, body, db):
         state = -1
 
     elif payment.status == "performed":
-        # Check if already delivered
         if order.delivery_status and order.delivery_status.lower() == "delivered":
             return _payme_error(req_id, PAYME_ERRORS["CANT_CANCEL"],
                                 "Bekor qilib bo'lmaydi", "Невозможно отменить", "Cannot cancel after delivery")
 
-        # Money was charged — reversal
         payment.status = "cancelled_after_perform"
         payment.cancel_reason = reason
         payment.cancel_time = now
@@ -384,7 +471,6 @@ async def _payme_cancel(req_id, params, body, db):
         order.status = "Cancelled"
         state = -2
 
-        # Restore stock
         for item in order.items:
             await db.execute(
                 update(Product).where(Product.id == item.product_id)
@@ -486,7 +572,6 @@ async def _click_prepare(data, db):
     click_trans_id = str(data.get("click_trans_id", ""))
     amount = float(data.get("amount", 0))
 
-    # Find order
     try:
         order_uuid = uuid.UUID(merchant_trans_id)
     except ValueError:
@@ -497,11 +582,9 @@ async def _click_prepare(data, db):
     if not order:
         return _click_response(data, -5, "Order not found")
 
-    # Check amount (Click sends in so'm)
     if abs(float(order.total) - amount) > 0.01:
         return _click_response(data, -2, "Incorrect amount")
 
-    # Idempotency: check if this click_trans_id already exists
     existing = await db.execute(
         select(Payment).where(Payment.transaction_id == click_trans_id)
     )
@@ -513,14 +596,12 @@ async def _click_prepare(data, db):
             "merchant_prepare_id": str(payment.id),
         })
 
-    # Check if already paid by another transaction
     paid_check = await db.execute(
         select(Payment).where(Payment.order_id == order.id, Payment.status == "performed")
     )
     if paid_check.scalar_one_or_none():
         return _click_response(data, -4, "Already paid")
 
-    # Create payment
     payment = Payment(
         order_id=order.id,
         provider="click",
@@ -552,7 +633,6 @@ async def _click_complete(data, db):
     if not payment:
         return _click_response(data, -6, "Transaction not found")
 
-    # Idempotency
     if payment.status == "performed":
         return _click_response(data, 0, "Success", {
             "merchant_trans_id": str(payment.order_id),
@@ -565,7 +645,6 @@ async def _click_complete(data, db):
     order = payment.order
 
     if click_error < 0:
-        # Click reports error — cancel payment
         payment.status = "cancelled"
         payment.cancel_time = datetime.utcnow()
         payment.raw_payload = data
@@ -576,7 +655,6 @@ async def _click_complete(data, db):
             "merchant_prepare_id": str(payment.id),
         })
 
-    # Success
     now = datetime.utcnow()
     payment.status = "performed"
     payment.perform_time = now
