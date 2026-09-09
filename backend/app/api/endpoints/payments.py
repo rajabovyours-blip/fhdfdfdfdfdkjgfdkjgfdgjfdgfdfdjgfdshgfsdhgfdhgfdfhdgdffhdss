@@ -248,6 +248,7 @@ PAYME_ERRORS = {
     "TRANSACTION_NOT_FOUND": -31003,
     "CANT_CANCEL": -31007,
     "ACCOUNT_NOT_FOUND": -31050,
+    "ACCOUNT_BUSY": -31051,
 }
 
 PAYME_KEY_SETTING = "payme_key_override"
@@ -294,8 +295,7 @@ async def payme_webhook(request: Request, db: AsyncSession = Depends(get_db)):
     provided = auth_header.replace("Basic ", "")
 
     # Prod kaliti, sandbox kaliti va ChangePassword orqali o'rnatilgan
-    # parol — uchalasi ham qabul qilinadi. Shu tufayli sertifikatsiya
-    # production sozlamasini buzmaydi.
+    # parol — uchalasi ham qabul qilinadi.
     stored = await _get_stored_payme_key(db)
     accepted_keys = [k for k in (settings.PAYME_KEY, settings.PAYME_TEST_KEY, stored) if k]
     authorized = any(
@@ -354,8 +354,18 @@ async def _payme_check_perform(req_id, params, body, db):
         select(Payment).where(Payment.order_id == order.id, Payment.status == "performed")
     )
     if existing.scalar_one_or_none():
-        return _payme_error(req_id, PAYME_ERRORS["CANT_PERFORM"],
+        return _payme_error(req_id, PAYME_ERRORS["ACCOUNT_BUSY"],
                             "Allaqachon to'langan", "Уже оплачено", "Already paid")
+
+    # Hisob band: shu buyurtma uchun boshqa tranzaksiya hali kutilmoqda.
+    # Aks holda bitta buyurtmadan ikki marta pul yechilishi mumkin.
+    active = await db.execute(
+        select(Payment).where(Payment.order_id == order.id, Payment.status == "created")
+    )
+    if active.scalar_one_or_none():
+        return _payme_error(req_id, PAYME_ERRORS["ACCOUNT_BUSY"],
+                            "Buyurtma band", "Заказ занят другой транзакцией",
+                            "Order is busy with another transaction")
 
     return _payme_result(req_id, {"allow": True})
 
@@ -386,6 +396,23 @@ async def _payme_create(req_id, params, body, db):
     if params.get("amount") != expected_amount:
         return _payme_error(req_id, PAYME_ERRORS["INVALID_AMOUNT"],
                             "Noto'g'ri summa", "Неверная сумма", "Invalid amount")
+
+    # Shu buyurtma allaqachon to'langanmi?
+    paid = await db.execute(
+        select(Payment).where(Payment.order_id == order.id, Payment.status == "performed")
+    )
+    if paid.scalar_one_or_none():
+        return _payme_error(req_id, PAYME_ERRORS["ACCOUNT_BUSY"],
+                            "Allaqachon to'langan", "Уже оплачено", "Already paid")
+
+    # Boshqa tranzaksiya shu buyurtmani band qilganmi?
+    active = await db.execute(
+        select(Payment).where(Payment.order_id == order.id, Payment.status == "created")
+    )
+    if active.scalar_one_or_none():
+        return _payme_error(req_id, PAYME_ERRORS["ACCOUNT_BUSY"],
+                            "Buyurtma band", "Заказ занят другой транзакцией",
+                            "Order is busy with another transaction")
 
     payment = Payment(
         order_id=order.id,
