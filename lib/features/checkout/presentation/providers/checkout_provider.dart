@@ -44,6 +44,9 @@ class CheckoutState {
   final String notes;
   final bool selectAll;
   final OrderEntity? order;
+  final bool deliveryEnabled;
+  final double shippingFeeSetting;
+  final double freeShippingThreshold;
 
   const CheckoutState({
     this.isLoading = false,
@@ -58,6 +61,9 @@ class CheckoutState {
     this.notes = '',
     this.selectAll = true,
     this.order,
+    this.deliveryEnabled = true,
+    this.shippingFeeSetting = 15000,
+    this.freeShippingThreshold = 500000,
   });
 
   CheckoutState copyWith({
@@ -73,6 +79,9 @@ class CheckoutState {
     String? notes,
     bool? selectAll,
     OrderEntity? order,
+    bool? deliveryEnabled,
+    double? shippingFeeSetting,
+    double? freeShippingThreshold,
   }) {
     return CheckoutState(
       isLoading: isLoading ?? this.isLoading,
@@ -87,6 +96,10 @@ class CheckoutState {
       notes: notes ?? this.notes,
       selectAll: selectAll ?? this.selectAll,
       order: order ?? this.order,
+      deliveryEnabled: deliveryEnabled ?? this.deliveryEnabled,
+      shippingFeeSetting: shippingFeeSetting ?? this.shippingFeeSetting,
+      freeShippingThreshold:
+          freeShippingThreshold ?? this.freeShippingThreshold,
     );
   }
 }
@@ -112,6 +125,11 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
 
     final addressResult = await repository.getAddresses();
 
+    // Fetch the current shipping settings from the backend so the shown
+    // price always matches what will actually be charged, without ever
+    // needing a new app build when it changes.
+    _loadShippingSettings();
+
     addressResult.fold(
       (addressFailure) {
         final defaultAddress = localAddresses.where((a) => a.isDefault).isNotEmpty 
@@ -136,6 +154,25 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
         );
       },
     );
+  }
+
+  Future<void> _loadShippingSettings() async {
+    try {
+      final dio = ref.read(dioProvider);
+      final response = await dio.get('/settings/shipping');
+      final data = response.data['data'];
+      if (data != null) {
+        state = state.copyWith(
+          deliveryEnabled: data['deliveryEnabled'] as bool? ?? true,
+          shippingFeeSetting:
+              (data['shippingFee'] as num?)?.toDouble() ?? 15000,
+          freeShippingThreshold:
+              (data['freeShippingThreshold'] as num?)?.toDouble() ?? 500000,
+        );
+      }
+    } catch (_) {
+      // Keep the safe defaults already in state if this fails (e.g. offline).
+    }
   }
 
   void initializeWithCartItems(List<CartItemEntity> items) {
@@ -362,7 +399,10 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
           );
 
   double get shippingFee {
-    return subtotal < 500000 ? 15000 : 0;
+    if (!state.deliveryEnabled) return 0;
+    return subtotal < state.freeShippingThreshold
+        ? state.shippingFeeSetting
+        : 0;
   }
   double get discount => 0;
   double get tax => 0;
