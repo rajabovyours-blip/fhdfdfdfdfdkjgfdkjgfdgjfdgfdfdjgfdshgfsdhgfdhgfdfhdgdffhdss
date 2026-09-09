@@ -22,6 +22,42 @@ router = APIRouter()
 # Allowed order statuses
 ALLOWED_ORDER_STATUSES = {"pending", "processing", "confirmed", "completed", "delivered", "cancelled"}
 
+
+def calculate_shipping_fee(products_in_order, subtotal: float) -> float:
+    """Yetkazib berish narxini hisoblaydi.
+
+    Qoida (hech qanday narx kodda qattiq yozilmagan):
+      1. Butun tizimda yetkazib berish o'chirilgan bo'lsa   -> 0
+      2. Buyurtma summasi bepul yetkazish chegarasidan katta -> 0
+      3. Aks holda: buyurtmadagi mahsulotlar ichidagi ENG KATTA
+         delivery_price olinadi (bitta kuryer bir marta boradi).
+         has_delivery=False bo'lgan mahsulot narxga qo'shilmaydi.
+
+    Har bir mahsulotning has_delivery va delivery_price qiymatlari
+    admin panel orqali belgilanadi.
+    """
+    if not settings.DELIVERY_ENABLED:
+        return 0.0
+
+    if settings.FREE_SHIPPING_THRESHOLD > 0 and subtotal >= settings.FREE_SHIPPING_THRESHOLD:
+        return 0.0
+
+    fees = [
+        float(p.delivery_price or 0)
+        for p in products_in_order
+        if getattr(p, "has_delivery", True)
+    ]
+
+    if not fees:
+        return 0.0
+
+    max_fee = max(fees)
+    # Agar hech bir mahsulotga narx belgilanmagan bo'lsa, zaxira qiymatdan foydalanamiz
+    if max_fee <= 0:
+        return float(settings.SHIPPING_FEE or 0)
+    return max_fee
+
+
 @router.post("", response_model=APIResponse[dict])
 async def create_order(
     order_in: OrderCreate,
@@ -31,6 +67,7 @@ async def create_order(
     # Phase 8: Verify products and calculate totals server-side
     subtotal = 0.0
     items_to_create = []
+    products_in_order = []
     
     for item in order_in.items:
         result = await db.execute(select(Product).where(Product.id == item.product_id))
@@ -50,22 +87,15 @@ async def create_order(
         
         price = float(product.price)
         subtotal += price * item.quantity
+        products_in_order.append(product)
         
         items_to_create.append({
             "product_id": product.id,
             "quantity": item.quantity,
             "price_at_time": price
         })
-        
-    # Yetkazib berish narxi endi Render Environment orqali sozlanadi
-    # (DELIVERY_ENABLED, SHIPPING_FEE, FREE_SHIPPING_THRESHOLD) — kodni
-    # yoki APK'ni qayta build qilmasdan o'zgartirish mumkin.
-    if not settings.DELIVERY_ENABLED:
-        shipping_fee = 0.0
-    elif subtotal >= settings.FREE_SHIPPING_THRESHOLD:
-        shipping_fee = 0.0
-    else:
-        shipping_fee = settings.SHIPPING_FEE
+
+    shipping_fee = calculate_shipping_fee(products_in_order, subtotal)
     total = subtotal + shipping_fee
     
     order = Order(
@@ -95,6 +125,54 @@ async def create_order(
     
     return APIResponse(message="Order created successfully", data={"order_id": str(order.id)})
 
+
+class ShippingQuoteItem(PydanticBaseModel if False else object):
+    pass
+
+
+from pydantic import BaseModel as PydanticBaseModel
+
+
+class QuoteItem(PydanticBaseModel):
+    product_id: UUID
+    quantity: int = 1
+
+
+class ShippingQuoteRequest(PydanticBaseModel):
+    items: List[QuoteItem]
+
+
+@router.post("/shipping-quote", response_model=APIResponse[dict])
+async def shipping_quote(
+    payload: ShippingQuoteRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Ilova checkout ekranida KO'RSATADIGAN yetkazib berish narxini
+    serverdan so'raydi. Shu tufayli ilovada hech qanday narx qattiq
+    yozilmaydi va admin o'zgartirishi darhol ilovada ko'rinadi."""
+    subtotal = 0.0
+    products_in_order = []
+
+    for item in payload.items:
+        result = await db.execute(select(Product).where(Product.id == item.product_id))
+        product = result.scalar_one_or_none()
+        if not product:
+            continue
+        subtotal += float(product.price) * item.quantity
+        products_in_order.append(product)
+
+    shipping_fee = calculate_shipping_fee(products_in_order, subtotal)
+
+    return APIResponse(data={
+        "subtotal": subtotal,
+        "shipping_fee": shipping_fee,
+        "total": subtotal + shipping_fee,
+        "free_shipping_threshold": settings.FREE_SHIPPING_THRESHOLD,
+        "delivery_enabled": settings.DELIVERY_ENABLED,
+    })
+
+
 @router.get("", response_model=APIResponse[List[OrderModel]])
 @router.get("/my", response_model=APIResponse[List[OrderModel]])
 async def get_orders(
@@ -115,13 +193,8 @@ async def get_orders(
             .where(Order.user_id == current_user.id)
             .order_by(Order.created_at.desc())
         )
-    try:
-        orders = result.unique().scalars().all()
-        return APIResponse(data=[OrderModel.model_validate(o) for o in orders])
-    except Exception as e:
-        import traceback
-        error_msg = traceback.format_exc()
-        return APIResponse(data=[], message=f"DEBUG ERROR: {error_msg}")
+    orders = result.unique().scalars().all()
+    return APIResponse(data=[OrderModel.model_validate(o) for o in orders])
 
 @router.get("/{id}", response_model=APIResponse[OrderModel])
 async def get_order(
@@ -149,7 +222,6 @@ async def get_order(
         
     return APIResponse(data=OrderModel.model_validate(order))
 
-from pydantic import BaseModel as PydanticBaseModel
 
 class OrderStatusUpdate(PydanticBaseModel):
     status: Literal["pending", "processing", "confirmed", "completed", "delivered", "cancelled"]
