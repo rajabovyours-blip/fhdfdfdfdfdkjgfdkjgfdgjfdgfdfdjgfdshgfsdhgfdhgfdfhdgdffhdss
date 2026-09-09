@@ -16,10 +16,10 @@
 
   <div id="app">
     <div class="d-flex justify-content-between align-items-center mb-24" style="margin-bottom: 24px;">
-      <h2 style="margin: 0;">Administratorlar</h2>
+      <h2 style="margin: 0;" data-i18n="admins">Administratorlar</h2>
       <button class="btn btn-primary" id="btn-add-admin">
         <span class="material-symbols-rounded">add</span>
-        Yangi Qo'shish
+        <span data-i18n="add">Yangi Qo'shish</span>
       </button>
     </div>
 
@@ -28,16 +28,16 @@
         <table class="table">
           <thead>
             <tr>
-              <th>F.I.Sh.</th>
+              <th data-i18n="fullName">F.I.Sh.</th>
               <th>Username</th>
-              <th>Rol</th>
-              <th>Holat</th>
-              <th width="120" class="text-center">Amallar</th>
+              <th data-i18n="role">Rol</th>
+              <th data-i18n="status">Holat</th>
+              <th width="120" class="text-center" data-i18n="actions">Amallar</th>
             </tr>
           </thead>
           <tbody id="admin-list">
             <tr>
-              <td colspan="5" class="text-center">Yuklanmoqda...</td>
+              <td colspan="5" class="text-center" data-i18n="loading">Yuklanmoqda...</td>
             </tr>
           </tbody>
         </table>
@@ -49,7 +49,7 @@
   <div class="modal-overlay" id="admin-modal">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 id="modal-title" style="margin: 0;">Admin Qo'shish</h3>
+        <h3 id="modal-title" style="margin: 0;" data-i18n="add">Admin Qo'shish</h3>
         <button class="modal-close" id="btn-close-modal"><span class="material-symbols-rounded">close</span></button>
       </div>
       <div class="modal-body">
@@ -57,7 +57,7 @@
           <input type="hidden" id="admin-id">
           
           <div class="form-group">
-            <label class="form-label">F.I.Sh.</label>
+            <label class="form-label" data-i18n="fullName">F.I.Sh.</label>
             <input type="text" class="form-control" id="admin-fullname" required>
           </div>
           
@@ -67,13 +67,13 @@
           </div>
           
           <div class="form-group">
-            <label class="form-label">Parol <span id="pwd-hint" style="font-weight:normal; color:var(--text-medium); font-size:12px;"></span></label>
+            <label class="form-label" data-i18n="password">Parol <span id="pwd-hint" style="font-weight:normal; color:var(--text-medium); font-size:12px;"></span></label>
             <input type="password" class="form-control" id="admin-password">
           </div>
           
           <div class="d-flex gap-16 form-row">
             <div class="form-group w-100">
-              <label class="form-label">Rol</label>
+              <label class="form-label" data-i18n="role">Rol</label>
               <select class="form-control" id="admin-role">
                 <option value="ADMIN">ADMIN</option>
                 <option value="OWNER">OWNER</option>
@@ -83,20 +83,21 @@
             <div class="form-group w-100" id="group-active" style="display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 12px; display: none;">
               <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
                 <input type="checkbox" id="admin-active" style="width: 18px; height: 18px;">
-                <span class="form-label" style="margin:0;">Faol</span>
+                <span class="form-label" style="margin:0;" data-i18n="active">Faol</span>
               </label>
             </div>
           </div>
         </form>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-outline" id="btn-cancel-modal">Bekor qilish</button>
-        <button class="btn btn-primary" id="btn-save-admin">Saqlash</button>
+        <button class="btn btn-outline" id="btn-cancel-modal" data-i18n="cancel">Bekor qilish</button>
+        <button class="btn btn-primary" id="btn-save-admin" data-i18n="save">Saqlash</button>
       </div>
     </div>
   </div>
 
   <script src="js/config.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/layout.js"></script>
