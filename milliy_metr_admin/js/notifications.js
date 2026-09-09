@@ -37,14 +37,24 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+function targetLabel(t) {
+  const map = {
+    all: i18n.lang === 'ru' ? 'Все клиенты' : 'Barcha mijozlar',
+    users: i18n.lang === 'ru' ? 'Все клиенты' : 'Barcha mijozlar',
+    customers: i18n.lang === 'ru' ? 'Только клиенты' : 'Faqat mijozlar',
+    admins: i18n.lang === 'ru' ? 'Администраторы' : 'Adminlar',
+  };
+  return map[t] || t || '-';
+}
+
 async function loadNotifications() {
   const tbody = document.getElementById('notification-list');
   try {
-    const res = await api.get('/notifications');
+    const res = await api.get('/notifications/admin/history');
     const notifs = res.data || [];
     
     if (notifs.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="5" class="text-center">Xabarlar tarixi bo'sh</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="5" class="text-center">${i18n.t('noData')}</td></tr>`;
       return;
     }
     
@@ -61,7 +71,7 @@ async function loadNotifications() {
           <td>${imgHtml}</td>
           <td style="font-weight: 500;">${n.title || '-'}</td>
           <td style="max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${n.body || '-'}</td>
-          <td><span class="badge badge-neutral">${n.target || 'Barchaga'}</span></td>
+          <td><span class="badge badge-neutral">${targetLabel(n.target)}</span></td>
           <td>${dateStr}</td>
         </tr>
       `;
