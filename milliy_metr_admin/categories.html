@@ -16,17 +16,17 @@
 
   <div id="app">
     <div class="d-flex justify-content-between align-items-center mb-24" style="margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
-      <h2 style="margin: 0;">Kategoriyalar</h2>
+      <h2 style="margin: 0;" data-i18n="categories">Kategoriyalar</h2>
       <div style="display: flex; flex-wrap: wrap; gap: 8px;">
         <a href="#" id="btn-download-template" class="btn btn-outline" style="text-decoration: none; display: flex; align-items: center; gap: 4px;">
-          <span class="material-symbols-rounded">download</span> Shablon
+          <span class="material-symbols-rounded">download</span> <span data-i18n="template">Shablon</span>
         </a>
         <label for="excel-upload" class="btn btn-outline" style="cursor: pointer; margin: 0; display: flex; align-items: center; gap: 4px;">
-          <span class="material-symbols-rounded">upload</span> Excel orqali
+          <span class="material-symbols-rounded">upload</span> Excel
         </label>
         <input type="file" id="excel-upload" accept=".xlsx" style="display: none;">
         <button class="btn btn-primary" id="btn-add-category">
-          <span class="material-symbols-rounded">add</span> Yangi Qo'shish
+          <span class="material-symbols-rounded">add</span> <span data-i18n="add">Yangi Qo'shish</span>
         </button>
       </div>
     </div>
@@ -36,15 +36,15 @@
         <table class="table">
           <thead>
             <tr>
-              <th width="60">Rasm</th>
-              <th>Nomi (Uz)</th>
-              <th>Ota Kategoriya</th>
-              <th width="120" class="text-center">Amallar</th>
+              <th width="60" data-i18n="image">Rasm</th>
+              <th data-i18n="title">Nomi</th>
+              <th data-i18n="categories">Ota Kategoriya</th>
+              <th width="120" class="text-center" data-i18n="actions">Amallar</th>
             </tr>
           </thead>
           <tbody id="category-list">
             <tr>
-              <td colspan="4" class="text-center">Yuklanmoqda...</td>
+              <td colspan="4" class="text-center" data-i18n="loading">Yuklanmoqda...</td>
             </tr>
           </tbody>
         </table>
@@ -56,7 +56,7 @@
   <div class="modal-overlay" id="category-modal">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 id="modal-title" style="margin: 0;">Kategoriya Qo'shish</h3>
+        <h3 id="modal-title" style="margin: 0;" data-i18n="add">Kategoriya Qo'shish</h3>
         <button class="modal-close" id="btn-close-modal"><span class="material-symbols-rounded">close</span></button>
       </div>
       <div class="modal-body">
@@ -79,7 +79,7 @@
           </div>
           
           <div class="form-group">
-            <label class="form-label">Ota Kategoriya</label>
+            <label class="form-label" data-i18n="categories">Ota Kategoriya</label>
             <select class="form-control" id="cat-parent">
               <option value="">(Yo'q - Asosiy Kategoriya)</option>
               <!-- Filled via JS -->
@@ -87,7 +87,7 @@
           </div>
           
           <div class="form-group">
-            <label class="form-label">Rasm yuklash</label>
+            <label class="form-label" data-i18n="image">Rasm yuklash</label>
             <div class="d-flex gap-16 align-items-center form-row">
               <img id="cat-img-preview" src="" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; background: var(--color-surface-variant); display: none;">
               <input type="file" id="cat-img-upload" class="form-control" accept="image/*" style="padding-top: 10px;">
@@ -97,13 +97,14 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-outline" id="btn-cancel-modal">Bekor qilish</button>
-        <button class="btn btn-primary" id="btn-save-category">Saqlash</button>
+        <button class="btn btn-outline" id="btn-cancel-modal" data-i18n="cancel">Bekor qilish</button>
+        <button class="btn btn-primary" id="btn-save-category" data-i18n="save">Saqlash</button>
       </div>
     </div>
   </div>
 
   <script src="js/config.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/layout.js"></script>
