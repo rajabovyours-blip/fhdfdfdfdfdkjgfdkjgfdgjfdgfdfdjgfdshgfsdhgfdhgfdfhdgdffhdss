@@ -6,7 +6,12 @@ class Settings(BaseSettings):
     PUBLIC_BACKEND_URL: str = "https://milliymetr-backend.onrender.com"
     SECRET_KEY: str = "super_secret_key_change_in_production"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8  # 8 days
-    
+
+    # XAVFSIZLIK: /docs, /redoc va /openapi.json sahifalari. Production'da
+    # HAR DOIM false bo'lishi kerak — aks holda istalgan odam backend
+    # manzilining oxiriga /docs qo'shib, barcha API'larni ko'ra oladi.
+    ENABLE_API_DOCS: bool = False
+
     # Database
     POSTGRES_SERVER: str = "localhost"
     POSTGRES_USER: str = "postgres"
@@ -36,10 +41,15 @@ class Settings(BaseSettings):
     PAYME_MERCHANT_ID: str = ""
     PAYME_KEY: str = ""
 
-    # Yetkazib berish (shipping) sozlamalari — Render Environment orqali o'zgartiriladi,
-    # kod yoki APK'ni qayta build qilish shart emas.
+    # ── Yetkazib berish (shipping) ────────────────────────────────
+    # Asosiy narx endi HAR BIR MAHSULOTGA admin panelda belgilanadi
+    # (products.has_delivery / products.delivery_price).
+    # Quyidagilar faqat umumiy qoidalar:
+    #   DELIVERY_ENABLED        — butun tizim bo'yicha yetkazib berishni o'chirish
+    #   FREE_SHIPPING_THRESHOLD — shu summadan katta buyurtmaga yetkazish bepul
+    #   SHIPPING_FEE            — mahsulotda narx belgilanmagan bo'lsa, zaxira qiymat
     DELIVERY_ENABLED: bool = True
-    SHIPPING_FEE: float = 15000.0
+    SHIPPING_FEE: float = 0.0
     FREE_SHIPPING_THRESHOLD: float = 500000.0
 
     DATABASE_URL: str | None = None
