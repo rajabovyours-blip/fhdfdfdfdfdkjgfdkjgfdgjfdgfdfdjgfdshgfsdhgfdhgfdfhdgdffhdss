@@ -294,10 +294,16 @@ async def payme_webhook(request: Request, db: AsyncSession = Depends(get_db)):
     auth_header = request.headers.get("Authorization", "")
     provided = auth_header.replace("Basic ", "")
 
-    # Prod kaliti, sandbox kaliti va ChangePassword orqali o'rnatilgan
-    # parol — uchalasi ham qabul qilinadi.
+    # ChangePassword orqali parol o'rnatilgan bo'lsa — FAQAT o'sha qabul
+    # qilinadi. Payme talabi shu: parol almashgach eskisi darhol ishlamay
+    # qolishi kerak, aks holda o'g'irlangan eski kalit abadiy amal qiladi.
+    # Parolni admin panel > Sozlamalar orqali tiklash mumkin.
     stored = await _get_stored_payme_key(db)
-    accepted_keys = [k for k in (settings.PAYME_KEY, settings.PAYME_TEST_KEY, stored) if k]
+    if stored:
+        accepted_keys = [stored]
+    else:
+        accepted_keys = [k for k in (settings.PAYME_KEY, settings.PAYME_TEST_KEY) if k]
+
     authorized = any(
         hmac.compare_digest(
             provided,
@@ -610,7 +616,7 @@ async def _payme_get_statement(req_id, params, body, db):
 
 async def _payme_change_password(req_id, params, body, db):
     """Kassa parolini o'zgartiradi. Yangi parol bazada saqlanadi va
-    webhook autentifikatsiyasida qabul qilinadi."""
+    shundan keyin FAQAT u qabul qilinadi (eskisi darhol bekor bo'ladi)."""
     new_password = params.get("password")
 
     if not new_password or not isinstance(new_password, str) or len(new_password.strip()) < 8:
