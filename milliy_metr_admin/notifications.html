@@ -15,30 +15,30 @@
 <body>
 
   <div id="app">
-    <div class="d-flex justify-content-between align-items-center mb-24" style="margin-bottom: 24px;">
-      <h2 style="margin: 0;">Push Bildirishnomalar</h2>
+    <div class="d-flex justify-content-between align-items-center mb-24" style="margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+      <h2 style="margin: 0;" data-i18n="notifications">Push Bildirishnomalar</h2>
       <button class="btn btn-primary" id="btn-add-notification">
         <span class="material-symbols-rounded">send</span>
-        Xabar Yuborish
+        <span data-i18n="notifications">Xabar Yuborish</span>
       </button>
     </div>
 
     <div class="card">
-      <h3 style="margin-bottom: 16px;">Yuborilgan xabarlar tarixi</h3>
+      <h3 style="margin-bottom: 16px;" data-i18n="recentOrders">Yuborilgan xabarlar tarixi</h3>
       <div class="table-responsive">
         <table class="table">
           <thead>
             <tr>
-              <th>ID / Rasm</th>
-              <th>Sarlavha</th>
-              <th>Matn (Body)</th>
+              <th data-i18n="image">ID / Rasm</th>
+              <th data-i18n="title">Sarlavha</th>
+              <th>Matn</th>
               <th>Maqsad</th>
-              <th>Sana</th>
+              <th data-i18n="date">Sana</th>
             </tr>
           </thead>
           <tbody id="notification-list">
             <tr>
-              <td colspan="5" class="text-center">Yuklanmoqda...</td>
+              <td colspan="5" class="text-center" data-i18n="loading">Yuklanmoqda...</td>
             </tr>
           </tbody>
         </table>
@@ -50,13 +50,13 @@
   <div class="modal-overlay" id="notification-modal">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 id="modal-title" style="margin: 0;">Push Xabar Yuborish</h3>
+        <h3 id="modal-title" style="margin: 0;" data-i18n="notifications">Push Xabar Yuborish</h3>
         <button class="modal-close" id="btn-close-modal"><span class="material-symbols-rounded">close</span></button>
       </div>
       <div class="modal-body">
         <form id="notification-form">
           <div class="form-group">
-            <label class="form-label">Sarlavha</label>
+            <label class="form-label" data-i18n="title">Sarlavha</label>
             <input type="text" class="form-control" id="notif-title" required>
           </div>
           
@@ -66,7 +66,7 @@
           </div>
           
           <div class="form-group">
-            <label class="form-label">Rasm yuklash (Ixtiyoriy)</label>
+            <label class="form-label" data-i18n="image">Rasm yuklash (Ixtiyoriy)</label>
             <div class="d-flex gap-16 align-items-center form-row">
               <img id="notif-img-preview" src="" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; background: var(--color-surface-variant); display: none;">
               <input type="file" id="notif-img-upload" class="form-control" accept="image/*" style="padding-top: 10px;">
@@ -75,17 +75,16 @@
           </div>
           
           <div class="form-group">
-            <label class="form-label">Maqsad (Target)</label>
+            <label class="form-label">Maqsad</label>
             <select class="form-control" id="notif-target">
-              <option value="all">Barcha foydalanuvchilarga</option>
-              <option value="customers">Faqat mijozlarga</option>
-              <option value="sellers">Faqat sotuvchilarga (Vendor)</option>
+              <option value="all">Barcha mijozlarga</option>
+              <option value="admins" data-i18n="admins">Faqat adminlarga</option>
             </select>
           </div>
         </form>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-outline" id="btn-cancel-modal">Bekor qilish</button>
+        <button class="btn btn-outline" id="btn-cancel-modal" data-i18n="cancel">Bekor qilish</button>
         <button class="btn btn-primary" id="btn-save-notif">
           <span class="material-symbols-rounded">send</span>
           Yuborish
@@ -95,6 +94,7 @@
   </div>
 
   <script src="js/config.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/layout.js"></script>
