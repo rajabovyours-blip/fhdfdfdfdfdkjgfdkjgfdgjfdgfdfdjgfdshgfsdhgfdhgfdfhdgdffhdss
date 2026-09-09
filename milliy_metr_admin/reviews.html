@@ -22,7 +22,7 @@
 
   <div id="app">
     <div class="d-flex justify-content-between align-items-center mb-24">
-      <h2 style="margin: 0;">Sharhlar (Reviews)</h2>
+      <h2 style="margin: 0;" data-i18n="reviews">Sharhlar</h2>
     </div>
 
     <div class="card">
@@ -30,17 +30,17 @@
         <table class="table">
           <thead>
             <tr>
-              <th>Sana</th>
-              <th>Mahsulot</th>
-              <th>Mijoz</th>
+              <th data-i18n="date">Sana</th>
+              <th data-i18n="products">Mahsulot</th>
+              <th data-i18n="customer">Mijoz</th>
               <th width="100">Baho</th>
-              <th>Sharh matni</th>
-              <th width="80" class="text-center">Amallar</th>
+              <th data-i18n="reviews">Sharh matni</th>
+              <th width="80" class="text-center" data-i18n="actions">Amallar</th>
             </tr>
           </thead>
           <tbody id="reviews-list">
             <tr>
-              <td colspan="6" class="text-center">Yuklanmoqda...</td>
+              <td colspan="6" class="text-center" data-i18n="loading">Yuklanmoqda...</td>
             </tr>
           </tbody>
         </table>
@@ -49,6 +49,7 @@
   </div>
 
   <script src="js/config.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/layout.js"></script>
