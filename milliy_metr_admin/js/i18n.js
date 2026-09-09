@@ -126,6 +126,7 @@ const i18n = {
       updated: 'Yangilandi',
       rawPayload: "Qo'shimcha ma'lumot",
       noResults: 'Natija topilmadi',
+      template: 'Andoza',
     },
 
     ru: {
@@ -242,6 +243,7 @@ const i18n = {
       updated: 'Обновлено',
       rawPayload: 'Доп. информация',
       noResults: 'Ничего не найдено',
+      template: 'Шаблон',
     },
   },
 
