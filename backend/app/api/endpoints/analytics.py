@@ -6,7 +6,7 @@ Frontend faqat chizadi — matematika bu yerda.
 
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func, and_, case
+from sqlalchemy import select, func, and_, case, cast, Text
 from datetime import datetime, date, timedelta
 from typing import Optional
 
@@ -30,6 +30,14 @@ def _pct_change(current: float, previous: float) -> Optional[float]:
 
 
 def _localized(name_json, lang: str = "uz") -> str:
+    # Postgres json ustuni GROUP BY qila olmagani uchun uni matn sifatida
+    # olamiz — shuning uchun bu yerda satrni ham qayta o'girish kerak.
+    if isinstance(name_json, str):
+        try:
+            import json as _json
+            name_json = _json.loads(name_json)
+        except Exception:
+            return name_json
     if isinstance(name_json, dict):
         return name_json.get(lang) or name_json.get("uz") or name_json.get("ru") or next(iter(name_json.values()), "—")
     return str(name_json or "—")
@@ -150,18 +158,20 @@ async def get_dashboard_analytics(
     ]
 
     # ── 7. Eng ko'p daromad keltirgan mahsulotlar (90 kun) ────────────
+    # DIQQAT: Postgres `json` ustuni bo'yicha GROUP BY qila olmaydi
+    # (tenglik operatori yo'q), shuning uchun nomni matnga o'giramiz.
     top_start = now - timedelta(days=90)
     top_q = (
         select(
             Product.id,
-            Product.name,
+            func.min(cast(Product.name, Text)).label("name"),
             func.sum(OrderItem.quantity).label("qty"),
             func.sum(OrderItem.quantity * OrderItem.price_at_time).label("revenue"),
         )
         .join(OrderItem, OrderItem.product_id == Product.id)
         .join(Order, Order.id == OrderItem.order_id)
         .where(and_(Order.created_at >= top_start, paid_filter))
-        .group_by(Product.id, Product.name)
+        .group_by(Product.id)
         .order_by(func.sum(OrderItem.quantity * OrderItem.price_at_time).desc())
         .limit(10)
     )
@@ -179,14 +189,14 @@ async def get_dashboard_analytics(
     cat_q = (
         select(
             Category.id,
-            Category.name,
+            func.min(cast(Category.name, Text)).label("name"),
             func.sum(OrderItem.quantity * OrderItem.price_at_time).label("revenue"),
         )
         .join(Product, Product.category_id == Category.id)
         .join(OrderItem, OrderItem.product_id == Product.id)
         .join(Order, Order.id == OrderItem.order_id)
         .where(and_(Order.created_at >= top_start, paid_filter))
-        .group_by(Category.id, Category.name)
+        .group_by(Category.id)
         .order_by(func.sum(OrderItem.quantity * OrderItem.price_at_time).desc())
         .limit(8)
     )
@@ -228,7 +238,7 @@ async def get_dashboard_analytics(
             "id": str(order.id),
             "orderNumber": order.order_number,
             "customerName": (user.full_name if user else None) or "—",
-            "customerPhone": (user.phone_number if user and hasattr(user, "phone_number") else None) or "",
+            "customerPhone": (user.phone if user else None) or "",
             "total": float(order.total or 0),
             "status": (order.status or "").lower(),
             "paymentStatus": (order.payment_status or "").lower(),
