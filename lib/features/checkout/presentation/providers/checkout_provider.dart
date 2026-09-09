@@ -44,9 +44,11 @@ class CheckoutState {
   final String notes;
   final bool selectAll;
   final OrderEntity? order;
-  final bool deliveryEnabled;
-  final double shippingFeeSetting;
-  final double freeShippingThreshold;
+
+  /// Yetkazib berish narxi — HAR DOIM serverdan keladi
+  /// (POST /orders/shipping-quote). Kodda hech qanday narx yozilmagan.
+  final double shippingFee;
+  final bool isQuoting;
 
   const CheckoutState({
     this.isLoading = false,
@@ -61,9 +63,8 @@ class CheckoutState {
     this.notes = '',
     this.selectAll = true,
     this.order,
-    this.deliveryEnabled = true,
-    this.shippingFeeSetting = 15000,
-    this.freeShippingThreshold = 500000,
+    this.shippingFee = 0,
+    this.isQuoting = false,
   });
 
   CheckoutState copyWith({
@@ -79,9 +80,8 @@ class CheckoutState {
     String? notes,
     bool? selectAll,
     OrderEntity? order,
-    bool? deliveryEnabled,
-    double? shippingFeeSetting,
-    double? freeShippingThreshold,
+    double? shippingFee,
+    bool? isQuoting,
   }) {
     return CheckoutState(
       isLoading: isLoading ?? this.isLoading,
@@ -96,10 +96,8 @@ class CheckoutState {
       notes: notes ?? this.notes,
       selectAll: selectAll ?? this.selectAll,
       order: order ?? this.order,
-      deliveryEnabled: deliveryEnabled ?? this.deliveryEnabled,
-      shippingFeeSetting: shippingFeeSetting ?? this.shippingFeeSetting,
-      freeShippingThreshold:
-          freeShippingThreshold ?? this.freeShippingThreshold,
+      shippingFee: shippingFee ?? this.shippingFee,
+      isQuoting: isQuoting ?? this.isQuoting,
     );
   }
 }
@@ -111,29 +109,28 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
   CheckoutNotifier(this.repository, this.ref) : super(const CheckoutState());
 
   Future<void> load() async {
-    final defaultPaymentMethod = PreferencesManager.getString('selected_payment_method') ?? 'payme';
-    
+    final defaultPaymentMethod =
+        PreferencesManager.getString('selected_payment_method') ?? 'payme';
+
     state = state.copyWith(
-      isLoading: true, 
+      isLoading: true,
       error: null,
       paymentMethod: defaultPaymentMethod,
     );
-    
+
     // Load local addresses
-    final localAddressesStrs = PreferencesManager.getStringList('local_addresses');
-    final localAddresses = localAddressesStrs.map((s) => AddressEntity.fromJson(jsonDecode(s))).toList();
+    final localAddressesStrs =
+        PreferencesManager.getStringList('local_addresses');
+    final localAddresses = localAddressesStrs
+        .map((s) => AddressEntity.fromJson(jsonDecode(s)))
+        .toList();
 
     final addressResult = await repository.getAddresses();
 
-    // Fetch the current shipping settings from the backend so the shown
-    // price always matches what will actually be charged, without ever
-    // needing a new app build when it changes.
-    _loadShippingSettings();
-
     addressResult.fold(
       (addressFailure) {
-        final defaultAddress = localAddresses.where((a) => a.isDefault).isNotEmpty 
-            ? localAddresses.where((a) => a.isDefault).first 
+        final defaultAddress = localAddresses.where((a) => a.isDefault).isNotEmpty
+            ? localAddresses.where((a) => a.isDefault).first
             : (localAddresses.isNotEmpty ? localAddresses.first : null);
         state = state.copyWith(
           isLoading: false,
@@ -154,29 +151,48 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
         );
       },
     );
+
+    await refreshShippingQuote();
   }
 
-  Future<void> _loadShippingSettings() async {
+  /// Yetkazib berish narxini serverdan so'raydi. Narx har bir mahsulotga
+  /// admin panelda belgilangan qiymatlardan hisoblanadi, shuning uchun
+  /// admin o'zgartirishi darhol ilovada ko'rinadi — APK qayta build
+  /// qilish shart emas.
+  Future<void> refreshShippingQuote() async {
+    final selected = state.cartItems.where((i) => i.isSelected).toList();
+    if (selected.isEmpty) {
+      state = state.copyWith(shippingFee: 0, isQuoting: false);
+      return;
+    }
+
+    state = state.copyWith(isQuoting: true);
     try {
       final dio = ref.read(dioProvider);
-      final response = await dio.get('/settings/shipping');
+      final response = await dio.post(
+        '/orders/shipping-quote',
+        data: {
+          'items': selected
+              .map((i) => {
+                    'product_id': i.product.id,
+                    'quantity': i.quantity,
+                  })
+              .toList(),
+        },
+      );
       final data = response.data['data'];
-      if (data != null) {
-        state = state.copyWith(
-          deliveryEnabled: data['deliveryEnabled'] as bool? ?? true,
-          shippingFeeSetting:
-              (data['shippingFee'] as num?)?.toDouble() ?? 15000,
-          freeShippingThreshold:
-              (data['freeShippingThreshold'] as num?)?.toDouble() ?? 500000,
-        );
-      }
+      final fee = (data?['shippingFee'] ?? data?['shipping_fee'] ?? 0) as num;
+      state = state.copyWith(shippingFee: fee.toDouble(), isQuoting: false);
     } catch (_) {
-      // Keep the safe defaults already in state if this fails (e.g. offline).
+      // Server javob bermasa, 0 ko'rsatamiz — noto'g'ri raqam ko'rsatishdan
+      // ko'ra ko'rsatmagan yaxshi. Haqiqiy summa baribir serverda hisoblanadi.
+      state = state.copyWith(shippingFee: 0, isQuoting: false);
     }
   }
 
   void initializeWithCartItems(List<CartItemEntity> items) {
     state = state.copyWith(cartItems: items);
+    refreshShippingQuote();
   }
 
   void toggleSelectAll(bool value) {
@@ -186,6 +202,7 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
         for (final item in state.cartItems) item.copyWith(isSelected: value),
       ],
     );
+    refreshShippingQuote();
   }
 
   void toggleItemSelection(String id, bool value) {
@@ -195,6 +212,7 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
           item.id == id ? item.copyWith(isSelected: value) : item,
       ],
     );
+    refreshShippingQuote();
   }
 
   void updateQuantity(String id, int quantity) {
@@ -204,12 +222,14 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
           item.id == id ? item.copyWith(quantity: quantity) : item,
       ],
     );
+    refreshShippingQuote();
   }
 
   void removeItem(String id) {
     state = state.copyWith(
       cartItems: state.cartItems.where((item) => item.id != id).toList(),
     );
+    refreshShippingQuote();
   }
 
   void saveForLater(String id) {
@@ -220,7 +240,6 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
       ],
     );
   }
-
 
   void deleteAddress(String id) {
     final updated = state.addresses.where((a) => a.id != id).toList();
@@ -234,51 +253,31 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
 
   void setDefaultAddress(String id) {
     final updated = state.addresses.map<AddressEntity>((a) {
-      if (a.id == id) {
-        return AddressEntity(
-          id: a.id,
-          label: a.label,
-          region: a.region,
-          district: a.district,
-          street: a.street,
-          building: a.building,
-          apartment: a.apartment,
-          zipCode: a.zipCode,
-          phone: a.phone,
-          notes: a.notes,
-          isDefault: true,
-          isCurrentLocation: a.isCurrentLocation,
-          addressType: a.addressType,
-        );
-      } else {
-        return AddressEntity(
-          id: a.id,
-          label: a.label,
-          region: a.region,
-          district: a.district,
-          street: a.street,
-          building: a.building,
-          apartment: a.apartment,
-          zipCode: a.zipCode,
-          phone: a.phone,
-          notes: a.notes,
-          isDefault: false,
-          isCurrentLocation: a.isCurrentLocation,
-          addressType: a.addressType,
-        );
-      }
+      return AddressEntity(
+        id: a.id,
+        label: a.label,
+        region: a.region,
+        district: a.district,
+        street: a.street,
+        building: a.building,
+        apartment: a.apartment,
+        zipCode: a.zipCode,
+        phone: a.phone,
+        notes: a.notes,
+        isDefault: a.id == id,
+        isCurrentLocation: a.isCurrentLocation,
+        addressType: a.addressType,
+      );
     }).toList();
     state = state.copyWith(addresses: updated);
   }
 
-  Future<bool> addNewAddress(String label, String region, String district, String street) async {
+  Future<bool> addNewAddress(
+      String label, String region, String district, String street) async {
     state = state.copyWith(isLoading: true);
 
-    // Check for duplicates
     final bool isDuplicate = state.addresses.any((a) =>
-        a.region == region &&
-        a.district == district &&
-        a.street == street,);
+        a.region == region && a.district == district && a.street == street);
 
     if (isDuplicate) {
       state = state.copyWith(
@@ -287,7 +286,7 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
       );
       return false;
     }
-    
+
     final newAddress = AddressEntity(
       id: 'local_${DateTime.now().millisecondsSinceEpoch}',
       label: label,
@@ -303,18 +302,12 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
       isCurrentLocation: false,
       addressType: 'local',
     );
-    
-    final localStrs = List<String>.from(PreferencesManager.getStringList('local_addresses'));
-    
-    // Check for duplicates
-    final bool alreadyExists = state.addresses.any((a) => 
-        a.street == street && a.region == region && a.district == district,);
-    
-    if (!alreadyExists) {
-      localStrs.add(jsonEncode(newAddress.toJson()));
-      await PreferencesManager.setStringList('local_addresses', localStrs);
-    }
-    
+
+    final localStrs =
+        List<String>.from(PreferencesManager.getStringList('local_addresses'));
+    localStrs.add(jsonEncode(newAddress.toJson()));
+    await PreferencesManager.setStringList('local_addresses', localStrs);
+
     try {
       final dio = ref.read(dioProvider);
       final landmark = '$region, $district';
@@ -332,7 +325,7 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
     } catch (e) {
       // Remote sync fails, but local persists
     }
-    
+
     await load();
     return true;
   }
@@ -398,12 +391,8 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
             (sum, item) => sum + (item.product.price * item.quantity),
           );
 
-  double get shippingFee {
-    if (!state.deliveryEnabled) return 0;
-    return subtotal < state.freeShippingThreshold
-        ? state.shippingFeeSetting
-        : 0;
-  }
+  /// Serverdan kelgan narx — kodda hech qanday raqam qattiq yozilmagan.
+  double get shippingFee => state.shippingFee;
   double get discount => 0;
   double get tax => 0;
   double get total => subtotal + shippingFee;
@@ -424,11 +413,27 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
     } catch (_) {}
   }
 
+  /// Buyurtma HAQIQATAN to'langanmi — buni faqat backend aytadi.
+  /// To'lov tizimidan qaytgan URL hech qachon to'lov dalili emas.
+  Future<bool> isOrderPaid(String orderId) async {
+    try {
+      final dio = ref.read(dioProvider);
+      final response = await dio.get('/orders/$orderId');
+      final data = response.data['data'];
+      final status =
+          (data?['paymentStatus'] ?? data?['payment_status'] ?? '').toString();
+      return status.toLowerCase() == 'paid';
+    } catch (_) {
+      return false;
+    }
+  }
+
   /// Process payment and get checkout URL
   Future<String?> processPaymentUrl(String orderId, String paymentMethod) async {
     try {
       final paymentRepo = ref.read(paymentRepositoryProvider);
-      final result = await paymentRepo.processPayment(orderId, paymentMethod.toLowerCase());
+      final result = await paymentRepo.processPayment(
+          orderId, paymentMethod.toLowerCase());
       return result.fold(
         (failure) => null,
         (url) => url,
