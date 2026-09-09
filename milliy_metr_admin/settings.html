@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="css/style.css">
 
   <style>
-    .settings-card { max-width: 640px; padding: 24px; }
+    .settings-card { max-width: 640px; padding: 24px; margin-bottom: 20px; }
     .settings-row { margin-bottom: 20px; }
     .settings-row label { display:block; font-weight:600; font-size:14px; margin-bottom:6px; }
     .settings-hint { font-size:12px; color: var(--color-text-medium, #6b7280); margin-top:6px; line-height:1.5; }
@@ -55,6 +55,25 @@
       </div>
 
       <button class="btn" id="btn-save-settings" data-i18n="save">Saqlash</button>
+    </div>
+
+    <h2 style="margin:32px 0 20px; font-size:20px;">Payme</h2>
+
+    <div class="card settings-card">
+      <div class="settings-row">
+        <label>Kassa paroli holati</label>
+        <span class="badge badge-neutral" id="payme-key-state">—</span>
+        <div class="settings-hint">
+          Payme <code>ChangePassword</code> orqali parolni almashtirsa, yangi parol shu yerda
+          saqlanadi va faqat u qabul qilinadi. Agar aloqa uzilib qolsa yoki sertifikatsiya
+          paytida parol chalkashsa, quyidagi tugma bilan Render sozlamasidagi kalitga qaytaring.
+        </div>
+      </div>
+
+      <button class="btn btn-outline" id="btn-reset-payme">
+        <span class="material-symbols-rounded" style="font-size:18px;">restart_alt</span>
+        Payme parolini tiklash
+      </button>
     </div>
   </div>
 
