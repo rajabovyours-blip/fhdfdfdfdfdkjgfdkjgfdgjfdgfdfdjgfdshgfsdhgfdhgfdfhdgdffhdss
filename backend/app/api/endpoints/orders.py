@@ -2,10 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update
 from sqlalchemy.orm import joinedload
+from pydantic import BaseModel as PydanticBaseModel
 from typing import List, Literal
 from uuid import UUID
 import uuid
-from enum import Enum as PyEnum
 
 from app.db.session import get_db
 from app.models.order import Order, OrderItem
@@ -27,7 +27,7 @@ def calculate_shipping_fee(products_in_order, subtotal: float) -> float:
     """Yetkazib berish narxini hisoblaydi.
 
     Qoida (hech qanday narx kodda qattiq yozilmagan):
-      1. Butun tizimda yetkazib berish o'chirilgan bo'lsa   -> 0
+      1. Butun tizimda yetkazib berish o'chirilgan bo'lsa    -> 0
       2. Buyurtma summasi bepul yetkazish chegarasidan katta -> 0
       3. Aks holda: buyurtmadagi mahsulotlar ichidagi ENG KATTA
          delivery_price olinadi (bitta kuryer bir marta boradi).
@@ -58,21 +58,34 @@ def calculate_shipping_fee(products_in_order, subtotal: float) -> float:
     return max_fee
 
 
+class QuoteItem(PydanticBaseModel):
+    product_id: UUID
+    quantity: int = 1
+
+
+class ShippingQuoteRequest(PydanticBaseModel):
+    items: List[QuoteItem]
+
+
+class OrderStatusUpdate(PydanticBaseModel):
+    status: Literal["pending", "processing", "confirmed", "completed", "delivered", "cancelled"]
+
+
 @router.post("", response_model=APIResponse[dict])
 async def create_order(
     order_in: OrderCreate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    # Phase 8: Verify products and calculate totals server-side
+    # Verify products and calculate totals server-side
     subtotal = 0.0
     items_to_create = []
     products_in_order = []
-    
+
     for item in order_in.items:
         result = await db.execute(select(Product).where(Product.id == item.product_id))
         product = result.scalar_one_or_none()
-        
+
         if not product:
             raise HTTPException(status_code=404, detail=f"Product {item.product_id} not found")
         stmt = (
@@ -84,11 +97,11 @@ async def create_order(
         res = await db.execute(stmt)
         if res.rowcount == 0:
             raise HTTPException(status_code=400, detail=f"Insufficient stock for {product.name.get('uz', product.name.get('en', 'product'))}")
-        
+
         price = float(product.price)
         subtotal += price * item.quantity
         products_in_order.append(product)
-        
+
         items_to_create.append({
             "product_id": product.id,
             "quantity": item.quantity,
@@ -97,7 +110,7 @@ async def create_order(
 
     shipping_fee = calculate_shipping_fee(products_in_order, subtotal)
     total = subtotal + shipping_fee
-    
+
     order = Order(
         user_id=current_user.id,
         order_number=f"ORD-{uuid.uuid4().hex[:8].upper()}",
@@ -110,8 +123,8 @@ async def create_order(
         customer_notes=order_in.customer_notes
     )
     db.add(order)
-    await db.flush() # Get order ID
-    
+    await db.flush()  # Get order ID
+
     for item_data in items_to_create:
         order_item = OrderItem(
             order_id=order.id,
@@ -120,26 +133,10 @@ async def create_order(
             price_at_time=item_data["price_at_time"]
         )
         db.add(order_item)
-        
+
     await db.commit()
-    
+
     return APIResponse(message="Order created successfully", data={"order_id": str(order.id)})
-
-
-class ShippingQuoteItem(PydanticBaseModel if False else object):
-    pass
-
-
-from pydantic import BaseModel as PydanticBaseModel
-
-
-class QuoteItem(PydanticBaseModel):
-    product_id: UUID
-    quantity: int = 1
-
-
-class ShippingQuoteRequest(PydanticBaseModel):
-    items: List[QuoteItem]
 
 
 @router.post("/shipping-quote", response_model=APIResponse[dict])
@@ -196,6 +193,7 @@ async def get_orders(
     orders = result.unique().scalars().all()
     return APIResponse(data=[OrderModel.model_validate(o) for o in orders])
 
+
 @router.get("/{id}", response_model=APIResponse[OrderModel])
 async def get_order(
     id: UUID,
@@ -216,15 +214,12 @@ async def get_order(
             .where(Order.id == id, Order.user_id == current_user.id)
         )
     order = result.unique().scalar_one_or_none()
-    
+
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
-        
+
     return APIResponse(data=OrderModel.model_validate(order))
 
-
-class OrderStatusUpdate(PydanticBaseModel):
-    status: Literal["pending", "processing", "confirmed", "completed", "delivered", "cancelled"]
 
 @router.patch("/{id}/status", response_model=APIResponse[dict])
 async def update_order_status(
@@ -239,20 +234,21 @@ async def update_order_status(
         .where(Order.id == id)
     )
     order = result.unique().scalar_one_or_none()
-    
+
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
-    
+
     old_status = order.status
     order.status = payload.status
-    
+
     # If cancelling, restore stock
     if payload.status.lower() == "cancelled" and old_status.lower() != "cancelled":
         await _restore_order_stock(order, db)
-    
+
     await db.commit()
-    
+
     return APIResponse(message="Order status updated", data={"status": order.status})
+
 
 @router.put("/{id}/cancel", response_model=APIResponse[dict])
 async def cancel_order(
@@ -266,20 +262,20 @@ async def cancel_order(
         .where(Order.id == id, Order.user_id == current_user.id)
     )
     order = result.unique().scalar_one_or_none()
-    
+
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
-        
+
     if order.status.lower() != 'pending':
         raise HTTPException(status_code=400, detail="Only pending orders can be cancelled")
-        
+
     order.status = "Cancelled"
-    
+
     # Restore stock for cancelled order
     await _restore_order_stock(order, db)
-    
+
     await db.commit()
-    
+
     return APIResponse(message="Order cancelled successfully", data={"status": order.status})
 
 
