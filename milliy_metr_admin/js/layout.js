@@ -23,6 +23,7 @@ const layout = {
       { href: 'notifications.html', icon: 'notifications', key: 'notifications', match: 'notification' },
       { href: 'payments.html', icon: 'payments', key: 'payments', match: 'payment' },
       { href: 'admin-users.html', icon: 'admin_panel_settings', key: 'admins', match: 'admin-users' },
+      { href: 'settings.html', icon: 'settings', key: 'settings', match: 'settings' },
     ];
 
     const navHTML = navItems.map((item) => {
