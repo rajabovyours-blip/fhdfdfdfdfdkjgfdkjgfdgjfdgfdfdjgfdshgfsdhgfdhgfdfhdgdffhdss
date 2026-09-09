@@ -147,14 +147,8 @@ _RETURN_PAGE = """
 async def payment_return_page(order_id: str = None, db: AsyncSession = Depends(get_db)):
     """To'lov tizimi to'lovdan keyin shu manzilga qaytaradi.
 
-    MUHIM: bu sahifa haqiqiy holatni bazadan tekshiradi. Ilgari u
-    har doim "To'lov yakunlandi" deb yozardi — pul yechilmagan bo'lsa
-    ham. Endi holat faqat provayder webhook'i tasdiqlagandan keyin
-    "to'landi" deb ko'rsatiladi.
-
-    Ilova bu sahifani ko'rsatmaydi: in-app webview shu manzilni
-    ushlab, oynani yopadi va holatni /payments/status/{id} orqali
-    qayta tekshiradi.
+    Bu sahifa haqiqiy holatni bazadan tekshiradi — hech qachon
+    "to'landi" deb yolg'on gapirmaydi.
     """
     fallback = HTMLResponse(_RETURN_PAGE.format(
         icon="&#8505;",
@@ -256,6 +250,8 @@ PAYME_ERRORS = {
     "ACCOUNT_NOT_FOUND": -31050,
 }
 
+PAYME_KEY_SETTING = "payme_key_override"
+
 
 def _payme_error(id_, code, message_uz, message_ru, message_en):
     return JSONResponse(content={
@@ -275,6 +271,18 @@ def _now_ms():
     return int(datetime.utcnow().timestamp() * 1000)
 
 
+async def _get_stored_payme_key(db) -> str:
+    """ChangePassword orqali o'rnatilgan parolni o'qiydi (bo'lmasa bo'sh)."""
+    try:
+        from app.models.app_settings import AppSetting
+        row = (await db.execute(
+            select(AppSetting).where(AppSetting.key == PAYME_KEY_SETTING)
+        )).scalar_one_or_none()
+        return row.value if row and row.value else ""
+    except Exception:
+        return ""
+
+
 @router.post("/payme/webhook")
 async def payme_webhook(request: Request, db: AsyncSession = Depends(get_db)):
     body = await request.json()
@@ -282,15 +290,14 @@ async def payme_webhook(request: Request, db: AsyncSession = Depends(get_db)):
     method = body.get("method")
     params = body.get("params", {})
 
-    # 1. Auth check
     auth_header = request.headers.get("Authorization", "")
     provided = auth_header.replace("Basic ", "")
 
-    # Prod va sandbox kalitlarining IKKALASI ham qabul qilinadi.
-    # Shu tufayli Payme'ning sandbox sertifikatsiyasini o'tkazish uchun
-    # production sozlamasini o'chirish SHART EMAS. Test tugagach
-    # PAYME_TEST_KEY ni bo'sh qoldirish kifoya.
-    accepted_keys = [k for k in (settings.PAYME_KEY, settings.PAYME_TEST_KEY) if k]
+    # Prod kaliti, sandbox kaliti va ChangePassword orqali o'rnatilgan
+    # parol — uchalasi ham qabul qilinadi. Shu tufayli sertifikatsiya
+    # production sozlamasini buzmaydi.
+    stored = await _get_stored_payme_key(db)
+    accepted_keys = [k for k in (settings.PAYME_KEY, settings.PAYME_TEST_KEY, stored) if k]
     authorized = any(
         hmac.compare_digest(
             provided,
@@ -309,6 +316,8 @@ async def payme_webhook(request: Request, db: AsyncSession = Depends(get_db)):
         "PerformTransaction": _payme_perform,
         "CancelTransaction": _payme_cancel,
         "CheckTransaction": _payme_check,
+        "GetStatement": _payme_get_statement,
+        "ChangePassword": _payme_change_password,
     }
     handler = handlers.get(method)
     if not handler:
@@ -523,6 +532,77 @@ async def _payme_check(req_id, params, body, db):
         "reason": payment.cancel_reason,
     }
     return _payme_result(req_id, result)
+
+
+async def _payme_get_statement(req_id, params, body, db):
+    """Davr ichidagi tranzaksiyalar ro'yxati (Payme solishtirish uchun so'raydi)."""
+    frm = params.get("from")
+    to = params.get("to")
+
+    if frm is None or to is None:
+        return _payme_error(req_id, PAYME_ERRORS["INVALID_PARAMS"],
+                            "Parametrlar noto'g'ri", "Неверные параметры", "Invalid params")
+
+    start = datetime.utcfromtimestamp(frm / 1000)
+    end = datetime.utcfromtimestamp(to / 1000)
+
+    rows = (await db.execute(
+        select(Payment)
+        .options(joinedload(Payment.order))
+        .where(
+            Payment.provider == "payme",
+            Payment.created_at >= start,
+            Payment.created_at <= end,
+        )
+        .order_by(Payment.created_at.asc())
+    )).unique().scalars().all()
+
+    state_map = {
+        "pending": 1, "created": 1, "performed": 2,
+        "cancelled": -1, "cancelled_after_perform": -2,
+    }
+
+    transactions = []
+    for p in rows:
+        transactions.append({
+            "id": p.transaction_id,
+            "time": int(p.created_at.timestamp() * 1000) if p.created_at else 0,
+            "amount": int(p.amount or 0),
+            "account": {"order_id": str(p.order_id)},
+            "create_time": int(p.created_at.timestamp() * 1000) if p.created_at else 0,
+            "perform_time": int(p.perform_time.timestamp() * 1000) if p.perform_time else 0,
+            "cancel_time": int(p.cancel_time.timestamp() * 1000) if p.cancel_time else 0,
+            "transaction": str(p.id),
+            "state": state_map.get(p.status, 1),
+            "reason": p.cancel_reason,
+            "receivers": None,
+        })
+
+    return _payme_result(req_id, {"transactions": transactions})
+
+
+async def _payme_change_password(req_id, params, body, db):
+    """Kassa parolini o'zgartiradi. Yangi parol bazada saqlanadi va
+    webhook autentifikatsiyasida qabul qilinadi."""
+    new_password = params.get("password")
+
+    if not new_password or not isinstance(new_password, str) or len(new_password.strip()) < 8:
+        return _payme_error(req_id, PAYME_ERRORS["INVALID_PARAMS"],
+                            "Parol noto'g'ri", "Неверный пароль", "Invalid password")
+
+    from app.models.app_settings import AppSetting
+
+    row = (await db.execute(
+        select(AppSetting).where(AppSetting.key == PAYME_KEY_SETTING)
+    )).scalar_one_or_none()
+
+    if row:
+        row.value = new_password
+    else:
+        db.add(AppSetting(key=PAYME_KEY_SETTING, value=new_password))
+
+    await db.commit()
+    return _payme_result(req_id, {"success": True})
 
 
 # ══════════════════════════════════════════════
