@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update
+from sqlalchemy import select, update, or_, cast, String, func
 from sqlalchemy.orm import joinedload
 from pydantic import BaseModel as PydanticBaseModel
-from typing import List, Literal
+from typing import List, Literal, Optional
+from datetime import datetime
 from uuid import UUID
 import uuid
 
@@ -15,31 +16,30 @@ from app.schemas.order import OrderModel
 from app.schemas.order_create import OrderCreate
 from app.schemas.common import APIResponse
 from app.api.deps import get_current_user, get_current_admin
-from app.core.config import settings
+from app.api.endpoints.settings import load_shipping_settings
 
 router = APIRouter()
 
-# Allowed order statuses
 ALLOWED_ORDER_STATUSES = {"pending", "processing", "confirmed", "completed", "delivered", "cancelled"}
 
 
-def calculate_shipping_fee(products_in_order, subtotal: float) -> float:
+def calculate_shipping_fee(products_in_order, subtotal: float, cfg: dict) -> float:
     """Yetkazib berish narxini hisoblaydi.
 
-    Qoida (hech qanday narx kodda qattiq yozilmagan):
-      1. Butun tizimda yetkazib berish o'chirilgan bo'lsa    -> 0
-      2. Buyurtma summasi bepul yetkazish chegarasidan katta -> 0
-      3. Aks holda: buyurtmadagi mahsulotlar ichidagi ENG KATTA
-         delivery_price olinadi (bitta kuryer bir marta boradi).
-         has_delivery=False bo'lgan mahsulot narxga qo'shilmaydi.
+    Qoida (kodda hech qanday narx qattiq yozilmagan):
+      1. Yetkazib berish o'chirilgan bo'lsa                 -> 0
+      2. Summa bepul yetkazish chegarasidan katta bo'lsa     -> 0
+      3. Aks holda mahsulotlar ichidagi ENG KATTA delivery_price
+         (bitta kuryer bir marta boradi). has_delivery=False
+         bo'lgan mahsulot hisobga olinmaydi.
 
-    Har bir mahsulotning has_delivery va delivery_price qiymatlari
-    admin panel orqali belgilanadi.
+    cfg — admin panelda belgilangan sozlamalar (settings.load_shipping_settings).
     """
-    if not settings.DELIVERY_ENABLED:
+    if not cfg.get("delivery_enabled", True):
         return 0.0
 
-    if settings.FREE_SHIPPING_THRESHOLD > 0 and subtotal >= settings.FREE_SHIPPING_THRESHOLD:
+    threshold = float(cfg.get("free_shipping_threshold") or 0)
+    if threshold > 0 and subtotal >= threshold:
         return 0.0
 
     fees = [
@@ -47,14 +47,12 @@ def calculate_shipping_fee(products_in_order, subtotal: float) -> float:
         for p in products_in_order
         if getattr(p, "has_delivery", True)
     ]
-
     if not fees:
         return 0.0
 
     max_fee = max(fees)
-    # Agar hech bir mahsulotga narx belgilanmagan bo'lsa, zaxira qiymatdan foydalanamiz
     if max_fee <= 0:
-        return float(settings.SHIPPING_FEE or 0)
+        return float(cfg.get("shipping_fee") or 0)
     return max_fee
 
 
@@ -77,7 +75,6 @@ async def create_order(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    # Verify products and calculate totals server-side
     subtotal = 0.0
     items_to_create = []
     products_in_order = []
@@ -88,6 +85,7 @@ async def create_order(
 
         if not product:
             raise HTTPException(status_code=404, detail=f"Product {item.product_id} not found")
+
         stmt = (
             update(Product)
             .where(Product.id == item.product_id)
@@ -96,7 +94,10 @@ async def create_order(
         )
         res = await db.execute(stmt)
         if res.rowcount == 0:
-            raise HTTPException(status_code=400, detail=f"Insufficient stock for {product.name.get('uz', product.name.get('en', 'product'))}")
+            raise HTTPException(
+                status_code=400,
+                detail=f"Insufficient stock for {product.name.get('uz', product.name.get('en', 'product'))}"
+            )
 
         price = float(product.price)
         subtotal += price * item.quantity
@@ -108,7 +109,8 @@ async def create_order(
             "price_at_time": price
         })
 
-    shipping_fee = calculate_shipping_fee(products_in_order, subtotal)
+    cfg = await load_shipping_settings(db)
+    shipping_fee = calculate_shipping_fee(products_in_order, subtotal, cfg)
     total = subtotal + shipping_fee
 
     order = Order(
@@ -123,19 +125,17 @@ async def create_order(
         customer_notes=order_in.customer_notes
     )
     db.add(order)
-    await db.flush()  # Get order ID
+    await db.flush()
 
     for item_data in items_to_create:
-        order_item = OrderItem(
+        db.add(OrderItem(
             order_id=order.id,
             product_id=item_data["product_id"],
             quantity=item_data["quantity"],
             price_at_time=item_data["price_at_time"]
-        )
-        db.add(order_item)
+        ))
 
     await db.commit()
-
     return APIResponse(message="Order created successfully", data={"order_id": str(order.id)})
 
 
@@ -145,9 +145,7 @@ async def shipping_quote(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    """Ilova checkout ekranida KO'RSATADIGAN yetkazib berish narxini
-    serverdan so'raydi. Shu tufayli ilovada hech qanday narx qattiq
-    yozilmaydi va admin o'zgartirishi darhol ilovada ko'rinadi."""
+    """Ilova checkout ekranida KO'RSATADIGAN narxni serverdan so'raydi."""
     subtotal = 0.0
     products_in_order = []
 
@@ -159,37 +157,71 @@ async def shipping_quote(
         subtotal += float(product.price) * item.quantity
         products_in_order.append(product)
 
-    shipping_fee = calculate_shipping_fee(products_in_order, subtotal)
+    cfg = await load_shipping_settings(db)
+    shipping_fee = calculate_shipping_fee(products_in_order, subtotal, cfg)
 
     return APIResponse(data={
         "subtotal": subtotal,
         "shipping_fee": shipping_fee,
         "total": subtotal + shipping_fee,
-        "free_shipping_threshold": settings.FREE_SHIPPING_THRESHOLD,
-        "delivery_enabled": settings.DELIVERY_ENABLED,
+        "free_shipping_threshold": cfg["free_shipping_threshold"],
+        "delivery_enabled": cfg["delivery_enabled"],
     })
 
 
 @router.get("", response_model=APIResponse[List[OrderModel]])
 @router.get("/my", response_model=APIResponse[List[OrderModel]])
 async def get_orders(
+    status: Optional[str] = Query(None, description="Holat bo'yicha filtr"),
+    payment_status: Optional[str] = Query(None, description="To'lov holati bo'yicha filtr"),
+    date_from: Optional[str] = Query(None, description="YYYY-MM-DD"),
+    date_to: Optional[str] = Query(None, description="YYYY-MM-DD"),
+    search: Optional[str] = Query(None, description="Buyurtma raqami yoki mijoz"),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     from app.models.user import RoleEnum
-    if current_user.role in [RoleEnum.ADMIN, RoleEnum.OWNER]:
-        result = await db.execute(
-            select(Order)
-            .options(joinedload(Order.user), joinedload(Order.items).joinedload(OrderItem.product))
-            .order_by(Order.created_at.desc())
-        )
+    is_admin = current_user.role in [RoleEnum.ADMIN, RoleEnum.OWNER]
+
+    query = (
+        select(Order)
+        .options(joinedload(Order.user), joinedload(Order.items).joinedload(OrderItem.product))
+    )
+
+    if not is_admin:
+        query = query.where(Order.user_id == current_user.id)
     else:
-        result = await db.execute(
-            select(Order)
-            .options(joinedload(Order.user), joinedload(Order.items).joinedload(OrderItem.product))
-            .where(Order.user_id == current_user.id)
-            .order_by(Order.created_at.desc())
-        )
+        # Filtrlar faqat admin uchun ma'noga ega
+        if status:
+            query = query.where(func.lower(Order.status) == status.lower())
+        if payment_status:
+            query = query.where(func.lower(Order.payment_status) == payment_status.lower())
+        if date_from:
+            try:
+                query = query.where(Order.created_at >= datetime.fromisoformat(date_from))
+            except ValueError:
+                pass
+        if date_to:
+            try:
+                end = datetime.fromisoformat(date_to)
+                end = end.replace(hour=23, minute=59, second=59)
+                query = query.where(Order.created_at <= end)
+            except ValueError:
+                pass
+        if search:
+            term = f"%{search.strip()}%"
+            query = query.outerjoin(User, User.id == Order.user_id).where(
+                or_(
+                    Order.order_number.ilike(term),
+                    cast(Order.id, String).ilike(term),
+                    User.full_name.ilike(term),
+                    User.phone_number.ilike(term),
+                )
+            )
+
+    query = query.order_by(Order.created_at.desc())
+
+    result = await db.execute(query)
     orders = result.unique().scalars().all()
     return APIResponse(data=[OrderModel.model_validate(o) for o in orders])
 
@@ -201,20 +233,16 @@ async def get_order(
     current_user: User = Depends(get_current_user)
 ):
     from app.models.user import RoleEnum
+    base = (
+        select(Order)
+        .options(joinedload(Order.user), joinedload(Order.items).joinedload(OrderItem.product))
+    )
     if current_user.role in [RoleEnum.ADMIN, RoleEnum.OWNER]:
-        result = await db.execute(
-            select(Order)
-            .options(joinedload(Order.user), joinedload(Order.items).joinedload(OrderItem.product))
-            .where(Order.id == id)
-        )
+        result = await db.execute(base.where(Order.id == id))
     else:
-        result = await db.execute(
-            select(Order)
-            .options(joinedload(Order.user), joinedload(Order.items).joinedload(OrderItem.product))
-            .where(Order.id == id, Order.user_id == current_user.id)
-        )
-    order = result.unique().scalar_one_or_none()
+        result = await db.execute(base.where(Order.id == id, Order.user_id == current_user.id))
 
+    order = result.unique().scalar_one_or_none()
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
 
@@ -226,27 +254,22 @@ async def update_order_status(
     id: UUID,
     payload: OrderStatusUpdate,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_admin),  # Only admin/owner
+    current_user: User = Depends(get_current_admin),
 ):
     result = await db.execute(
-        select(Order)
-        .options(joinedload(Order.items))
-        .where(Order.id == id)
+        select(Order).options(joinedload(Order.items)).where(Order.id == id)
     )
     order = result.unique().scalar_one_or_none()
-
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
 
     old_status = order.status
     order.status = payload.status
 
-    # If cancelling, restore stock
-    if payload.status.lower() == "cancelled" and old_status.lower() != "cancelled":
+    if payload.status.lower() == "cancelled" and (old_status or "").lower() != "cancelled":
         await _restore_order_stock(order, db)
 
     await db.commit()
-
     return APIResponse(message="Order status updated", data={"status": order.status})
 
 
@@ -257,30 +280,25 @@ async def cancel_order(
     current_user: User = Depends(get_current_user)
 ):
     result = await db.execute(
-        select(Order)
-        .options(joinedload(Order.items))
+        select(Order).options(joinedload(Order.items))
         .where(Order.id == id, Order.user_id == current_user.id)
     )
     order = result.unique().scalar_one_or_none()
-
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
 
-    if order.status.lower() != 'pending':
+    if (order.status or "").lower() != 'pending':
         raise HTTPException(status_code=400, detail="Only pending orders can be cancelled")
 
     order.status = "Cancelled"
-
-    # Restore stock for cancelled order
     await _restore_order_stock(order, db)
-
     await db.commit()
 
     return APIResponse(message="Order cancelled successfully", data={"status": order.status})
 
 
 async def _restore_order_stock(order: Order, db: AsyncSession):
-    """Restore product stock when an order is cancelled."""
+    """Buyurtma bekor qilinganda mahsulot zaxirasini qaytaradi."""
     for item in order.items:
         await db.execute(
             update(Product)
