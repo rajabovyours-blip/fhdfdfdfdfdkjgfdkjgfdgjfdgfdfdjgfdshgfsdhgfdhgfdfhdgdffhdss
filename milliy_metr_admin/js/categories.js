@@ -1,5 +1,13 @@
 let allCategories = [];
 
+/** Kategoriya nomini joriy admin til bo'yicha ko'rsatadi (uz/ru), yo'q bo'lsa uz'ga tushadi. */
+function localizedCategoryName(name) {
+  if (typeof name === 'object' && name !== null) {
+    return name[i18n.lang] || name.uz || name.ru || Object.values(name)[0] || '-';
+  }
+  return name || '-';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   auth.requireAuth();
   layout.inject();
@@ -100,7 +108,7 @@ function renderCategoryTable() {
   const tbody = document.getElementById('category-list');
   
   if (allCategories.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="4" class="text-center">Kategoriyalar mavjud emas</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="4" class="text-center">${i18n.t('noData')}</td></tr>`;
     return;
   }
   
@@ -118,15 +126,14 @@ function renderCategoryTable() {
   let html = '';
   
   function renderNode(cat, depth = 0) {
-    let nameUz = cat.name;
-    if (typeof cat.name === 'object' && cat.name.uz) nameUz = cat.name.uz;
-    
+    const displayName = localizedCategoryName(cat.name);
+
     let parentName = '-';
     const catParentId = cat.parentId || cat.parent_id;
     if (catParentId) {
         const parent = allCategories.find(p => p.id === catParentId);
         if (parent) {
-            parentName = typeof parent.name === 'object' ? parent.name.uz : parent.name;
+            parentName = localizedCategoryName(parent.name);
         }
     }
     
@@ -141,7 +148,7 @@ function renderCategoryTable() {
     html += `
       <tr>
         <td>${imgHtml}</td>
-        <td style="${depth === 0 ? 'font-weight: 600;' : ''}">${indent}${nameUz}</td>
+        <td style="${depth === 0 ? 'font-weight: 600;' : ''}">${indent}${displayName}</td>
         <td>${parentName}</td>
         <td class="text-center">
           <button class="btn btn-sm btn-outline" style="padding: 0 8px;" onclick="openModal('${cat.id}')"><span class="material-symbols-rounded" style="font-size: 18px;">edit</span></button>
@@ -166,8 +173,7 @@ function updateParentDropdown(excludeId = null) {
   // Only top level categories can be parents typically, but let's just show all except the current one
   allCategories.forEach(cat => {
     if (cat.id !== excludeId) {
-      let nameUz = typeof cat.name === 'object' ? cat.name.uz : cat.name;
-      html += `<option value="${cat.id}">${nameUz}</option>`;
+      html += `<option value="${cat.id}">${localizedCategoryName(cat.name)}</option>`;
     }
   });
   
@@ -186,7 +192,7 @@ function openModal(id = null) {
   preview.style.display = 'none';
   
   if (id) {
-    title.textContent = 'Kategoriyani Tahrirlash';
+    title.textContent = i18n.t('edit') + ': ' + i18n.t('categories');
     const cat = allCategories.find(c => c.id === id);
     if (cat) {
       document.getElementById('cat-id').value = cat.id;
@@ -210,7 +216,7 @@ function openModal(id = null) {
       }
     }
   } else {
-    title.textContent = "Kategoriya Qo'shish";
+    title.textContent = i18n.t('add') + ': ' + i18n.t('categories');
     updateParentDropdown();
   }
   
