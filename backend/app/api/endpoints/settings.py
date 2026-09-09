@@ -1,13 +1,8 @@
-"""Admin panel orqali o'zgartiriladigan sozlamalar.
-
-Yetkazib berish narxi endi Render env emas, bazada saqlanadi va
-admin panelidan o'zgartiriladi. Env qiymatlari faqat birinchi marta
-(baza bo'sh bo'lganda) boshlang'ich qiymat sifatida ishlatiladi.
-"""
+"""Admin panel orqali o'zgartiriladigan sozlamalar."""
 
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from pydantic import BaseModel, Field
 from typing import Optional
 
@@ -20,7 +15,8 @@ from app.api.dependencies import get_current_admin
 
 router = APIRouter()
 
-# Sozlama kalitlari va ularning env'dagi zaxira qiymatlari
+PAYME_KEY_SETTING = "payme_key_override"
+
 DEFAULTS = {
     "delivery_enabled": lambda: "true" if env_settings.DELIVERY_ENABLED else "false",
     "shipping_fee": lambda: str(env_settings.SHIPPING_FEE),
@@ -29,7 +25,6 @@ DEFAULTS = {
 
 
 async def get_setting(db: AsyncSession, key: str) -> str:
-    """Bitta sozlamani o'qiydi. Bazada yo'q bo'lsa env'dan oladi."""
     row = (await db.execute(select(AppSetting).where(AppSetting.key == key))).scalar_one_or_none()
     if row is not None and row.value is not None:
         return row.value
@@ -38,7 +33,6 @@ async def get_setting(db: AsyncSession, key: str) -> str:
 
 
 async def load_shipping_settings(db: AsyncSession) -> dict:
-    """Yetkazib berish sozlamalarini to'g'ri turlarda qaytaradi."""
     enabled = (await get_setting(db, "delivery_enabled")).strip().lower() in ("true", "1", "yes")
     try:
         fee = float(await get_setting(db, "shipping_fee") or 0)
@@ -63,7 +57,7 @@ async def set_setting(db: AsyncSession, key: str, value: str) -> None:
         db.add(AppSetting(key=key, value=value))
 
 
-# ── Ochiq endpoint: ilova ko'rsatish uchun o'qiydi ────────────────────
+# ── Ochiq endpoint ───────────────────────────────────────────────────
 
 @router.get("/shipping", response_model=APIResponse[dict])
 async def get_shipping_settings(db: AsyncSession = Depends(get_db)):
@@ -86,10 +80,15 @@ async def admin_get_settings(
     current_user: User = Depends(get_current_admin),
 ):
     data = await load_shipping_settings(db)
+    payme_row = (await db.execute(
+        select(AppSetting).where(AppSetting.key == PAYME_KEY_SETTING)
+    )).scalar_one_or_none()
+
     return APIResponse(data={
         "deliveryEnabled": data["delivery_enabled"],
         "shippingFee": data["shipping_fee"],
         "freeShippingThreshold": data["free_shipping_threshold"],
+        "paymeKeyOverridden": bool(payme_row and payme_row.value),
     })
 
 
@@ -114,3 +113,19 @@ async def admin_update_settings(
         "shippingFee": data["shipping_fee"],
         "freeShippingThreshold": data["free_shipping_threshold"],
     })
+
+
+@router.delete("/admin/payme-key", response_model=APIResponse[dict])
+async def reset_payme_key(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_admin),
+):
+    """Payme ChangePassword orqali o'rnatilgan parolni bekor qiladi.
+
+    Shundan keyin webhook yana Render'dagi PAYME_KEY / PAYME_TEST_KEY
+    qiymatlarini qabul qiladi. Sertifikatsiya paytida parol chalkashib
+    qolsa yoki aloqa uzilib qolsa — bu zaxira chiqish yo'li.
+    """
+    await db.execute(delete(AppSetting).where(AppSetting.key == PAYME_KEY_SETTING))
+    await db.commit()
+    return APIResponse(message="Payme paroli tiklandi", data={"reset": True})
