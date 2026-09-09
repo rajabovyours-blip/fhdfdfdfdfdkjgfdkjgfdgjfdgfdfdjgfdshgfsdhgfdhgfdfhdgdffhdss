@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:milliy_metr/core/router/route_constants.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:milliy_metr/shared/widgets/app_button.dart';
@@ -11,6 +10,7 @@ import 'package:milliy_metr/features/checkout/presentation/providers/checkout_pr
 import 'package:milliy_metr/l10n/l10n_extension.dart';
 import 'package:milliy_metr/features/checkout/presentation/widgets/delivery_address_card.dart';
 import 'package:milliy_metr/features/checkout/presentation/widgets/payment_method_selector.dart';
+import 'package:milliy_metr/features/payment/presentation/views/payment_webview_screen.dart';
 
 class CheckoutScreen extends ConsumerStatefulWidget {
   const CheckoutScreen({super.key});
@@ -34,6 +34,63 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
       customPattern: '#,##0 \u00A4',
     );
     return format.format(amount).replaceAll(',', ' ');
+  }
+
+  /// To'lovni ilova ICHIDAGI oynada ochadi (tashqi brauzerda emas).
+  /// Shu tufayli foydalanuvchi backend manzilini umuman ko'rmaydi va
+  /// to'lovdan keyin avtomatik ravishda ilovaga qaytadi.
+  Future<void> _startPayment(String orderId, String method) async {
+    final notifier = ref.read(checkoutProvider.notifier);
+    final paymentUrl = await notifier.processPaymentUrl(orderId, method);
+
+    if (!mounted) return;
+
+    if (paymentUrl == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text("To'lov tizimiga ulanib bo'lmadi. Keyinroq urinib ko'ring."),
+          backgroundColor: context.colors.danger,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      context.go(AppRoutes.orderDetails.replaceFirst(':id', orderId));
+      return;
+    }
+
+    // In-app webview — natijasi: to'lov oqimi tugadimi yoki yo'q
+    final completed = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => PaymentWebviewScreen(
+          paymentUrl: paymentUrl,
+          orderId: orderId,
+        ),
+      ),
+    );
+
+    if (!mounted) return;
+
+    if (completed == true) {
+      // URL'ga hech qachon ishonmaymiz — haqiqiy holatni backenddan so'raymiz
+      final isPaid = await notifier.isOrderPaid(orderId);
+      if (!mounted) return;
+
+      if (isPaid) {
+        context.go(AppRoutes.orderSuccess);
+        return;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            "To'lov hali tasdiqlanmadi. Buyurtma holatini tekshirib turing.",
+          ),
+          backgroundColor: context.colors.warning,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+
+    context.go(AppRoutes.orderDetails.replaceFirst(':id', orderId));
   }
 
   @override
@@ -225,36 +282,9 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                       } else if (ref.read(checkoutProvider).order != null) {
                         final order = ref.read(checkoutProvider).order!;
                         final method = state.paymentMethod.toLowerCase();
-                        
-                        // For Click/Payme, get payment URL and open via external browser/app
+
                         if (method == 'click' || method == 'payme') {
-                          final paymentUrl = await notifier.processPaymentUrl(
-                            order.id, method,
-                          );
-                          if (!context.mounted) return;
-                          if (paymentUrl != null) {
-                            try {
-                              final uri = Uri.parse(paymentUrl);
-                              await launchUrl(uri, mode: LaunchMode.externalApplication);
-                            } catch (e) {
-                              if (!context.mounted) return;
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: const Text('To\'lov ilovasini ochishda xatolik yuz berdi'),
-                                  backgroundColor: context.colors.danger,
-                                ),
-                              );
-                            }
-                            context.go(AppRoutes.orderDetails.replaceFirst(':id', order.id));
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: const Text('To\'lov tizimiga ulanib bo\'lmadi. Sozlamalarni tekshiring.'),
-                                backgroundColor: context.colors.danger,
-                              ),
-                            );
-                            context.go(AppRoutes.orderDetails.replaceFirst(':id', order.id));
-                          }
+                          await _startPayment(order.id, method);
                         } else {
                           context.go(AppRoutes.orderSuccess);
                         }
@@ -315,6 +345,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
         _DeliveryOptionCard(
           title: context.l10n.deliveryService,
           subtitle: '',
+          // Narx serverdan keladi — kodda hech qanday raqam yozilmagan
           price: _formatCurrency(notifier.shippingFee),
           value: 'Delivery Service',
           groupValue: state.deliveryMethod,
