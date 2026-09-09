@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:milliy_metr/core/router/route_constants.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:milliy_metr/shared/widgets/app_button.dart';
@@ -10,7 +11,6 @@ import 'package:milliy_metr/features/checkout/presentation/providers/checkout_pr
 import 'package:milliy_metr/l10n/l10n_extension.dart';
 import 'package:milliy_metr/features/checkout/presentation/widgets/delivery_address_card.dart';
 import 'package:milliy_metr/features/checkout/presentation/widgets/payment_method_selector.dart';
-import 'package:milliy_metr/features/payment/presentation/views/payment_webview_screen.dart';
 
 class CheckoutScreen extends ConsumerStatefulWidget {
   const CheckoutScreen({super.key});
@@ -36,9 +36,15 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     return format.format(amount).replaceAll(',', ' ');
   }
 
-  /// To'lovni ilova ICHIDAGI oynada ochadi (tashqi brauzerda emas).
-  /// Shu tufayli foydalanuvchi backend manzilini umuman ko'rmaydi va
-  /// to'lovdan keyin avtomatik ravishda ilovaga qaytadi.
+  /// To'lovni Click / Payme ILOVASIDA ochadi.
+  ///
+  /// Webview ISHLATILMAYDI: Click va Payme checkout sahifalari o'z mobil
+  /// ilovalariga deep link orqali o'tadi, webview esa bunday havolalarni
+  /// ocha olmaydi va xato beradi. Shuning uchun tizim brauzeri/ilovasiga
+  /// topshiramiz — u o'rnatilgan Click/Payme ilovasini o'zi ochadi.
+  ///
+  /// To'lov holati esa HECH QACHON URL orqali aniqlanmaydi — foydalanuvchi
+  /// ilovaga qaytgach, backenddan haqiqiy holat so'raladi.
   Future<void> _startPayment(String orderId, String method) async {
     final notifier = ref.read(checkoutProvider.notifier);
     final paymentUrl = await notifier.processPaymentUrl(orderId, method);
@@ -48,7 +54,9 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     if (paymentUrl == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text("To'lov tizimiga ulanib bo'lmadi. Keyinroq urinib ko'ring."),
+          content: const Text(
+            "To'lov tizimiga ulanib bo'lmadi. Keyinroq urinib ko'ring.",
+          ),
           backgroundColor: context.colors.danger,
           behavior: SnackBarBehavior.floating,
         ),
@@ -57,39 +65,27 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
       return;
     }
 
-    // In-app webview — natijasi: to'lov oqimi tugadimi yoki yo'q
-    final completed = await Navigator.of(context).push<bool>(
-      MaterialPageRoute(
-        builder: (_) => PaymentWebviewScreen(
-          paymentUrl: paymentUrl,
-          orderId: orderId,
-        ),
-      ),
-    );
+    bool launched = false;
+    try {
+      final uri = Uri.parse(paymentUrl);
+      launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (_) {
+      launched = false;
+    }
 
     if (!mounted) return;
 
-    if (completed == true) {
-      // URL'ga hech qachon ishonmaymiz — haqiqiy holatni backenddan so'raymiz
-      final isPaid = await notifier.isOrderPaid(orderId);
-      if (!mounted) return;
-
-      if (isPaid) {
-        context.go(AppRoutes.orderSuccess);
-        return;
-      }
-
+    if (!launched) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text(
-            "To'lov hali tasdiqlanmadi. Buyurtma holatini tekshirib turing.",
-          ),
-          backgroundColor: context.colors.warning,
+          content: const Text("To'lov ilovasini ochib bo'lmadi."),
+          backgroundColor: context.colors.danger,
           behavior: SnackBarBehavior.floating,
         ),
       );
     }
 
+    // Buyurtma tafsilotlari sahifasi holatni backenddan tekshirib turadi.
     context.go(AppRoutes.orderDetails.replaceFirst(':id', orderId));
   }
 
