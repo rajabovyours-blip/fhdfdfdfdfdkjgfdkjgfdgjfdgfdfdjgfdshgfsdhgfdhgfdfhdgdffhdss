@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function loadUsers() {
   const tbody = document.getElementById('users-list');
   try {
-    const res = await api.get('/users?role=customer');
+    const res = await api.get('/users?role=user');
     allUsers = res.data || [];
     renderTable();
   } catch (err) {
@@ -37,19 +37,20 @@ function renderTable(searchQuery = '') {
   });
   
   if (filtered.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="7" class="text-center">Mijozlar topilmadi</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" class="text-center">${i18n.t('noResults')}</td></tr>`;
     return;
   }
   
   tbody.innerHTML = filtered.map(u => {
     const isActive = u.isActive !== undefined ? u.isActive : u.is_active;
     const statusHtml = isActive !== false 
-      ? '<span class="badge badge-success">Faol</span>' 
-      : '<span class="badge badge-danger">Bloklangan</span>';
+      ? `<span class="badge badge-success">${i18n.t('active')}</span>` 
+      : `<span class="badge badge-danger">${i18n.t('blocked')}</span>`;
       
     const createdAt = u.createdAt || u.created_at;
-    const dateStr = createdAt ? new Date(createdAt).toLocaleDateString('ru-RU') : 'Yaqinda';
-    const provider = u.provider ? (u.provider.toLowerCase() === 'google' ? 'Google orqali' : u.provider) : 'SMS orqali';
+    const locale = i18n.lang === 'ru' ? 'ru-RU' : 'uz-UZ';
+    const dateStr = createdAt ? new Date(createdAt).toLocaleDateString(locale) : '-';
+    const provider = u.provider ? (u.provider.toLowerCase() === 'google' ? 'Google' : u.provider) : 'SMS';
     const count = u.ordersCount || u.orders_count || 0;
       
     return `
@@ -83,9 +84,10 @@ function openModal(id) {
     document.getElementById('user-active').checked = isActive !== false; // defaults to true
     
     const createdAt = u.createdAt || u.created_at;
-    document.getElementById('user-date').textContent = createdAt ? new Date(createdAt).toLocaleDateString('ru-RU') : 'Yaqinda';
+    const locale = i18n.lang === 'ru' ? 'ru-RU' : 'uz-UZ';
+    document.getElementById('user-date').textContent = createdAt ? new Date(createdAt).toLocaleDateString(locale) : '-';
     document.getElementById('user-orders-count').textContent = u.ordersCount || u.orders_count || 0;
-    document.getElementById('user-auth-method').textContent = u.authProvider || u.auth_provider || 'SMS orqali';
+    document.getElementById('user-auth-method').textContent = u.authProvider || u.auth_provider || 'SMS';
     
     modal.classList.add('active');
   }
@@ -105,17 +107,17 @@ async function saveUser() {
   
   const btn = document.getElementById('btn-save-user');
   btn.disabled = true;
-  btn.textContent = 'Saqlanmoqda...';
+  btn.textContent = i18n.t('loading');
   
   try {
     await api.put(`/users/${id}`, payload);
-    layout.showToast('Mijoz ma\'lumotlari yangilandi');
+    layout.showToast(i18n.t('success'));
     closeModal();
     loadUsers();
   } catch (err) {
     layout.showToast(err.message, 'error');
   } finally {
     btn.disabled = false;
-    btn.textContent = 'Saqlash';
+    btn.textContent = i18n.t('save');
   }
 }
