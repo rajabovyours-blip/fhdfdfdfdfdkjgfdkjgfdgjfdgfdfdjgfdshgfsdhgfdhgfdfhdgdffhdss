@@ -123,137 +123,148 @@ class _PersonalInformationScreenState
           ),
         ],
       ),
-      body: Center(
+      body: Align(
+        alignment: Alignment.topCenter,
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 600),
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
             child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              // Avatar
-              Center(
-                child: GestureDetector(
-                  onTap: () async {
-                    if (!_isEditing) return;
-                    
-                    await showModalBottomSheet(
-                      context: context,
-                      builder: (BuildContext bc) {
-                        return SafeArea(
-                          child: Wrap(
-                            children: <Widget>[
-                              ListTile(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // Avatar
+                  GestureDetector(
+                    onTap: () async {
+                      if (!_isEditing) return;
+
+                      await showModalBottomSheet(
+                        context: context,
+                        builder: (BuildContext bc) {
+                          return SafeArea(
+                            child: Wrap(
+                              children: <Widget>[
+                                ListTile(
                                   leading: const Icon(Icons.photo_library),
                                   title: Text(context.l10n.pickFromGallery),
                                   onTap: () async {
                                     Navigator.of(context).pop();
-                                    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-                                    if (image != null) unawaited(_uploadImage(image));
-                                  },),
-                              ListTile(
-                                leading: const Icon(Icons.photo_camera),
-                                title: Text(context.l10n.takePhoto),
-                                onTap: () async {
-                                  Navigator.of(context).pop();
-                                  final XFile? image = await _picker.pickImage(source: ImageSource.camera);
-                                  if (image != null) unawaited(_uploadImage(image));
-                                },
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    );
-                  },
-                  child: Stack(
-                    children: [
-                      CircleAvatar(
-                        radius: 50,
-                        backgroundColor: context.colors.surfaceVariant,
-                        backgroundImage: _localAvatarPath != null
-                            ? FileImage(File(_localAvatarPath!))
-                            : (_avatarUrl != null && _avatarUrl!.isNotEmpty
-                                ? NetworkImage(ImageUtils.getFullImageUrl(_avatarUrl!)) as ImageProvider
-                                : null),
-                        child: _localAvatarPath == null && (_avatarUrl == null || _avatarUrl!.isEmpty)
-                            ? Text(
-                                _getInitials(_nameController.text),
-                                style: TextStyle(
-                                  fontSize: 36,
-                                  fontWeight: FontWeight.bold,
-                                  color: context.colors.primary,
+                                    final XFile? image = await _picker
+                                        .pickImage(source: ImageSource.gallery);
+                                    if (image != null) {
+                                      unawaited(_uploadImage(image));
+                                    }
+                                  },
                                 ),
-                              )
-                            : null,
-                      ),
-                      if (_isEditing)
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              color: context.colors.primary,
-                              shape: BoxShape.circle,
+                                ListTile(
+                                  leading: const Icon(Icons.photo_camera),
+                                  title: Text(context.l10n.takePhoto),
+                                  onTap: () async {
+                                    Navigator.of(context).pop();
+                                    final XFile? image = await _picker
+                                        .pickImage(source: ImageSource.camera);
+                                    if (image != null) {
+                                      unawaited(_uploadImage(image));
+                                    }
+                                  },
+                                ),
+                              ],
                             ),
-                            child: Icon(
-                              Icons.camera_alt,
-                              size: 18,
-                              color: context.colors.background,
+                          );
+                        },
+                      );
+                    },
+                    child: Stack(
+                      children: [
+                        CircleAvatar(
+                          radius: 50,
+                          backgroundColor: context.colors.surfaceVariant,
+                          backgroundImage: _localAvatarPath != null
+                              ? FileImage(File(_localAvatarPath!))
+                              : (_avatarUrl != null && _avatarUrl!.isNotEmpty
+                                  ? NetworkImage(ImageUtils.getFullImageUrl(
+                                      _avatarUrl!)) as ImageProvider
+                                  : null),
+                          child: _localAvatarPath == null &&
+                                  (_avatarUrl == null || _avatarUrl!.isEmpty)
+                              ? Text(
+                                  _getInitials(_nameController.text),
+                                  style: TextStyle(
+                                    fontSize: 36,
+                                    fontWeight: FontWeight.bold,
+                                    color: context.colors.primary,
+                                  ),
+                                )
+                              : null,
+                        ),
+                        if (_isEditing)
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: context.colors.primary,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.camera_alt,
+                                size: 18,
+                                color: context.colors.background,
+                              ),
                             ),
                           ),
-                        ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 32),
+                  const SizedBox(height: 32),
 
-              // Full Name
-              _buildField(
-                label: l10n.fullName,
-                controller: _nameController,
-                icon: Icons.person_outline,
-                enabled: _isEditing,
-                validator: (val) {
-                  if (val == null || val.trim().isEmpty) {
-                    return l10n.enterFullName;
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
+                  // Full Name
+                  _buildField(
+                    label: l10n.fullName,
+                    controller: _nameController,
+                    icon: Icons.person_outline,
+                    enabled: _isEditing,
+                    validator: (val) {
+                      if (val == null || val.trim().isEmpty) {
+                        return l10n.enterFullName;
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
 
-              // Phone (read-only)
-              _buildField(
-                label: l10n.phone,
-                controller: _phoneController,
-                icon: Icons.phone_outlined,
-                enabled: _isEditing,
-                keyboardType: TextInputType.phone,
-              ),
-              const SizedBox(height: 16),
+                  // Phone (read-only)
+                  _buildField(
+                    label: l10n.phone,
+                    controller: _phoneController,
+                    icon: Icons.phone_outlined,
+                    enabled: _isEditing,
+                    keyboardType: TextInputType.phone,
+                  ),
+                  const SizedBox(height: 16),
 
-              // Email
-              _buildField(
-                label: l10n.email,
-                controller: _emailController,
-                icon: Icons.email_outlined,
-                enabled: _isEditing,
-                keyboardType: TextInputType.emailAddress,
-                validator: (val) {
-                  if (val != null && val.isNotEmpty && !val.contains('@')) {
-                    return l10n.enterEmail;
-                  }
-                  return null;
-                },
+                  // Email
+                  _buildField(
+                    label: l10n.email,
+                    controller: _emailController,
+                    icon: Icons.email_outlined,
+                    enabled: _isEditing,
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (val) {
+                      if (val != null &&
+                          val.isNotEmpty &&
+                          !val.contains('@')) {
+                        return l10n.enterEmail;
+                      }
+                      return null;
+                    },
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
         ),
       ),
     );
