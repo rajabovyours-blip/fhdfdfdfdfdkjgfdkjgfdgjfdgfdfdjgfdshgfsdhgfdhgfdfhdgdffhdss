@@ -15,6 +15,7 @@ from app.schemas.order import OrderModel
 from app.schemas.order_create import OrderCreate
 from app.schemas.common import APIResponse
 from app.api.deps import get_current_user, get_current_admin
+from app.core.config import settings
 
 router = APIRouter()
 
@@ -56,7 +57,15 @@ async def create_order(
             "price_at_time": price
         })
         
-    shipping_fee = 15000.0 if subtotal < 500000 else 0.0
+    # Yetkazib berish narxi endi Render Environment orqali sozlanadi
+    # (DELIVERY_ENABLED, SHIPPING_FEE, FREE_SHIPPING_THRESHOLD) — kodni
+    # yoki APK'ni qayta build qilmasdan o'zgartirish mumkin.
+    if not settings.DELIVERY_ENABLED:
+        shipping_fee = 0.0
+    elif subtotal >= settings.FREE_SHIPPING_THRESHOLD:
+        shipping_fee = 0.0
+    else:
+        shipping_fee = settings.SHIPPING_FEE
     total = subtotal + shipping_fee
     
     order = Order(
