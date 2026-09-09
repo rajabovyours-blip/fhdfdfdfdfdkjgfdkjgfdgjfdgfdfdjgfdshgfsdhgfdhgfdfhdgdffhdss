@@ -5,6 +5,7 @@ import os
 
 from contextlib import asynccontextmanager
 
+from app.core.config import settings
 from app.db.base_class import Base
 from app.db.session import engine
 # Import all models to ensure they are registered with Base.metadata
@@ -111,6 +112,17 @@ async def lifespan(app: FastAPI):
                 await conn.execute(text(col_sql))
         except Exception:
             pass
+
+    # Product delivery columns (per-product delivery settings)
+    for col_sql in [
+        "ALTER TABLE products ADD COLUMN has_delivery BOOLEAN DEFAULT TRUE",
+        "ALTER TABLE products ADD COLUMN delivery_price NUMERIC(12,2) DEFAULT 0",
+    ]:
+        try:
+            async with engine.begin() as conn:
+                await conn.execute(text(col_sql))
+        except Exception:
+            pass
     
     # Add unique index on transaction_id if not exists
     try:
@@ -140,6 +152,12 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan,
     redirect_slashes=False,
+    # XAVFSIZLIK: avtomatik API hujjatlari (/docs, /redoc, /openapi.json) faqat
+    # ENABLE_API_DOCS=true bo'lganda ochiladi. Production'da ular yopiq turadi,
+    # aks holda istalgan odam backend'ning barcha endpointlarini ko'ra oladi.
+    docs_url="/docs" if settings.ENABLE_API_DOCS else None,
+    redoc_url="/redoc" if settings.ENABLE_API_DOCS else None,
+    openapi_url="/openapi.json" if settings.ENABLE_API_DOCS else None,
 )
 
 # CORS Configuration
@@ -153,7 +171,6 @@ app.add_middleware(
 )
 
 from app.api.router import api_router
-from app.core.config import settings
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
