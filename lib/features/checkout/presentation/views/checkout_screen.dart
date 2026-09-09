@@ -315,7 +315,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
         _DeliveryOptionCard(
           title: context.l10n.deliveryService,
           subtitle: '',
-          price: _formatCurrency(50000),
+          price: _formatCurrency(notifier.shippingFee),
           value: 'Delivery Service',
           groupValue: state.deliveryMethod,
           onChanged: (v) => notifier.setDeliveryMethod(v!),
