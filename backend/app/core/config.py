@@ -36,6 +36,12 @@ class Settings(BaseSettings):
     PAYME_MERCHANT_ID: str = ""
     PAYME_KEY: str = ""
 
+    # Yetkazib berish (shipping) sozlamalari — Render Environment orqali o'zgartiriladi,
+    # kod yoki APK'ni qayta build qilish shart emas.
+    DELIVERY_ENABLED: bool = True
+    SHIPPING_FEE: float = 15000.0
+    FREE_SHIPPING_THRESHOLD: float = 500000.0
+
     DATABASE_URL: str | None = None
 
     @property
