@@ -64,10 +64,10 @@ const i18n = {
       totalProducts: 'Jami mahsulotlar',
       todayOrders: 'Bugungi buyurtmalar',
       revenueDynamics: 'Daromad dinamikasi',
-      ordersByStatus: 'Buyurtmalar holati bo\'yicha',
+      ordersByStatus: "Buyurtmalar holati bo'yicha",
       paymentMethods: "To'lov usullari",
-      topProducts: 'Eng ko\'p daromad keltirgan mahsulotlar',
-      categorySales: 'Kategoriyalar bo\'yicha savdo',
+      topProducts: "Eng ko'p daromad keltirgan mahsulotlar",
+      categorySales: "Kategoriyalar bo'yicha savdo",
       newCustomers: 'Yangi mijozlar',
       lowStock: 'Ombordagi kam qolgan mahsulotlar',
       recentOrders: "So'nggi buyurtmalar",
@@ -76,7 +76,6 @@ const i18n = {
       last90Days: 'Oxirgi 90 kun',
       last365Days: 'Oxirgi 1 yil',
       remaining: 'Qolgan',
-      last90DaysShort: '90 kun',
 
       // Buyurtma holatlari
       st_pending: 'Kutilmoqda',
@@ -92,6 +91,21 @@ const i18n = {
       ps_paid: "To'langan",
       ps_cancelled: 'Bekor qilingan',
       ps_refunded: 'Qaytarilgan',
+
+      // Sozlamalar
+      settings: 'Sozlamalar',
+      deliverySettings: 'Yetkazib berish sozlamalari',
+      deliveryEnabled: 'Yetkazib berish yoqilgan',
+      deliveryEnabledHint: "O'chirilsa, barcha buyurtmalarda yetkazib berish bepul bo'ladi.",
+      freeShippingThreshold: 'Bepul yetkazish chegarasi',
+      freeThresholdHint: "Buyurtma summasi shu qiymatdan katta bo'lsa, yetkazib berish bepul. 0 = chegara yo'q.",
+      defaultShippingFee: 'Zaxira yetkazib berish narxi',
+      defaultFeeHint: "Mahsulotga alohida narx belgilanmagan bo'lsa shu narx ishlatiladi.",
+      blocked: 'Bloklangan',
+      active: 'Faol',
+      block: 'Bloklash',
+      unblock: 'Blokdan chiqarish',
+      stock: 'Zaxira',
     },
 
     ru: {
@@ -158,7 +172,6 @@ const i18n = {
       last90Days: 'Последние 90 дней',
       last365Days: 'Последний год',
       remaining: 'Осталось',
-      last90DaysShort: '90 дней',
 
       // Статусы заказов
       st_pending: 'В ожидании',
@@ -174,6 +187,21 @@ const i18n = {
       ps_paid: 'Оплачен',
       ps_cancelled: 'Отменён',
       ps_refunded: 'Возвращён',
+
+      // Настройки
+      settings: 'Настройки',
+      deliverySettings: 'Настройки доставки',
+      deliveryEnabled: 'Доставка включена',
+      deliveryEnabledHint: 'Если выключить, доставка будет бесплатной для всех заказов.',
+      freeShippingThreshold: 'Порог бесплатной доставки',
+      freeThresholdHint: 'Если сумма заказа больше этого значения, доставка бесплатна. 0 = без порога.',
+      defaultShippingFee: 'Резервная цена доставки',
+      defaultFeeHint: 'Используется, если у товара не задана своя цена доставки.',
+      blocked: 'Заблокирован',
+      active: 'Активен',
+      block: 'Заблокировать',
+      unblock: 'Разблокировать',
+      stock: 'Остаток',
     },
   },
 
@@ -184,7 +212,9 @@ const i18n = {
   /** Kalit bo'yicha tarjima. Topilmasa kalitning o'zini qaytaradi. */
   t(key) {
     const d = this.dict[this._lang] || this.dict.uz;
-    return d[key] !== undefined ? d[key] : (this.dict.uz[key] !== undefined ? this.dict.uz[key] : key);
+    if (d[key] !== undefined) return d[key];
+    if (this.dict.uz[key] !== undefined) return this.dict.uz[key];
+    return key;
   },
 
   /** Buyurtma holatini tarjima qiladi (confirmed -> Tasdiqlangan). */
@@ -202,9 +232,9 @@ const i18n = {
   /** Holatga mos rang klassi (badge uchun). */
   statusBadge(raw) {
     const s = String(raw || '').toLowerCase().trim();
-    if (['paid', 'delivered', 'completed'].includes(s)) return 'badge-success';
-    if (['cancelled', 'refunded'].includes(s)) return 'badge-danger';
-    if (['confirmed', 'processing'].includes(s)) return 'badge-warning';
+    if (['paid', 'delivered', 'completed', 'performed'].includes(s)) return 'badge-success';
+    if (['cancelled', 'refunded', 'cancelled_after_perform'].includes(s)) return 'badge-danger';
+    if (['confirmed', 'processing', 'waiting', 'created'].includes(s)) return 'badge-warning';
     return 'badge-neutral';
   },
 
