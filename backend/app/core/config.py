@@ -37,9 +37,16 @@ class Settings(BaseSettings):
     CLICK_SECRET_KEY: str = ""
     CLICK_MERCHANT_USER_ID: str = ""
 
-    # Payme
+    # ── Payme ─────────────────────────────────────────────────────
+    # PAYME_KEY      — production (asosiy) kassa kaliti
+    # PAYME_TEST_KEY — sandbox (песочница) kaliti, faqat test davrida
+    #
+    # Webhook ikkala kalitni ham qabul qiladi. Shu tufayli Payme'ning
+    # sandbox testini o'tkazish uchun production sozlamasini o'chirish
+    # SHART EMAS — test tugagach PAYME_TEST_KEY ni bo'sh qoldirish kifoya.
     PAYME_MERCHANT_ID: str = ""
     PAYME_KEY: str = ""
+    PAYME_TEST_KEY: str = ""
 
     # ── Yetkazib berish (shipping) ────────────────────────────────
     # Asosiy narx endi HAR BIR MAHSULOTGA admin panelda belgilanadi
