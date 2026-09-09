@@ -39,6 +39,28 @@ class Notification(Base):
     
     user = relationship("User")
 
+
+class NotificationBroadcast(Base):
+    """Admin panel orqali yuborilgan har bir push xabar uchun BITTA yozuv.
+
+    `Notification` jadvalida har bir qabul qiluvchiga alohida qator
+    yaratiladi (fan-out), shuning uchun u admin uchun "yuborilgan
+    xabarlar tarixi"ni ko'rsatishga mos emas — bitta broadcast yuzlab
+    qatorga aylanadi. Bu jadval esa faqat yuborish faktini saqlaydi.
+    """
+    __tablename__ = "notification_broadcasts"
+
+    id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    title = Column(String, nullable=False)
+    body = Column(String, nullable=False)
+    image_url = Column(String, nullable=True)
+    target = Column(String(50), default="all")  # all | admins | <user_id>
+    recipient_count = Column(Integer, default=0)
+    sent_by = Column(Uuid(as_uuid=True), ForeignKey("users.id"), nullable=True)
+
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
 class Payment(Base):
     __tablename__ = "payments"
     
