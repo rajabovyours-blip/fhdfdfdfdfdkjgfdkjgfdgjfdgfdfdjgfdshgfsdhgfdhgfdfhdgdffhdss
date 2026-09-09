@@ -68,12 +68,14 @@ async def process_payment(
     return_url = f"{settings.PUBLIC_BACKEND_URL}/api/v1/payments/return?order_id={order.id}"
 
     if method == "payme":
-        if not settings.PAYME_MERCHANT_ID:
+        merchant_id = settings.payme_active_merchant_id
+        if not merchant_id:
             raise HTTPException(status_code=400, detail="Payme is not configured yet")
         amount_tiyin = int(round(amount * 100))
-        raw = f"m={settings.PAYME_MERCHANT_ID};ac.order_id={order.id};a={amount_tiyin};c={return_url}"
+        raw = f"m={merchant_id};ac.order_id={order.id};a={amount_tiyin};c={return_url}"
         encoded = base64.b64encode(raw.encode()).decode()
-        url = f"https://checkout.paycom.uz/{encoded}"
+        # PAYME_TEST_MODE=true bo'lsa sandbox manziliga (test.paycom.uz) ketadi
+        url = f"{settings.payme_checkout_base}/{encoded}"
     elif method == "click":
         if not settings.CLICK_SERVICE_ID:
             raise HTTPException(status_code=400, detail="Click is not configured yet")
