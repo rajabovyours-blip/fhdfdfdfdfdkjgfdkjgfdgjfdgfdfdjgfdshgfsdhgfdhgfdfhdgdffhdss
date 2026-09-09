@@ -87,6 +87,8 @@
 		<string>Yetkazib berish manzilini xaritada aniqlash uchun joylashuv ma'lumotlaridan foydalaniladi.</string>
 		<key>NSLocationAlwaysUsageDescription</key>
 		<string>Yetkazib berish manzilini xaritada aniqlash uchun joylashuv ma'lumotlaridan foydalaniladi.</string>
+		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+		<string>Yetkazib berish manzilini xaritada aniqlash uchun joylashuv ma'lumotlaridan foydalaniladi.</string>
 		<key>UIStatusBarHidden</key>
 		<false/>
 	</dict>
