@@ -176,7 +176,7 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
               .map((i) => {
                     'product_id': i.product.id,
                     'quantity': i.quantity,
-                  })
+                  },)
               .toList(),
         },
       );
@@ -273,11 +273,11 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
   }
 
   Future<bool> addNewAddress(
-      String label, String region, String district, String street) async {
+      String label, String region, String district, String street,) async {
     state = state.copyWith(isLoading: true);
 
     final bool isDuplicate = state.addresses.any((a) =>
-        a.region == region && a.district == district && a.street == street);
+        a.region == region && a.district == district && a.street == street,);
 
     if (isDuplicate) {
       state = state.copyWith(
@@ -433,7 +433,7 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
     try {
       final paymentRepo = ref.read(paymentRepositoryProvider);
       final result = await paymentRepo.processPayment(
-          orderId, paymentMethod.toLowerCase());
+          orderId, paymentMethod.toLowerCase(),);
       return result.fold(
         (failure) => null,
         (url) => url,

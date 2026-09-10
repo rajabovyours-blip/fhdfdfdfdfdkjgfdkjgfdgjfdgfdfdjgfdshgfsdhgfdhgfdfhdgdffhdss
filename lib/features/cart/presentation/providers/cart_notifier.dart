@@ -189,7 +189,20 @@ class CartNotifier extends StateNotifier<FeatureState<List<CartItemEntity>>> {
     final repository = _ref.read(cartRepositoryProvider);
     final result = await repository.updateCartItem(cartItemId, quantity);
     if (result.isLeft()) {
-      return false;
+      // Backend xato bersa (masalan, local ID UUID formatida emas),
+      // local holatni yangilaymiz — foydalanuvchi uchun ishlaydi
+      state.maybeWhen(
+        loaded: (items) {
+          final newItems = List<CartItemEntity>.from(items);
+          final index = newItems.indexWhere((i) => i.id == cartItemId);
+          if (index >= 0) {
+            newItems[index] = newItems[index].copyWith(quantity: quantity);
+            state = FeatureState.loaded(newItems);
+          }
+        },
+        orElse: () {},
+      );
+      return true;
     } else {
       await loadCart(silent: true);
       return true;

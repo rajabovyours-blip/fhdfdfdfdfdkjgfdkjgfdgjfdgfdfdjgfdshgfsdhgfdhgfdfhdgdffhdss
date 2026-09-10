@@ -6,6 +6,7 @@ import 'package:milliy_metr/features/orders/presentation/providers/order_notifie
 import 'package:intl/intl.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
 import 'package:go_router/go_router.dart';
+import 'package:milliy_metr/core/router/route_constants.dart';
 import 'package:milliy_metr/core/utils/currency_formatter.dart';
 
 class OrderDetailsScreen extends ConsumerWidget {
@@ -18,7 +19,21 @@ class OrderDetailsScreen extends ConsumerWidget {
     final orderAsync = ref.watch(orderDetailsProvider(orderId));
 
     return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.orderNumberLabel(orderId))),
+      appBar: AppBar(
+        title: Text(context.l10n.orderNumberLabel(orderId)),
+        leading: IconButton(
+          icon: Icon(
+            Navigator.of(context).canPop() ? Icons.arrow_back : Icons.home,
+          ),
+          onPressed: () {
+            if (Navigator.of(context).canPop()) {
+              Navigator.of(context).pop();
+            } else {
+              context.go(AppRoutes.home);
+            }
+          },
+        ),
+      ),
       body: orderAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text(e.toString())),

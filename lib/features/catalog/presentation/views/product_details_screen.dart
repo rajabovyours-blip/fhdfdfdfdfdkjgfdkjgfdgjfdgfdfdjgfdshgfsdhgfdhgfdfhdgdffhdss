@@ -6,6 +6,8 @@ import 'package:milliy_metr/core/utils/app_formatters.dart';
 import 'package:milliy_metr/features/catalog/presentation/providers/product_details_notifier.dart';
 import 'package:milliy_metr/features/wishlist/presentation/providers/wishlist_notifier.dart';
 import 'package:milliy_metr/features/cart/presentation/providers/cart_notifier.dart';
+import 'package:milliy_metr/features/checkout/presentation/providers/checkout_provider.dart';
+import 'package:milliy_metr/features/checkout/domain/entities/cart_item_entity.dart';
 import 'package:go_router/go_router.dart';
 import 'package:milliy_metr/core/router/route_constants.dart';
 
@@ -1047,9 +1049,9 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
     int quantityInCart = 0;
     cartState.maybeWhen(
       loaded: (items) {
-        final existing = items.where((item) => item.product.id == product.id).firstOrNull;
-        if (existing != null) {
-          quantityInCart = existing.quantity;
+        final matches = items.where((item) => item.product.id == product.id);
+        if (matches.isNotEmpty) {
+          quantityInCart = matches.first.quantity;
         }
       },
       orElse: () {},
@@ -1179,6 +1181,20 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                             onPressed: outOfStock ? null : () async {
                               await ref.read(cartNotifierProvider.notifier).ensureInCart(product, 1);
                               if (context.mounted) {
+                                // Checkout provider'ga mahsulotni uzatamiz
+                                // aks holda checkout "Select one item" xatosi beradi
+                                final cartItem = CartItemEntity(
+                                  id: DateTime.now().millisecondsSinceEpoch.toString(),
+                                  product: product,
+                                  quantity: 1,
+                                  isSelected: true,
+                                  isSavedForLater: false,
+                                  isWholesale: false,
+                                  minimumOrderQuantity: 1,
+                                  maximumQuantity: product.stock,
+                                  warehouseName: 'Asosiy ombor',
+                                );
+                                ref.read(checkoutProvider.notifier).initializeWithCartItems([cartItem]);
                                 unawaited(context.push(AppRoutes.checkout));
                               }
                             },

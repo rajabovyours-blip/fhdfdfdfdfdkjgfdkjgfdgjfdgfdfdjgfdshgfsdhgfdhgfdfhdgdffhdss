@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:go_router/go_router.dart';
+import 'package:milliy_metr/core/router/route_constants.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 
 /// To'lov sahifasini ILOVA ICHIDA ochadi.
 ///
 /// Nima uchun tashqi brauzer emas:
 ///  - foydalanuvchi backend manzilini (va u orqali API'larni) ko'rmaydi
-///  - to'lovdan keyin avtomatik ravishda ilovaga qaytadi
+///  - to'lovdan keyin avtomatik ravishda buyurtma sahifasiga o'tadi
 ///  - to'lov holati URL orqali emas, backenddan tekshiriladi
 class PaymentWebviewScreen extends ConsumerStatefulWidget {
   final String paymentUrl;
@@ -46,10 +48,9 @@ class _PaymentWebviewScreenState extends ConsumerState<PaymentWebviewScreen> {
           },
           onNavigationRequest: (NavigationRequest request) {
             if (request.url.contains('/payments/return')) {
-              // To'lov oqimi provayder tomonida tugadi. Oynani yopamiz va
-              // haqiqiy holatni backenddan tekshiramiz — URL hech qachon
-              // to'lov dalili emas.
-              _close(true);
+              // To'lov oqimi provayder tomonida tugadi. Buyurtma
+              // sahifasiga o'tamiz — haqiqiy holatni backenddan tekshiramiz.
+              _goToOrderDetails();
               return NavigationDecision.prevent;
             }
             return NavigationDecision.navigate;
@@ -59,10 +60,11 @@ class _PaymentWebviewScreenState extends ConsumerState<PaymentWebviewScreen> {
       ..loadRequest(Uri.parse(widget.paymentUrl));
   }
 
-  void _close(bool completed) {
+  void _goToOrderDetails() {
     if (_closed || !mounted) return;
     _closed = true;
-    Navigator.of(context).pop(completed);
+    // Buyurtma tafsilotlari sahifasiga o'tamiz
+    context.go(AppRoutes.orderDetails.replaceFirst(':id', widget.orderId));
   }
 
   @override
@@ -70,7 +72,7 @@ class _PaymentWebviewScreenState extends ConsumerState<PaymentWebviewScreen> {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
-        if (!didPop) _close(false);
+        if (!didPop) _goToOrderDetails();
       },
       child: Scaffold(
         backgroundColor: context.colors.background,
@@ -84,7 +86,7 @@ class _PaymentWebviewScreenState extends ConsumerState<PaymentWebviewScreen> {
           centerTitle: true,
           leading: IconButton(
             icon: const Icon(Icons.close),
-            onPressed: () => _close(false),
+            onPressed: () => _goToOrderDetails(),
           ),
         ),
         body: Center(
@@ -102,3 +104,4 @@ class _PaymentWebviewScreenState extends ConsumerState<PaymentWebviewScreen> {
     );
   }
 }
+

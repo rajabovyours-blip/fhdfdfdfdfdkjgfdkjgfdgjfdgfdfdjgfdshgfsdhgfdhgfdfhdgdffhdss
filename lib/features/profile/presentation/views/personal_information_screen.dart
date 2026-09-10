@@ -184,7 +184,7 @@ class _PersonalInformationScreenState
                               ? FileImage(File(_localAvatarPath!))
                               : (_avatarUrl != null && _avatarUrl!.isNotEmpty
                                   ? NetworkImage(ImageUtils.getFullImageUrl(
-                                      _avatarUrl!)) as ImageProvider
+                                      _avatarUrl!,),) as ImageProvider
                                   : null),
                           child: _localAvatarPath == null &&
                                   (_avatarUrl == null || _avatarUrl!.isEmpty)
