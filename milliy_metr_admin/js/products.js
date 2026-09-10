@@ -60,11 +60,11 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('prod-img-upload').addEventListener('change', async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    // Compress image before uploading
+    // Compress image before uploading — HD sifat (2000px, 92% quality)
     const compressedFile = await ImageCompressor.compress(file, {
-      maxWidth: 800,
-      maxHeight: 800,
-      quality: 0.8
+      maxWidth: 2000,
+      maxHeight: 2000,
+      quality: 0.92
     });
     
     const formData = new FormData();
