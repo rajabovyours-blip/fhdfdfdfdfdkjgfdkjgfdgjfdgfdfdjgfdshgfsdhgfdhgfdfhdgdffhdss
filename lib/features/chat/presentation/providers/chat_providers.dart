@@ -45,7 +45,7 @@ class ChatSessionNotifier extends StateNotifier<FeatureState<ChatSessionEntity?>
         name: name,
         phone: phone,
         isResolved: false,
-      ));
+      ),);
       startPolling();
     } else {
       state = const FeatureState.loaded(null);

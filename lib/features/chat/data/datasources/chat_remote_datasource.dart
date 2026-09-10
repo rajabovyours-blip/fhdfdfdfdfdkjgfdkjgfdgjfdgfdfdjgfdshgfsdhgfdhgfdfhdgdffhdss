@@ -18,7 +18,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
       final response = await dio.post('/chat/start', data: {
         'name': name,
         'phone': phone,
-      });
+      },);
       return response.data['data'] as Map<String, dynamic>;
     } on DioException catch (e) {
       throw ServerException(e.message ?? 'Network error');
@@ -40,7 +40,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
     try {
       final response = await dio.post('/chat/$sessionId/messages', data: {
         'text': text,
-      });
+      },);
       return response.data['data'] as Map<String, dynamic>;
     } on DioException catch (e) {
       throw ServerException(e.message ?? 'Network error');
