@@ -54,7 +54,7 @@ function renderBannerTable() {
   const tbody = document.getElementById('banner-list');
   
   if (allBanners.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="6" class="text-center">Bannerlar mavjud emas</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6" class="text-center">${i18n.t('noData')}</td></tr>`;
     return;
   }
   
@@ -63,8 +63,8 @@ function renderBannerTable() {
     const imgSrc = imgUrl ? api.getImageUrl(imgUrl) : '';
     const isActive = b.isActive !== undefined ? b.isActive : b.is_active;
     const statusHtml = isActive 
-      ? '<span class="badge badge-success">Faol</span>' 
-      : '<span class="badge badge-neutral">Nofaol</span>';
+      ? `<span class="badge badge-success">${i18n.t('active')}</span>` 
+      : `<span class="badge badge-neutral">${i18n.t('inactive')}</span>`;
       
     const linkUrl = b.linkUrl || b.link_url || '-';
     const orderIndex = b.orderIndex !== undefined ? b.orderIndex : b.order_index;
@@ -101,7 +101,7 @@ function openModal(id = null) {
   document.getElementById('banner-order').value = "0";
   
   if (id) {
-    title.textContent = 'Bannerni Tahrirlash';
+    title.textContent = i18n.t('edit') + ': ' + i18n.t('banners');
     const b = allBanners.find(x => x.id === id);
     if (b) {
       document.getElementById('banner-id').value = b.id;
@@ -118,7 +118,7 @@ function openModal(id = null) {
       }
     }
   } else {
-    title.textContent = "Banner Qo'shish";
+    title.textContent = i18n.t('add') + ': ' + i18n.t('banners');
   }
   
   modal.classList.add('active');
@@ -151,15 +151,15 @@ async function saveBanner() {
   
   const btn = document.getElementById('btn-save-banner');
   btn.disabled = true;
-  btn.textContent = 'Saqlanmoqda...';
+  btn.textContent = i18n.t('loading');
   
   try {
     if (id) {
       await api.put(`/banners/${id}`, payload);
-      layout.showToast('Banner yangilandi');
+      layout.showToast(i18n.t('success'));
     } else {
       await api.post('/banners', payload);
-      layout.showToast('Banner qo\'shildi');
+      layout.showToast(i18n.t('success'));
     }
     closeModal();
     loadBanners();
@@ -167,16 +167,16 @@ async function saveBanner() {
     layout.showToast(err.message, 'error');
   } finally {
     btn.disabled = false;
-    btn.textContent = 'Saqlash';
+    btn.textContent = i18n.t('save');
   }
 }
 
 async function deleteBanner(id) {
-  if (!confirm('Rostdan ham ushbu bannerni o\'chirmoqchimisiz?')) return;
+  if (!confirm(i18n.t('confirmDelete'))) return;
   
   try {
     await api.delete(`/banners/${id}`);
-    layout.showToast('Banner o\'chirildi');
+    layout.showToast(i18n.t('success'));
     loadBanners();
   } catch (err) {
     layout.showToast(err.message, 'error');
