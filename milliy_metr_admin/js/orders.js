@@ -29,7 +29,12 @@ function ensureFilterUi() {
   const statusFilter = document.getElementById('status-filter');
   if (!statusFilter || document.getElementById('date-from')) return;
 
-  const host = statusFilter.parentElement;
+  // Muhim: statusFilter.parentElement — bu faqat status select joylashgan
+  // tor (200px) quti. Filtrlarni O'SHA quti ichiga emas, balki butun
+  // filtr qatoriga (.d-flex.gap-16) qo'shish kerak, aks holda hammasi
+  // bir-biriga siqilib, buzilib ko'rinadi.
+  const row = statusFilter.closest('.d-flex.gap-16') || statusFilter.parentElement.parentElement;
+
   const wrap = document.createElement('div');
   wrap.style.cssText = 'display:flex; gap:8px; align-items:center; flex-wrap:wrap;';
   wrap.innerHTML = `
@@ -46,7 +51,7 @@ function ensureFilterUi() {
       <span class="material-symbols-rounded" style="font-size:18px;">restart_alt</span>
     </button>
   `;
-  host.appendChild(wrap);
+  row.appendChild(wrap);
 
   ['payment-filter', 'date-from', 'date-to'].forEach(id => {
     document.getElementById(id).addEventListener('change', loadOrders);
@@ -234,7 +239,7 @@ async function loadPaymentHistory(orderId) {
                 <td>${(p.provider || '—').toUpperCase()}</td>
                 <td style="font-family:monospace; font-size:11px;">${p.transaction_id || '—'}</td>
                 <td>${i18n.money(Number(p.amount || 0) / 100)}</td>
-                <td><span class="badge ${i18n.statusBadge(p.status)}">${p.status || '—'}</span></td>
+                <td><span class="badge ${i18n.statusBadge(p.status)}">${p.status === 'cancelled_after_perform' ? i18n.t('ps_refunded') : i18n.paymentStatus(p.status)}</span></td>
                 <td>${p.created_at ? new Date(p.created_at).toLocaleString(locale) : '—'}</td>
               </tr>`).join('')}
           </tbody>
