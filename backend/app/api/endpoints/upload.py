@@ -30,12 +30,12 @@ def process_image(image_bytes, watermark_path):
                 wm_height = int(watermark.height * wm_ratio)
                 watermark = watermark.resize((wm_width, wm_height), Image.Resampling.LANCZOS)
                 
-                # Calculate top right corner with 20px padding
+                # Yurakcha (sevimlilar) tugmasi ilovada yuqori O'NG burchakda
+                # turadi — shuning uchun logotip u bilan to'qnashmasligi uchun
+                # yuqori CHAP burchakka joylashtiriladi.
                 padding_x = 20
                 padding_y = 20
-                pos_x = base_image.width - wm_width - padding_x
-                if pos_x < 0:
-                    pos_x = 0
+                pos_x = padding_x
                 pos_y = padding_y
                 
                 # Create transparent layer and paste watermark
@@ -62,7 +62,10 @@ async def upload_image(file: UploadFile = File(...)):
     try:
         content = await file.read()
         final_image = await run_in_threadpool(process_image, content, WATERMARK_PATH)
-        await run_in_threadpool(final_image.save, file_path, "PNG")
+        # PNG - lossless (sifat yo'qotilmaydi). Asosiy sifat pasayishi
+        # oldin admin panelning client-side siqishida bo'lgan (image-utils.js) —
+        # u alohida tuzatildi.
+        await run_in_threadpool(final_image.save, file_path, "PNG", optimize=True)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to upload image: {e}")
         
