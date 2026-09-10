@@ -7,3 +7,4 @@ from app.models.review import Review
 from app.models.cart import CartItem
 from app.models.address import Address
 from app.models.extras import Wishlist, Banner, Notification, Payment
+from app.models.chat import ChatSession, ChatMessage

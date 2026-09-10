@@ -12,8 +12,7 @@ import 'package:milliy_metr/l10n/l10n_extension.dart';
 import 'package:milliy_metr/core/utils/image_utils.dart';
 import 'package:milliy_metr/core/providers/main_navigation_provider.dart';
 import 'package:milliy_metr/features/wishlist/presentation/providers/wishlist_notifier.dart';
-
-
+import 'package:milliy_metr/features/chat/presentation/views/chat_bottom_sheet.dart' as milliy_metr_chat;
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -48,6 +47,23 @@ class ProfileScreen extends ConsumerWidget {
             error: (message) => _buildErrorState(context, message, ref),
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (context) => Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
+              child: const milliy_metr_chat.ChatBottomSheet(),
+            ),
+          );
+        },
+        backgroundColor: context.colors.primary,
+        child: const Icon(Icons.chat_bubble_outline, color: Colors.white),
       ),
     );
   }
