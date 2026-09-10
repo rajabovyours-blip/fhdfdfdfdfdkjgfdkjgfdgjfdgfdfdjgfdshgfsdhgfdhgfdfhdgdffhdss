@@ -29,7 +29,13 @@ class CartNotifier extends StateNotifier<FeatureState<List<CartItemEntity>>> {
       _wasAuthenticated = isNowAuthenticated;
     });
 
-    loadCart();
+    // Agar auth allaqachon authenticated bo'lsa (tokendan tiklangan) — darhol serverdan yuklash
+    if (_wasAuthenticated) {
+      loadCart();
+    } else {
+      // Guest yoki hali loading — bo'sh cart ko'rsatish (auth tayyor bo'lganda listener yuklaydi)
+      state = const FeatureState.loaded([]);
+    }
   }
 
   Future<void> loadCart({bool silent = false}) async {
