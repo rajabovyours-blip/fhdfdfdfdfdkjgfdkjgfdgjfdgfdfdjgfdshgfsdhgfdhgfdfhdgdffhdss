@@ -10,6 +10,7 @@ from app.models.chat import ChatSession, ChatMessage
 from app.schemas.chat import ChatSessionCreate, ChatSessionModel, ChatMessageCreate, ChatMessageModel
 from app.schemas.common import APIResponse
 from app.api.deps import get_current_user_optional, get_current_admin
+from app.models.extras import Notification
 
 router = APIRouter()
 
@@ -118,6 +119,13 @@ async def admin_send_message(
     from datetime import datetime
     session.updated_at = datetime.utcnow()
     session.is_resolved = False # automatically unresolve if admin replies
+    
+    if session.user_id:
+        db.add(Notification(
+            user_id=session.user_id,
+            title="Sizga admin xabar yozdi",
+            body=payload.text[:100] + ("..." if len(payload.text) > 100 else ""),
+        ))
     
     await db.commit()
     await db.refresh(message)
