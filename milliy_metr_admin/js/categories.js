@@ -24,11 +24,11 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('cat-img-upload').addEventListener('change', async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    // Compress image before uploading
+    // Compress image before uploading — HD sifat
     const compressedFile = await ImageCompressor.compress(file, {
-      maxWidth: 512,
-      maxHeight: 512,
-      quality: 0.8
+      maxWidth: 1000,
+      maxHeight: 1000,
+      quality: 0.9
     });
     
     const formData = new FormData();
