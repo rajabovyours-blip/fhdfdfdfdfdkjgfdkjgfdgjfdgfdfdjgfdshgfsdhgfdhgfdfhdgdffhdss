@@ -1,0 +1,7 @@
+.category-tile { text-align: left; }
+.product-name { padding: 0; border: 0; background: transparent; text-align: left; cursor: pointer; }
+.home-intro .button { margin-top: 22px; }
+
+@media (max-width: 680px) {
+  .sort-select { width: 88px; padding: 0 7px; color: var(--ink); font-size: 10px; }
+}
