@@ -76,8 +76,19 @@ async def update_me(payload: UserMeUpdate, db: AsyncSession = Depends(get_db), c
     if payload.preferred_language is not None:
         current_user.preferred_language = payload.preferred_language
         
-    await db.commit()
-    await db.refresh(current_user)
+    try:
+        await db.commit()
+        await db.refresh(current_user)
+    except Exception as e:
+        await db.rollback()
+        error_str = str(e).lower()
+        if "unique" in error_str or "duplicate" in error_str:
+            if "phone" in error_str:
+                raise HTTPException(status_code=400, detail="Bu telefon raqami allaqachon ro'yxatdan o'tgan")
+            if "email" in error_str:
+                raise HTTPException(status_code=400, detail="Bu email allaqachon ro'yxatdan o'tgan")
+            raise HTTPException(status_code=400, detail="Bu ma'lumot allaqachon mavjud")
+        raise HTTPException(status_code=500, detail="Profil yangilashda xatolik yuz berdi")
     return APIResponse(data=UserModel.model_validate(current_user))
 
 class UserUpdate(PydanticBaseModel):

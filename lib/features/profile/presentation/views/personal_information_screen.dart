@@ -87,20 +87,30 @@ class _PersonalInformationScreenState
               if (_isEditing) {
                 if (_formKey.currentState!.validate()) {
                   setState(() => _isSaving = true);
-                  final error = await ref.read(authProvider.notifier).updateProfile(
-                    _nameController.text,
-                    _emailController.text,
-                    _phoneController.text,
-                    _avatarUrl ?? '',
-                  );
-                  setState(() => _isSaving = false);
-                  if (!context.mounted) return;
-                  
-                  if (error == null) {
-                    setState(() => _isEditing = false);
-                    AppSnackBar.showSuccess(context, l10n.profileUpdated);
-                  } else {
-                    AppSnackBar.showError(context, error);
+                  try {
+                    final error = await ref.read(authProvider.notifier).updateProfile(
+                      _nameController.text,
+                      _emailController.text,
+                      _phoneController.text,
+                      _avatarUrl ?? '',
+                    ).timeout(
+                      const Duration(seconds: 15),
+                      onTimeout: () => 'So\'rov vaqti tugadi. Qayta urinib ko\'ring.',
+                    );
+                    if (!context.mounted) return;
+                    
+                    if (error == null) {
+                      setState(() => _isEditing = false);
+                      AppSnackBar.showSuccess(context, l10n.profileUpdated);
+                    } else {
+                      AppSnackBar.showError(context, error);
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      AppSnackBar.showError(context, l10n.errorOccurred);
+                    }
+                  } finally {
+                    if (mounted) setState(() => _isSaving = false);
                   }
                 }
               } else {
