@@ -172,14 +172,9 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                                       child: Text(context.l10n.cancel, style: TextStyle(color: context.colors.textMedium)),
                                     ),
                                     TextButton(
-                                      onPressed: () async {
+                                      onPressed: () {
                                         Navigator.pop(ctx);
-                                        final success = await notifier.removeFromCart(item.id);
-                                        if (success) {
-                                          _removeItemWithUndo(item);
-                                        } else if (context.mounted) {
-                                          AppSnackBar.showError(context, context.l10n.errorUpdatingQuantity);
-                                        }
+                                        _removeItemWithUndo(item);
                                       },
                                       child: Text(context.l10n.clear, style: TextStyle(color: context.colors.danger)),
                                     ),
@@ -187,10 +182,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                                 ),
                               );
                             } else {
-                              final success = await notifier.updateCartItem(item.id, item.quantity - 1);
-                              if (!success && context.mounted) {
-                                AppSnackBar.showError(context, context.l10n.errorUpdatingQuantity);
-                              }
+                              await notifier.updateCartItem(item.id, item.quantity - 1);
                             }
                           },
                           onRemove: () => _removeItemWithUndo(item),

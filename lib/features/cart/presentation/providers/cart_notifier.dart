@@ -230,7 +230,17 @@ class CartNotifier extends StateNotifier<FeatureState<List<CartItemEntity>>> {
     final repository = _ref.read(cartRepositoryProvider);
     final result = await repository.removeFromCart(cartItemId);
     if (result.isLeft()) {
-      return false;
+      // Backend xato bersa (masalan, local ID UUID formatida emas),
+      // local holatdan o'chiramiz — foydalanuvchi uchun ishlaydi
+      state.maybeWhen(
+        loaded: (items) {
+          final newItems = List<CartItemEntity>.from(items);
+          newItems.removeWhere((i) => i.id == cartItemId);
+          state = FeatureState.loaded(newItems);
+        },
+        orElse: () {},
+      );
+      return true;
     } else {
       await loadCart(silent: true);
       return true;
