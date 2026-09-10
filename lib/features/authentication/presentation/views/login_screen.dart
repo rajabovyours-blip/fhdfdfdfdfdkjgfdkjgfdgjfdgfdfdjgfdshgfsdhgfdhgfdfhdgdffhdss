@@ -161,14 +161,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (credential.identityToken != null) {
         if (!mounted) return;
         await ref.read(authProvider.notifier).socialLogin('apple', credential.identityToken!);
+      } else {
+        if (!mounted) return;
+        AppSnackBar.showError(context, 'Apple identityToken null qaytdi. Qayta urinib ko\'ring.');
+      }
+    } on SignInWithAppleAuthorizationException catch (e) {
+      if (e.code == AuthorizationErrorCode.canceled) return;
+      debugPrint('Apple Sign-In authorization error: ${e.code} - ${e.message}');
+      if (mounted) {
+        AppSnackBar.showError(context, '${context.l10n.appleSignInError}: ${e.message}');
       }
     } catch (e) {
-      if (e is SignInWithAppleAuthorizationException && e.code == AuthorizationErrorCode.canceled) {
-        return;
-      }
       debugPrint('Apple Sign-In caught: $e');
       if (mounted) {
-        AppSnackBar.showError(context, context.l10n.appleSignInError);
+        AppSnackBar.showError(context, '${context.l10n.appleSignInError}: $e');
       }
     }
   }
