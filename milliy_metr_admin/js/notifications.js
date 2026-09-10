@@ -12,11 +12,11 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('notif-img-upload').addEventListener('change', async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    // Compress image before uploading
+    // Compress image before uploading — HD sifat
     const compressedFile = await ImageCompressor.compress(file, {
-      maxWidth: 800,
-      maxHeight: 600,
-      quality: 0.8
+      maxWidth: 1600,
+      maxHeight: 1200,
+      quality: 0.9
     });
     
     const formData = new FormData();
