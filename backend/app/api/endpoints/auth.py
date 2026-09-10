@@ -171,7 +171,7 @@ async def social_login(payload: SocialLoginRequest, db: AsyncSession = Depends(g
             import jwt
             # Decode token (frontend SDK handles initial verification with Apple)
             id_info = jwt.decode(payload.token, options={"verify_signature": False})
-            email = id_info.get('email')
+            email = id_info.get('email')  # Apple faqat BIRINCHI kirishda email yuboradi!
             provider_id = id_info.get('sub')
             first_name = 'Apple'
             last_name = 'User'
@@ -179,35 +179,46 @@ async def social_login(payload: SocialLoginRequest, db: AsyncSession = Depends(g
     except ValueError as e:
         raise HTTPException(status_code=400, detail=f"Authentication failed: {str(e)}")
     except Exception as e:
-        raise HTTPException(status_code=400, detail="Authentication failed")
+        raise HTTPException(status_code=400, detail=f"Authentication failed: {str(e)}")
 
-    if not email:
-        raise HTTPException(status_code=400, detail="Could not extract email from token")
+    if not provider_id:
+        raise HTTPException(status_code=400, detail="Could not extract user ID from token")
 
-    # Check if user exists by email OR provider_id
-    result = await db.execute(select(User).where(User.email == email))
-    user = result.scalar_one_or_none()
-    
-    if not user:
-        # Check by provider_id just in case
-        result_sub = await db.execute(select(User).where(User.provider_id == provider_id))
-        user = result_sub.scalar_one_or_none()
+    # 1) Avval provider_id bo'yicha qidirish (Apple qayta kirishda email bermaydi)
+    user = None
+    result_sub = await db.execute(select(User).where(User.provider_id == provider_id))
+    user = result_sub.scalar_one_or_none()
+
+    # 2) Agar provider_id bo'yicha topilmasa, email bo'yicha qidirish
+    if not user and email:
+        result_email = await db.execute(select(User).where(User.email == email))
+        user = result_email.scalar_one_or_none()
         
     if user:
         # Update provider info if missing
-        if user.provider != payload.provider or user.provider_id != provider_id:
+        changed = False
+        if user.provider != payload.provider:
             user.provider = payload.provider
+            changed = True
+        if user.provider_id != provider_id:
             user.provider_id = provider_id
+            changed = True
+        if email and not user.email:
+            user.email = email
+            changed = True
+        if changed:
             await db.commit()
     else:
+        if not email:
+            # Apple birinchi marta kirish, lekin email bermadi — kamdan-kam holat
+            email = f"{provider_id}@privaterelay.appleid.com"
         # Create new user
         full_name = f"{first_name} {last_name}".strip()
-        dummy_phone = f"{payload.provider}_{provider_id}"[:20] # Ensure it fits in 20 chars
         user = User(
             id=uuid.uuid4(),
             full_name=full_name,
             email=email,
-            phone=dummy_phone, # Required by DB schema
+            phone=f"_{uuid.uuid4().hex[:18]}",  # Unique dummy phone (20 chars max)
             hashed_password=get_password_hash(uuid.uuid4().hex),
             provider=payload.provider,
             provider_id=provider_id
