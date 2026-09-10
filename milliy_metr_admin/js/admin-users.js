@@ -27,14 +27,14 @@ function renderTable() {
   const tbody = document.getElementById('admin-list');
   
   if (allAdmins.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="5" class="text-center">Adminlar mavjud emas</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5" class="text-center">${i18n.t('noData')}</td></tr>`;
     return;
   }
   
   tbody.innerHTML = allAdmins.map(u => {
     const statusHtml = u.is_active 
-      ? '<span class="badge badge-success">Faol</span>' 
-      : '<span class="badge badge-danger">Bloklangan</span>';
+      ? `<span class="badge badge-success">${i18n.t('active')}</span>` 
+      : `<span class="badge badge-danger">${i18n.t('blocked')}</span>`;
       
     const roleHtml = u.role === 'OWNER' 
       ? '<span class="badge badge-warning">OWNER</span>'
@@ -47,8 +47,8 @@ function renderTable() {
         <td>${roleHtml}</td>
         <td>${statusHtml}</td>
         <td class="text-center">
-          <button class="btn btn-sm btn-outline" style="padding: 0 8px;" onclick="openModal('${u.id}')" title="Tahrirlash"><span class="material-symbols-rounded" style="font-size: 18px;">edit</span></button>
-          <button class="btn btn-sm btn-outline" style="padding: 0 8px; color: var(--danger-color); border-color: var(--danger-color); margin-left: 4px;" onclick="deleteAdmin('${u.id}')" title="O'chirish"><span class="material-symbols-rounded" style="font-size: 18px;">delete</span></button>
+          <button class="btn btn-sm btn-outline" style="padding: 0 8px;" onclick="openModal('${u.id}')" title="${i18n.t('edit')}"><span class="material-symbols-rounded" style="font-size: 18px;">edit</span></button>
+          <button class="btn btn-sm btn-outline" style="padding: 0 8px; color: var(--danger-color); border-color: var(--danger-color); margin-left: 4px;" onclick="deleteAdmin('${u.id}')" title="${i18n.t('delete')}"><span class="material-symbols-rounded" style="font-size: 18px;">delete</span></button>
         </td>
       </tr>
     `;
@@ -66,7 +66,7 @@ function openModal(id = null) {
   document.getElementById('group-active').style.display = id ? 'flex' : 'none';
   
   if (id) {
-    title.textContent = 'Adminni Tahrirlash';
+    title.textContent = i18n.t('edit') + ': ' + i18n.t('admins');
     document.getElementById('pwd-hint').textContent = '(O\'zgartirish uchun kiriting, yo\'qsa bo\'sh qoldiring)';
     document.getElementById('admin-password').required = false;
     
@@ -78,7 +78,7 @@ function openModal(id = null) {
       document.getElementById('admin-active').checked = u.is_active;
     }
   } else {
-    title.textContent = "Admin Qo'shish";
+    title.textContent = i18n.t('add') + ': ' + i18n.t('admins');
     document.getElementById('pwd-hint').textContent = '(Kamida 6 belgi)';
     document.getElementById('admin-password').required = true;
     document.getElementById('admin-role').value = 'ADMIN';
@@ -106,7 +106,7 @@ async function saveAdmin() {
   
   const btn = document.getElementById('btn-save-admin');
   btn.disabled = true;
-  btn.textContent = 'Saqlanmoqda...';
+  btn.textContent = i18n.t('loading');
   
   try {
     if (id) {
@@ -122,7 +122,7 @@ async function saveAdmin() {
         await api.patch(`/admin/users/${id}/status`, { is_active: isActive });
       }
       
-      layout.showToast('Administrator yangilandi');
+      layout.showToast(i18n.t('success'));
     } else {
       // Create
       if (!username || password.length < 6) {
@@ -136,7 +136,7 @@ async function saveAdmin() {
       };
       await api.post('/admin/users/', payload);
       
-      layout.showToast("Admin muvaffaqiyatli saqlandi!", 'success');
+      layout.showToast(i18n.t('success'), 'success');
       closeModal();
       loadAdmins();
     }
@@ -148,22 +148,22 @@ async function saveAdmin() {
         ? err.response.data.detail 
         : JSON.stringify(err.response.data.detail);
     }
-    layout.showToast("Xatolik: " + errorMsg, 'error');
+    layout.showToast(i18n.t('error') + ": " + errorMsg, 'error');
     console.error("Admin save error:", err);
   } finally {
     btn.disabled = false;
-    btn.textContent = 'Saqlash';
+    btn.textContent = i18n.t('save');
   }
 }
 
 async function deleteAdmin(id) {
-  if (!confirm("Haqiqatan ham bu adminni o'chirmoqchimisiz?")) {
+  if (!confirm(i18n.t('confirmDelete'))) {
     return;
   }
   
   try {
     await api.delete(`/admin/users/${id}`);
-    layout.showToast("Admin muvaffaqiyatli o'chirildi", 'success');
+    layout.showToast(i18n.t('success'), 'success');
     loadAdmins();
   } catch (err) {
     let errorMsg = err.message || "Xatolik yuz berdi";
@@ -172,6 +172,6 @@ async function deleteAdmin(id) {
         ? err.response.data.detail 
         : JSON.stringify(err.response.data.detail);
     }
-    layout.showToast("Xatolik: " + errorMsg, 'error');
+    layout.showToast(i18n.t('error') + ": " + errorMsg, 'error');
   }
 }
