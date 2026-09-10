@@ -13,9 +13,11 @@ const ImageCompressor = {
    */
   async compress(file, options = {}) {
     const {
-      maxWidth = 1024,
-      maxHeight = 1024,
-      quality = 0.8,
+      // HD sifat standart qiymatlari. Oldin 1024/0.8 edi va rasmlar
+      // xira chiqardi — endi yuqoriroq o'lcham va sifat bilan.
+      maxWidth = 1920,
+      maxHeight = 1920,
+      quality = 0.92,
       mimeType = 'image/webp'
     } = options;
 
@@ -39,7 +41,9 @@ const ImageCompressor = {
         let width = img.width;
         let height = img.height;
         
-        // Calculate new dimensions while maintaining aspect ratio
+        // Calculate new dimensions while maintaining aspect ratio.
+        // Kichik rasmlar KATTALASHTIRILMAYDI — faqat chegaradan
+        // kattalari kichraytiriladi.
         if (width > maxWidth || height > maxHeight) {
           const ratio = Math.min(maxWidth / width, maxHeight / height);
           width = width * ratio;
@@ -51,6 +55,8 @@ const ImageCompressor = {
         canvas.height = height;
         
         const ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
         // Fill white background for transparent images converted to JPEG
         if (mimeType === 'image/jpeg' && file.type === 'image/png') {
            ctx.fillStyle = '#FFFFFF';
