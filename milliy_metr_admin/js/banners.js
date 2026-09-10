@@ -14,11 +14,11 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('banner-img-upload').addEventListener('change', async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    // Compress image before uploading
+    // Compress image before uploading — to'liq HD (1080p)
     const compressedFile = await ImageCompressor.compress(file, {
-      maxWidth: 1024,
-      maxHeight: 576, // 16:9 approx max for banners
-      quality: 0.8
+      maxWidth: 1920,
+      maxHeight: 1080, // 16:9, to'liq HD
+      quality: 0.92
     });
     
     const formData = new FormData();
