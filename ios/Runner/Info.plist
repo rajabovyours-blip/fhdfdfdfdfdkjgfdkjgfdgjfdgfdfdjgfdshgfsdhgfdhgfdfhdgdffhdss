@@ -36,6 +36,14 @@
 					<string>com.googleusercontent.apps.5408559924-kl0rm498vdr2qo39prt5k6g5v0vjvsqt</string>
 				</array>
 			</dict>
+			<dict>
+				<key>CFBundleTypeRole</key>
+				<string>Editor</string>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>milliymetr</string>
+				</array>
+			</dict>
 		</array>
 		<key>LSRequiresIPhoneOS</key>
 		<true/>

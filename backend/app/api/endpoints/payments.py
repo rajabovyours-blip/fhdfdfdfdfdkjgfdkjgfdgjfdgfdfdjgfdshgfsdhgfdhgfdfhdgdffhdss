@@ -132,13 +132,21 @@ _RETURN_PAGE = """
   body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
          text-align: center; padding: 64px 24px; color: #11181C; }}
   h2 {{ margin-bottom: 8px; }}
-  p  {{ color: #536471; }}
+  p  {{ color: #536471; margin-bottom: 32px; }}
   .icon {{ font-size: 48px; margin-bottom: 16px; }}
+  .btn {{ display: inline-block; padding: 12px 24px; background: #FF3B30; color: white; 
+         text-decoration: none; border-radius: 12px; font-weight: 600; font-size: 16px; }}
 </style></head>
 <body>
   <div class="icon">{icon}</div>
   <h2>{title}</h2>
   <p>{message}</p>
+  <a href="milliymetr://payment/return?order_id={order_id}" class="btn">Ilovaga qaytish</a>
+  <script>
+    setTimeout(function() {{
+      window.location.href = "milliymetr://payment/return?order_id={order_id}";
+    }}, 1000);
+  </script>
 </body></html>
 """
 
@@ -154,6 +162,7 @@ async def payment_return_page(order_id: str = None, db: AsyncSession = Depends(g
         icon="&#8505;",
         title="Ilovaga qayting",
         message="Buyurtma holatini ilovadan tekshirishingiz mumkin.",
+        order_id=order_id or "",
     ))
 
     if not order_id:
@@ -177,18 +186,21 @@ async def payment_return_page(order_id: str = None, db: AsyncSession = Depends(g
             icon="&#10004;",
             title="To'lov qabul qilindi",
             message="Buyurtmangiz tasdiqlandi. Ilovaga qaytishingiz mumkin.",
+            order_id=order_id,
         ))
     if status_value in ("cancelled", "refunded"):
         return HTMLResponse(_RETURN_PAGE.format(
             icon="&#10006;",
             title="To'lov amalga oshmadi",
             message="To'lov bekor qilindi. Ilovadan qayta urinib ko'ring.",
+            order_id=order_id,
         ))
 
     return HTMLResponse(_RETURN_PAGE.format(
         icon="&#8987;",
         title="To'lov tekshirilmoqda",
         message="To'lov hali tasdiqlanmadi. Ilovaga qaytib, buyurtma holatini kuzating.",
+        order_id=order_id,
     ))
 
 
