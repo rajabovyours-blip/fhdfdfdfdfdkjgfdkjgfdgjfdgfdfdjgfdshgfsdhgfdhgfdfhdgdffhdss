@@ -128,6 +128,15 @@ const i18n = {
       rawPayload: "Qo'shimcha ma'lumot",
       noResults: 'Natija topilmadi',
       template: 'Andoza',
+
+      // Chat
+      chat: 'Chat',
+      chatOpen: 'Ochiq suhbatlar',
+      chatResolved: 'Yopilgan',
+      chatSelectSession: 'Suhbatni tanlang',
+      chatResolve: 'Suhbatni yopish',
+      chatWriteMessage: 'Xabar yozing...',
+      chatResolveConfirm: 'Suhbat yopilsinmi?',
     },
 
     ru: {
@@ -246,6 +255,15 @@ const i18n = {
       rawPayload: 'Доп. информация',
       noResults: 'Ничего не найдено',
       template: 'Шаблон',
+
+      // Чат
+      chat: 'Чат',
+      chatOpen: 'Открытые диалоги',
+      chatResolved: 'Закрытые',
+      chatSelectSession: 'Выберите диалог',
+      chatResolve: 'Закрыть диалог',
+      chatWriteMessage: 'Напишите сообщение...',
+      chatResolveConfirm: 'Закрыть диалог?',
     },
   },
 
