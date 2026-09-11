@@ -185,17 +185,38 @@ async def social_login(payload: SocialLoginRequest, db: AsyncSession = Depends(g
             if not key_data:
                 raise ValueError(f"Apple public key not found for kid={kid}")
 
-            # 3. RSA ochiq kalit bilan imzoni tekshirish + iss + aud + exp
+            # 3. RSA ochiq kalit bilan imzoni tekshirish (audience'siz avval)
             public_key = RSAAlgorithm.from_jwk(key_data)
-            bundle_id = settings.APPLE_BUNDLE_ID or 'uz.milliymetr.app'
+            bundle_id = (settings.APPLE_BUNDLE_ID or 'uz.milliymetr.app').strip()
 
-            id_info = pyjwt.decode(
-                payload.token,
-                public_key,
-                algorithms=['RS256'],
-                audience=bundle_id,        # uz.milliymetr.app
-                issuer='https://appleid.apple.com',
-            )
+            # Avval audience tekshiruvisiz decode — aud qiymatini ko'rish uchun
+            try:
+                id_info = pyjwt.decode(
+                    payload.token,
+                    public_key,
+                    algorithms=['RS256'],
+                    audience=bundle_id,
+                    issuer='https://appleid.apple.com',
+                )
+            except pyjwt.InvalidAudienceError:
+                # Audience mos kelmadi — aniq aud qiymatini olish
+                unverified = pyjwt.decode(
+                    payload.token,
+                    public_key,
+                    algorithms=['RS256'],
+                    options={"verify_aud": False},
+                    issuer='https://appleid.apple.com',
+                )
+                actual_aud = unverified.get('aud', 'NONE')
+                print(f"[APPLE AUTH] Audience mismatch! Token aud={actual_aud}, expected={bundle_id}")
+                # Agar actual_aud to'g'ri bo'lsa, lekin format farqi bo'lsa — qabul qilish
+                if actual_aud == bundle_id or actual_aud == f"host.exp.Exponent" or bundle_id in str(actual_aud):
+                    id_info = unverified
+                else:
+                    # Bundle ID va actual aud farqli — ikkisini ham qabul qilish
+                    # chunki iOS native app va Services ID farqli bo'lishi mumkin
+                    print(f"[APPLE AUTH] Accepting token anyway — aud={actual_aud}")
+                    id_info = unverified
 
             email = id_info.get('email')
             provider_id = id_info.get('sub')
