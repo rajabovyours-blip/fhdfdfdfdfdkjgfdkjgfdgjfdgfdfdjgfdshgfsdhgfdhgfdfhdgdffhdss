@@ -1,11 +1,12 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
-import 'package:milliy_metr/shared/widgets/app_snackbar.dart';
 import 'package:local_auth/local_auth.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:milliy_metr/core/providers/auth_provider.dart';
 import 'package:milliy_metr/core/storage/preferences.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
 class SecurityPrivacyScreen extends StatefulWidget {
   const SecurityPrivacyScreen({super.key});
@@ -16,13 +17,85 @@ class SecurityPrivacyScreen extends StatefulWidget {
 
 class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
   bool _biometricEnabled = false;
-  bool _twoFactorEnabled = false;
+  String _deviceModel = '';
+  String _cityName = '';
 
   @override
   void initState() {
     super.initState();
     _biometricEnabled = PreferencesManager.getBool('biometric_enabled');
-    _twoFactorEnabled = PreferencesManager.getBool('two_factor_enabled');
+    _loadDeviceInfo();
+    _loadLocation();
+  }
+
+  Future<void> _loadDeviceInfo() async {
+    final deviceInfo = DeviceInfoPlugin();
+    String model;
+    if (Platform.isIOS) {
+      final iosInfo = await deviceInfo.iosInfo;
+      model = iosInfo.utsname.machine; // e.g. iPhone15,2
+      // Map to human-readable names
+      model = _mapIosModel(iosInfo.utsname.machine, iosInfo.model);
+    } else if (Platform.isAndroid) {
+      final androidInfo = await deviceInfo.androidInfo;
+      model = '${androidInfo.brand} ${androidInfo.model}';
+    } else {
+      model = 'Unknown';
+    }
+    if (mounted) {
+      setState(() => _deviceModel = model);
+    }
+  }
+
+  String _mapIosModel(String machine, String fallback) {
+    // Common iOS device mappings
+    final Map<String, String> models = {
+      'iPhone14,2': 'iPhone 13 Pro',
+      'iPhone14,3': 'iPhone 13 Pro Max',
+      'iPhone14,4': 'iPhone 13 mini',
+      'iPhone14,5': 'iPhone 13',
+      'iPhone14,7': 'iPhone 14',
+      'iPhone14,8': 'iPhone 14 Plus',
+      'iPhone15,2': 'iPhone 14 Pro',
+      'iPhone15,3': 'iPhone 14 Pro Max',
+      'iPhone15,4': 'iPhone 15',
+      'iPhone15,5': 'iPhone 15 Plus',
+      'iPhone16,1': 'iPhone 15 Pro',
+      'iPhone16,2': 'iPhone 15 Pro Max',
+      'iPhone17,1': 'iPhone 16 Pro',
+      'iPhone17,2': 'iPhone 16 Pro Max',
+      'iPhone17,3': 'iPhone 16',
+      'iPhone17,4': 'iPhone 16 Plus',
+      'iPhone17,5': 'iPhone 16e',
+    };
+    return models[machine] ?? fallback;
+  }
+
+  Future<void> _loadLocation() async {
+    try {
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+      if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+        if (mounted) setState(() => _cityName = '');
+        return;
+      }
+
+      final position = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(accuracy: LocationAccuracy.low),
+      );
+      final placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
+      if (placemarks.isNotEmpty) {
+        final place = placemarks.first;
+        final city = place.locality ?? place.subAdministrativeArea ?? place.administrativeArea ?? '';
+        if (mounted) {
+          setState(() => _cityName = city);
+        }
+      }
+    } catch (_) {
+      // Location not available — leave empty
+    }
   }
 
   @override
@@ -48,11 +121,6 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
         children: [
           // Account Security Section
           _buildSectionHeader(l10n.accountSecurity),
-          _buildTile(
-            icon: Icons.lock_outline,
-            title: l10n.changePassword,
-            onTap: () => _showChangePasswordSheet(context),
-          ),
           _buildSwitchTile(
             icon: Icons.fingerprint,
             title: l10n.biometricAuth,
@@ -110,53 +178,8 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
               }
             },
           ),
-          _buildSwitchTile(
-            icon: Icons.verified_user_outlined,
-            title: l10n.twoFactorAuth,
-            subtitle: l10n.twoFactorAuthDesc,
-            value: _twoFactorEnabled,
-            onChanged: (val) {
-              if (val) {
-                // Eagerly update to avoid bounce-back
-                setState(() => _twoFactorEnabled = true);
-                showDialog(
-                  context: context,
-                  builder: (ctx) => AlertDialog(
-                    title: Text(l10n.smsVerification),
-                    content: Text(l10n.smsVerificationDesc),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(ctx, false);
-                        },
-                        child: Text(l10n.cancel),
-                      ),
-                      TextButton(
-                        onPressed: () async {
-                          await PreferencesManager.setBool('two_factor_enabled', true);
-                          if (context.mounted) {
-                            AppSnackBar.showSuccess(context, 'Ikki bosqichli autentifikatsiya yoqildi');
-                            Navigator.pop(ctx, true);
-                          }
-                        },
-                        child: Text(l10n.continueBtn),
-                      ),
-                    ],
-                  ),
-                ).then((value) {
-                  if (value != true) {
-                    setState(() => _twoFactorEnabled = false);
-                  }
-                });
-              } else {
-                setState(() => _twoFactorEnabled = false);
-                PreferencesManager.setBool('two_factor_enabled', false);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Ikki bosqichli autentifikatsiya o\'chirildi')),
-                );
-              }
-            },
-          ),
+
+          // Active Sessions
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
             child: Column(
@@ -178,9 +201,12 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
                     border: Border.all(color: context.colors.outline),
                   ),
                   child: ListTile(
-                    leading: Icon(Icons.phone_iphone_rounded, color: context.colors.textHigh),
+                    leading: Icon(
+                      Platform.isIOS ? Icons.phone_iphone_rounded : Icons.phone_android_rounded,
+                      color: context.colors.textHigh,
+                    ),
                     title: Text(
-                      '${l10n.thisDevice} ',
+                      _deviceModel.isNotEmpty ? _deviceModel : '...',
                       style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
                     ),
                     subtitle: Row(
@@ -194,7 +220,10 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
                           ),
                         ),
                         const SizedBox(width: 6),
-                        Text('${l10n.activeSession} (Toshkent)', style: const TextStyle(fontSize: 12)),
+                        Text(
+                          '${l10n.activeSession}${_cityName.isNotEmpty ? ' ($_cityName)' : ''}',
+                          style: const TextStyle(fontSize: 12),
+                        ),
                       ],
                     ),
                   ),
@@ -361,160 +390,6 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
     );
   }
 
-  void _showChangePasswordSheet(BuildContext context) {
-    final l10n = context.l10n;
-    final currentCtrl = TextEditingController();
-    final newCtrl = TextEditingController();
-    final confirmCtrl = TextEditingController();
-    
-    bool obscureCurrent = true;
-    bool obscureNew = true;
-    bool obscureConfirm = true;
-    bool isSaving = false;
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: context.colors.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (ctx) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setStateSheet) {
-            return Padding(
-              padding: EdgeInsets.fromLTRB(
-                20,
-                24,
-                20,
-                MediaQuery.of(ctx).viewInsets.bottom + 24,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    l10n.changePassword,
-                    style: TextStyle(
-                      color: context.colors.textHigh,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  _buildPasswordField(
-                    controller: currentCtrl,
-                    label: l10n.currentPassword,
-                    obscureText: obscureCurrent,
-                    onToggle: () => setStateSheet(() => obscureCurrent = !obscureCurrent),
-                  ),
-                  const SizedBox(height: 12),
-                  _buildPasswordField(
-                    controller: newCtrl,
-                    label: l10n.newPassword,
-                    obscureText: obscureNew,
-                    onToggle: () => setStateSheet(() => obscureNew = !obscureNew),
-                  ),
-                  const SizedBox(height: 12),
-                  _buildPasswordField(
-                    controller: confirmCtrl,
-                    label: l10n.confirmPassword,
-                    obscureText: obscureConfirm,
-                    onToggle: () => setStateSheet(() => obscureConfirm = !obscureConfirm),
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: isSaving ? null : () async {
-                      if (newCtrl.text.length < 8) {
-                        ScaffoldMessenger.of(context).clearSnackBars();
-                        AppSnackBar.showError(context, l10n.passwordTooShort);
-                        return;
-                      }
-                      if (newCtrl.text != confirmCtrl.text) {
-                        AppSnackBar.showError(context, l10n.passwordsDoNotMatch);
-                        return;
-                      }
-                      
-                      setStateSheet(() => isSaving = true);
-                      try {
-                        final dio = ProviderScope.containerOf(context).read(dioProvider);
-                        final response = await dio.post('/auth/change-password', data: {
-                          'old_password': currentCtrl.text,
-                          'new_password': newCtrl.text,
-                        },);
-                        if (response.statusCode == 200) {
-                          if (context.mounted) {
-                            Navigator.pop(ctx);
-                            AppSnackBar.showSuccess(context, l10n.passwordChangedSuccessfully);
-                          }
-                        }
-                      } catch (e) {
-                        if (context.mounted) {
-                          AppSnackBar.showError(context, context.l10n.passwordChangeError);
-                        }
-                      } finally {
-                        setStateSheet(() => isSaving = false);
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: context.colors.primary,
-                      foregroundColor: context.colors.background,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: isSaving
-                        ? SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: context.colors.background, strokeWidth: 2))
-                        : Text(l10n.save),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
-  Widget _buildPasswordField({
-    required TextEditingController controller,
-    required String label,
-    required bool obscureText,
-    required VoidCallback onToggle,
-  }) {
-    return TextField(
-      controller: controller,
-      obscureText: obscureText,
-      style: TextStyle(color: context.colors.textHigh),
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: TextStyle(color: context.colors.textMedium),
-        filled: true,
-        fillColor: context.colors.surfaceVariant,
-        suffixIcon: IconButton(
-          icon: Icon(
-            obscureText ? Icons.visibility_off : Icons.visibility,
-            color: context.colors.textMedium,
-          ),
-          onPressed: onToggle,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: context.colors.outline),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: context.colors.outline),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: context.colors.primary, width: 2),
-        ),
-      ),
-    );
-  }
-
   void _showDeleteAccountDialog(BuildContext context) {
     final l10n = context.l10n;
     showDialog(
@@ -540,7 +415,6 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
-              /* AppSnackBar.showSuccess(context, l10n.requiresBackendIntegration); */
             },
             child: Text(
               l10n.deleteAccount,
