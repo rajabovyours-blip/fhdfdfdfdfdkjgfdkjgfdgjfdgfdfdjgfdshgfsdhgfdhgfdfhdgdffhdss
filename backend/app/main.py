@@ -123,6 +123,16 @@ async def lifespan(app: FastAPI):
                 await conn.execute(text(col_sql))
         except Exception:
             pass
+
+    # Notifications: model'da image_url bor edi, lekin jadval avval shusiz
+    # yaratilgan (schema drift). Chatdan admin javob yozganda mijozga
+    # bildirishnoma yaratilishi shu ustunni talab qiladi — busiz
+    # "UndefinedColumnError: column image_url does not exist" beradi.
+    try:
+        async with engine.begin() as conn:
+            await conn.execute(text("ALTER TABLE notifications ADD COLUMN image_url VARCHAR"))
+    except Exception:
+        pass
     
     # Add unique index on transaction_id if not exists
     try:
