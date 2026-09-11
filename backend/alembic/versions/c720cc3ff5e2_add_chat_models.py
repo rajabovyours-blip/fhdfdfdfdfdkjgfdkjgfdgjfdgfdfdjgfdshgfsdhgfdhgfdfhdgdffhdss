@@ -28,7 +28,10 @@ def upgrade() -> None:
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('is_resolved', sa.Boolean(), nullable=True),
-    sa.Column('user_id', sa.String(), nullable=True),
+    # MUHIM: users.id UUID turida. Bu yerda avval String edi va
+    # "foreign key constraint cannot be implemented ... character
+    # varying and uuid" xatosi bilan har bir deploy'ni qulatgan.
+    sa.Column('user_id', sa.Uuid(), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='SET NULL'),
     sa.PrimaryKeyConstraint('id')
     )
