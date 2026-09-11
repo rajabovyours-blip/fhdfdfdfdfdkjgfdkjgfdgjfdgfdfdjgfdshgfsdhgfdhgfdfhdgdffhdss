@@ -1,6 +1,7 @@
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Optional
 from app.db.session import get_db
 from app.core.config import settings
 from app.models.user import User
@@ -40,6 +41,38 @@ async def get_current_user(
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
     
     return user
+
+
+async def get_current_user_optional(
+    db: AsyncSession = Depends(get_db),
+    token: HTTPAuthorizationCredentials = Depends(security)
+) -> Optional[User]:
+    """Foydalanuvchi kirgan bo'lsa uni qaytaradi, aks holda None.
+
+    Chat uchun kerak: mijoz tizimga KIRMAGAN holda ham yozishi mumkin
+    (ism va telefon kiritib). Kirgan bo'lsa — suhbat uning hisobiga
+    bog'lanadi va admin javob berganda bildirishnoma yuboriladi.
+
+    Bu funksiya HECH QACHON xato tashlamaydi — token yaroqsiz bo'lsa
+    ham shunchaki None qaytaradi, aks holda mehmon foydalanuvchi
+    chatdan umuman foydalana olmaydi.
+    """
+    if not token:
+        return None
+
+    try:
+        payload = jwt.decode(token.credentials, settings.SECRET_KEY, algorithms=["HS256"])
+        user_id = payload.get("sub")
+        if not user_id:
+            return None
+
+        import uuid
+        parsed_id = uuid.UUID(user_id)
+
+        result = await db.execute(select(User).where(User.id == parsed_id))
+        return result.scalar_one_or_none()
+    except Exception:
+        return None
 
 
 async def get_current_admin(
