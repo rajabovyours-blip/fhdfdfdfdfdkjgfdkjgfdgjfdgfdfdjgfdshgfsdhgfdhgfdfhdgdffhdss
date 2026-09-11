@@ -32,7 +32,24 @@ async def start_chat_session(
     db.add(session)
     await db.commit()
     await db.refresh(session)
-    return APIResponse(data=ChatSessionModel.model_validate(session))
+
+    # MUHIM: ChatSessionModel.model_validate(session) ISHLATILMAYDI.
+    # `session.messages` — lazy-loaded relationship. db.refresh() uni
+    # yuklamaydi, Pydantic esa `from_attributes` orqali sinxron o'qishga
+    # urinadi va async kontekstdan tashqarida "MissingGreenlet" xatosi
+    # bilan qulaydi. Yangi sessiyada xabar hali yo'qligi aniq bo'lgani
+    # uchun bazadan qayta so'ramasdan, to'g'ridan-to'g'ri bo'sh ro'yxat
+    # bilan qaytaramiz.
+    return APIResponse(data=ChatSessionModel(
+        id=session.id,
+        name=session.name,
+        phone=session.phone,
+        created_at=session.created_at,
+        updated_at=session.updated_at,
+        is_resolved=session.is_resolved,
+        user_id=session.user_id,
+        messages=[],
+    ))
 
 
 @router.get("/{session_id}/messages", response_model=APIResponse[List[ChatMessageModel]])
