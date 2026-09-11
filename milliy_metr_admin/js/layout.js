@@ -18,6 +18,7 @@ const layout = {
       { href: 'products.html', icon: 'inventory_2', key: 'products', match: 'product' },
       { href: 'categories.html', icon: 'category', key: 'categories', match: 'categor' },
       { href: 'users.html', icon: 'group', key: 'customers', match: 'users.html' },
+      { href: 'chat.html', icon: 'chat', key: 'chat', match: 'chat' },
       { href: 'banners.html', icon: 'view_carousel', key: 'banners', match: 'banner' },
       { href: 'reviews.html', icon: 'reviews', key: 'reviews', match: 'review' },
       { href: 'notifications.html', icon: 'notifications', key: 'notifications', match: 'notification' },
