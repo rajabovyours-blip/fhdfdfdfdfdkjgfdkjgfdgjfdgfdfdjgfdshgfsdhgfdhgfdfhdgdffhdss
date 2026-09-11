@@ -17,6 +17,7 @@
     .settings-row label { display:block; font-weight:600; font-size:14px; margin-bottom:6px; }
     .settings-hint { font-size:12px; color: var(--color-text-medium, #6b7280); margin-top:6px; line-height:1.5; }
     .switch-row { display:flex; align-items:center; gap:12px; }
+    .danger-card { border: 1px solid var(--color-danger, #dc2626); }
   </style>
 </head>
 <body>
@@ -73,6 +74,28 @@
       <button class="btn btn-outline" id="btn-reset-payme">
         <span class="material-symbols-rounded" style="font-size:18px;">restart_alt</span>
         Payme parolini tiklash
+      </button>
+    </div>
+
+    <h2 style="margin:32px 0 20px; font-size:20px; color: var(--color-danger, #dc2626);">Xavfli hudud</h2>
+
+    <div class="card settings-card danger-card">
+      <div class="settings-row">
+        <label>Test buyurtmalarini tozalash</label>
+        <div class="settings-hint">
+          Barcha <b>buyurtma</b> va <b>to'lov</b> yozuvlarini butunlay o'chiradi (dashboard,
+          statistika, hisob-kitoblar nolga tushadi). <b>Mijozlar, mahsulotlar, kategoriyalar,
+          bannerlar tegilmaydi</b> — mijozlar soni o'zgarmaydi.
+          <br><br>
+          <b style="color: var(--color-danger, #dc2626);">Bu amalni qaytarib bo'lmaydi.</b>
+          Faqat production'ga chiqishdan oldin, test ma'lumotlarini tozalash uchun ishlating.
+          Faqat OWNER bajara oladi.
+        </div>
+      </div>
+
+      <button class="btn btn-danger" id="btn-reset-transactional">
+        <span class="material-symbols-rounded" style="font-size:18px;">delete_forever</span>
+        Buyurtma va to'lovlarni butunlay tozalash
       </button>
     </div>
   </div>
