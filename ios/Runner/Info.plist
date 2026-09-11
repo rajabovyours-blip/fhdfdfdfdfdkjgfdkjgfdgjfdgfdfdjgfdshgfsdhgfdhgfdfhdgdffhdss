@@ -97,6 +97,8 @@
 		<string>Yetkazib berish manzilini xaritada aniqlash uchun joylashuv ma'lumotlaridan foydalaniladi.</string>
 		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 		<string>Yetkazib berish manzilini xaritada aniqlash uchun joylashuv ma'lumotlaridan foydalaniladi.</string>
+		<key>NSFaceIDUsageDescription</key>
+		<string>Milliy Metr ilovasiga tez va xavfsiz kirish uchun Face ID dan foydalaniladi.</string>
 		<key>UIStatusBarHidden</key>
 		<false/>
 	</dict>
