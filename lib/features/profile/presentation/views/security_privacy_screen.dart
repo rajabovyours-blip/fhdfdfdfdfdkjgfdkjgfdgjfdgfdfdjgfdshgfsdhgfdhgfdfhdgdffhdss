@@ -232,66 +232,6 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
             ),
           ),
 
-          const SizedBox(height: 8),
-          Container(height: 8, color: context.colors.surface),
-          const SizedBox(height: 8),
-
-          // Privacy Section
-          _buildSectionHeader(l10n.privacySettings),
-          _buildTile(
-            icon: Icons.privacy_tip_outlined,
-            title: l10n.dataPrivacy,
-            onTap: () {
-              bool sendErrors = true;
-              bool createAd = false;
-              showModalBottomSheet(
-                context: context,
-                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-                builder: (ctx) => StatefulBuilder(
-                  builder: (context, setStateSheet) => Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(l10n.dataPrivacy, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 16),
-                        ListTile(
-                          title: Text(l10n.sendErrorReports),
-                          subtitle: Text(l10n.sendErrorReportsDesc),
-                          trailing: Switch.adaptive(
-                            value: sendErrors,
-                            activeTrackColor: context.colors.primary,
-                            onChanged: (v) => setStateSheet(() => sendErrors = v),
-                          ),
-                          onTap: () => setStateSheet(() => sendErrors = !sendErrors),
-                        ),
-                        ListTile(
-                          title: Text(l10n.createAdProfile),
-                          subtitle: Text(l10n.createAdProfileDesc),
-                          trailing: Switch.adaptive(
-                            value: createAd,
-                            activeTrackColor: context.colors.primary,
-                            onChanged: (v) => setStateSheet(() => createAd = v),
-                          ),
-                          onTap: () => setStateSheet(() => createAd = !createAd),
-                        ),
-                        const SizedBox(height: 16),
-                        SizedBox(
-                          width: double.infinity,
-                          height: 48,
-                          child: ElevatedButton(
-                            onPressed: () => Navigator.pop(ctx),
-                            style: ElevatedButton.styleFrom(backgroundColor: context.colors.primary, foregroundColor: Colors.white),
-                            child: Text(l10n.save),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
 
           const SizedBox(height: 8),
           Container(height: 8, color: context.colors.surface),
