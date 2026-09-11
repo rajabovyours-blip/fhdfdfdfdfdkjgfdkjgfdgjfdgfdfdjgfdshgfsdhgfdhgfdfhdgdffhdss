@@ -37,3 +37,5 @@ class CheckPhone(BaseModel):
 class SocialLoginRequest(BaseModel):
     provider: str
     token: str
+    given_name: str | None = None
+    family_name: str | None = None

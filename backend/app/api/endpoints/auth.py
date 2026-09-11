@@ -168,13 +168,40 @@ async def social_login(payload: SocialLoginRequest, db: AsyncSession = Depends(g
             last_name = id_info.get('family_name', 'User')
         
         elif payload.provider == 'apple':
-            import jwt
-            # Decode token (frontend SDK handles initial verification with Apple)
-            id_info = jwt.decode(payload.token, options={"verify_signature": False})
-            email = id_info.get('email')  # Apple faqat BIRINCHI kirishda email yuboradi!
+            import jwt as pyjwt
+            import httpx
+            from jwt.algorithms import RSAAlgorithm
+
+            # 1. Apple'ning ochiq kalitlarini olish (JWKS)
+            async with httpx.AsyncClient(timeout=10) as client:
+                resp = await client.get('https://appleid.apple.com/auth/keys')
+                resp.raise_for_status()
+                apple_keys = resp.json()['keys']
+
+            # 2. Token header'idagi kid bilan mos kalitni topish
+            header = pyjwt.get_unverified_header(payload.token)
+            kid = header.get('kid')
+            key_data = next((k for k in apple_keys if k['kid'] == kid), None)
+            if not key_data:
+                raise ValueError(f"Apple public key not found for kid={kid}")
+
+            # 3. RSA ochiq kalit bilan imzoni tekshirish + iss + aud + exp
+            public_key = RSAAlgorithm.from_jwk(key_data)
+            bundle_id = settings.APPLE_BUNDLE_ID or 'uz.milliymetr.app'
+
+            id_info = pyjwt.decode(
+                payload.token,
+                public_key,
+                algorithms=['RS256'],
+                audience=bundle_id,        # uz.milliymetr.app
+                issuer='https://appleid.apple.com',
+            )
+
+            email = id_info.get('email')
             provider_id = id_info.get('sub')
-            first_name = 'Apple'
-            last_name = 'User'
+            # Apple faqat BIRINCHI kirishda ism beradi — payload'dan olamiz
+            first_name = payload.given_name or 'Apple'
+            last_name = payload.family_name or 'User'
             
     except ValueError as e:
         raise HTTPException(status_code=400, detail=f"Authentication failed: {str(e)}")

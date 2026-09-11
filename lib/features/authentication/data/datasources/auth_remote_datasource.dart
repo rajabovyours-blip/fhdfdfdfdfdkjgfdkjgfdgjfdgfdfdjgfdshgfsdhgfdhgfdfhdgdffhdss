@@ -11,7 +11,7 @@ abstract class AuthRemoteDataSource {
   Future<void> requestOtp(String phone);
   Future<bool> checkPhone(String phone);
   Future<TokenModel> verifyOtp(String phone, String otp, {String? fullName, String? surname});
-  Future<TokenModel> socialLogin(String provider, String token);
+  Future<TokenModel> socialLogin(String provider, String token, {String? givenName, String? familyName});
   Future<UserModel> getCurrentUser();
 }
 
@@ -138,14 +138,18 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<TokenModel> socialLogin(String provider, String token) async {
+  Future<TokenModel> socialLogin(String provider, String token, {String? givenName, String? familyName}) async {
     try {
+      final data = <String, dynamic>{
+        'provider': provider,
+        'token': token,
+      };
+      if (givenName != null) data['given_name'] = givenName;
+      if (familyName != null) data['family_name'] = familyName;
+
       final response = await dio.post(
         '/auth/social-login',
-        data: {
-          'provider': provider,
-          'token': token,
-        },
+        data: data,
       );
       return TokenModel.fromJson(response.data['data']);
     } on DioException catch (e) {

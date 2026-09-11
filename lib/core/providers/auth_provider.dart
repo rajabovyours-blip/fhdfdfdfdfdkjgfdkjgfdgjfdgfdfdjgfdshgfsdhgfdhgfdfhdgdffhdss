@@ -251,13 +251,16 @@ class AuthController extends StateNotifier<AuthState> {
     );
   }
 
-  Future<void> socialLogin(String provider, String token) async {
+  Future<void> socialLogin(String provider, String token, {String? givenName, String? familyName}) async {
     state = const AuthState.loading();
     final result = await _socialLoginUseCase(
-      SocialLoginParams(provider: provider, token: token),
+      SocialLoginParams(provider: provider, token: token, givenName: givenName, familyName: familyName),
     );
     result.fold(
-      (failure) => state = AuthState.error(failure.message),
+      (failure) {
+        print('[AUTH] socialLogin XATO: ${failure.message}');
+        state = AuthState.error(failure.message);
+      },
       (token) => checkAuthStatus(),
     );
   }

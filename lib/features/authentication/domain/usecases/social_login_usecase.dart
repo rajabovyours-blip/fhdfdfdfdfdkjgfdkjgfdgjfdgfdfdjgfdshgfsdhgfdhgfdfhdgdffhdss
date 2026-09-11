@@ -7,7 +7,9 @@ import 'package:milliy_metr/features/authentication/domain/entities/token_entity
 class SocialLoginParams {
   final String provider;
   final String token;
-  SocialLoginParams({required this.provider, required this.token});
+  final String? givenName;
+  final String? familyName;
+  SocialLoginParams({required this.provider, required this.token, this.givenName, this.familyName});
 }
 
 class SocialLoginUseCase
@@ -17,6 +19,6 @@ class SocialLoginUseCase
 
   @override
   Future<Either<Failure, TokenEntity>> call(SocialLoginParams params) {
-    return repository.socialLogin(params.provider, params.token);
+    return repository.socialLogin(params.provider, params.token, givenName: params.givenName, familyName: params.familyName);
   }
 }

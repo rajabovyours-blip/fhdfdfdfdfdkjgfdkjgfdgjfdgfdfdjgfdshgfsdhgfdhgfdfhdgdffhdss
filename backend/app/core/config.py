@@ -31,6 +31,17 @@ class Settings(BaseSettings):
     # DevSMS 
     DEVSMS_TOKEN: str = ""
 
+    # Apple Sign In
+    APPLE_TEAM_ID: str = ""
+    APPLE_KEY_ID: str = ""
+    APPLE_BUNDLE_ID: str = "uz.milliymetr.app"
+    APPLE_PRIVATE_KEY: str = ""
+
+    @property
+    def apple_private_key_pem(self) -> str:
+        """Return private key with actual newlines (env stores \\n as escape)."""
+        return self.APPLE_PRIVATE_KEY.replace("\\n", "\n")
+
     # Click
     CLICK_SERVICE_ID: str = ""
     CLICK_MERCHANT_ID: str = ""

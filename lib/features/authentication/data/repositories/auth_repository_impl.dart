@@ -116,10 +116,12 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Either<Failure, TokenEntity>> socialLogin(
     String provider,
-    String token,
-  ) async {
+    String token, {
+    String? givenName,
+    String? familyName,
+  }) async {
     try {
-      final tokenModel = await remoteDataSource.socialLogin(provider, token);
+      final tokenModel = await remoteDataSource.socialLogin(provider, token, givenName: givenName, familyName: familyName);
       await localDataSource.saveToken(tokenModel);
       return Right(tokenModel.toEntity());
     } on Failure catch (e) {

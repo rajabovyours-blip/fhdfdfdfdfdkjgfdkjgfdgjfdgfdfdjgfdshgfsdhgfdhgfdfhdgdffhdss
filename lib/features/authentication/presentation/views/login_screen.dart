@@ -144,35 +144,57 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Future<void> _handleAppleLogin() async {
     try {
+      print('[APPLE SIGN IN] Step 1: isAvailable() tekshirilmoqda...');
       final isAvailable = await SignInWithApple.isAvailable();
+      print('[APPLE SIGN IN] isAvailable = $isAvailable');
       if (!isAvailable) {
         if (!mounted) return;
         AppSnackBar.showError(context, 'Apple Sign-In is not available on this device.');
         return;
       }
 
+      print('[APPLE SIGN IN] Step 2: getAppleIDCredential() chaqirilmoqda...');
       final credential = await SignInWithApple.getAppleIDCredential(
         scopes: [
           AppleIDAuthorizationScopes.email,
           AppleIDAuthorizationScopes.fullName,
         ],
       );
-      
+
+      print('[APPLE SIGN IN] Step 3: credential olindi');
+      print('[APPLE SIGN IN]   identityToken: ${credential.identityToken != null ? "mavjud (${credential.identityToken!.length} char)" : "NULL"}');
+      print('[APPLE SIGN IN]   email: ${credential.email}');
+      print('[APPLE SIGN IN]   givenName: ${credential.givenName}');
+      print('[APPLE SIGN IN]   familyName: ${credential.familyName}');
+      print('[APPLE SIGN IN]   userIdentifier: ${credential.userIdentifier}');
+
       if (credential.identityToken != null) {
         if (!mounted) return;
-        await ref.read(authProvider.notifier).socialLogin('apple', credential.identityToken!);
+        print('[APPLE SIGN IN] Step 4: backend ga socialLogin yuborilmoqda...');
+        await ref.read(authProvider.notifier).socialLogin(
+          'apple',
+          credential.identityToken!,
+          givenName: credential.givenName,
+          familyName: credential.familyName,
+        );
+        print('[APPLE SIGN IN] Step 4: socialLogin chaqirildi.');
       } else {
+        print('[APPLE SIGN IN] XATO: identityToken NULL!');
         if (!mounted) return;
         AppSnackBar.showError(context, 'Apple identityToken null qaytdi. Qayta urinib ko\'ring.');
       }
     } on SignInWithAppleAuthorizationException catch (e) {
-      if (e.code == AuthorizationErrorCode.canceled) return;
-      debugPrint('Apple Sign-In authorization error: ${e.code} - ${e.message}');
+      if (e.code == AuthorizationErrorCode.canceled) {
+        print('[APPLE SIGN IN] Foydalanuvchi bekor qildi.');
+        return;
+      }
+      print('[APPLE SIGN IN] AuthorizationException: code=${e.code}, message=${e.message}');
       if (mounted) {
         AppSnackBar.showError(context, '${context.l10n.appleSignInError}: ${e.message}');
       }
-    } catch (e) {
-      debugPrint('Apple Sign-In caught: $e');
+    } catch (e, stackTrace) {
+      print('[APPLE SIGN IN] XATO (catch): $e');
+      print('[APPLE SIGN IN] StackTrace: $stackTrace');
       if (mounted) {
         AppSnackBar.showError(context, '${context.l10n.appleSignInError}: $e');
       }

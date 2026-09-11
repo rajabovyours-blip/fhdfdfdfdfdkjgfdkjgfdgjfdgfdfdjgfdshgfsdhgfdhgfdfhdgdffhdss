@@ -16,8 +16,10 @@ abstract class AuthRepository {
   Future<Either<Failure, TokenEntity>> verifyOtp(String phone, String otp, {String? fullName, String? surname});
   Future<Either<Failure, TokenEntity>> socialLogin(
     String provider,
-    String token,
-  );
+    String token, {
+    String? givenName,
+    String? familyName,
+  });
   Future<Either<Failure, UserEntity>> getCurrentUser();
   Future<Either<Failure, void>> logout();
   Future<Either<Failure, UserEntity?>> getCachedUser();
