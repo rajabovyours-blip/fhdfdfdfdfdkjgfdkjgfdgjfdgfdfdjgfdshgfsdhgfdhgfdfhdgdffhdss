@@ -48,22 +48,25 @@ class ProfileScreen extends ConsumerWidget {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            backgroundColor: Colors.transparent,
-            builder: (context) => Padding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
+      floatingActionButton: authState.maybeWhen(
+        authenticated: (_) => FloatingActionButton(
+          onPressed: () {
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              backgroundColor: Colors.transparent,
+              builder: (context) => Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                ),
+                child: const milliy_metr_chat.ChatBottomSheet(),
               ),
-              child: const milliy_metr_chat.ChatBottomSheet(),
-            ),
-          );
-        },
-        backgroundColor: context.colors.primary,
-        child: const Icon(Icons.chat_bubble_outline, color: Colors.white),
+            );
+          },
+          backgroundColor: context.colors.primary,
+          child: const Icon(Icons.chat_bubble_outline, color: Colors.white),
+        ),
+        orElse: () => null,
       ),
     );
   }

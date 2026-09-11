@@ -2847,6 +2847,54 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Barcha mahsulotlar'**
   String get allProducts;
+
+  /// No description provided for @chatName.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ismingiz'**
+  String get chatName;
+
+  /// No description provided for @chatPhone.
+  ///
+  /// In uz, this message translates to:
+  /// **'Telefon raqamingiz'**
+  String get chatPhone;
+
+  /// No description provided for @chatStart.
+  ///
+  /// In uz, this message translates to:
+  /// **'Suhbatni boshlash'**
+  String get chatStart;
+
+  /// No description provided for @chatResolved.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ushbu chat yakunlangan. Yangi savol bo\'lsa xabar yozishingiz mumkin.'**
+  String get chatResolved;
+
+  /// No description provided for @chatTypeMessage.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xabar yozing...'**
+  String get chatTypeMessage;
+
+  /// No description provided for @chatTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Jonli Chat'**
+  String get chatTitle;
+
+  /// No description provided for @chatSupport.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mijozlarga xizmat'**
+  String get chatSupport;
+
+  /// No description provided for @chatWelcomeDesc.
+  ///
+  /// In uz, this message translates to:
+  /// **'Savollaringiz bormi? Ism va raqamingizni kiriting, biz sizga yordam berishdan xursand bo\'lamiz.'**
+  String get chatWelcomeDesc;
 }
 
 class _AppLocalizationsDelegate

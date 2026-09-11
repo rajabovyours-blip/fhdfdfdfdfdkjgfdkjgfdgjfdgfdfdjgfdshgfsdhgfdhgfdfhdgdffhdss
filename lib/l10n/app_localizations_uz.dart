@@ -1438,4 +1438,30 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get allProducts => 'Barcha mahsulotlar';
+
+  @override
+  String get chatName => 'Ismingiz';
+
+  @override
+  String get chatPhone => 'Telefon raqamingiz';
+
+  @override
+  String get chatStart => 'Suhbatni boshlash';
+
+  @override
+  String get chatResolved =>
+      'Ushbu chat yakunlangan. Yangi savol bo\'lsa xabar yozishingiz mumkin.';
+
+  @override
+  String get chatTypeMessage => 'Xabar yozing...';
+
+  @override
+  String get chatTitle => 'Jonli Chat';
+
+  @override
+  String get chatSupport => 'Mijozlarga xizmat';
+
+  @override
+  String get chatWelcomeDesc =>
+      'Savollaringiz bormi? Ism va raqamingizni kiriting, biz sizga yordam berishdan xursand bo\'lamiz.';
 }

@@ -1427,4 +1427,30 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get allProducts => 'Все товары';
+
+  @override
+  String get chatName => 'Ваше имя';
+
+  @override
+  String get chatPhone => 'Ваш номер телефона';
+
+  @override
+  String get chatStart => 'Начать беседу';
+
+  @override
+  String get chatResolved =>
+      'Этот чат завершен. Вы можете написать сообщение, если есть новый вопрос.';
+
+  @override
+  String get chatTypeMessage => 'Напишите сообщение...';
+
+  @override
+  String get chatTitle => 'Живой чат';
+
+  @override
+  String get chatSupport => 'Служба поддержки';
+
+  @override
+  String get chatWelcomeDesc =>
+      'Есть вопросы? Введите имя и номер телефона, мы будем рады помочь.';
 }

@@ -1426,4 +1426,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get allProducts => 'All products';
+
+  @override
+  String get chatName => 'Your Name';
+
+  @override
+  String get chatPhone => 'Your Phone Number';
+
+  @override
+  String get chatStart => 'Start Chat';
+
+  @override
+  String get chatResolved =>
+      'This chat has ended. You can send a message if you have a new question.';
+
+  @override
+  String get chatTypeMessage => 'Type a message...';
+
+  @override
+  String get chatTitle => 'Live Chat';
+
+  @override
+  String get chatSupport => 'Customer Support';
+
+  @override
+  String get chatWelcomeDesc =>
+      'Do you have any questions? Enter your name and phone number, we will be happy to help you.';
 }
