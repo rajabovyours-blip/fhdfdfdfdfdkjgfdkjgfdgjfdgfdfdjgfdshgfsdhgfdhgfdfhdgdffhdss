@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const resetBtn = document.getElementById('btn-reset-payme');
   if (resetBtn) resetBtn.addEventListener('click', resetPaymeKey);
+
+  const resetTxBtn = document.getElementById('btn-reset-transactional');
+  if (resetTxBtn) resetTxBtn.addEventListener('click', resetTransactionalData);
 });
 
 async function loadSettings() {
@@ -68,5 +71,41 @@ async function resetPaymeKey() {
     layout.showToast(err.message, 'error');
   } finally {
     btn.disabled = false;
+  }
+}
+
+/**
+ * QAYTARIB BO'LMAYDI: barcha buyurtma va to'lov yozuvlarini o'chiradi.
+ * Mijozlar, mahsulotlar, kategoriyalar, bannerlar tegilmaydi.
+ */
+async function resetTransactionalData() {
+  const step1 = confirm(
+    "DIQQAT: Barcha buyurtma va to'lovlar butunlay o'chiriladi.\n\n" +
+    "Mijozlar, mahsulotlar, kategoriyalar, bannerlar TEGILMAYDI.\n\n" +
+    "Bu amalni qaytarib bo'lmaydi. Davom etasizmi?"
+  );
+  if (!step1) return;
+
+  const step2 = prompt("Tasdiqlash uchun katta harflar bilan O'CHIR deb yozing:");
+  if (step2 !== "O'CHIR") {
+    layout.showToast('Bekor qilindi', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('btn-reset-transactional');
+  btn.disabled = true;
+  btn.textContent = 'Tozalanmoqda...';
+
+  try {
+    const res = await api.delete('/settings/admin/reset-transactional-data');
+    const d = res.data || {};
+    layout.showToast(
+      `Tozalandi: ${d.orders_deleted || 0} buyurtma, ${d.payments_deleted || 0} to'lov o'chirildi`
+    );
+  } catch (err) {
+    layout.showToast(err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<span class="material-symbols-rounded" style="font-size:18px;">delete_forever</span> Buyurtma va to\'lovlarni butunlay tozalash';
   }
 }
