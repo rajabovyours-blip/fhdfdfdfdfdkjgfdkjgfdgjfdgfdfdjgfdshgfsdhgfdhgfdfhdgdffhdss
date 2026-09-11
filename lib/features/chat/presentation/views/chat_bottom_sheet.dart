@@ -75,7 +75,7 @@ class _ChatBottomSheetState extends ConsumerState<ChatBottomSheet> {
                     ),
                     const SizedBox(width: 12),
                     Text(
-                      'Mijozlarga xizmat',
+                      context.l10n.chatSupport,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -119,7 +119,7 @@ class _ChatBottomSheetState extends ConsumerState<ChatBottomSheet> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Xush kelibsiz!',
+            context.l10n.welcome,
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -129,7 +129,7 @@ class _ChatBottomSheetState extends ConsumerState<ChatBottomSheet> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Savollaringiz bormi? Ism va raqamingizni kiriting, biz sizga yordam berishdan xursand bo\'lamiz.',
+            context.l10n.chatWelcomeDesc,
             style: TextStyle(color: context.colors.textMedium),
             textAlign: TextAlign.center,
           ),
@@ -138,7 +138,7 @@ class _ChatBottomSheetState extends ConsumerState<ChatBottomSheet> {
             controller: _nameController,
             style: TextStyle(color: context.colors.textHigh),
             decoration: InputDecoration(
-              labelText: 'Ismingiz',
+              labelText: context.l10n.chatName,
               labelStyle: TextStyle(color: context.colors.textMedium),
               filled: true,
               fillColor: context.colors.surfaceVariant,
@@ -153,7 +153,7 @@ class _ChatBottomSheetState extends ConsumerState<ChatBottomSheet> {
             controller: _phoneController,
             style: TextStyle(color: context.colors.textHigh),
             decoration: InputDecoration(
-              labelText: 'Telefon raqamingiz',
+              labelText: context.l10n.chatPhone,
               labelStyle: TextStyle(color: context.colors.textMedium),
               filled: true,
               fillColor: context.colors.surfaceVariant,
@@ -166,7 +166,7 @@ class _ChatBottomSheetState extends ConsumerState<ChatBottomSheet> {
           ),
           const SizedBox(height: 24),
           AppButton(
-            text: 'Suhbatni boshlash',
+            text: context.l10n.chatStart,
             onPressed: () {
               if (_nameController.text.isNotEmpty && _phoneController.text.isNotEmpty) {
                 notifier.startSession(_nameController.text, _phoneController.text);
@@ -189,7 +189,7 @@ class _ChatBottomSheetState extends ConsumerState<ChatBottomSheet> {
             color: context.colors.surfaceVariant,
             width: double.infinity,
             child: Text(
-              'Ushbu chat yakunlangan. Yangi savol bo\'lsa xabar yozishingiz mumkin.',
+              context.l10n.chatResolved,
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 12, color: context.colors.textMedium),
             ),
@@ -198,7 +198,7 @@ class _ChatBottomSheetState extends ConsumerState<ChatBottomSheet> {
           child: messages.isEmpty
               ? Center(
                   child: Text(
-                    'Xabar yozing...',
+                    context.l10n.chatTypeMessage,
                     style: TextStyle(color: context.colors.textMedium),
                   ),
                 )
@@ -233,7 +233,7 @@ class _ChatBottomSheetState extends ConsumerState<ChatBottomSheet> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              '${msg.createdAt.hour.toString().padLeft(2, '0')}:${msg.createdAt.minute.toString().padLeft(2, '0')}',
+                              '${msg.createdAt.toLocal().hour.toString().padLeft(2, '0')}:${msg.createdAt.toLocal().minute.toString().padLeft(2, '0')}',
                               style: TextStyle(
                                 fontSize: 10,
                                 color: isUser ? Colors.white70 : context.colors.textMedium,
@@ -275,7 +275,7 @@ class _ChatBottomSheetState extends ConsumerState<ChatBottomSheet> {
                   // ham, fon ham mavzuga (dark/light) moslashadi.
                   style: TextStyle(color: context.colors.textHigh),
                   decoration: InputDecoration(
-                    hintText: 'Xabar...',
+                    hintText: context.l10n.chatTypeMessage,
                     hintStyle: TextStyle(color: context.colors.textMedium),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(24),

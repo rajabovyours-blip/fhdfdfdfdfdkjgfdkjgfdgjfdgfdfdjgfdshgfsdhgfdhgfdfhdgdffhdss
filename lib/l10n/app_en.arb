@@ -464,5 +464,13 @@
   "calculatorReserve": "With reserve (+5%):",
   "calculatorAddToCart": "Add calculated amount to cart",
   "calculatorAddedSnack": "pcs added to cart",
-  "allProducts": "All products"
+  "allProducts": "All products",
+  "chatName": "Your Name",
+  "chatPhone": "Your Phone Number",
+  "chatStart": "Start Chat",
+  "chatResolved": "This chat has ended. You can send a message if you have a new question.",
+  "chatTypeMessage": "Type a message...",
+  "chatTitle": "Live Chat",
+  "chatSupport": "Customer Support",
+  "chatWelcomeDesc": "Do you have any questions? Enter your name and phone number, we will be happy to help you."
 }

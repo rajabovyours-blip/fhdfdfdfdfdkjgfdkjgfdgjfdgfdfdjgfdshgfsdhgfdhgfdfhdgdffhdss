@@ -485,5 +485,13 @@
   "calculatorReserve": "Zaxira bilan (+5%):",
   "calculatorAddToCart": "Hisoblangan miqdorni savatga qo'shish",
   "calculatorAddedSnack": "dona savatga qo'shildi",
-  "allProducts": "Barcha mahsulotlar"
+  "allProducts": "Barcha mahsulotlar",
+  "chatName": "Ismingiz",
+  "chatPhone": "Telefon raqamingiz",
+  "chatStart": "Suhbatni boshlash",
+  "chatResolved": "Ushbu chat yakunlangan. Yangi savol bo'lsa xabar yozishingiz mumkin.",
+  "chatTypeMessage": "Xabar yozing...",
+  "chatTitle": "Jonli Chat",
+  "chatSupport": "Mijozlarga xizmat",
+  "chatWelcomeDesc": "Savollaringiz bormi? Ism va raqamingizni kiriting, biz sizga yordam berishdan xursand bo'lamiz."
 }
