@@ -74,14 +74,18 @@ class _ChatBottomSheetState extends ConsumerState<ChatBottomSheet> {
                       child: Icon(Icons.support_agent, color: context.colors.primary),
                     ),
                     const SizedBox(width: 12),
-                    const Text(
+                    Text(
                       'Mijozlarga xizmat',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: context.colors.textHigh,
+                      ),
                     ),
                   ],
                 ),
                 IconButton(
-                  icon: const Icon(Icons.close),
+                  icon: Icon(Icons.close, color: context.colors.textHigh),
                   onPressed: () => Navigator.pop(context),
                 ),
               ],
@@ -114,31 +118,49 @@ class _ChatBottomSheetState extends ConsumerState<ChatBottomSheet> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text(
+          Text(
             'Xush kelibsiz!',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: context.colors.textHigh,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
           Text(
             'Savollaringiz bormi? Ism va raqamingizni kiriting, biz sizga yordam berishdan xursand bo\'lamiz.',
-            style: TextStyle(color: Colors.grey.shade600),
+            style: TextStyle(color: context.colors.textMedium),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 32),
           TextField(
             controller: _nameController,
+            style: TextStyle(color: context.colors.textHigh),
             decoration: InputDecoration(
               labelText: 'Ismingiz',
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              labelStyle: TextStyle(color: context.colors.textMedium),
+              filled: true,
+              fillColor: context.colors.surfaceVariant,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
             ),
           ),
           const SizedBox(height: 16),
           TextField(
             controller: _phoneController,
+            style: TextStyle(color: context.colors.textHigh),
             decoration: InputDecoration(
               labelText: 'Telefon raqamingiz',
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              labelStyle: TextStyle(color: context.colors.textMedium),
+              filled: true,
+              fillColor: context.colors.surfaceVariant,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
             ),
             keyboardType: TextInputType.phone,
           ),
@@ -164,12 +186,12 @@ class _ChatBottomSheetState extends ConsumerState<ChatBottomSheet> {
         if (session.isResolved)
           Container(
             padding: const EdgeInsets.all(8),
-            color: Colors.grey.shade200,
+            color: context.colors.surfaceVariant,
             width: double.infinity,
-            child: const Text(
+            child: Text(
               'Ushbu chat yakunlangan. Yangi savol bo\'lsa xabar yozishingiz mumkin.',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 12),
+              style: TextStyle(fontSize: 12, color: context.colors.textMedium),
             ),
           ),
         Expanded(
@@ -177,7 +199,7 @@ class _ChatBottomSheetState extends ConsumerState<ChatBottomSheet> {
               ? Center(
                   child: Text(
                     'Xabar yozing...',
-                    style: TextStyle(color: Colors.grey.shade500),
+                    style: TextStyle(color: context.colors.textMedium),
                   ),
                 )
               : ListView.builder(
@@ -193,7 +215,7 @@ class _ChatBottomSheetState extends ConsumerState<ChatBottomSheet> {
                         margin: const EdgeInsets.only(bottom: 12),
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                         decoration: BoxDecoration(
-                          color: isUser ? context.colors.primary : Colors.grey.shade200,
+                          color: isUser ? context.colors.primary : context.colors.surfaceVariant,
                           borderRadius: BorderRadius.circular(16).copyWith(
                             bottomRight: isUser ? const Radius.circular(4) : const Radius.circular(16),
                             bottomLeft: !isUser ? const Radius.circular(4) : const Radius.circular(16),
@@ -206,7 +228,7 @@ class _ChatBottomSheetState extends ConsumerState<ChatBottomSheet> {
                             Text(
                               msg.text,
                               style: TextStyle(
-                                color: isUser ? Colors.white : Colors.black87,
+                                color: isUser ? Colors.white : context.colors.textHigh,
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -214,7 +236,7 @@ class _ChatBottomSheetState extends ConsumerState<ChatBottomSheet> {
                               '${msg.createdAt.hour.toString().padLeft(2, '0')}:${msg.createdAt.minute.toString().padLeft(2, '0')}',
                               style: TextStyle(
                                 fontSize: 10,
-                                color: isUser ? Colors.white70 : Colors.black54,
+                                color: isUser ? Colors.white70 : context.colors.textMedium,
                               ),
                             ),
                           ],
@@ -246,14 +268,21 @@ class _ChatBottomSheetState extends ConsumerState<ChatBottomSheet> {
               Expanded(
                 child: TextField(
                   controller: _messageController,
+                  // MUHIM: yozilayotgan matn rangi aniq ko'rsatilmagan edi,
+                  // shuning uchun tungi rejimda standart (oq) rangni olib,
+                  // xuddi shu tungi rejimda ham yorug' turadigan fon bilan
+                  // qo'shilib, matn butunlay ko'rinmay qolardi. Endi matn
+                  // ham, fon ham mavzuga (dark/light) moslashadi.
+                  style: TextStyle(color: context.colors.textHigh),
                   decoration: InputDecoration(
                     hintText: 'Xabar...',
+                    hintStyle: TextStyle(color: context.colors.textMedium),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(24),
                       borderSide: BorderSide.none,
                     ),
                     filled: true,
-                    fillColor: Colors.grey.shade100,
+                    fillColor: context.colors.surfaceVariant,
                     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   ),
                   onSubmitted: (val) {
