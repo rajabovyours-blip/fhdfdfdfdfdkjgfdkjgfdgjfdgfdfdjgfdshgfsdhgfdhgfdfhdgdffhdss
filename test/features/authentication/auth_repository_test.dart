@@ -38,7 +38,7 @@ class MockRemoteDataSource implements AuthRemoteDataSource {
   }
 
   @override
-  Future<TokenModel> socialLogin(String provider, String token) async {
+  Future<TokenModel> socialLogin(String provider, String token, {String? givenName, String? familyName}) async {
     return const TokenModel(accessToken: 'token', refreshToken: 'refresh');
   }
 

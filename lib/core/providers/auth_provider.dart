@@ -256,13 +256,13 @@ class AuthController extends StateNotifier<AuthState> {
     final result = await _socialLoginUseCase(
       SocialLoginParams(provider: provider, token: token, givenName: givenName, familyName: familyName),
     );
-    result.fold(
-      (failure) {
-        print('[AUTH] socialLogin XATO: ${failure.message}');
-        state = AuthState.error(failure.message);
-      },
-      (token) => checkAuthStatus(),
-    );
+    if (result.isLeft()) {
+      final failure = result.getLeft().toNullable()!;
+      debugPrint('[AUTH] socialLogin XATO: ${failure.message}');
+      state = AuthState.error(failure.message);
+    } else {
+      await checkAuthStatus();
+    }
   }
 
   Future<void> logout() async {
