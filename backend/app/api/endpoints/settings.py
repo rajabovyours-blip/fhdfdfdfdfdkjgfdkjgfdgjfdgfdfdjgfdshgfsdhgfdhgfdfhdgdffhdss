@@ -1,6 +1,6 @@
 """Admin panel orqali o'zgartiriladigan sozlamalar."""
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete
 from pydantic import BaseModel, Field
@@ -8,7 +8,7 @@ from typing import Optional
 
 from app.db.session import get_db
 from app.models.app_settings import AppSetting
-from app.models.user import User
+from app.models.user import User, RoleEnum
 from app.schemas.common import APIResponse
 from app.core.config import settings as env_settings
 from app.api.dependencies import get_current_admin
@@ -129,3 +129,36 @@ async def reset_payme_key(
     await db.execute(delete(AppSetting).where(AppSetting.key == PAYME_KEY_SETTING))
     await db.commit()
     return APIResponse(message="Payme paroli tiklandi", data={"reset": True})
+
+
+@router.delete("/admin/reset-transactional-data", response_model=APIResponse[dict])
+async def reset_transactional_data(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_admin),
+):
+    """DIQQAT — QAYTARIB BO'LMAYDI.
+
+    Barcha buyurtma, buyurtma qatori va to'lov yozuvlarini butunlay
+    o'chiradi (test ma'lumotlarini production'ga chiqishdan oldin
+    tozalash uchun). Bunga TEGILMAYDI: mijozlar (users), mahsulotlar,
+    kategoriyalar, bannerlar — shuning uchun mijozlar soni o'zgarmaydi.
+
+    Faqat OWNER bajara oladi (ADMIN emas) — ehtiyot chorasi sifatida.
+    """
+    if current_user.role != RoleEnum.OWNER:
+        raise HTTPException(status_code=403, detail="Faqat OWNER bu amalni bajara oladi")
+
+    from app.models.order import Order, OrderItem
+    from app.models.extras import Payment
+
+    payments_result = await db.execute(delete(Payment))
+    items_result = await db.execute(delete(OrderItem))
+    orders_result = await db.execute(delete(Order))
+
+    await db.commit()
+
+    return APIResponse(message="Statistika tozalandi", data={
+        "orders_deleted": orders_result.rowcount,
+        "order_items_deleted": items_result.rowcount,
+        "payments_deleted": payments_result.rowcount,
+    })
