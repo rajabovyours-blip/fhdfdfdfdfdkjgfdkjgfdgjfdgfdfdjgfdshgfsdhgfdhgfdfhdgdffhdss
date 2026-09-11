@@ -280,32 +280,6 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
     );
   }
 
-  Widget _buildTile({
-    required IconData icon,
-    required String title,
-    String? subtitle,
-    required VoidCallback onTap,
-  }) {
-    return ListTile(
-      leading: Icon(icon, color: context.colors.textMedium),
-      title: Text(
-        title,
-        style: TextStyle(color: context.colors.textHigh, fontSize: 15),
-      ),
-      subtitle: subtitle != null
-          ? Text(
-              subtitle,
-              style: TextStyle(color: context.colors.textMedium, fontSize: 13),
-            )
-          : null,
-      trailing: Icon(
-        Icons.chevron_right_rounded,
-        color: context.colors.textMedium,
-        size: 20,
-      ),
-      onTap: onTap,
-    );
-  }
 
   Widget _buildSwitchTile({
     required IconData icon,
