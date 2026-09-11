@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:milliy_metr/features/chat/presentation/providers/chat_providers.dart';
 import 'package:milliy_metr/shared/widgets/app_button.dart';
+import 'package:milliy_metr/l10n/l10n_extension.dart';
 
 class ChatBottomSheet extends ConsumerStatefulWidget {
   const ChatBottomSheet({super.key});
