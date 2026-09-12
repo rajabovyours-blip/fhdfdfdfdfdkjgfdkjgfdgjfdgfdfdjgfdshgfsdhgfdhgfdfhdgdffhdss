@@ -292,9 +292,13 @@ async function openModal(id = null) {
       
       document.getElementById('prod-id').value = p.id;
       
+      const nameEnEl = document.getElementById('prod-name-en');
+      const descEnEl = document.getElementById('prod-desc-en');
+
       if (typeof p.name === 'object') {
         document.getElementById('prod-name-uz').value = p.name.uz || '';
         document.getElementById('prod-name-ru').value = p.name.ru || '';
+        if (nameEnEl) nameEnEl.value = p.name.en || '';
       } else {
         document.getElementById('prod-name-uz').value = p.name || '';
       }
@@ -302,6 +306,7 @@ async function openModal(id = null) {
       if (typeof p.description === 'object') {
         document.getElementById('prod-desc-uz').value = p.description.uz || '';
         document.getElementById('prod-desc-ru').value = p.description.ru || '';
+        if (descEnEl) descEnEl.value = p.description.en || '';
       } else {
         document.getElementById('prod-desc-uz').value = p.description || '';
       }
@@ -342,6 +347,10 @@ async function openModal(id = null) {
     document.getElementById('prod-delivery-info').value = '';
     const skNew = document.getElementById('prod-search-keywords');
     if (skNew) skNew.value = '';
+    const nEn = document.getElementById('prod-name-en');
+    if (nEn) nEn.value = '';
+    const dEn = document.getElementById('prod-desc-en');
+    if (dEn) dEn.value = '';
     const deliveryPriceEl = document.getElementById('prod-delivery-price');
     if (deliveryPriceEl) deliveryPriceEl.value = 0;
     renderSpecs({});
@@ -376,6 +385,14 @@ window.removeImage = function(index) {
 async function saveProduct() {
   const id = document.getElementById('prod-id').value;
   
+  const nameUz = document.getElementById('prod-name-uz').value.trim();
+  const descUz = document.getElementById('prod-desc-uz').value.trim();
+
+  if (!nameUz) {
+    layout.showToast("Nomi (O'zbekcha) kiritilishi shart", 'error');
+    return;
+  }
+
   if (!document.getElementById('prod-category').value) {
     layout.showToast("Kategoriya tanlanishi shart", 'error');
     return;
@@ -387,8 +404,20 @@ async function saveProduct() {
     : 0;
 
   const payload = {
-    name: { uz: document.getElementById('prod-name-uz').value, ru: document.getElementById('prod-name-ru').value },
-    description: { uz: document.getElementById('prod-desc-uz').value, ru: document.getElementById('prod-desc-ru').value },
+    // Ilova foydalanuvchi tanlagan tilda ko'rsatadi, shuning uchun uchala
+    // til ham yuboriladi. Ruscha yoki inglizcha bo'sh qoldirilsa —
+    // o'zbekchasi zaxira sifatida ishlatiladi, aks holda ilova o'sha
+    // tilda mahsulot nomini bo'sh ko'rsatadi.
+    name: {
+      uz: nameUz,
+      ru: document.getElementById('prod-name-ru').value.trim() || nameUz,
+      en: (document.getElementById('prod-name-en')?.value || '').trim() || nameUz,
+    },
+    description: {
+      uz: descUz,
+      ru: document.getElementById('prod-desc-ru').value.trim() || descUz,
+      en: (document.getElementById('prod-desc-en')?.value || '').trim() || descUz,
+    },
     categoryId: document.getElementById('prod-category').value,
     price: parseFloat(document.getElementById('prod-price').value) || 0,
     discountPrice: parseFloat(document.getElementById('prod-discount-price').value) || null,
