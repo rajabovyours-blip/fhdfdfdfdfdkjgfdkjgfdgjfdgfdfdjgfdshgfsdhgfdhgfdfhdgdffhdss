@@ -18,6 +18,65 @@ from app.api.dependencies import get_current_admin
 
 router = APIRouter()
 
+
+# ── Topilmagan qidiruvlar ────────────────────────────────────────
+# Qidiruvning o'z-o'zidan yaxshilanishi uchun asosiy vosita: mijozlar
+# nima deb qidirganini, lekin hech narsa topilmaganini ko'rsatadi.
+# Admin shu ro'yxatga qarab kerakli mahsulotga bitta so'z qo'shadi
+# (search_keywords) — kod o'zgarmaydi, deploy kerak emas.
+
+from sqlalchemy import desc as _desc
+
+
+@router.get("/search-misses", response_model=APIResponse[List[Dict[str, Any]]])
+async def list_search_misses(
+    resolved: bool = False,
+    limit: int = 100,
+    db: AsyncSession = Depends(get_db),
+    admin: User = Depends(get_current_admin),
+):
+    from app.models.extras import SearchMiss
+
+    result = await db.execute(
+        select(SearchMiss)
+        .where(SearchMiss.resolved == resolved)
+        .order_by(_desc(SearchMiss.hit_count), _desc(SearchMiss.last_searched_at))
+        .limit(limit)
+    )
+    rows = result.scalars().all()
+    return APIResponse(data=[
+        {
+            "id": str(r.id),
+            "term": r.term,
+            "normalized_term": r.normalized_term,
+            "hit_count": r.hit_count,
+            "resolved": r.resolved,
+            "last_searched_at": r.last_searched_at.isoformat() if r.last_searched_at else None,
+        }
+        for r in rows
+    ])
+
+
+@router.put("/search-misses/{miss_id}/resolve", response_model=APIResponse[dict])
+async def resolve_search_miss(
+    miss_id: str,
+    db: AsyncSession = Depends(get_db),
+    admin: User = Depends(get_current_admin),
+):
+    """Admin bu so'rovni "ko'rib chiqdim, hal qildim" deb belgilaydi
+    (masalan tegishli mahsulotga search_keywords qo'shgandan keyin)."""
+    from app.models.extras import SearchMiss
+
+    row = (await db.execute(
+        select(SearchMiss).where(SearchMiss.id == miss_id)
+    )).scalar_one_or_none()
+    if not row:
+        raise HTTPException(status_code=404, detail="Topilmadi")
+
+    row.resolved = True
+    await db.commit()
+    return APIResponse(message="Belgilandi", data={"id": str(row.id)})
+
 @router.post("/import/preview", response_model=APIResponse[Dict[str, Any]])
 async def preview_excel_import(
     file: UploadFile = File(...),
