@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, or_, cast, String, func, case
+from sqlalchemy import select, or_, and_, cast, String, func, case
 from sqlalchemy.orm import selectinload
 from typing import List, Optional
 from uuid import UUID
@@ -16,6 +16,53 @@ from app.schemas.product import ProductModel, CategoryModel
 from app.schemas.common import APIResponse
 
 router = APIRouter()
+
+
+async def _recompute_search_text(product: Product, db: AsyncSession):
+    """Mahsulot saqlangach search_text'ni qayta hisoblaydi.
+
+    Nom, brend, birlik, admin kiritgan search_keywords va kategoriya
+    nomidan yig'ma, normallashtirilgan matn tuziladi. Qidiruv aynan
+    shu ustun bo'yicha ishlaydi.
+    """
+    from app.utils.search_helpers import build_search_text
+
+    category_name = None
+    if product.category_id:
+        cat = (await db.execute(
+            select(Category).where(Category.id == product.category_id)
+        )).scalar_one_or_none()
+        category_name = cat.name if cat else None
+
+    product.search_text = build_search_text(product, category_name)
+
+
+async def _log_missed_search(db: AsyncSession, raw_term: str):
+    """Natija bermagan qidiruvni yozib qo'yadi.
+
+    Bir xil so'z qayta-qayta qidirilsa, faqat hit_count oshadi — jadval
+    shishib ketmaydi va admin panelda "eng ko'p so'ralgan" tartibda
+    ko'rinadi.
+    """
+    from app.utils.search_helpers import normalize
+    from app.models.extras import SearchMiss
+
+    norm = normalize(raw_term)
+    if not norm:
+        return
+
+    existing = (await db.execute(
+        select(SearchMiss).where(SearchMiss.normalized_term == norm)
+    )).scalar_one_or_none()
+
+    if existing:
+        existing.hit_count = (existing.hit_count or 0) + 1
+        existing.last_searched_at = func.now()
+        existing.resolved = False
+    else:
+        db.add(SearchMiss(term=raw_term, normalized_term=norm))
+
+    await db.commit()
 
 @router.get("", response_model=APIResponse[List[ProductModel]])
 async def get_products(
@@ -71,29 +118,37 @@ async def get_products(
     if has_discount:
         query = query.where(Product.discount_price.isnot(None))
         
+    relevance = None
     if search:
-        from app.utils.search_helpers import normalize_search_term, get_intent_keywords
-        
-        normalized_term = normalize_search_term(search)
-        keywords = get_intent_keywords(normalized_term)
-        
-        query = query.outerjoin(Category, Product.category_id == Category.id)
-        
-        search_conditions = []
-        for kw in keywords:
-            kw_term = f"%{kw}%"
-            search_conditions.append(cast(Product.name, String).ilike(kw_term))
-            search_conditions.append(cast(Product.description, String).ilike(kw_term))
-            search_conditions.append(cast(Category.name, String).ilike(kw_term))
+        from app.utils.search_helpers import normalize
 
-        query = query.where(or_(*search_conditions))
-        
-        # We will use this in the sorting logic if no sort_by is provided
-        exact_term = f"%{normalized_term}%"
-        exact_match_cond = or_(
-            cast(Product.name, String).ilike(exact_term),
-            cast(Product.brand, String).ilike(exact_term)
-        )
+        # So'rov ham, saqlangan search_text ham BIR XIL normalizatsiyadan
+        # o'tadi (lotinlashtirilgan, apostrofsiz). Shuning uchun mijoz
+        # kirillda ham, lotinda ham, apostrof bilan ham yozishi mumkin.
+        nterm = normalize(search)
+        words = [w for w in nterm.split() if len(w) >= 2]
+
+        st = func.coalesce(Product.search_text, '')
+
+        # 1) Har bir so'z alohida topilishi kerak (AND) — "qizil gisht"
+        #    yozilganda faqat ikkalasi ham bor mahsulot chiqadi.
+        conds = [st.ilike(f"%{w}%") for w in words] or [st.ilike(f"%{nterm}%")]
+        substring_match = and_(*conds)
+
+        # 2) Xato yozilgan bo'lsa — trigram o'xshashligi qutqaradi.
+        #    similarity() 0..1 oralig'ida ball beradi; 0.3 amalda
+        #    "bir-ikki harf xato" darajasiga to'g'ri keladi.
+        try:
+            sim = func.similarity(st, nterm)
+            query = query.where(or_(substring_match, sim > 0.3))
+            relevance = sim
+        except Exception:
+            # pg_trgm mavjud bo'lmasa ham qidiruv ishlayversin
+            query = query.where(substring_match)
+
+        # Aniq moslik (nom boshidan) eng yuqorida tursin
+        starts_with = st.ilike(f"{nterm}%")
+        exact_match_cond = starts_with
 
     if sort_by == 'price_asc':
         query = query.order_by(Product.price.asc())
@@ -106,28 +161,32 @@ async def get_products(
     elif sort_by == 'popular':
         query = query.order_by(Product.review_count.desc())
     elif search:
-        query = query.order_by(
-            case(
-                (exact_match_cond, 0),
-                else_=1
-            ),
-            Product.rating.desc(),
-            Product.review_count.desc()
-        )
+        # Moslik tartibi: nomi shu so'zdan boshlanadi -> omborda bor ->
+        # trigram o'xshashligi -> reyting. Omborda yo'q mahsulot hech
+        # qachon birinchi chiqmaydi.
+        order_terms = [case((exact_match_cond, 0), else_=1),
+                       case((Product.stock > 0, 0), else_=1)]
+        if relevance is not None:
+            order_terms.append(relevance.desc())
+        order_terms += [Product.rating.desc(), Product.review_count.desc()]
+        query = query.order_by(*order_terms)
         
     query = query.offset((page - 1) * limit).limit(limit)
         
     result = await db.execute(query)
     products = result.scalars().all()
     
-    # Fallback Logic: if search yielded no results, return similar/popular items instead
+    # Hech narsa topilmasa: so'rovni yozib qo'yamiz (admin keyin shu
+    # ro'yxatni ko'rib, mahsulotga kerakli so'zni qo'shadi) va MASHHUR
+    # mahsulotlarni "topildi" deb ko'rsatmaymiz — bu mijozni chalg'itadi.
     if search and len(products) == 0 and page == 1:
-        fallback_query = select(Product).order_by(Product.rating.desc(), Product.review_count.desc()).limit(limit)
-        fallback_result = await db.execute(fallback_query)
-        products = fallback_result.scalars().all()
+        try:
+            await _log_missed_search(db, search)
+        except Exception:
+            pass
         return APIResponse(
-            data=[ProductModel.model_validate(p) for p in products],
-            message="Siz qidirgan mahsulot topilmadi, o'rniga o'xshash mahsulotlar taqdim etildi."
+            data=[],
+            message="Siz qidirgan mahsulot topilmadi."
         )
 
     return APIResponse(data=[ProductModel.model_validate(p) for p in products])
@@ -171,6 +230,7 @@ class ProductCreateRequest(PydanticBaseModel):
     certificates: list | None = None
     delivery_information: str | None = None
     moq: int = 1
+    search_keywords: str | None = None
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -230,8 +290,11 @@ async def create_product(payload: ProductCreateRequest, db: AsyncSession = Depen
         delivery_information=payload.delivery_information,
         moq=payload.moq,
         currency="UZS",
+        search_keywords=payload.search_keywords,
     )
     db.add(product)
+    await db.flush()
+    await _recompute_search_text(product, db)
     await db.commit()
     await db.refresh(product)
     return APIResponse(data=ProductModel.model_validate(product))
@@ -260,6 +323,8 @@ async def update_product(id: str, payload: ProductCreateRequest, db: AsyncSessio
     product.brand = payload.brand
     product.has_delivery = payload.has_delivery
     product.delivery_price = payload.delivery_price
+    if payload.search_keywords is not None:
+        product.search_keywords = payload.search_keywords
     
     if payload.specifications is not None:
         product.specifications = payload.specifications
@@ -273,7 +338,8 @@ async def update_product(id: str, payload: ProductCreateRequest, db: AsyncSessio
         product.images = payload.images
     if payload.brand is not None:
         product.brand = payload.brand
-        
+
+    await _recompute_search_text(product, db)
     await db.commit()
     await db.refresh(product)
     
