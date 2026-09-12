@@ -56,6 +56,33 @@ async def _abandoned_order_cleanup_loop():
             print(f"[abandoned_order_cleanup] error: {e}")
         await asyncio.sleep(600)  # 10 minutes
 
+
+async def _backfill_search_text():
+    """search_text bo'sh mahsulotlar uchun uni hisoblab qo'yadi.
+
+    Yangi ustun qo'shilgach mavjud mahsulotlarda u bo'sh bo'ladi va ular
+    qidiruvda umuman chiqmaydi. Shu funksiya bir marta to'ldirib beradi.
+    Faqat bo'shlari olinadi, shuning uchun har ishga tushishda qayta
+    hisoblanmaydi.
+    """
+    from app.models.product import Product as _P
+    from app.models.category import Category as _C
+    from app.utils.search_helpers import build_search_text
+
+    async with AsyncSessionLocal() as db:
+        rows = (await db.execute(
+            select(_P).where((_P.search_text.is_(None)) | (_P.search_text == ""))
+        )).scalars().all()
+        if not rows:
+            return
+
+        cats = {c.id: c.name for c in (await db.execute(select(_C))).scalars().all()}
+        for p in rows:
+            p.search_text = build_search_text(p, cats.get(p.category_id))
+        await db.commit()
+        print(f"[search] {len(rows)} ta mahsulot uchun search_text to'ldirildi")
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Initialize database tables
@@ -117,12 +144,25 @@ async def lifespan(app: FastAPI):
     for col_sql in [
         "ALTER TABLE products ADD COLUMN has_delivery BOOLEAN DEFAULT TRUE",
         "ALTER TABLE products ADD COLUMN delivery_price NUMERIC(12,2) DEFAULT 0",
+        # Qidiruv ustunlari
+        "ALTER TABLE products ADD COLUMN search_keywords VARCHAR",
+        "ALTER TABLE products ADD COLUMN search_text VARCHAR",
     ]:
         try:
             async with engine.begin() as conn:
                 await conn.execute(text(col_sql))
         except Exception:
             pass
+
+    # pg_trgm — xatoga chidamli qidiruvning asosi. So'zlarni uch harfli
+    # bo'laklarga bo'lib solishtiradi, shuning uchun bir-ikki harf xato
+    # yozilsa ham mahsulot topiladi. Sinonim ro'yxati talab qilmaydi.
+    try:
+        async with engine.begin() as conn:
+            await conn.execute(text("CREATE EXTENSION IF NOT EXISTS pg_trgm"))
+        print("[search] pg_trgm tayyor")
+    except Exception as e:
+        print(f"[search] pg_trgm mavjud emas, faqat ILIKE ishlaydi: {e}")
 
     # Notifications: model'da image_url bor edi, lekin jadval avval shusiz
     # yaratilgan (schema drift). Chatdan admin javob yozganda mijozga
@@ -150,6 +190,24 @@ async def lifespan(app: FastAPI):
             await seed_data(session)
     except Exception as e:
         print(f"Error seeding/cleaning data: {e}")
+
+    # DIQQAT — TARTIB: indeks va backfill create_all() hamda seed_data()
+    # dan KEYIN turishi shart. Aks holda bo'sh bazada products jadvali
+    # hali yo'q bo'ladi, urug'langan mahsulotlar esa search_text'siz
+    # qolib, qidiruvda umuman chiqmaydi.
+    try:
+        async with engine.begin() as conn:
+            await conn.execute(text(
+                "CREATE INDEX IF NOT EXISTS ix_products_search_trgm "
+                "ON products USING GIN (search_text gin_trgm_ops)"
+            ))
+    except Exception as e:
+        print(f"[search] trgm indeks o'tkazib yuborildi: {e}")
+
+    try:
+        await _backfill_search_text()
+    except Exception as e:
+        print(f"[search] backfill xatosi: {e}")
         
     asyncio.create_task(_abandoned_order_cleanup_loop())
 
