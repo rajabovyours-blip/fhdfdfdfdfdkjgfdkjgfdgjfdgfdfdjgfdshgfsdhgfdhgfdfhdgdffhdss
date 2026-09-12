@@ -61,6 +61,26 @@ class NotificationBroadcast(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
+class SearchMiss(Base):
+    """Mijoz qidirgan, lekin hech narsa topilmagan so'rovlar.
+
+    MAQSAD: qidiruv o'z-o'zidan yaxshilanib borishi uchun. Admin panelda
+    bu ro'yxat ko'rinadi — "odamlar buni shunday deb qidirar ekan" degan
+    real ma'lumot. Admin mos mahsulotga bitta so'z qo'shsa (search_keywords),
+    keyingi safar aynan shu so'rov topiladi. Hech qanday kod o'zgarishi
+    yoki qayta deploy kerak emas.
+    """
+    __tablename__ = "search_misses"
+
+    id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    term = Column(String, nullable=False)          # foydalanuvchi aynan yozgan matn
+    normalized_term = Column(String, nullable=False, index=True)  # takrorlarni yig'ish uchun
+    hit_count = Column(Integer, default=1)          # shu so'z necha marta qidirilgan
+    resolved = Column(Boolean, default=False)       # admin "ko'rib chiqdim" deb belgilashi mumkin
+    last_searched_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
 class Payment(Base):
     __tablename__ = "payments"
     
