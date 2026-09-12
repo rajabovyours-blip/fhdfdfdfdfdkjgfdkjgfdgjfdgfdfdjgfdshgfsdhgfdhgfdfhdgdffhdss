@@ -320,6 +320,8 @@ async function openModal(id = null) {
       }
 
       document.getElementById('prod-brand').value = p.brand || '';
+      const skEl = document.getElementById('prod-search-keywords');
+      if (skEl) skEl.value = p.searchKeywords || p.search_keywords || '';
       document.getElementById('prod-moq').value = p.moq || 1;
       document.getElementById('prod-delivery-info').value = p.deliveryInformation || p.delivery_information || '';
       
@@ -338,6 +340,8 @@ async function openModal(id = null) {
     currentEditProduct = null;
     document.getElementById('prod-moq').value = 1;
     document.getElementById('prod-delivery-info').value = '';
+    const skNew = document.getElementById('prod-search-keywords');
+    if (skNew) skNew.value = '';
     const deliveryPriceEl = document.getElementById('prod-delivery-price');
     if (deliveryPriceEl) deliveryPriceEl.value = 0;
     renderSpecs({});
@@ -393,6 +397,10 @@ async function saveProduct() {
     hasDelivery: document.getElementById('prod-has-delivery').checked,
     deliveryPrice: deliveryPrice,
     brand: document.getElementById('prod-brand').value || null,
+    // Admin kiritgan qidiruv so'zlari. Backend bularni search_text ichiga
+    // qo'shadi, shuning uchun sinonim qo'shish uchun kod o'zgartirish
+    // yoki qayta deploy qilish kerak emas.
+    searchKeywords: (document.getElementById('prod-search-keywords')?.value || '').trim() || null,
     images: productImages,
     moq: parseInt(document.getElementById('prod-moq').value) || 1,
     delivery_information: document.getElementById('prod-delivery-info').value || null,
