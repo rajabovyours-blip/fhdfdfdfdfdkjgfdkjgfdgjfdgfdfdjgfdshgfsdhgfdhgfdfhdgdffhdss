@@ -71,7 +71,10 @@ document.addEventListener('DOMContentLoaded', () => {
     formData.append('file', compressedFile);
     
     try {
-      const res = await api.post('/upload/image', formData);
+      // watermark=true — Milliy Metr logotipi FAQAT mahsulot rasmlariga
+      // qo'yiladi. Kategoriya, banner, bildirishnoma va foydalanuvchi
+      // avatari oddiy /upload/image chaqiradi va toza qoladi.
+      const res = await api.post('/upload/image?watermark=true', formData);
       if (res.data && res.data.url) {
         productImages.push(res.data.url);
         renderImages();
