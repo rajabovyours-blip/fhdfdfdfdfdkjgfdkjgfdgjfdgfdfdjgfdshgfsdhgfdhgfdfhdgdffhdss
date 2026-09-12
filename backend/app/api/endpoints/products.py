@@ -136,11 +136,20 @@ async def get_products(
         substring_match = and_(*conds)
 
         # 2) Xato yozilgan bo'lsa — trigram o'xshashligi qutqaradi.
-        #    similarity() 0..1 oralig'ida ball beradi; 0.3 amalda
-        #    "bir-ikki harf xato" darajasiga to'g'ri keladi.
+        #
+        #    DIQQAT: bu yerda similarity() EMAS, word_similarity() ishlatiladi.
+        #    similarity() butun matnni solishtiradi; mahsulot matni 100+ belgi,
+        #    so'rov esa 10-12 belgi bo'lgani uchun ball har doim juda past
+        #    chiqadi va xato yozilgan so'z UMUMAN topilmaydi (bazada sinab
+        #    ko'rilganda 0 ta natija bergan).
+        #    word_similarity() esa so'rovni matn ICHIDAGI eng mos so'z bilan
+        #    solishtiradi — "shpaklefka" -> "shpaklyovka" 0.64 ball beradi.
+        #
+        #    Chegara 0.5: bir-ikki harf xatoni tutadi, lekin butunlay boshqa
+        #    so'zni o'tkazmaydi (sinovda "semnt" 0.33 bilan to'g'ri rad etildi).
         try:
-            sim = func.similarity(st, nterm)
-            query = query.where(or_(substring_match, sim > 0.3))
+            sim = func.word_similarity(nterm, st)
+            query = query.where(or_(substring_match, sim > 0.5))
             relevance = sim
         except Exception:
             # pg_trgm mavjud bo'lmasa ham qidiruv ishlayversin
