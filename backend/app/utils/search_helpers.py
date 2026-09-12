@@ -6,13 +6,13 @@ istalgan so'zni yozishi mumkin. Shuning uchun bu yerda faqat
 ALGORITM turadi:
 
   1. Matnni bir ko'rinishga keltirish (registr, apostrof, bo'shliq)
-  2. Kirill <-> lotin ikki tomonlama o'girish
+  2. Kirillni lotinga o'girish — ikkala tomon bir fazoda uchrashadi
   3. Mahsulot uchun yig'ma qidiruv matnini qurish
 
-Mahsulotga xos so'zlar (masalan mijozlar shu tovarni qanday atashi)
-admin panelda har bir mahsulotning o'z maydoniga kiritiladi —
-kodga emas. Xato yozilgan so'zlar esa bazadagi trigram
-o'xshashligi (pg_trgm) orqali topiladi.
+Mahsulotga xos so'zlar (mijozlar shu tovarni qanday atashi) admin
+panelda har bir mahsulotning o'z maydoniga kiritiladi — kodga emas.
+Xato yozilgan so'zlar esa bazadagi trigram o'xshashligi (pg_trgm)
+orqali topiladi.
 """
 
 import re
@@ -74,8 +74,13 @@ def normalize(text: str) -> str:
     if not text:
         return ''
     t = str(text).lower()
-    t = _strip_marks(t)
+    # DIQQAT — TARTIB MUHIM. _strip_marks() NFKD orqali "ё" ni "е" + belgiga
+    # ajratib, belgini tashlab yuboradi va "yo" tovushi yo'qoladi
+    # ("Шпаклёвка" -> "shpaklevka", lotincha "shpaklyovka" bilan mos
+    # kelmay qoladi). Shuning uchun kirilldan lotinga o'girish AVVAL
+    # bajariladi. Bu qatorlarning o'rnini almashtirmang.
     t = cyr_to_lat(t)
+    t = _strip_marks(t)
     for ch in APOSTROPHES:
         t = t.replace(ch, '')
     # harf va raqamdan boshqa hamma narsa bo'shliqqa aylanadi
@@ -85,16 +90,14 @@ def normalize(text: str) -> str:
 
 
 def query_variants(term: str) -> list[str]:
-    """So'rovning turli yozuv variantlarini qaytaradi.
+    """So'rovning normallashgan ko'rinishi.
 
-    Sinonim EMAS — faqat bir xil so'zning boshqa alifbodagi ko'rinishi.
-    Shu tufayli mijoz kirillda ham, lotinda ham yoza oladi.
+    normalize() kirillni ham lotinga keltirgani uchun bitta variant
+    yetarli — mijoz qaysi alifboda yozishidan qat'i nazar, so'rov ham,
+    saqlangan matn ham bir xil fazoga tushadi.
     """
     base = normalize(term)
-    if not base:
-        return []
-    variants = {base, normalize(lat_to_cyr(base))}
-    return [v for v in variants if v]
+    return [base] if base else []
 
 
 def _flatten(value) -> str:
@@ -111,10 +114,8 @@ def _flatten(value) -> str:
 def build_search_text(product, category_name=None) -> str:
     """Mahsulot uchun yig'ma qidiruv matnini quradi.
 
-    Ichiga kiradi: barcha tillardagi nomi, tavsifi, brendi, SKU,
-    kategoriya nomi va admin kiritgan qidiruv so'zlari. Har biri
-    HAM lotin, HAM kirill ko'rinishida yoziladi — shuning uchun
-    mijoz qaysi alifboda yozishidan qat'i nazar topiladi.
+    Ichiga kiradi: barcha tillardagi nomi, brendi, SKU, o'lchov birligi,
+    kategoriya nomi, admin kiritgan qidiruv so'zlari va tavsifning boshi.
     """
     parts = [
         _flatten(getattr(product, 'name', None)),
@@ -129,10 +130,16 @@ def build_search_text(product, category_name=None) -> str:
     if desc:
         parts.append(desc[:400])
 
+    # normalize() BARCHA matnni lotinga keltiradi, so'rov ham xuddi shunday
+    # normallashadi — demak ikkala tomon bir xil fazoda uchrashadi va
+    # kirillcha nusxani alohida saqlash shart emas (indeks ikki barobar
+    # shishishining oldi olinadi).
     raw = ' '.join(p for p in parts if p)
-    lat = normalize(raw)
-    cyr = normalize(lat_to_cyr(lat))
-    return f'{lat} {cyr}'.strip()
+    words = []
+    for w in normalize(raw).split():
+        if w not in words:
+            words.append(w)
+    return ' '.join(words)
 
 
 # ── Eskicha nomlar (mos kelishi uchun saqlangan) ──────────────────
