@@ -36,7 +36,20 @@ class Product(Base):
     location = Column(String, nullable=True)
     has_delivery = Column(Boolean, default=True)
     delivery_price = Column(Numeric(12, 2), default=0.0)
-    
+
+    # ── Qidiruv ───────────────────────────────────────────────────
+    # search_keywords: admin panelda qo'lda kiritiladigan qo'shimcha
+    # so'zlar — mijozlar shu tovarni qanday atashi (xalq tilidagi
+    # nomlari, ruscha/inglizcha varianti, keng tarqalgan xato yozuv).
+    # Sinonimlar KODDA emas, aynan shu yerda yashaydi.
+    search_keywords = Column(String, nullable=True)
+
+    # search_text: yuqoridagi hamma narsadan yig'ilgan, normallashtirilgan
+    # (lotinlashtirilgan, apostrofsiz) yagona matn. Qidiruv faqat shu
+    # ustun bo'yicha ishlaydi va unga pg_trgm GIN indeksi qo'yiladi.
+    # Mahsulot saqlanganda avtomatik qayta hisoblanadi.
+    search_text = Column(String, nullable=True)
+
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
