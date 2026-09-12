@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException, Query
 import os
 import uuid
 import io
@@ -14,22 +14,31 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 # Path to the watermark logo
 WATERMARK_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), "assets", "watermark.png")
 
-def process_image(image_bytes, watermark_path):
+
+def process_image(image_bytes, watermark_path, add_watermark: bool):
+    """Rasmni ochadi va FAQAT so'ralganda logotip qo'yadi.
+
+    MUHIM: logotip faqat MAHSULOT rasmlariga qo'yiladi. Kategoriya,
+    banner, bildirishnoma va foydalanuvchi avatariga qo'yilmasligi kerak —
+    aks holda ilovaning hamma joyida logotip takrorlanib chiqadi.
+    """
     base_image = Image.open(io.BytesIO(image_bytes))
     base_image = base_image.convert("RGBA")
-    
-    # Add watermark
+
+    if not add_watermark:
+        return base_image
+
     if os.path.exists(watermark_path):
         try:
             with Image.open(watermark_path) as watermark:
                 watermark = watermark.convert("RGBA")
-                
+
                 # Resize watermark to be 25% of the image width
                 wm_width = int(base_image.width * 0.25)
                 wm_ratio = wm_width / float(watermark.width)
                 wm_height = int(watermark.height * wm_ratio)
                 watermark = watermark.resize((wm_width, wm_height), Image.Resampling.LANCZOS)
-                
+
                 # Yurakcha (sevimlilar) tugmasi ilovada yuqori O'NG burchakda
                 # turadi — shuning uchun logotip u bilan to'qnashmasligi uchun
                 # yuqori CHAP burchakka joylashtiriladi.
@@ -37,41 +46,57 @@ def process_image(image_bytes, watermark_path):
                 padding_y = 20
                 pos_x = padding_x
                 pos_y = padding_y
-                
+
                 # Create transparent layer and paste watermark
-                transparent = Image.new('RGBA', base_image.size, (0,0,0,0))
+                transparent = Image.new('RGBA', base_image.size, (0, 0, 0, 0))
                 transparent.paste(watermark, (pos_x, pos_y), mask=watermark)
-                
+
                 # Composite
                 base_image = Image.alpha_composite(base_image, transparent)
         except Exception as e:
             print(f"Failed to add watermark: {e}")
-            
+
     return base_image
 
+
 @router.post("/image")
-async def upload_image(file: UploadFile = File(...)):
+async def upload_image(
+    file: UploadFile = File(...),
+    watermark: bool = Query(
+        False,
+        description="Logotip qo'yilsinmi. FAQAT mahsulot rasmlari uchun true.",
+    ),
+):
+    """Rasm yuklash.
+
+    `watermark=true` bo'lgandagina Milliy Metr logotipi qo'yiladi.
+    Standart qiymat — false, ya'ni kategoriya/banner/avatar rasmlari
+    toza, logotipsiz saqlanadi.
+    """
     if not file.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="File provided is not an image")
-    
+
     unique_filename = f"{uuid.uuid4().hex}.png"
     file_path = os.path.join(UPLOAD_DIR, unique_filename)
-    
+
     from starlette.concurrency import run_in_threadpool
-    
+
     try:
         content = await file.read()
-        final_image = await run_in_threadpool(process_image, content, WATERMARK_PATH)
+        final_image = await run_in_threadpool(
+            process_image, content, WATERMARK_PATH, watermark
+        )
         # PNG - lossless (sifat yo'qotilmaydi). Asosiy sifat pasayishi
         # oldin admin panelning client-side siqishida bo'lgan (image-utils.js) —
         # u alohida tuzatildi.
         await run_in_threadpool(final_image.save, file_path, "PNG", optimize=True)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to upload image: {e}")
-        
+
     return {
         "data": {
             "url": f"/uploads/images/{unique_filename}",
-            "filename": unique_filename
+            "filename": unique_filename,
+            "watermarked": watermark,
         }
     }
