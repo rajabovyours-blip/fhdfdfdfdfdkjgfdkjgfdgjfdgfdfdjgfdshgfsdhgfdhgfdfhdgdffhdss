@@ -1,8 +1,10 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shimmer/shimmer.dart';
 
 import 'package:milliy_metr/core/utils/image_utils.dart';
+import 'package:milliy_metr/shared/components/web_image_strategy.dart';
 
 class ProductImage extends StatefulWidget {
   final String? imageUrl;
@@ -75,6 +77,30 @@ class _ProductImageState extends State<ProductImage> {
     }
 
     final String processedUrl = ImageUtils.getFullImageUrl(imageUrl);
+
+    if (kIsWeb && webImgMode != 'cached') {
+      return Image.network(
+        processedUrl,
+        key: ValueKey('$processedUrl#$_retryCount'),
+        height: widget.height,
+        width: widget.width,
+        fit: widget.fit,
+        webHtmlElementStrategy: webImgMode == 'html'
+            ? WebHtmlElementStrategy.prefer
+            : WebHtmlElementStrategy.never,
+        frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+          if (wasSynchronouslyLoaded || frame != null) return child;
+          return _buildLoadingPlaceholder(context);
+        },
+        errorBuilder: (context, error, stackTrace) {
+          if (_retryCount < _maxRetries) {
+            _scheduleRetry(processedUrl);
+            return _buildLoadingPlaceholder(context);
+          }
+          return _buildErrorFallback(context);
+        },
+      );
+    }
 
     return CachedNetworkImage(
       // _retryCount o'zgarganda kalit ham o'zgaradi — bu Flutter'ga eski,

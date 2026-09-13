@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:milliy_metr/core/utils/image_utils.dart';
+import 'package:milliy_metr/shared/components/web_image_strategy.dart';
 
 class BrandImageLoader extends StatefulWidget {
   final String? imageUrl;
@@ -77,7 +79,7 @@ class _BrandImageLoaderState extends State<BrandImageLoader> {
             child: Opacity(
               opacity: 0.45,
               child: Image.asset(
-                'assets/images/milliy_metr_logo.png',
+                'assets/images/milliy_metr_logo_transparent.png',
                 width: (widget.width != null) ? (widget.width! * 0.45).clamp(24.0, 56.0) : 40.0,
                 fit: BoxFit.contain,
                 errorBuilder: (_, __, ___) => const Icon(
@@ -119,6 +121,33 @@ class _BrandImageLoaderState extends State<BrandImageLoader> {
         ),
         child: const Center(
           child: Icon(Icons.image_not_supported_outlined, color: Colors.grey, size: 24),
+        ),
+      );
+    }
+
+    if (kIsWeb && webImgMode != 'cached') {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(widget.borderRadius),
+        child: Image.network(
+          processedUrl,
+          key: ValueKey('$processedUrl#$_retryCount'),
+          width: widget.width,
+          height: widget.height,
+          fit: widget.fit,
+          webHtmlElementStrategy: webImgMode == 'html'
+              ? WebHtmlElementStrategy.prefer
+              : WebHtmlElementStrategy.never,
+          frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+            if (wasSynchronouslyLoaded || frame != null) return child;
+            return buildShimmerPlaceholder();
+          },
+          errorBuilder: (context, error, stackTrace) {
+            if (_retryCount < _maxRetries) {
+              _scheduleRetry(processedUrl);
+              return buildShimmerPlaceholder();
+            }
+            return buildErrorPlaceholder();
+          },
         ),
       );
     }
