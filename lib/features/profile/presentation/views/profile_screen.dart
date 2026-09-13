@@ -12,6 +12,8 @@ import 'package:milliy_metr/l10n/l10n_extension.dart';
 import 'package:milliy_metr/core/utils/image_utils.dart';
 import 'package:milliy_metr/core/providers/main_navigation_provider.dart';
 import 'package:milliy_metr/features/wishlist/presentation/providers/wishlist_notifier.dart';
+import 'package:milliy_metr/features/orders/presentation/providers/order_notifier.dart';
+import 'package:milliy_metr/features/checkout/presentation/providers/checkout_provider.dart';
 import 'package:milliy_metr/features/chat/presentation/views/chat_bottom_sheet.dart' as milliy_metr_chat;
 
 class ProfileScreen extends ConsumerWidget {
@@ -254,7 +256,23 @@ class ProfileScreen extends ConsumerWidget {
           loaded: (items) => items.length.toString(),
           orElse: () => '0',
         );
-        
+
+    final ordersCount = ref.watch(orderNotifierProvider).maybeWhen(
+          loaded: (orders) => orders.length.toString(),
+          orElse: () => '0',
+        );
+
+    final checkoutState = ref.watch(checkoutProvider);
+    // Agar manzillar hali yuklanmagan bo'lsa — birinchi marta profilga
+    // kirilganda yuklab olish kerak, aks holda doim 0 ko'rinadi.
+    if (checkoutState.addresses.isEmpty &&
+        !checkoutState.isLoading &&
+        checkoutState.error == null) {
+      Future.microtask(
+          () => ref.read(checkoutProvider.notifier).load());
+    }
+    final addressesCount = checkoutState.addresses.length.toString();
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: Row(
@@ -262,21 +280,21 @@ class ProfileScreen extends ConsumerWidget {
           AccountSummaryCard(
             icon: Icons.shopping_bag_outlined,
             label: context.l10n.orders,
-            value: '0', 
+            value: ordersCount,
             onTap: () => context.push(AppRoutes.orders),
           ),
           const SizedBox(width: 12),
           AccountSummaryCard(
             icon: Icons.favorite_border_rounded,
             label: context.l10n.wishlist,
-            value: wishlistCount, 
+            value: wishlistCount,
             onTap: () => ref.read(mainTabIndexProvider.notifier).state = 2,
           ),
           const SizedBox(width: 12),
           AccountSummaryCard(
             icon: Icons.location_on_outlined,
             label: context.l10n.addresses,
-            value: '0', 
+            value: addressesCount,
             onTap: () => context.push(AppRoutes.addresses),
           ),
         ],
