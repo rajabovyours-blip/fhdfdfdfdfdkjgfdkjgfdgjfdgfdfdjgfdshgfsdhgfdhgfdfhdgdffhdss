@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:milliy_metr/l10n/l10n_extension.dart';
@@ -29,14 +29,34 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
   }
 
   Future<void> _loadDeviceInfo() async {
+    // dart:io Platform ishlamaydi (veb sahifada "Unsupported operation"
+    // xatosi bilan qulab tushadi) — veb brauzerda qurilma modeli o'rniga
+    // brauzer haqidagi ma'lumotni ko'rsatamiz.
+    if (kIsWeb) {
+      final deviceInfo = DeviceInfoPlugin();
+      String model = 'Veb brauzer';
+      try {
+        final webInfo = await deviceInfo.webBrowserInfo;
+        model = webInfo.browserName.name.isNotEmpty
+            ? '${webInfo.browserName.name[0].toUpperCase()}${webInfo.browserName.name.substring(1)} brauzeri'
+            : 'Veb brauzer';
+      } catch (_) {
+        // Brauzer ma'lumotini olib bo'lmasa ham, ekran ishlashda davom etadi
+      }
+      if (mounted) {
+        setState(() => _deviceModel = model);
+      }
+      return;
+    }
+
     final deviceInfo = DeviceInfoPlugin();
     String model;
-    if (Platform.isIOS) {
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
       final iosInfo = await deviceInfo.iosInfo;
       model = iosInfo.utsname.machine; // e.g. iPhone15,2
       // Map to human-readable names
       model = _mapIosModel(iosInfo.utsname.machine, iosInfo.model);
-    } else if (Platform.isAndroid) {
+    } else if (defaultTargetPlatform == TargetPlatform.android) {
       final androidInfo = await deviceInfo.androidInfo;
       model = '${androidInfo.brand} ${androidInfo.model}';
     } else {
@@ -127,6 +147,17 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
             subtitle: l10n.biometricAuthDesc,
             value: _biometricEnabled,
             onChanged: (val) async {
+              // local_auth veb brauzerda ilova qilinmagan (native plagin
+              // topilmadi xatosi bilan qulaydi) — veb saytda bu funksiya
+              // faqat mobil ilovada mavjudligini bildiramiz.
+              if (kIsWeb) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Bu funksiya faqat mobil ilovada mavjud'),
+                  ),
+                );
+                return;
+              }
               if (val) {
                 // Eagerly update to avoid bounce back
                 setState(() => _biometricEnabled = true);
@@ -202,7 +233,11 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
                   ),
                   child: ListTile(
                     leading: Icon(
-                      Platform.isIOS ? Icons.phone_iphone_rounded : Icons.phone_android_rounded,
+                      kIsWeb
+                          ? Icons.language_rounded
+                          : (defaultTargetPlatform == TargetPlatform.iOS
+                              ? Icons.phone_iphone_rounded
+                              : Icons.phone_android_rounded),
                       color: context.colors.textHigh,
                     ),
                     title: Text(

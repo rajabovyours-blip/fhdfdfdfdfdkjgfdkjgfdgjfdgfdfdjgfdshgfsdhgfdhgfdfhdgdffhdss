@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart' show PointerDeviceKind;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:milliy_metr/core/theme/app_theme.dart';
@@ -53,9 +54,20 @@ class MilliyMetrApp extends ConsumerWidget {
             FocusManager.instance.primaryFocus?.unfocus();
           },
           child: ScrollConfiguration(
+            // Kompyuter brauzerida standart holatda sichqoncha bilan ushlab
+            // sudrab (drag) skroll qilib bo'lmaydi — Flutter faqat
+            // barmoq/stilus/trackpadni ruxsat beradi. Banner va kategoriya
+            // qatorlarini sichqoncha bilan surish uchun mouse'ni ham
+            // qo'shamiz (mobil ilovaga hech qanday ta'sir qilmaydi).
             behavior: ScrollConfiguration.of(context).copyWith(
               physics: const BouncingScrollPhysics(),
               overscroll: false,
+              dragDevices: {
+                PointerDeviceKind.touch,
+                PointerDeviceKind.mouse,
+                PointerDeviceKind.trackpad,
+                PointerDeviceKind.stylus,
+              },
             ),
             child: child ?? const SizedBox.shrink(),
           ),

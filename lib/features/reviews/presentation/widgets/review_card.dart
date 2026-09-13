@@ -1,4 +1,5 @@
-import 'dart:io';
+import 'dart:io' show File;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:go_router/go_router.dart';
@@ -159,9 +160,14 @@ class ReviewCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(color: context.colors.outline),
                         image: DecorationImage(
+                          // Veb brauzerda mahalliy rasm yo'li ham blob: havola
+                          // bo'ladi — dart:io File uni ocholmaydi (qulab
+                          // tushadi), shuning uchun NetworkImage ishlatamiz.
                           image: photo.startsWith('http') || photo.startsWith('/') || photo.startsWith('uploads/')
                               ? NetworkImage(ImageUtils.getFullImageUrl(photo)) as ImageProvider
-                              : FileImage(File(photo)),
+                              : (kIsWeb
+                                  ? NetworkImage(photo) as ImageProvider
+                                  : FileImage(File(photo))),
                           fit: BoxFit.cover,
                         ),
                       ),

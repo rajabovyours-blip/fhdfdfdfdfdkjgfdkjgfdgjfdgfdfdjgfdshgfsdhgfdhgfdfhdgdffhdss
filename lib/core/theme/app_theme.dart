@@ -32,6 +32,12 @@ class AppTheme {
           elevation: 0,
         ),
       ),
+      // Kompyuter brauzerida pastdan chiqadigan panellar (filtr, saralash,
+      // sharh yozish) butun ekran kengligiga cho'zilib ketmasligi uchun —
+      // telefonda (kenglik shu qiymatdan kichik) hech narsa o'zgarmaydi.
+      bottomSheetTheme: const BottomSheetThemeData(
+        constraints: BoxConstraints(maxWidth: 640),
+      ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColorsExtension.light.surfaceVariant,
@@ -84,6 +90,9 @@ class AppTheme {
           foregroundColor: AppColorsExtension.dark.onPrimary,
           elevation: 0,
         ),
+      ),
+      bottomSheetTheme: const BottomSheetThemeData(
+        constraints: BoxConstraints(maxWidth: 640),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,

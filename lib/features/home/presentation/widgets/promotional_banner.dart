@@ -49,8 +49,12 @@ class _PromotionalBannerState extends State<PromotionalBanner> {
       children: [
         LayoutBuilder(
           builder: (context, constraints) {
-            // Desktop: taller banner, mobile: 160px
-            final bannerHeight = constraints.maxWidth > 700 ? 220.0 : 160.0;
+            // Real banner suratlari ~2.4:1 nisbatda (1920x800) yuklanadi —
+            // konteyner nisbatini aynan shunga moslaymiz, shunda BoxFit.cover
+            // deyarli hech narsani kesmaydi va yon tomonlarda (yoki
+            // tepa/pastda) rangli bo'sh joy qolmaydi.
+            final bannerHeight =
+                (constraints.maxWidth / 2.4).clamp(160.0, 340.0);
             return SizedBox(
               height: bannerHeight,
               child: PageView.builder(
@@ -81,6 +85,10 @@ class _PromotionalBannerState extends State<PromotionalBanner> {
                       ),
                       child: CachedNetworkImage(
                         imageUrl: ImageUtils.getFullImageUrl(banner.imageUrl),
+                        // Konteyner nisbati suratning haqiqiy nisbatiga
+                        // (~2.4:1) mos kelgani uchun "cover" endi deyarli
+                        // hech narsani kesmaydi va rangli chiziqlar
+                        // (letterbox) qoldirmaydi.
                         fit: BoxFit.cover,
                         width: double.infinity,
                         memCacheWidth: 800,

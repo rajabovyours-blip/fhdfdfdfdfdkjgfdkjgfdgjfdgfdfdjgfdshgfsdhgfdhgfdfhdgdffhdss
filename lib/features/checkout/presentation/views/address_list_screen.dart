@@ -56,6 +56,7 @@ class _AddressListScreenState extends ConsumerState<AddressListScreen> {
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 24, vertical: 12,),
+                            minimumSize: const Size(0, 44),
                           ),
                         ),
                       ],

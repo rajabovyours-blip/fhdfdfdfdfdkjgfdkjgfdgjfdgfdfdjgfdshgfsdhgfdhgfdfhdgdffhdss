@@ -122,6 +122,7 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
+                                  minimumSize: const Size(0, 44),
                                 ),
                                 child: Text(
                                   context.l10n.retry,

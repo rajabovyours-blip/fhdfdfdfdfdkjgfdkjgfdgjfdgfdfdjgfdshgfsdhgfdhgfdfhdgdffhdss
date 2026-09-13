@@ -103,7 +103,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
             final isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
             return Center(
               child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 600),
+                constraints: const BoxConstraints(maxWidth: 440),
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
                   child: ConstrainedBox(

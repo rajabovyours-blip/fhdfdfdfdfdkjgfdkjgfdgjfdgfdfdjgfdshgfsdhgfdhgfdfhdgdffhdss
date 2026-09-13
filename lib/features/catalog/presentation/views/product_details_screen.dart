@@ -99,26 +99,33 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           child: CircularProgressIndicator(color: context.colors.primary),
         ),
         error: (e) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                context.l10n.errorLoadingProductDetails,
-                style: TextStyle(color: context.colors.textHigh),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: context.colors.primary,
-                ),
-                onPressed: () => ref
-                    .refresh(productDetailsNotifierProvider(widget.productId)),
-                child: Text(
-                  context.l10n.retry,
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  context.l10n.errorLoadingProductDetails,
                   style: TextStyle(color: context.colors.textHigh),
+                  textAlign: TextAlign.center,
                 ),
-              ),
-            ],
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: context.colors.primary,
+                    // Kompyuterda tugma ekran kengligiga cho'zilib ketmasin.
+                    minimumSize: const Size(0, 44),
+                  ),
+                  onPressed: () => ref
+                      .refresh(productDetailsNotifierProvider(widget.productId)),
+                  child: Text(
+                    context.l10n.retry,
+                    style: TextStyle(color: context.colors.textHigh),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
         loaded: (product) {
@@ -137,9 +144,15 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                         final imageWidget = Container(
                           height: isDesktop ? 500 : MediaQuery.of(context).size.width,
                           width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: context.colors.surface,
-                            borderRadius: const BorderRadius.vertical(
+                          decoration: const BoxDecoration(
+                            // Mahsulot suratlari deyarli har doim oq/och fonda
+                            // olinadi va BoxFit.contain rasm nisbati mos
+                            // kelmaganda tepa-pastdan bo'sh joy qoldiradi —
+                            // qorong'i mavzuda bu joy context.colors.surface
+                            // (qora) bilan to'lib, surat "qorayib qolganday"
+                            // ko'rinardi. Shu joyni doim och rangda qoldiramiz.
+                            color: Color(0xFFF5F5F5),
+                            borderRadius: BorderRadius.vertical(
                               bottom: Radius.circular(24),
                             ),
                           ),

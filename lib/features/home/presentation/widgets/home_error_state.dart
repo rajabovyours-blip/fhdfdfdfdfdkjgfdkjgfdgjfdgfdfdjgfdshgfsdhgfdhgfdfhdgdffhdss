@@ -56,6 +56,9 @@ class HomeErrorState extends StatelessWidget {
                   ),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  // Kompyuterda tugma butun konteyner kengligiga (1280px)
+                  // cho'zilib ketmasin — o'z matni o'lchamida qolsin.
+                  minimumSize: const Size(0, 44),
                 ),
                 child: const Text(
                   'Qayta urinish',

@@ -1,4 +1,5 @@
-import 'dart:io';
+import 'dart:io' show File;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 
@@ -21,7 +22,9 @@ class ReviewPhotoViewerScreen extends StatelessWidget {
         child: InteractiveViewer(
           minScale: 1.0,
           maxScale: 5.0,
-          child: photoUrl.startsWith('http')
+          // Veb brauzerda mahalliy rasm yo'li ham blob: havola bo'ladi —
+          // dart:io File uni ocholmaydi (qulab tushadi).
+          child: (photoUrl.startsWith('http') || kIsWeb)
               ? Image.network(photoUrl, fit: BoxFit.contain)
               : Image.file(File(photoUrl), fit: BoxFit.contain),
         ),

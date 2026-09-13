@@ -498,18 +498,28 @@ class ProfileScreen extends ConsumerWidget {
   Widget _buildLogoutButton(BuildContext context, WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      child: OutlinedButton(
-        onPressed: () => _showLogoutDialog(context, ref),
-        style: OutlinedButton.styleFrom(
-          foregroundColor: context.colors.danger,
-          side: BorderSide(color: context.colors.danger),
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        ),
-        child: Text(
-          context.l10n.logout,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+      // Ushbu ustun crossAxisAlignment.stretch bo'lgani uchun (yuqoridagi
+      // menyu qatorlari to'liq kenglikda bo'lishi kerak), lekin "Chiqish"
+      // tugmasi kompyuterda shu kenglikka (masalan 800px) cho'zilib
+      // ketmasligi uchun Center + ConstrainedBox bilan cheklaymiz.
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 360),
+          child: OutlinedButton(
+            onPressed: () => _showLogoutDialog(context, ref),
+            style: OutlinedButton.styleFrom(
+              minimumSize: const Size(double.infinity, 0),
+              foregroundColor: context.colors.danger,
+              side: BorderSide(color: context.colors.danger),
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+            ),
+            child: Text(
+              context.l10n.logout,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
+          ),
         ),
       ),
     );

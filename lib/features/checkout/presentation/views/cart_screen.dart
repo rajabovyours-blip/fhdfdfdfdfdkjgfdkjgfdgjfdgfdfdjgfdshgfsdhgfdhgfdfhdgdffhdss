@@ -486,6 +486,10 @@ class _CartScreenState extends ConsumerState<CartScreen> {
             ElevatedButton(
               onPressed: () =>
                   ref.read(cartNotifierProvider.notifier).loadCart(),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                minimumSize: const Size(0, 44),
+              ),
               child: Text(context.l10n.retry),
             ),
           ],

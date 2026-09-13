@@ -121,6 +121,10 @@ class CategoriesScreen extends ConsumerWidget {
                             onPressed: () => ref
                                 .read(categoryNotifierProvider.notifier)
                                 .loadCategories(),
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                              minimumSize: const Size(0, 44),
+                            ),
                             child: Text(context.l10n.retry),
                           ),
                         ],

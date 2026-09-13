@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -60,7 +61,15 @@ class AuthGuard {
 
 
     return authState.maybeWhen(
-      initial: () => AppRoutes.splash,
+      // Veb saytda splash ekran umuman ko'rsatilmaydi (u shaffof/bo'sh
+      // ekran bo'lgani uchun uzoq "oq ekran" holatini keltirib chiqarardi).
+      // Avtorizatsiya holati hali aniqlanmagan bo'lsa ham, foydalanuvchi
+      // darhol so'ralgan sahifani (masalan, Home) ko'radi — login talab
+      // qiladigan sahifalar bo'lsa, holat aniqlangach yuqoridagi
+      // "unauthenticated" shoxobchasi baribir login'ga yo'naltiradi
+      // (refreshListenable orqali qayta ishga tushadi). Mobil ilovada эса
+      // avvalgidek brendlangan splash ekran davom etadi.
+      initial: () => kIsWeb ? null : AppRoutes.splash,
       loading: () => null,
       unauthenticated: () {
         // If it's a protected route, force login and pass the original URL as redirect

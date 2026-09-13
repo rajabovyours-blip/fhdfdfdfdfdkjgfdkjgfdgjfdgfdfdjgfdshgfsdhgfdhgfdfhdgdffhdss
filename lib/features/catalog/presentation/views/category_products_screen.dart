@@ -164,6 +164,7 @@ class _CategoryProductsScreenState extends ConsumerState<CategoryProductsScreen>
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
+                                minimumSize: const Size(0, 44),
                               ),
                               child: Text(
                                 context.l10n.retry,
@@ -215,6 +216,7 @@ class _CategoryProductsScreenState extends ConsumerState<CategoryProductsScreen>
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     elevation: 0,
+                                    minimumSize: const Size(0, 44),
                                   ),
                                   child: Text(
                                     context.l10n.catalog,

@@ -18,10 +18,12 @@ class CategoryCarousel extends ConsumerWidget {
     return categoriesState.maybeWhen(
       loaded: (categories) {
         if (categories.isEmpty) return const SizedBox.shrink();
-        
-        // Take up to 10 categories for the home carousel
-        final displayCategories = categories.take(10).toList();
-        
+
+        // Barcha kategoriyalarni ko'rsatamiz — foydalanuvchi (sichqoncha
+        // yoki barmoq bilan) o'ngga surib, qolganlarini ko'ra oladi.
+        // Ilgari faqat dastlabki 10 tasi ko'rsatilardi.
+        final displayCategories = categories.toList();
+
         return SizedBox(
           height: 120,
           child: ListView.separated(

@@ -1,4 +1,5 @@
-import 'dart:io';
+import 'dart:io' show File;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -468,7 +469,11 @@ class _ReviewComposerSheetState extends ConsumerState<ReviewComposerSheet> {
                                 border:
                                     Border.all(color: context.colors.outline),
                                 image: DecorationImage(
-                                  image: FileImage(File(path)),
+                                  // Veb brauzerda tanlangan rasm yo'li blob:
+                                  // havola bo'ladi — dart:io File uni ocholmaydi.
+                                  image: kIsWeb
+                                      ? NetworkImage(path) as ImageProvider
+                                      : FileImage(File(path)),
                                   fit: BoxFit.cover,
                                 ),
                               ),

@@ -1,5 +1,6 @@
-import 'dart:io';
+import 'dart:io' show File;
 import 'dart:async';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
@@ -191,7 +192,12 @@ class _PersonalInformationScreenState
                           radius: 50,
                           backgroundColor: context.colors.surfaceVariant,
                           backgroundImage: _localAvatarPath != null
-                              ? FileImage(File(_localAvatarPath!))
+                              // Veb brauzerda tanlangan rasm yo'li blob: havola
+                              // bo'ladi — dart:io File uni ocholmaydi (qulab
+                              // tushadi), shuning uchun NetworkImage ishlatamiz.
+                              ? (kIsWeb
+                                  ? NetworkImage(_localAvatarPath!) as ImageProvider
+                                  : FileImage(File(_localAvatarPath!)))
                               : (_avatarUrl != null && _avatarUrl!.isNotEmpty
                                   ? NetworkImage(ImageUtils.getFullImageUrl(
                                       _avatarUrl!,),) as ImageProvider
