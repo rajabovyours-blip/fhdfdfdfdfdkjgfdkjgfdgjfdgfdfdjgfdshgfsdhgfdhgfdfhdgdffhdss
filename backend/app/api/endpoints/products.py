@@ -572,9 +572,45 @@ async def bulk_upload_products(file: UploadFile = File(...), db: AsyncSession = 
 
 from pydantic import BaseModel as PydanticBaseModel
 
+
 class ReviewCreate(PydanticBaseModel):
+    """Ilova "Оставить отзыв" formasidan keladigan ma'lumot.
+
+    photos — bu yerga MAHALLIY qurilma yo'li emas, balki oldindan
+    /upload/image orqali yuklab olingan server URL'lari kelishi kerak
+    (Flutter tomon shunday tuzatildi).
+    """
     rating: int
     text: str
+    photos: List[str] = []
+    templates: List[str] = []
+    would_buy_again: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True, alias_generator=to_camel)
+
+
+def _review_to_response(review: Review, user: User) -> dict:
+    """ReviewEntity (Flutter) kutgan barcha maydonlarni to'liq qaytaradi.
+
+    MUHIM: `ReviewModel.fromJson` productId/userId/userName/createdAt kabi
+    maydonlarni MAJBURIY (null bo'lmagan) deb kutadi. Ulardan biri
+    tushib qolsa, ilova javobni o'qiyotganda qulab tushadi.
+    """
+    return {
+        "id": str(review.id),
+        "productId": str(review.product_id),
+        "userId": str(review.user_id),
+        "userName": (user.full_name if user and user.full_name else "Mijoz"),
+        "userAvatar": None,
+        "rating": int(review.rating) if review.rating is not None else 0,
+        "text": review.comment or "",
+        "photos": review.photos or [],
+        "isVerifiedPurchase": True,
+        "createdAt": review.created_at.isoformat() if review.created_at else None,
+        "templates": review.templates or [],
+        "wouldBuyAgain": review.would_buy_again,
+    }
+
 
 @router.get("/{id}/reviews", response_model=APIResponse[list])
 async def get_product_reviews(
@@ -594,17 +630,7 @@ async def get_product_reviews(
     reviews = []
     if product.reviews:
         for r in product.reviews:
-            reviews.append({
-                "id": str(r.id),
-                "productId": str(r.product_id),
-                "userId": str(r.user_id),
-                "userName": r.user.full_name if r.user else "User",
-                "rating": float(r.rating) if r.rating else 5.0,
-                "text": r.comment if hasattr(r, 'comment') else "",
-                "photos": [],
-                "createdAt": r.created_at.isoformat() if hasattr(r, 'created_at') and r.created_at else None,
-                "isVerifiedPurchase": True
-            })
+            reviews.append(_review_to_response(r, r.user))
             
     return APIResponse(data=reviews)
 
@@ -634,12 +660,7 @@ async def get_user_review(
     review = result.scalar_one_or_none()
     if not review:
         return {"data": None}
-    return {"data": {
-        "id": str(review.id), 
-        "rating": float(review.rating),
-        "text": review.comment, 
-        "createdAt": review.created_at.isoformat(),
-    }}
+    return {"data": _review_to_response(review, current_user)}
 
 @router.post("/{id}/reviews", response_model=APIResponse[dict])
 async def add_product_review(
@@ -660,8 +681,19 @@ async def add_product_review(
     if review:
         review.rating = payload.rating
         review.comment = payload.text
+        review.photos = payload.photos
+        review.templates = payload.templates
+        review.would_buy_again = payload.would_buy_again
     else:
-        review = Review(user_id=current_user.id, product_id=id, rating=payload.rating, comment=payload.text)
+        review = Review(
+            user_id=current_user.id,
+            product_id=id,
+            rating=payload.rating,
+            comment=payload.text,
+            photos=payload.photos,
+            templates=payload.templates,
+            would_buy_again=payload.would_buy_again,
+        )
         db.add(review)
     await db.flush()
 
@@ -674,4 +706,9 @@ async def add_product_review(
     product.review_count = count
 
     await db.commit()
-    return APIResponse(message="Review saved successfully", data={"id": str(review.id)})
+    await db.refresh(review)
+
+    return APIResponse(
+        message="Review saved successfully",
+        data=_review_to_response(review, current_user),
+    )
