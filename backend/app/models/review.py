@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, ForeignKey, Integer, Numeric, DateTime, text
+from sqlalchemy import Column, String, ForeignKey, Integer, Numeric, DateTime, Boolean, JSON, text
 from sqlalchemy.orm import relationship
 from app.db.base_class import Base
 from sqlalchemy import Uuid
@@ -14,7 +14,14 @@ class Review(Base):
     
     rating = Column(Numeric(3, 2), nullable=False)
     comment = Column(String, nullable=True)
-    
+
+    # Ilova "Оставить отзыв" formasida yig'iladigan qo'shimcha ma'lumot.
+    # Avval bularni saqlaydigan ustun umuman yo'q edi — mijoz rasm va
+    # teglar bilan sharh yuborsa ham, ular jimgina yo'qolib ketardi.
+    photos = Column(JSON, default=list)       # server URL'lari ro'yxati
+    templates = Column(JSON, default=list)    # "Narxiga arziydi" kabi tanlangan teglar
+    would_buy_again = Column(Boolean, nullable=True)
+
     created_at = Column(DateTime, default=datetime.utcnow)
 
     # Relationships
