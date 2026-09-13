@@ -140,7 +140,14 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
         );
       },
       (addresses) {
-        final allAddresses = [...addresses, ...localAddresses];
+        // Lokal manzillarni serverdan kelganlar bilan dublikatsiya qilmaslik
+        // uchun: agar serverda aynan shu ko'cha (street) bor bo'lsa, lokal
+        // nusxani olib tashlaymiz.
+        final serverStreets = addresses.map((a) => a.street.trim().toLowerCase()).toSet();
+        final uniqueLocal = localAddresses
+            .where((a) => !serverStreets.contains(a.street.trim().toLowerCase()))
+            .toList();
+        final allAddresses = [...addresses, ...uniqueLocal];
         final defaultAddress = allAddresses.where((a) => a.isDefault).isNotEmpty
             ? allAddresses.where((a) => a.isDefault).first
             : (allAddresses.isNotEmpty ? allAddresses.first : null);
@@ -303,11 +310,10 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
       addressType: 'local',
     );
 
-    final localStrs =
-        List<String>.from(PreferencesManager.getStringList('local_addresses'));
-    localStrs.add(jsonEncode(newAddress.toJson()));
-    await PreferencesManager.setStringList('local_addresses', localStrs);
-
+    // Avval serverga yuboramiz — muvaffaqiyatli bo'lsa, lokal saqlash
+    // shart emas (load() serverdan oladi). Faqat server xato bersa
+    // lokal saqlash — oflayn zaxira sifatida.
+    bool serverSaved = false;
     try {
       final dio = ref.read(dioProvider);
       final landmark = '$region, $district';
@@ -322,8 +328,16 @@ class CheckoutNotifier extends StateNotifier<CheckoutState> {
           'is_default': state.addresses.isEmpty,
         },
       );
+      serverSaved = true;
     } catch (e) {
-      // Remote sync fails, but local persists
+      // Server xato berdi — lokal saqlash (oflayn zaxira)
+    }
+
+    if (!serverSaved) {
+      final localStrs =
+          List<String>.from(PreferencesManager.getStringList('local_addresses'));
+      localStrs.add(jsonEncode(newAddress.toJson()));
+      await PreferencesManager.setStringList('local_addresses', localStrs);
     }
 
     await load();

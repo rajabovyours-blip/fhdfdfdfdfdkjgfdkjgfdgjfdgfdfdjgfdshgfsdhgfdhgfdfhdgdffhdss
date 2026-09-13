@@ -53,7 +53,7 @@ class _PromotionalBannerState extends State<PromotionalBanner> {
             // deyarli hech narsani kesmaydi va yon tomonlarda (yoki
             // tepa/pastda) rangli bo'sh joy qolmaydi.
             final bannerHeight =
-                (constraints.maxWidth / 2.4).clamp(160.0, 340.0);
+                (constraints.maxWidth / 2.4).clamp(160.0, 440.0);
             return SizedBox(
               height: bannerHeight,
               child: PageView.builder(
