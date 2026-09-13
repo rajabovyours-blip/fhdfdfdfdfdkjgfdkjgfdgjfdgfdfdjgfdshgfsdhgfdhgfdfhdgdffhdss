@@ -173,6 +173,20 @@ async def lifespan(app: FastAPI):
             await conn.execute(text("ALTER TABLE notifications ADD COLUMN image_url VARCHAR"))
     except Exception:
         pass
+
+    # Reviews: rasm, teglar va "yana sotib olasizmi" javobi uchun ustunlar.
+    # Ilova bu ma'lumotni yig'ar edi, lekin ularni saqlaydigan joy yo'q
+    # edi — jimgina yo'qolib ketardi.
+    for col_sql in [
+        "ALTER TABLE reviews ADD COLUMN photos JSON",
+        "ALTER TABLE reviews ADD COLUMN templates JSON",
+        "ALTER TABLE reviews ADD COLUMN would_buy_again BOOLEAN",
+    ]:
+        try:
+            async with engine.begin() as conn:
+                await conn.execute(text(col_sql))
+        except Exception:
+            pass
     
     # Add unique index on transaction_id if not exists
     try:
