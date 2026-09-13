@@ -29,7 +29,7 @@ class LanguageScreen extends ConsumerWidget {
       ),
       body: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 800),
+          constraints: const BoxConstraints(maxWidth: 1000),
           child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

@@ -72,7 +72,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
       ),
       body: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 800),
+          constraints: const BoxConstraints(maxWidth: 1000),
           child: ListView(
         padding: const EdgeInsets.all(20),
         children: [

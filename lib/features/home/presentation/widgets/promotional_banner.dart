@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
 import 'package:milliy_metr/features/home/domain/entities/home_entities.dart';
-import 'package:milliy_metr/core/utils/image_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:milliy_metr/shared/components/brand_image_loader.dart';
 
 class PromotionalBanner extends StatefulWidget {
   final List<BannerEntity> banners;
@@ -83,21 +82,19 @@ class _PromotionalBannerState extends State<PromotionalBanner> {
                           ),
                         ],
                       ),
-                      child: CachedNetworkImage(
-                        imageUrl: ImageUtils.getFullImageUrl(banner.imageUrl),
+                      // BrandImageLoader — xatodan keyin avtomatik qayta
+                      // urinadi (keshni tozalab), aks holda Home'ga
+                      // qaytilganda banner "buzilgan rasm" holatida
+                      // qotib qolardi (faqat sahifani yangilash tuzatardi).
+                      child: BrandImageLoader(
+                        imageUrl: banner.imageUrl,
                         // Konteyner nisbati suratning haqiqiy nisbatiga
                         // (~2.4:1) mos kelgani uchun "cover" endi deyarli
                         // hech narsani kesmaydi va rangli chiziqlar
                         // (letterbox) qoldirmaydi.
                         fit: BoxFit.cover,
                         width: double.infinity,
-                        memCacheWidth: 800,
-                        fadeInDuration: const Duration(milliseconds: 200),
-                        errorWidget: (_, __, ___) => Icon(
-                          Icons.image,
-                          size: 60,
-                          color: context.colors.textHigh.withValues(alpha: 0.2),
-                        ),
+                        borderRadius: 0,
                       ),
                     ),
                   );

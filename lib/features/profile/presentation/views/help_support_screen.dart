@@ -24,7 +24,7 @@ class HelpSupportScreen extends StatelessWidget {
       ),
       body: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 800),
+          constraints: const BoxConstraints(maxWidth: 1000),
           child: ListView(
         padding: const EdgeInsets.symmetric(vertical: 8),
         children: [

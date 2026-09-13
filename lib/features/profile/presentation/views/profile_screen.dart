@@ -34,7 +34,7 @@ class ProfileScreen extends ConsumerWidget {
       ),
       body: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 800),
+          constraints: const BoxConstraints(maxWidth: 1000),
           child: authState.when(
             initial: () => Center(
               child: CircularProgressIndicator(color: context.colors.primary),

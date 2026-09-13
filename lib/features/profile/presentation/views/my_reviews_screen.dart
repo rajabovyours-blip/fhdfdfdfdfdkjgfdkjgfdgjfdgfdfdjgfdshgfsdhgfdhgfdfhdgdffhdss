@@ -27,7 +27,7 @@ class MyReviewsScreen extends StatelessWidget {
       ),
       body: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 800),
+          constraints: const BoxConstraints(maxWidth: 1000),
           child: _reviews.isEmpty
               ? Center(
                   child: Column(
