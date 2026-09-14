@@ -57,6 +57,9 @@ class _PromotionalBannerState extends State<PromotionalBanner> {
             // aynan shu nisbatda tayyorlanishi kerak.
             final bannerHeight =
                 (constraints.maxWidth / 2.4).clamp(160.0, 440.0);
+            // Konteyner chap-o'ngdan 16px margin bilan torayadi — kesh
+            // o'lchami hisoblanganda shu haqiqiy kenglik ishlatiladi.
+            final bannerWidth = constraints.maxWidth - 32;
             return SizedBox(
               height: bannerHeight,
               child: PageView.builder(
@@ -113,7 +116,19 @@ class _PromotionalBannerState extends State<PromotionalBanner> {
                                   // kesmaydi va rangli chiziqlar
                                   // (letterbox) qoldirmaydi.
                                   fit: BoxFit.cover,
-                                  width: double.infinity,
+                                  // MUHIM — TUZATILDI: avval bu yerda
+                                  // "width: double.infinity" va height
+                                  // umuman berilmagan edi. BrandImageLoader
+                                  // ichida esa kesh o'lchami (memCacheWidth/
+                                  // Height) qattiq 400x400 (KVADRAT) qilib
+                                  // yozilgan edi — bu banner kabi keng
+                                  // (2.4:1) rasmlarni kvadratga siqib,
+                                  // matn va grafikani qiyshaytirib
+                                  // ko'rsatardi. Endi aniq, haqiqiy en/bo'y
+                                  // beriladi, shunda kesh ham to'g'ri
+                                  // nisbatda hisoblanadi.
+                                  width: bannerWidth,
+                                  height: bannerHeight,
                                   borderRadius: 0,
                                 ),
                         ),
