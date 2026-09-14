@@ -20,6 +20,11 @@ os.makedirs(VIDEO_UPLOAD_DIR, exist_ok=True)
 MAX_VIDEO_BYTES = 20 * 1024 * 1024  # 20 MB
 ALLOWED_VIDEO_TYPES = {"video/mp4", "video/quicktime", "video/x-m4v"}
 
+# Animatsiyali GIF hajmi ham cheklanadi — GIF formati o'zi samarasiz
+# (video kabi siqilmaydi), shuning uchun bir necha soniyalik banner
+# ham osongina 20-30 MB bo'lib qolishi mumkin.
+MAX_GIF_BYTES = 15 * 1024 * 1024  # 15 MB
+
 # Path to the watermark logo
 WATERMARK_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), "assets", "watermark.png")
 
@@ -68,6 +73,18 @@ def process_image(image_bytes, watermark_path, add_watermark: bool):
     return base_image
 
 
+def _looks_like_gif(content: bytes, content_type: str) -> bool:
+    """GIF ekanini ikki usulda tekshiradi: brauzer bergan MIME turi va
+    faylning o'zidagi "sehrli baytlar" (magic bytes). Ikkinchisi
+    ishonchliroq — ba'zi brauzer/qurilmalar noto'g'ri MIME yuborishi
+    mumkin, lekin fayl boshidagi "GIF87a"/"GIF89a" imzosi hech qachon
+    yolg'on bo'lmaydi.
+    """
+    if content_type == "image/gif":
+        return True
+    return content[:6] in (b"GIF87a", b"GIF89a")
+
+
 @router.post("/image")
 async def upload_image(
     file: UploadFile = File(...),
@@ -85,13 +102,45 @@ async def upload_image(
     if not file.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="File provided is not an image")
 
+    from starlette.concurrency import run_in_threadpool
+
+    content = await file.read()
+
+    # MUHIM: animatsiyali GIF alohida yo'l bilan boradi. Agar bu yerda
+    # oddiy rasm kabi PIL orqali ochib PNG'ga saqlansa (pastdagi asosiy
+    # yo'l), PNG bitta kadrni saqlaydi — animatsiya BUTUNLAY yo'qoladi.
+    # Shuning uchun GIF UMUMAN qayta ishlanmaydi (watermark ham qo'yilmaydi,
+    # chunki kadr-kadr watermark qo'yish alohida, katta ish talab qiladi va
+    # bannerlar hozircha logotip so'ramaydi) — asl baytlar aynan qanday
+    # kelgan bo'lsa, shundayligicha saqlanadi.
+    if _looks_like_gif(content, file.content_type):
+        if len(content) > MAX_GIF_BYTES:
+            size_mb = round(len(content) / (1024 * 1024), 1)
+            raise HTTPException(
+                status_code=400,
+                detail=f"GIF hajmi {size_mb} MB — ruxsat etilgan maksimal hajm 15 MB. "
+                       f"Kadrlar sonini yoki o'lchamini kamaytirib qayta yuklang.",
+            )
+        unique_filename = f"{uuid.uuid4().hex}.gif"
+        file_path = os.path.join(UPLOAD_DIR, unique_filename)
+        try:
+            with open(file_path, "wb") as f:
+                f.write(content)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Failed to upload gif: {e}")
+        return {
+            "data": {
+                "url": f"/uploads/images/{unique_filename}",
+                "filename": unique_filename,
+                "watermarked": False,
+                "animated": True,
+            }
+        }
+
     unique_filename = f"{uuid.uuid4().hex}.png"
     file_path = os.path.join(UPLOAD_DIR, unique_filename)
 
-    from starlette.concurrency import run_in_threadpool
-
     try:
-        content = await file.read()
         final_image = await run_in_threadpool(
             process_image, content, WATERMARK_PATH, watermark
         )
