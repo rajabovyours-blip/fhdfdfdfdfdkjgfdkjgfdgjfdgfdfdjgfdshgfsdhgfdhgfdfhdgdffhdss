@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:milliy_metr/core/theme/app_colors_extension.dart';
+import 'package:milliy_metr/core/utils/image_utils.dart';
 import 'package:milliy_metr/features/home/domain/entities/home_entities.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:milliy_metr/shared/components/brand_image_loader.dart';
+import 'package:milliy_metr/features/home/presentation/widgets/video_banner_player.dart';
 
 class PromotionalBanner extends StatefulWidget {
   final List<BannerEntity> banners;
@@ -51,7 +53,8 @@ class _PromotionalBannerState extends State<PromotionalBanner> {
             // Real banner suratlari ~2.4:1 nisbatda (1920x800) yuklanadi —
             // konteyner nisbatini aynan shunga moslaymiz, shunda BoxFit.cover
             // deyarli hech narsani kesmaydi va yon tomonlarda (yoki
-            // tepa/pastda) rangli bo'sh joy qolmaydi.
+            // tepa/pastda) rangli bo'sh joy qolmaydi. Video bannerlar ham
+            // aynan shu nisbatda tayyorlanishi kerak.
             final bannerHeight =
                 (constraints.maxWidth / 2.4).clamp(160.0, 440.0);
             return SizedBox(
@@ -66,6 +69,8 @@ class _PromotionalBannerState extends State<PromotionalBanner> {
                 itemCount: widget.banners.length,
                 itemBuilder: (context, index) {
                   final banner = widget.banners[index];
+                  final isActivePage = index == _currentPage;
+
                   return GestureDetector(
                     onTap: () => _launchUrl(banner.linkUrl),
                     child: Container(
@@ -98,20 +103,19 @@ class _PromotionalBannerState extends State<PromotionalBanner> {
                         clipBehavior: Clip.antiAlias,
                         child: ColoredBox(
                           color: context.colors.primary,
-                          // BrandImageLoader — xatodan keyin avtomatik qayta
-                          // urinadi (keshni tozalab), aks holda Home'ga
-                          // qaytilganda banner "buzilgan rasm" holatida
-                          // qotib qolardi (faqat sahifani yangilash tuzatardi).
-                          child: BrandImageLoader(
-                            imageUrl: banner.imageUrl,
-                            // Konteyner nisbati suratning haqiqiy nisbatiga
-                            // (~2.4:1) mos kelgani uchun "cover" endi deyarli
-                            // hech narsani kesmaydi va rangli chiziqlar
-                            // (letterbox) qoldirmaydi.
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                            borderRadius: 0,
-                          ),
+                          child: banner.isVideo
+                              ? _buildVideoOrPlaceholder(banner, isActivePage)
+                              : BrandImageLoader(
+                                  imageUrl: banner.imageUrl,
+                                  // Konteyner nisbati suratning haqiqiy
+                                  // nisbatiga (~2.4:1) mos kelgani uchun
+                                  // "cover" endi deyarli hech narsani
+                                  // kesmaydi va rangli chiziqlar
+                                  // (letterbox) qoldirmaydi.
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  borderRadius: 0,
+                                ),
                         ),
                       ),
                     ),
@@ -140,6 +144,23 @@ class _PromotionalBannerState extends State<PromotionalBanner> {
             ),
           ),
       ],
+    );
+  }
+
+  /// Video faqat HOZIR EKRANDA ko'rinib turgan sahifada ijro etiladi.
+  ///
+  /// PageView bir nechta sahifani oldindan tayyorlab qo'yishi mumkin
+  /// (keyingi/oldingi banner uchun). Agar har biri o'zi video ijro
+  /// eta boshlasa — foydalanuvchi ko'rmayotgan bir nechta video bir
+  /// vaqtda internetdan yuklanib, ma'lumot va batareyani isrof qiladi.
+  /// Faol bo'lmagan sahifada shunchaki fon rangi turadi, aylanib
+  /// kelinganda video darhol ishga tushadi.
+  Widget _buildVideoOrPlaceholder(BannerEntity banner, bool isActivePage) {
+    if (!isActivePage) {
+      return const ColoredBox(color: Colors.black12);
+    }
+    return VideoBannerPlayer(
+      videoUrl: ImageUtils.getFullImageUrl(banner.videoUrl),
     );
   }
 }
