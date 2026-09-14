@@ -9,7 +9,16 @@ router = APIRouter()
 # Ensure uploads directory exists. Use absolute path for Render persistent disk
 BASE_UPLOAD_DIR = os.getenv("UPLOAD_DIR", "/app/uploads")
 UPLOAD_DIR = os.path.join(BASE_UPLOAD_DIR, "images")
+VIDEO_UPLOAD_DIR = os.path.join(BASE_UPLOAD_DIR, "videos")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+os.makedirs(VIDEO_UPLOAD_DIR, exist_ok=True)
+
+# Video banner cheklovlari. Bular server tomonda hech qanday siqish
+# (transcode) qilmaydi — faqat "aqlga to'g'ri keladigan" hajmda ekanini
+# tekshiradi. Admin panelda ham aynan shu raqamlar ko'rsatiladi, shunda
+# admin videoni yuklashdan oldin biladi.
+MAX_VIDEO_BYTES = 20 * 1024 * 1024  # 20 MB
+ALLOWED_VIDEO_TYPES = {"video/mp4", "video/quicktime", "video/x-m4v"}
 
 # Path to the watermark logo
 WATERMARK_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), "assets", "watermark.png")
@@ -98,5 +107,51 @@ async def upload_image(
             "url": f"/uploads/images/{unique_filename}",
             "filename": unique_filename,
             "watermarked": watermark,
+        }
+    }
+
+
+@router.post("/video")
+async def upload_video(file: UploadFile = File(...)):
+    """Banner uchun video yuklash.
+
+    Faqat MP4 (H.264) qabul qilinadi va serverda HECH QANDAY qayta ishlov
+    (transcode/siqish) qilinmaydi — fayl aynan qanday yuklangan bo'lsa,
+    shunday saqlanadi. Shuning uchun admin videoni oldindan to'g'ri
+    o'lchamda va sifatda tayyorlab yuklashi kerak (admin panelda
+    ko'rsatilgan tavsiyalarga qarang).
+
+    Hajm 20 MB bilan cheklangan — bundan katta video ilovada sekin
+    yuklanadi va mijozning internet trafigini isrof qiladi.
+    """
+    content_type = (file.content_type or "").lower()
+    if content_type not in ALLOWED_VIDEO_TYPES and not content_type.startswith("video/"):
+        raise HTTPException(status_code=400, detail="Fayl video formatida emas")
+
+    content = await file.read()
+    if len(content) > MAX_VIDEO_BYTES:
+        size_mb = round(len(content) / (1024 * 1024), 1)
+        raise HTTPException(
+            status_code=400,
+            detail=f"Video hajmi {size_mb} MB — ruxsat etilgan maksimal hajm 20 MB. "
+                   f"Videoni siqib (masalan HandBrake yoki CapCut orqali) qayta yuklang.",
+        )
+    if len(content) == 0:
+        raise HTTPException(status_code=400, detail="Fayl bo'sh")
+
+    unique_filename = f"{uuid.uuid4().hex}.mp4"
+    file_path = os.path.join(VIDEO_UPLOAD_DIR, unique_filename)
+
+    try:
+        with open(file_path, "wb") as f:
+            f.write(content)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to upload video: {e}")
+
+    return {
+        "data": {
+            "url": f"/uploads/videos/{unique_filename}",
+            "filename": unique_filename,
+            "size_bytes": len(content),
         }
     }
