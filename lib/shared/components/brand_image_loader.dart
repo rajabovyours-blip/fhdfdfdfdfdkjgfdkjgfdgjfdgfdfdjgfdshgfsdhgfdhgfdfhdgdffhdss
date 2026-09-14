@@ -58,6 +58,32 @@ class _BrandImageLoaderState extends State<BrandImageLoader> {
     });
   }
 
+  /// Xotira keshi uchun piksel o'lchamini hisoblaydi — FAQAT haqiqiy,
+  /// chekli (finite) qiymat berilgan bo'lsa.
+  ///
+  /// MUHIM — TOPILGAN ASOSIY XATO: avval bu yerda ikkala o'lcham
+  /// (memCacheWidth VA memCacheHeight) doim "400, 400" ga QATTIQ
+  /// yozilgan edi — kvadrat, mutlaqo barcha rasmlar uchun bir xil.
+  /// Flutter'ga "rasmni aniq 400x400 qilib dekodla" deyilganda, u
+  /// kvadrat BO'LMAGAN manba rasmni (masalan banner — 1200x500,
+  /// nisbat 2.4:1) kvadrat qutiga SIQIB-CHO'ZIB joylashtiradi —
+  /// natijada matn va grafika qiyshayib, "pachoq" chiqadi. Bu xato
+  /// productlar, kategoriya va bannerlarning HAMMASIGA tegishli edi,
+  /// shunchaki kvadratga yaqin rasmlarda unchalik sezilmasdi.
+  ///
+  /// Yechim: faqat CHAQIRUVCHI berayotgan haqiqiy en/bo'yni ishlatamiz.
+  /// Agar faqat bittasi (masalan faqat width) berilgan bo'lsa,
+  /// ikkinchisini NULL qoldiramiz — shunda Flutter nisbatni o'zi
+  /// TO'G'RI saqlab, faqat berilgan o'q bo'yicha kichraytiradi.
+  /// Hech qanday o'lcham berilmagan bo'lsa (masalan banner —
+  /// width: double.infinity), kesh cheklovi umuman qo'yilmaydi —
+  /// rasm asl o'lchamida dekodlanadi (siqilish emas, xavfsizlik).
+  int? _cacheDim(double? logical) {
+    if (logical == null || !logical.isFinite || logical <= 0) return null;
+    final dpr = MediaQuery.of(context).devicePixelRatio;
+    return (logical * dpr).round();
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -163,8 +189,8 @@ class _BrandImageLoaderState extends State<BrandImageLoader> {
         width: widget.width,
         height: widget.height,
         fit: widget.fit,
-        memCacheWidth: 400,
-        memCacheHeight: 400,
+        memCacheWidth: _cacheDim(widget.width),
+        memCacheHeight: _cacheDim(widget.height),
         fadeInDuration: const Duration(milliseconds: 200),
         placeholder: (_, __) => buildShimmerPlaceholder(),
         errorWidget: (context, url, error) {
