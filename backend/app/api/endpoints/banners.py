@@ -21,6 +21,11 @@ class BannerCreate(BaseModel):
     link_url: Optional[str] = None
     is_active: bool = True
     order_index: int = 0
+    # "image" (standart) yoki "video". video bo'lganda video_url to'ldirilgan
+    # bo'lishi kerak — image_url shu holatda "muqova" (poster) rasmi sifatida
+    # ham ishlatilishi mumkin (video hali yuklanayotganda ko'rinadi).
+    media_type: str = "image"
+    video_url: Optional[str] = None
 
 class BannerUpdate(BaseModel):
     title: Optional[str] = None
@@ -28,6 +33,8 @@ class BannerUpdate(BaseModel):
     link_url: Optional[str] = None
     is_active: Optional[bool] = None
     order_index: Optional[int] = None
+    media_type: Optional[str] = None
+    video_url: Optional[str] = None
 
 class BannerResponse(BaseModel):
     id: UUID
@@ -36,11 +43,19 @@ class BannerResponse(BaseModel):
     link_url: str = ""
     is_active: bool
     order_index: int
-    
-    @field_validator("link_url", mode="before")
+    media_type: str = "image"
+    video_url: str = ""
+
+    @field_validator("link_url", "video_url", mode="before")
     def empty_string_for_none(cls, v):
         return v if v is not None else ""
-    
+
+    @field_validator("media_type", mode="before")
+    def default_image_for_none(cls, v):
+        # Eski bannerlarda bu ustun bo'sh (NULL) bo'lishi mumkin — ular
+        # har doim oddiy rasm bo'lgan, shuning uchun "image" deb qaytamiz.
+        return v if v else "image"
+
     model_config = ConfigDict(from_attributes=True, populate_by_name=True, alias_generator=to_camel)
 
 @router.get("", response_model=APIResponse[List[BannerResponse]])
@@ -61,7 +76,9 @@ async def create_banner(payload: BannerCreate, db: AsyncSession = Depends(get_db
         image_url=payload.image_url,
         link_url=payload.link_url,
         is_active=payload.is_active,
-        order_index=payload.order_index
+        order_index=payload.order_index,
+        media_type=payload.media_type or "image",
+        video_url=payload.video_url,
     )
     db.add(banner)
     await db.commit()
@@ -91,6 +108,10 @@ async def update_banner(id: str, payload: BannerUpdate, db: AsyncSession = Depen
         banner.is_active = payload.is_active
     if payload.order_index is not None:
         banner.order_index = payload.order_index
+    if payload.media_type is not None:
+        banner.media_type = payload.media_type
+    if payload.video_url is not None:
+        banner.video_url = payload.video_url
         
     await db.commit()
     await db.refresh(banner)
@@ -113,4 +134,3 @@ async def delete_banner(id: str, db: AsyncSession = Depends(get_db), admin: User
     await db.commit()
     
     return APIResponse(data={"success": True, "message": "Banner deleted successfully"})
-
