@@ -22,7 +22,13 @@ class Banner(Base):
     link_url = Column(String, nullable=True)
     is_active = Column(Boolean, default=True)
     order_index = Column(Integer, default=0)
-    
+
+    # "image" (standart) yoki "video". Eski qatorlarda NULL bo'ladi —
+    # bu har doim "image" deb talqin qilinadi (API javobida ta'minlanadi).
+    media_type = Column(String(10), default="image")
+    # media_type == "video" bo'lganda videoning /uploads/videos/... manzili.
+    video_url = Column(String, nullable=True)
+
     created_at = Column(DateTime, default=datetime.utcnow)
 
 class Notification(Base):
