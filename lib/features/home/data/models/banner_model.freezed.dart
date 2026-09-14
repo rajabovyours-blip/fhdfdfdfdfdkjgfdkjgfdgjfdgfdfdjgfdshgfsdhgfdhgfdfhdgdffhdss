@@ -26,6 +26,8 @@ mixin _$BannerModel {
   LocalizedString get title => throw _privateConstructorUsedError;
   LocalizedString get subtitle => throw _privateConstructorUsedError;
   LocalizedString get cta => throw _privateConstructorUsedError;
+  String get mediaType => throw _privateConstructorUsedError;
+  String get videoUrl => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -45,7 +47,9 @@ abstract class $BannerModelCopyWith<$Res> {
       String linkUrl,
       LocalizedString title,
       LocalizedString subtitle,
-      LocalizedString cta});
+      LocalizedString cta,
+      String mediaType,
+      String videoUrl});
 }
 
 /// @nodoc
@@ -67,6 +71,8 @@ class _$BannerModelCopyWithImpl<$Res, $Val extends BannerModel>
     Object? title = null,
     Object? subtitle = null,
     Object? cta = null,
+    Object? mediaType = null,
+    Object? videoUrl = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -93,6 +99,14 @@ class _$BannerModelCopyWithImpl<$Res, $Val extends BannerModel>
           ? _value.cta
           : cta // ignore: cast_nullable_to_non_nullable
               as LocalizedString,
+      mediaType: null == mediaType
+          ? _value.mediaType
+          : mediaType // ignore: cast_nullable_to_non_nullable
+              as String,
+      videoUrl: null == videoUrl
+          ? _value.videoUrl
+          : videoUrl // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -111,7 +125,9 @@ abstract class _$$BannerModelImplCopyWith<$Res>
       String linkUrl,
       LocalizedString title,
       LocalizedString subtitle,
-      LocalizedString cta});
+      LocalizedString cta,
+      String mediaType,
+      String videoUrl});
 }
 
 /// @nodoc
@@ -131,6 +147,8 @@ class __$$BannerModelImplCopyWithImpl<$Res>
     Object? title = null,
     Object? subtitle = null,
     Object? cta = null,
+    Object? mediaType = null,
+    Object? videoUrl = null,
   }) {
     return _then(_$BannerModelImpl(
       id: null == id
@@ -157,6 +175,14 @@ class __$$BannerModelImplCopyWithImpl<$Res>
           ? _value.cta
           : cta // ignore: cast_nullable_to_non_nullable
               as LocalizedString,
+      mediaType: null == mediaType
+          ? _value.mediaType
+          : mediaType // ignore: cast_nullable_to_non_nullable
+              as String,
+      videoUrl: null == videoUrl
+          ? _value.videoUrl
+          : videoUrl // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -170,7 +196,9 @@ class _$BannerModelImpl extends _BannerModel {
       required this.linkUrl,
       required this.title,
       required this.subtitle,
-      required this.cta})
+      required this.cta,
+      required this.mediaType,
+      required this.videoUrl})
       : super._();
 
   factory _$BannerModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -188,10 +216,14 @@ class _$BannerModelImpl extends _BannerModel {
   final LocalizedString subtitle;
   @override
   final LocalizedString cta;
+  @override
+  final String mediaType;
+  @override
+  final String videoUrl;
 
   @override
   String toString() {
-    return 'BannerModel(id: $id, imageUrl: $imageUrl, linkUrl: $linkUrl, title: $title, subtitle: $subtitle, cta: $cta)';
+    return 'BannerModel(id: $id, imageUrl: $imageUrl, linkUrl: $linkUrl, title: $title, subtitle: $subtitle, cta: $cta, mediaType: $mediaType, videoUrl: $videoUrl)';
   }
 
   @override
@@ -206,13 +238,17 @@ class _$BannerModelImpl extends _BannerModel {
             (identical(other.title, title) || other.title == title) &&
             (identical(other.subtitle, subtitle) ||
                 other.subtitle == subtitle) &&
-            (identical(other.cta, cta) || other.cta == cta));
+            (identical(other.cta, cta) || other.cta == cta) &&
+            (identical(other.mediaType, mediaType) ||
+                other.mediaType == mediaType) &&
+            (identical(other.videoUrl, videoUrl) ||
+                other.videoUrl == videoUrl));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, imageUrl, linkUrl, title, subtitle, cta);
+  int get hashCode => Object.hash(runtimeType, id, imageUrl, linkUrl, title,
+      subtitle, cta, mediaType, videoUrl);
 
   @JsonKey(ignore: true)
   @override
@@ -235,7 +271,9 @@ abstract class _BannerModel extends BannerModel {
       required final String linkUrl,
       required final LocalizedString title,
       required final LocalizedString subtitle,
-      required final LocalizedString cta}) = _$BannerModelImpl;
+      required final LocalizedString cta,
+      required final String mediaType,
+      required final String videoUrl}) = _$BannerModelImpl;
   const _BannerModel._() : super._();
 
   factory _BannerModel.fromJson(Map<String, dynamic> json) =
@@ -253,6 +291,10 @@ abstract class _BannerModel extends BannerModel {
   LocalizedString get subtitle;
   @override
   LocalizedString get cta;
+  @override
+  String get mediaType;
+  @override
+  String get videoUrl;
   @override
   @JsonKey(ignore: true)
   _$$BannerModelImplCopyWith<_$BannerModelImpl> get copyWith =>
