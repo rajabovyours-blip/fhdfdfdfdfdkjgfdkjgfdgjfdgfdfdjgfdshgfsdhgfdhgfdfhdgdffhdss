@@ -124,6 +124,21 @@ class _BrandImageLoaderState extends State<BrandImageLoader> {
 
     if (processedUrl.isEmpty) return buildShimmerPlaceholder();
 
+    // GIF: keshni o'lchamlash (memCacheWidth/Height) UMUMAN qo'llanmaydi.
+    //
+    // SABAB — tasdiqlangan, hali yopilmagan Flutter mexanizm xatosi
+    // (flutter/flutter#90804 "ResizeImage cannot resize gif"): agar GIF
+    // rasmga memCacheWidth/memCacheHeight (ya'ni ResizeImage) berilsa,
+    // ko'p hollarda animatsiya YO qotib qoladi (faqat 1-kadr), YO
+    // noto'g'ri o'lchamda chiqadi. Video (VideoBannerPlayer) buni
+    // butunlay boshqacha, muammosiz yo'l bilan hal qiladi — shu sabab
+    // videoni tavsiya qilamiz. Lekin GIF so'ralgani uchun, hech bo'lmasa
+    // XAVFSIZ ishlashi uchun kesh cheklovi shu yerda butunlay olib
+    // tashlanadi: rasm asl o'lchamida, TO'G'RI animatsiya bilan
+    // dekodlanadi (BoxFit.cover esa widget darajasida xavfsiz ishlaydi,
+    // bu decode-darajasidagi resize bilan bog'liq emas).
+    final isGif = processedUrl.toLowerCase().split('?').first.endsWith('.gif');
+
     if (processedUrl.startsWith('assets/')) {
       return ClipRRect(
         borderRadius: BorderRadius.circular(widget.borderRadius),
@@ -189,8 +204,8 @@ class _BrandImageLoaderState extends State<BrandImageLoader> {
         width: widget.width,
         height: widget.height,
         fit: widget.fit,
-        memCacheWidth: _cacheDim(widget.width),
-        memCacheHeight: _cacheDim(widget.height),
+        memCacheWidth: isGif ? null : _cacheDim(widget.width),
+        memCacheHeight: isGif ? null : _cacheDim(widget.height),
         fadeInDuration: const Duration(milliseconds: 200),
         placeholder: (_, __) => buildShimmerPlaceholder(),
         errorWidget: (context, url, error) {
