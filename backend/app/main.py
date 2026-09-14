@@ -187,6 +187,17 @@ async def lifespan(app: FastAPI):
                 await conn.execute(text(col_sql))
         except Exception:
             pass
+
+    # Banners: video-banner qo'llab-quvvatlash uchun ustunlar.
+    for col_sql in [
+        "ALTER TABLE banners ADD COLUMN media_type VARCHAR(10) DEFAULT 'image'",
+        "ALTER TABLE banners ADD COLUMN video_url VARCHAR",
+    ]:
+        try:
+            async with engine.begin() as conn:
+                await conn.execute(text(col_sql))
+        except Exception:
+            pass
     
     # Add unique index on transaction_id if not exists
     try:
@@ -259,6 +270,7 @@ app.include_router(api_router, prefix=settings.API_V1_STR)
 # Mount static files directory
 BASE_UPLOAD_DIR = os.getenv("UPLOAD_DIR", "/app/uploads")
 os.makedirs(os.path.join(BASE_UPLOAD_DIR, "images"), exist_ok=True)
+os.makedirs(os.path.join(BASE_UPLOAD_DIR, "videos"), exist_ok=True)
 
 class CachedStaticFiles(StaticFiles):
     async def get_response(self, path: str, scope):
