@@ -17,7 +17,26 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('banner-img-upload').addEventListener('change', async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    // Compress image before uploading — to'liq HD (1080p)
+
+    const isGif = file.type === 'image/gif';
+
+    if (isGif) {
+      // DIQQAT: GIF hech qachon ImageCompressor orqali o'tkazilmaydi —
+      // u <canvas> ishlatadi, canvas esa faqat BITTA kadrni chizadi va
+      // animatsiyani butunlay o'ldiradi. GIF asl holicha, o'zgartirilmay
+      // yuboriladi.
+      const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
+      if (file.size > 15 * 1024 * 1024) {
+        layout.showToast(`GIF ${sizeMb} MB — 15 MB dan katta. Kadrlar sonini kamaytirib qayta yuklang.`, 'error');
+        e.target.value = '';
+        return;
+      }
+      layout.showToast(`GIF yuklanmoqda (${sizeMb} MB)...`);
+    }
+
+    // Rasm yuklashdan oldin siqiladi — to'liq HD (1080p). GIF bo'lsa
+    // ImageCompressor buni ichkarida o'zi payqab, o'zgartirmasdan
+    // qaytaradi (image-utils.js dagi tekshiruv).
     const compressedFile = await ImageCompressor.compress(file, {
       maxWidth: 1920,
       maxHeight: 1080, // 16:9, to'liq HD
@@ -34,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const preview = document.getElementById('banner-img-preview');
         preview.src = api.getImageUrl(res.data.url);
         preview.style.display = 'block';
-        layout.showToast('Rasm yuklandi');
+        layout.showToast(isGif ? 'GIF yuklandi — animatsiyali bo\'lib qoladi' : 'Rasm yuklandi');
       }
     } catch (err) {
       layout.showToast(err.message, 'error');
@@ -136,9 +155,12 @@ function renderBannerTable() {
     const linkUrl = b.linkUrl || b.link_url || '-';
     const orderIndex = b.orderIndex !== undefined ? b.orderIndex : b.order_index;
     const mediaType = b.mediaType || b.media_type || 'image';
+    const isGifBanner = mediaType === 'image' && imgUrl && imgUrl.toLowerCase().endsWith('.gif');
     const typeHtml = mediaType === 'video'
       ? `<span class="badge badge-type-video"><span class="material-symbols-rounded" style="font-size:14px; vertical-align:-2px;">movie</span> Video</span>`
-      : `<span class="badge badge-neutral"><span class="material-symbols-rounded" style="font-size:14px; vertical-align:-2px;">image</span> Rasm</span>`;
+      : isGifBanner
+        ? `<span class="badge badge-type-video"><span class="material-symbols-rounded" style="font-size:14px; vertical-align:-2px;">gif</span> GIF</span>`
+        : `<span class="badge badge-neutral"><span class="material-symbols-rounded" style="font-size:14px; vertical-align:-2px;">image</span> Rasm</span>`;
       
     return `
       <tr>
