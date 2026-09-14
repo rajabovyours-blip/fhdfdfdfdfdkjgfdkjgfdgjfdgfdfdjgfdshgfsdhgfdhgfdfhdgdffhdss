@@ -70,9 +70,20 @@ class _PromotionalBannerState extends State<PromotionalBanner> {
                     onTap: () => _launchUrl(banner.linkUrl),
                     child: Container(
                       margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-                      clipBehavior: Clip.antiAlias,
+                      // MUHIM: soya (boxShadow) va burchak kesish (clip)
+                      // ATAYLAB ikki alohida qatlamga ajratilgan.
+                      //
+                      // Avval ikkalasi BITTA Container'da edi
+                      // (clipBehavior + boxShadow bir joyda). Bu Flutter'da
+                      // ma'lum muammo: debug rejimida to'g'ri chiqadi, lekin
+                      // Impeller render dvigateli bilan KOMPILYATSIYA
+                      // qilingan (App Store/TestFlight) build'da burchaklarda
+                      // kichik uchburchak shaklidagi nuqsonlar paydo bo'ladi —
+                      // aynan shu rasmlarda ko'ringan holat.
+                      //
+                      // Yechim: tashqi Container faqat soya chizadi (KESMAYDI),
+                      // ichkarida esa alohida ClipRRect burchaklarni kesadi.
                       decoration: BoxDecoration(
-                        color: context.colors.primary,
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
@@ -82,19 +93,26 @@ class _PromotionalBannerState extends State<PromotionalBanner> {
                           ),
                         ],
                       ),
-                      // BrandImageLoader — xatodan keyin avtomatik qayta
-                      // urinadi (keshni tozalab), aks holda Home'ga
-                      // qaytilganda banner "buzilgan rasm" holatida
-                      // qotib qolardi (faqat sahifani yangilash tuzatardi).
-                      child: BrandImageLoader(
-                        imageUrl: banner.imageUrl,
-                        // Konteyner nisbati suratning haqiqiy nisbatiga
-                        // (~2.4:1) mos kelgani uchun "cover" endi deyarli
-                        // hech narsani kesmaydi va rangli chiziqlar
-                        // (letterbox) qoldirmaydi.
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        borderRadius: 0,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        clipBehavior: Clip.antiAlias,
+                        child: ColoredBox(
+                          color: context.colors.primary,
+                          // BrandImageLoader — xatodan keyin avtomatik qayta
+                          // urinadi (keshni tozalab), aks holda Home'ga
+                          // qaytilganda banner "buzilgan rasm" holatida
+                          // qotib qolardi (faqat sahifani yangilash tuzatardi).
+                          child: BrandImageLoader(
+                            imageUrl: banner.imageUrl,
+                            // Konteyner nisbati suratning haqiqiy nisbatiga
+                            // (~2.4:1) mos kelgani uchun "cover" endi deyarli
+                            // hech narsani kesmaydi va rangli chiziqlar
+                            // (letterbox) qoldirmaydi.
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            borderRadius: 0,
+                          ),
+                        ),
                       ),
                     ),
                   );
