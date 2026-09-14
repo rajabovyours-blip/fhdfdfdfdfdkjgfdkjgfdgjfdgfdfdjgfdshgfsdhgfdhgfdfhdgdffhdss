@@ -14,12 +14,22 @@ class BannerModel with _$BannerModel {
     required LocalizedString title,
     required LocalizedString subtitle,
     required LocalizedString cta,
+    // "image" yoki "video". Backend har doim to'ldirib yuboradi (eski
+    // bannerlar uchun ham "image" bo'lib qaytadi), shuning uchun bu yerda
+    // null bo'lish ehtimoli yo'q.
+    required String mediaType,
+    // mediaType == "video" bo'lganda videoning server manzili. Aks holda
+    // bo'sh satr — nullable qilib freezed'ning maxsus sentinel patternini
+    // ishlatmaslik uchun ataylab shunday.
+    required String videoUrl,
   }) = _BannerModel;
 
   factory BannerModel.fromJson(Map<String, dynamic> json) =>
       _$BannerModelFromJson(json);
 
   const BannerModel._();
+
+  bool get isVideo => mediaType == 'video' && videoUrl.isNotEmpty;
 
   BannerEntity toEntity() {
     return BannerEntity(
@@ -29,6 +39,8 @@ class BannerModel with _$BannerModel {
       title: title,
       subtitle: subtitle,
       cta: cta,
+      mediaType: mediaType,
+      videoUrl: videoUrl,
     );
   }
 }
