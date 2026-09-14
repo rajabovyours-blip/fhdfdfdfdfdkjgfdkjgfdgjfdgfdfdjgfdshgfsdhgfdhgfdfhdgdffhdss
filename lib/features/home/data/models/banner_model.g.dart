@@ -14,6 +14,8 @@ _$BannerModelImpl _$$BannerModelImplFromJson(Map<String, dynamic> json) =>
       title: LocalizedString.fromJson(json['title']),
       subtitle: LocalizedString.fromJson(json['subtitle']),
       cta: LocalizedString.fromJson(json['cta']),
+      mediaType: json['mediaType'] as String,
+      videoUrl: json['videoUrl'] as String,
     );
 
 Map<String, dynamic> _$$BannerModelImplToJson(_$BannerModelImpl instance) =>
@@ -24,4 +26,6 @@ Map<String, dynamic> _$$BannerModelImplToJson(_$BannerModelImpl instance) =>
       'title': instance.title,
       'subtitle': instance.subtitle,
       'cta': instance.cta,
+      'mediaType': instance.mediaType,
+      'videoUrl': instance.videoUrl,
     };
